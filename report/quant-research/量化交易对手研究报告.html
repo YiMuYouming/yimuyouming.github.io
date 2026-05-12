@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>量化交易对手研究报告</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--sky:#6A8CAF;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:960px;margin:0 auto}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:2px}
+
+.hdr{margin:48px 0 32px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:640px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:10px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate);display:flex;align-items:center;gap:6px}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}
+th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.tb-o{background:rgba(217,119,87,.12);color:var(--clay)}
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+
+/* Key insight box */
+.kb{background:var(--g150);border-left:4px solid var(--clay);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;line-height:1.6}
+.kb .l{font-weight:600;color:var(--slate);display:block;margin-bottom:2px}
+
+/* Institution cards */
+.ic{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.ic .c{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.ic .c .nm{font-weight:600;color:var(--slate);display:block}
+.ic .c .sc{font-family:var(--mono);font-size:11px;color:var(--g500);display:block;margin-bottom:2px}
+.ic .c .st{font-size:11px;color:var(--g700)}
+.ic .c .tg{display:inline-block;margin-top:3px;font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600}
+
+/* Strategy card */
+.sc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.sch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.sch:hover{background:var(--oat)}
+.sch .nn{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--sky);width:24px;flex-shrink:0}
+.sch .tt{font-weight:600;font-size:14px;color:var(--slate);flex:1}
+.sch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.sch.open .ar{transform:rotate(180deg)}
+.scb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.scb.show{display:block}
+.scb .wl{background:rgba(176,74,63,.06);border-left:3px solid var(--rust);padding:8px 12px;border-radius:0 6px 6px 0;margin:6px 0;font-size:12px;line-height:1.5}
+.scb .wl .l2{font-weight:600;color:var(--rust);display:block}
+.scb .mt{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0;font-size:12px}@media(max-width:500px){.scb .mt{grid-template-columns:1fr}}
+.scb .mt .it{background:var(--g150);border-radius:6px;padding:6px 8px;text-align:center}
+.scb .mt .it .l{font-size:10px;color:var(--g500);display:block}
+.scb .mt .it .v{font-weight:600}
+.scb .ei{font-size:12px;color:var(--g700);line-height:1.5;margin:4px 0}
+
+/* Blind spot / Advantage dual */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}@media(max-width:600px){.dual{grid-template-columns:1fr}}
+.dual .d{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px}
+.dual .d .hd{font-weight:600;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dual .d ul{font-size:12px;color:var(--g700)}
+.dual .d ul li{margin-bottom:4px;line-height:1.4}
+
+/* Training cards */
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}@media(max-width:600px){.tg{grid-template-columns:1fr}}
+.tg .t{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:12px 14px;font-size:12px}
+.tg .t .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.tg .t .nm{font-weight:600;color:var(--slate);display:block;font-size:13px;margin-bottom:2px}
+.tg .t .de{color:var(--g700);line-height:1.5}
+.tg .t .wh{color:var(--g500);margin-top:4px;padding-top:4px;border-top:1px solid var(--g150);font-size:11px}
+
+/* Cost comparison */
+.cost{background:#fff;border:1.5px solid var(--g300);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.cost .r{display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 12px;border-bottom:1px solid var(--g150);font-size:12px}
+.cost .r:last-child{border-bottom:0}
+.cost .rh{background:var(--g150);font-weight:600;font-size:11px;font-family:var(--mono);text-transform:uppercase}
+.cost .r .c1{font-weight:500}
+.cost .r .c3{color:var(--rust);font-family:var(--mono)}
+.cost .r .c2{text-align:center;font-family:var(--mono)}
+
+/* Advantage list */
+.av{display:grid;gap:10px;margin-bottom:14px}
+.av .a{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 14px;font-size:12px;display:flex;gap:10px;align-items:flex-start}
+.av .a .n{font-weight:700;font-size:16px;width:28px;flex-shrink:0;text-align:center;color:var(--olive)}
+.av .a .t{flex:1}
+.av .a .t .tt{font-weight:600;color:var(--slate);display:block}
+.av .a .t .de{color:var(--g700);line-height:1.4;margin-top:2px}
+.av .a .t .de code{font-family:var(--mono);font-size:11px;background:var(--g150);padding:1px 4px;border-radius:3px}
+
+/* Scene table alternative */
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}@media(max-width:500px){.sg2{grid-template-columns:1fr}}
+.sg2 .s{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:8px 10px;font-size:11px}
+.sg2 .s .sn{font-weight:600;color:var(--slate);display:block}
+.sg2 .s .q{color:var(--g500);display:block;margin:2px 0}
+.sg2 .s .a{color:var(--olive);font-weight:500;display:block}
+
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>量化交易对手研究报告</h1>
+  <div class="sub">把量化当作"对手"研究——它的规则是什么、它怕什么、它的盲区在哪里、我们在哪里能赢</div>
+  <div class="mr">
+    <span>📅 2026-03-28</span>
+    <span class="tag">#量化 #对手盘 #交易策略</span>
+    <span>稳米出品</span>
+  </div>
+</div>
+
+<div class="kb"><span class="l">研究视角</span>把量化当作<strong>"对手"</strong>研究，不是当"工具"学。它的规则是什么、它怕什么、它的盲区在哪里、我们在哪里能赢。</div>
+
+<!-- ===== 一、全景图 ===== -->
+<h2><span class="num">一</span>量化对手全景图</h2>
+
+<h3>头部"新四大天王"（2025格局）</h3>
+<div class="ic">
+  <div class="c"><span class="nm">衍复投资</span><span class="sc">国泰君安上海江苏路</span><span class="st">高频+中性策略</span><span class="tg tb tb-g">百亿+</span></div>
+  <div class="c"><span class="nm">明汯投资</span><span class="sc">华泰上海福山路</span><span class="st">高频+中频+中性</span><span class="tg tb tb-g">百亿+</span></div>
+  <div class="c"><span class="nm">九坤投资</span><span class="sc">中信北京总部</span><span class="st">多因子+CTA</span><span class="tg tb tb-g">百亿+</span></div>
+  <div class="c"><span class="nm">幻方量化</span><span class="sc">华泰杭州求是路</span><span class="st">高频+阿尔法+AI选股（DeepSeek）</span><span class="tg tb tb-g">百亿+</span></div>
+</div>
+<div class="kb"><span class="l">规模数据</span>量化交易占A股成交额约<strong>20-25%</strong>（2026年3月）·公募私募量化合计约<strong>2.2万亿</strong>·百亿量化私募<strong>39家</strong>，占百亿私募总数44.83%</div>
+
+<h3>交易成本"双轨制"——核心不公平</h3>
+<div class="cost">
+  <div class="r rh"><span class="c1"></span><span class="c2">散户</span><span class="c3">量化机构</span></div>
+  <div class="r"><span class="c1">佣金</span><span class="c2">万分之2.5~5</span><span class="c3">万分之0.5以下</span></div>
+  <div class="r"><span class="c1">印花税</span><span class="c2">千分之一（卖出）</span><span class="c3" style="color:var(--olive)">ETF免征</span></div>
+  <div class="r"><span class="c1">综合成本</span><span class="c2">千分之1.2~1.5</span><span class="c3">万分之几（近乎零）</span></div>
+</div>
+<div class="kb"><span class="l">这意味着</span>量化日交易十万次级别捕捉0.01元微小价差；散户因成本高被迫放弃短线套利。量化靠"胜率51%+海量交易"盈利，散户需要追求"一击即中"的高确定性。<br>
+<strong>核心结论：量化赚钱的本质不是"更聪明"，而是"更快+更便宜+更大"。</strong></div>
+
+<h3>监管变化（2024-2026）</h3>
+<p style="font-size:13px;color:var(--g700);background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 14px;">
+<strong>高频界定</strong>：单账户每秒≥300笔或单日≥20000笔 = 高频 · <strong>DMA清理</strong>：量化通过场外衍生品加杠杆的路被堵 · <strong>差异化收费</strong>：撤单率过高的账户可能被征"刷单税" · 趋势：高频"速度战"让位于"策略有效性"比拼
+</p>
+
+<!-- ===== 二、策略拆解 ===== -->
+<h2><span class="num">二</span>量化核心策略拆解</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:10px;">按持仓周期从短到长排列。重点标注每种策略的盈利逻辑和<strong>致命弱点</strong>——弱点就是我们可以利用的突破口。</p>
+
+<div class="sc">
+<div class="sch open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="nn">1</span><span class="tt">高频做市 T+0 日内回转</span><span class="ar">▼</span></div>
+<div class="scb show">
+<div class="mt"><div class="it"><span class="l">持仓周期</span><span class="v">日内</span></div><div class="it"><span class="l">资金规模</span><span class="v">十亿+</span></div></div>
+<div class="ei"><strong>盈利逻辑</strong>：持有底仓，先卖底仓再买回（变相T+0），在分时均线上下反复高抛低吸，每天赚0.3%-0.8%的波动差。</div>
+<div class="wl"><span class="l2">致命弱点</span>①依赖波动率——横盘赚不到，单边跌亏底仓 ②策略同质化——集体止损引发闪崩 ③监管收紧——撤单频率被限 ④易被反向利用——游资在均线附近挂假单诱多</div>
+</div>
+</div>
+
+<div class="sc">
+<div class="sch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="nn">2</span><span class="tt">统计套利（配对交易/期现套利）</span><span class="ar">▼</span></div>
+<div class="scb">
+<div class="mt"><div class="it"><span class="l">持仓周期</span><span class="v">数天</span></div><div class="it"><span class="l">资金规模</span><span class="v">亿级</span></div></div>
+<div class="ei"><strong>盈利逻辑</strong>：找两只高度相关股票，价差偏离时做多便宜的+做空贵的，等价差回归。</div>
+<div class="wl"><span class="l2">致命弱点</span>①相关性断裂——基本面变化致价差不再回归 ②A股大部分时间期货贴水 ③容量有限</div>
+</div>
+</div>
+
+<div class="sc">
+<div class="sch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="nn">3</span><span class="tt">因子投资（多因子选股/指数增强）</span><span class="ar">▼</span></div>
+<div class="scb">
+<div class="mt"><div class="it"><span class="l">持仓周期</span><span class="v">数周</span></div><div class="it"><span class="l">资金规模</span><span class="v">十亿+</span></div></div>
+<div class="ei"><strong>盈利逻辑</strong>：用动量/价值/质量/波动率等因子给股票打分，买高卖低，定期调仓。</div>
+<div class="wl"><span class="l2">致命弱点</span>①因子失效——市场风格切换时过去有效的突然失效 ②因子拥挤——太多量化用相同因子，超额被稀释 ③月度调仓对极端行情反应慢</div>
+<div class="ei" style="margin-top:6px;"><strong>与弈沐匹配度</strong>：动量因子→窗口1追涨 ⭐⭐⭐ | 情绪因子→7维情绪指标 ⭐⭐⭐ | 价值因子→W2低吸 ⭐⭐ | 关键差异：我们按<strong>日</strong>决策，灵活性碾压量化月度调仓</div>
+</div>
+</div>
+
+<div class="sc">
+<div class="sch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="nn">4</span><span class="tt">AI深度学习选股</span><span class="ar">▼</span></div>
+<div class="scb">
+<div class="mt"><div class="it"><span class="l">持仓周期</span><span class="v">日-周</span></div><div class="it"><span class="l">代表</span><span class="v">幻方量化</span></div></div>
+<div class="ei"><strong>盈利逻辑</strong>：用Transformer/神经网络挖掘非线性关系。输入海量行情+财务+另类数据，输出股票收益率排序。</div>
+<div class="wl"><span class="l2">致命弱点</span>①黑箱——不知道模型为什么选这只票 ②过拟合——新市场结构下失效 ③对政策突变等"软信息"反应慢 ④年运营成本数千万</div>
+</div>
+</div>
+
+<!-- ===== 三、盲区与优势 ===== -->
+<h2><span class="num">三</span>量化盲区 vs 我们的优势</h2>
+
+<div class="dual">
+  <div class="d" style="border-left:3px solid var(--clay)">
+    <div class="hd">✅ 量化做不到的（我们的优势）</div>
+    <ul>
+      <li><strong>盘口语言解读</strong>——大单撤单=试探还是撤退？涨停封单减半=开板还是换手？量化只能统计概率</li>
+      <li><strong>游资意图分析</strong>——量化能读龙虎榜数据，但无法理解游资风格和意图</li>
+      <li><strong>政策一阶/二阶/三阶推演</strong>——量化只能统计"历史类似情况"，每次政策背景不同</li>
+      <li><strong>概念萌芽期识别</strong>——新概念没历史数据，量化因子全部失效</li>
+      <li><strong>"假设空仓测试"等思维工具</strong>——量化不会自我审视</li>
+    </ul>
+  </div>
+  <div class="d" style="border-left:3px solid var(--rust)">
+    <div class="hd">⚠️ 量化比我们强的</div>
+    <ul>
+      <li><strong>数据处理</strong>——量化每天TB级，我们依赖稳米+API</li>
+      <li><strong>执行纪律</strong>——量化100%执行，人会在关键时刻犹豫</li>
+      <li><strong>多品种对冲</strong>——可同时操作几百只+期货期权</li>
+      <li><strong>覆盖广度</strong>——全市场5000+只（但大部分是噪音）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="kb"><span class="l">散户+AI = 量化时代生存之道</span>不用AI做量化，而用AI补足散户的执行力和数据处理短板，同时保留人类独有的认知深度和灵活性。稳米自动拉7维情绪指标 + 紫米红方对抗 + MEMORY.md记录教训 = 纯散户没有的优势。</div>
+
+<!-- ===== 四、训练清单 ===== -->
+<h2><span class="num">四</span>具体训练方向</h2>
+<div class="tg">
+  <div class="t" style="border-left:3px solid var(--olive)"><span class="rt" style="color:var(--olive)">⭐⭐⭐ 最高</span><span class="nm">盘口语言速读</span><span class="de">竞价30秒内判断资金意图——每天盯5只竞价变化，收盘复盘验证，积累100个案例形成直觉</span><span class="wh">为什么量化做不到：能读到竞价数据，但无法理解"主力试盘还是真买"</span></div>
+  <div class="t" style="border-left:3px solid var(--olive)"><span class="rt" style="color:var(--olive)">⭐⭐⭐ 高</span><span class="nm">龙虎榜席位画像</span><span class="de">看到龙虎榜30秒内判断"谁在买/什么风格/要不要跟"，建立核心席位库</span><span class="wh">量化不会"画像"某个席位——养家买和量化扫货是完全不同的信号</span></div>
+  <div class="t" style="border-left:3px solid var(--sky)"><span class="rt" style="color:var(--sky)">⭐⭐ 中</span><span class="nm">事件驱动推理</span><span class="de">看到政策/新闻后5分钟完成一阶→二阶→三阶影响链条推演</span><span class="wh">量化的NLP只能分析新闻情绪，无法做"利好出尽"这种因果推理</span></div>
+  <div class="t" style="border-left:3px solid var(--sky)"><span class="rt" style="color:var(--sky)">⭐⭐ 中</span><span class="nm">概念萌芽期识别</span><span class="de">新概念第一天判断是不是新主线——用主线三条件快速验证</span><span class="wh">新概念无历史数据，量化全部失效。人类可用"类比推理"</span></div>
+  <div class="t" style="border-left:3px solid var(--olive);grid-column:1/-1"><span class="rt" style="color:var(--olive)">⭐⭐⭐ 高</span><span class="nm">量化行为反向利用</span><span class="de">理解量化犯错模式，在错误时反向操作：集体止损闪崩低吸 / 因子拥挤不追 / 假突破识别 / 尾盘操纵不跟</span><span class="wh">量化会集体犯错——止损闪崩后企稳=低吸机会。这是我们的认知优势</span></div>
+</div>
+
+<!-- ===== 五、Rules补充 ===== -->
+<h2><span class="num">五</span>量化对弈沐操作的直接影响</h2>
+<div class="sg2">
+  <div class="s"><span class="sn">竞价高开5%+</span><span class="q">量化概率高开→拉升</span><span class="a">窗口1出手，9:45验证</span></div>
+  <div class="s"><span class="sn">盘中突然拉升3%</span><span class="q">量化T+0测试/扫货</span><span class="a">无量=测试，不追</span></div>
+  <div class="s"><span class="sn">尾盘14:50拉升</span><span class="q">量化做K线/竞价操纵</span><span class="a">不追，14:45后不操作</span></div>
+  <div class="s"><span class="sn">连续阴跌3天</span><span class="q">量化动量反转集体卖出</span><span class="a">假设空仓测试，不恐慌决策</span></div>
+  <div class="s" style="grid-column:1/-1"><span class="sn">板块突然集体涨停</span><span class="q">量化动量+质量信号触发</span><span class="a">用主线三条件验证持续性</span></div>
+</div>
+
+<h3>Rules 补充条款</h3>
+<div class="sbx">
+  <div class="tt">🆕 待验证条款</div>
+  <p style="font-size:13px;">
+  <strong>#31 避开量化集中止损区</strong> — 不在整数关口设止损（如10.00、20.00），设在非整数位（如9.85、19.73）。量化大量使用整数位做止损/止盈，容易踩踏。<br><br>
+  <strong>#32 量化行为反向观察</strong> — 复盘时看量化席位（华鑫红宝石路/宛平南路）的买入方向和集中度。同板块大量买入=方向确认；集中卖出=风险预警。<br><br>
+  <strong>#33 非操作时间就是量化时间</strong> — 10:00-13:00观察期和14:45-15:00非操作时间的波动很多是量化产生的，不要被误导。
+  </p>
+</div>
+
+<!-- ===== 六、散户量化工具 ===== -->
+<h2><span class="num">六</span>散户量化工具对比</h2>
+<div class="tw">
+<table>
+<thead><tr><th>工具</th><th>门槛</th><th>适合</th><th>天花板</th></tr></thead>
+<tbody>
+<tr><td><strong>QMT</strong></td><td>10-50万</td><td>有编程基础</td><td>可跑多因子，但机构级高频做不到</td></tr>
+<tr><td><strong>PTrade</strong></td><td>10-50万</td><td>不想写代码</td><td>策略模板有限，高频不支持</td></tr>
+<tr><td><strong>同花顺/通达信</strong></td><td>无</td><td>入门</td><td>只能日级别回测，精度差</td></tr>
+</tbody>
+</table>
+</div>
+<div class="kb"><span class="l">结论</span>个人量化的天花板是"简化版因子投资"——和弈沐情绪打法不同赛道。<strong>弈沐不需要学个人量化。需要的是理解量化的规则，不是用量化的工具。</strong></div>
+
+<hr>
+
+<footer>
+📌 本报告基于公开资料整理。核心数据来源：东方财富、界面新闻、同花顺、证监会公告等。<br>
+🆕待验证条款需经规则变更流程后方可成为正式规则。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-03-28</span>
+</footer>
+</div><!-- /page -->
+</body>
+</html>

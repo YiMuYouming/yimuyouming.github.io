@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>龙虎榜深度研究报告</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--sky:#6A8CAF;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:960px;margin:0 auto}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:2px}
+
+.hdr{margin:48px 0 32px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:640px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:10px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}
+th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.tb-o{background:rgba(217,119,87,.12);color:var(--clay)}
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+
+/* Quick reference cards at top */
+.qr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}@media(max-width:680px){.qr{grid-template-columns:1fr}}
+.qp{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:16px 18px}
+.qp .tt{font-size:12px;font-weight:600;color:var(--slate);margin-bottom:6px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.qp code{font-family:var(--mono);font-size:12px;line-height:1.7;display:block;white-space:pre;color:var(--g700)}
+.qp .sig{border:1.5px solid var(--g300);border-radius:6px;overflow:hidden;font-size:11px}
+.qp .sig .r{display:grid;grid-template-columns:70px 1fr 1fr;padding:5px 8px;border-bottom:1px solid var(--g150)}
+.qp .sig .r:last-child{border-bottom:0}
+.qp .sig .r .s{font-weight:600;color:var(--slate)}
+.qp .sig .r .a{color:var(--g500)}
+
+/* Capital type cards */
+.ct{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}@media(max-width:600px){.ct{grid-template-columns:1fr}}
+.ct .c{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px}
+.ct .c .nm{font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.ct .c .desc{font-size:12px;color:var(--g500);line-height:1.5}
+.ct .c .rt{font-size:11px;margin-top:4px;display:inline-block;padding:2px 7px;border-radius:5px}
+
+/* 游资 cards */
+.ys{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:14px}
+.ys .c{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.ys .c .nm{font-weight:600;color:var(--slate);display:block;margin-bottom:2px}
+.ys .c .seat{font-family:var(--mono);font-size:11px;color:var(--g500);display:block;margin-bottom:3px}
+.ys .c .sty{font-size:11px;color:var(--g700);line-height:1.4}
+.ys .c .win{display:inline-block;margin-top:3px;font-size:10px;padding:1px 6px;border-radius:4px}
+
+/* Step flow */
+.sf{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+@media(max-width:600px){.sf{grid-template-columns:1fr 1fr;gap:6px}}
+.sf .s{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px;text-align:center;font-size:12px}
+.sf .s .n{font-weight:600;color:var(--sky);display:block;font-size:14px}
+.sf .s .l{color:var(--g500);display:block;font-weight:500;margin:2px 0}
+.sf .s .d{color:var(--g700);font-size:11px;line-height:1.3}
+
+/* Danger signals */
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}@media(max-width:600px){.dg{grid-template-columns:1fr}}
+.dg .d{border:1.5px solid;border-radius:8px;padding:10px 12px;font-size:12px}
+.dg .d .h{font-weight:600;display:block;margin-bottom:2px}
+.dg .d .de{color:var(--g700);line-height:1.4}
+.dg .d .do{font-size:11px;margin-top:3px;color:var(--g500);font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+
+/* Info box / highlight */
+.info{background:rgba(106,140,175,.08);border:1.5px solid var(--sky);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12px;line-height:1.5}
+.info .l{font-weight:600;color:var(--sky);display:block;margin-bottom:2px}
+.warn{background:rgba(176,74,63,.06);border:1.5px solid var(--rust);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12px;line-height:1.5}
+.warn .l{font-weight:600;color:var(--rust);display:block;margin-bottom:2px}
+
+/* Signal priority */
+.sp{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.sp .it{font-size:11px;padding:4px 10px;border-radius:999px;background:#fff;border:1.5px solid var(--g300)}
+.sp .it.h{background:rgba(120,140,93,.10);border-color:var(--olive);color:var(--olive);font-weight:600}
+.sp .it.d{background:rgba(176,74,63,.08);border-color:var(--rust);color:var(--rust);font-weight:600}
+
+/* Framework table */
+.fw table td:first-child{font-weight:600}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+
+/* Comparison list */
+.cl{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;font-size:12px}@media(max-width:500px){.cl{grid-template-columns:1fr}}
+.cl .it{background:#fff;border:1.5px solid var(--g300);border-radius:6px;padding:8px 10px;display:flex;gap:8px;align-items:flex-start}
+.cl .it .i{font-weight:600;width:20px;flex-shrink:0;color:var(--sky)}
+.cl .it .tx{flex:1}
+
+/* Key insight */
+.ki{padding:12px 16px;background:var(--g150);border-radius:8px;margin:10px 0;font-size:12px;line-height:1.5;border-left:3px solid var(--clay)}
+.ki .l{font-weight:600;color:var(--slate);display:block;margin-bottom:2px}
+
+/* QK quick-link at bottom */
+.bq{display:flex;gap:6px;flex-wrap:wrap}
+.bq .it{background:#fff;border:1.5px solid var(--g300);border-radius:6px;padding:6px 10px;font-size:11px}
+.bq .it.s{background:rgba(120,140,93,.10);border-color:var(--olive)}
+.bq .it.da{background:rgba(176,74,63,.08);border-color:var(--rust)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>龙虎榜深度研究报告</h1>
+  <div class="sub">从席位到博弈的对手盘情报体系——谁在买、谁在卖、谁在骗、跟谁有肉</div>
+  <div class="mr">
+    <span>📅 2026-04-04</span>
+    <span class="tag">#龙虎榜 #游资 #量化 #对手盘</span>
+    <span>稳米出品</span>
+  </div>
+</div>
+
+<!-- Quick Reference -->
+<div class="qr">
+  <div class="qp">
+    <div class="tt">📋 看榜口诀</div>
+    <code>Step 1: 看上榜原因 → 为什么异动？
+Step 2: 看资金性质 → 谁在买卖？
+Step 3: 看买卖力度 → 净买还是净卖？
+Step 4: 看席位结构 → 合力还是独庄？
+Step 5: 看历史胜率 → 这个游资靠谱吗？</code>
+  </div>
+  <div class="qp">
+    <div class="tt">⚡ 信号速查</div>
+    <div class="sig">
+      <div class="r"><span class="s" style="color:var(--olive)">✅ 可参与</span><span>合力板+3家机构</span><span>主力共识最强</span></div>
+      <div class="r"><span class="s" style="color:var(--clay)">⚠ 确认</span><span>合力板+游资买</span><span>窗口2确认</span></div>
+      <div class="r"><span class="s" style="color:var(--rust)">❌ 规避</span><span>独庄板/散户板</span><span>无主力参与</span></div>
+      <div class="r"><span class="s" style="color:var(--rust)">❌ 减仓</span><span>机构/外资卖出</span><span>主力撤退</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>龙虎榜基础知识</h2>
+<p>龙虎榜是沪深交易所每日公布的<strong>交易异动个股买卖前五名营业部名单</strong>。不是所有股票都会上榜，只有触发特定条件的异动股才会披露。</p>
+
+<h3>上榜条件</h3>
+<div class="tw">
+<table>
+<thead><tr><th>条件</th><th>沪市</th><th>深市</th></tr></thead>
+<tbody>
+<tr><td>日涨幅偏离值</td><td>±7%</td><td>±7%</td></tr>
+<tr><td>日换手率</td><td>20%</td><td>20%</td></tr>
+<tr><td>日振幅</td><td>15%</td><td>15%</td></tr>
+<tr><td>连续3日累计偏离</td><td>±20%</td><td>±20%</td></tr>
+</tbody>
+</table>
+</div>
+<div class="info"><span class="l">关键认知</span>龙虎榜是T+1滞后数据（收盘后16:00公布），只能用于<strong>复盘和次日预判</strong>，不能用于盘中决策。但对弈沐短线体系完全够用——窗口1竞价前、窗口2午后前都有充裕时间。</div>
+<div class="ki"><span class="l">三日榜 > 当日榜</span>三日榜反映3天累计资金行为，信号更可靠。但要注意：三日榜是累计数据，日均要÷3。同时，三日榜数据要拆开每日明细看，避免被累计数字误导。</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>席位分类体系——认清对手是谁</h2>
+<div class="warn"><span class="l">核心原则</span>席位会变、会迁移、会被借用，<strong>不要迷信单一席位</strong>。要跟踪的是"席位集群+行为模式"，不是某个固定营业部。</div>
+
+<div class="ct">
+  <div class="c" style="border-left:3px solid var(--olive)"><span class="nm">🏢 机构资金</span><div class="desc">"机构专用"席位。看基本面，决策慢金额大，中长期(周-月)。净买入信号最可靠。</div><span class="rt tb tb-g">跟随价值 ⭐⭐⭐⭐⭐</span></div>
+  <div class="c" style="border-left:3px solid var(--clay)"><span class="nm">⚡ 游资</span><div class="desc">特定营业部。看情绪和题材，快进快出，短期(1-3天)。次日溢价但持续性差。</div><span class="rt tb tb-o">跟随价值 ⭐⭐⭐</span></div>
+  <div class="c" style="border-left:3px solid var(--sky)"><span class="nm">🤖 量化</span><div class="desc">算法驱动，高频无情绪，极短(日内-1天)。反向指标更有价值。</div><span class="rt tb tb-b">跟随价值 ⭐⭐</span></div>
+  <div class="c" style="border-left:3px solid var(--rust)"><span class="nm">🌐 外资</span><div class="desc">沪深股通。看估值+产业趋势，中长期(周-月)。净卖出信号更强。</div><span class="rt tb tb-r">跟随价值 ⭐⭐⭐⭐</span></div>
+</div>
+
+<h3>顶级游资席位图谱（2025-2026）</h3>
+<div class="ys">
+  <div class="c"><span class="nm">炒股养家</span><span class="seat">华鑫上海红宝石路/宛平南路</span><span class="sty">养家心法，情绪判断+龙头接力，善用一字板</span><span class="win tb tb-g">次日~70%</span></div>
+  <div class="c"><span class="nm">章盟主</span><span class="seat">国泰君安上海江苏路/中信杭州延安路</span><span class="sty">资金百亿级，格局大，持股周期相对长</span><span class="win tb tb-gy">次日~50%</span></div>
+  <div class="c"><span class="nm">方新侠</span><span class="seat">中信证券西安朱雀大街</span><span class="sty">资金量巨大，偏好大成交额趋势龙头</span><span class="win tb tb-gy">次日~50%</span></div>
+  <div class="c"><span class="nm">作手新一</span><span class="seat">国泰君安南京太平南路</span><span class="sty">操作凶猛，敢于重仓总龙头</span><span class="win tb tb-gy">次日~50%</span></div>
+  <div class="c"><span class="nm">小鳄鱼</span><span class="seat">南京证券南京大钟亭/中金南京太平南路</span><span class="sty">手法全面，低位到高位都参与</span><span class="win tb tb-gy">次日~50%</span></div>
+  <div class="c"><span class="nm">宁波桑田路</span><span class="seat">国盛证券宁波桑田路</span><span class="sty">节奏快，偏好题材前排，偶尔"核按钮"</span><span class="win tb tb-gy">次日砸盘风险</span></div>
+  <div class="c"><span class="nm">上塘路</span><span class="seat">财通证券杭州上塘路</span><span class="sty">"砸盘王"，善挖掘首板和一进二</span><span class="win tb tb-gy">次日不涨停就出货</span></div>
+  <div class="c"><span class="nm">拉萨天团</span><span class="seat">东财拉萨团结路/东环路</span><span class="sty">全国最大散户集中营，纯跟风无主力</span><span class="win tb tb-r">反向指标</span></div>
+</div>
+<div class="ki">买方前五全是拉萨席位 → <strong>没有主力资金参与，纯散户行情，次日大概率坑</strong>。</div>
+
+<h3>量化席位（2025-2026新势力）</h3>
+<div class="tw">
+<table>
+<thead><tr><th>通道</th><th>特征</th><th>行为模式</th></tr></thead>
+<tbody>
+<tr><td>华鑫证券上海分公司</td><td>量化打板，高频占比>60%</td><td>算法抢涨停，秒进秒出</td></tr>
+<tr><td>华泰证券深圳益田路</td><td>量化+机构混合</td><td>趋势跟随+日内T+0</td></tr>
+<tr><td>中信证券北京总部</td><td>量化大额通道</td><td>多策略混合</td></tr>
+<tr><td>中金公司上海黄浦区</td><td>量化+外资混合</td><td>跨市场套利</td></tr>
+</tbody>
+</table>
+</div>
+<div class="info"><span class="l">>20%!&nbsp;</span>2025年量化交易占龙虎榜总成交额已突破20%。核心特征：速度碾压·无情绪·双向收割·高换手。</div>
+
+<h3>机构席位 & 外资</h3>
+<div class="cl">
+  <div class="it"><span class="i">1</span><div class="tx">机构席位成交额突破<strong>万亿元</strong>，占比20.57%。3家及以上机构同时买入=共识强信号</div></div>
+  <div class="it"><span class="i">2</span><div class="tx">机构净买入后次日胜率>50%，但<strong>机构净卖出信号更可靠</strong>——净卖出后中长期胜率超55%</div></div>
+  <div class="it"><span class="i">3</span><div class="tx">2025年陆股通成交额突破<strong>1.27万亿</strong>。瑞银752亿+高盛700+亿</div></div>
+  <div class="it"><span class="i">4</span><div class="tx">外资高度聚焦AI主线（天孚通信/工业富联/新易盛），偏好业绩落地标的</div></div>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>龙虎榜看盘方法论</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:12px;">核心理念：龙虎榜的终极价值不是看"谁买了"，而是看<strong>"他们怎么买"</strong>。</p>
+
+<h3>看榜五步法</h3>
+<div class="sf">
+  <div class="s"><span class="n">Step 1</span><span class="l">看上榜原因</span><span class="d">为什么上这个榜？涨太多/跌太多/换手高</span></div>
+  <div class="s"><span class="n">Step 2</span><span class="l">看资金性质</span><span class="d">机构/游资/量化/外资/散户？</span></div>
+  <div class="s"><span class="n">Step 3</span><span class="l">看买卖力度</span><span class="d">买五vs卖五，净买/净卖额及占比</span></div>
+  <div class="s"><span class="n">Step 4</span><span class="l">看席位结构</span><span class="d">合力板/独庄板/散户板？最重要的一步</span></div>
+  <div class="s"><span class="n">Step 5</span><span class="l">看历史规律</span><span class="d">这个游资上次买了以后怎么样？</span></div>
+</div>
+
+<div class="ct" style="grid-template-columns:1fr 1fr 1fr">
+  <div class="c" style="border-left:3px solid var(--olive)"><div class="nm" style="font-size:13px">✅ 合力板</div><div class="desc">多家游资/机构金额均匀，无单一>30%。接力氛围好，连板概率大</div></div>
+  <div class="c" style="border-left:3px solid var(--rust)"><div class="nm" style="font-size:13px">⚠️ 独庄板</div><div class="desc">买一>40%，卖方稀疏。高度控盘，一旦出货无人接盘</div></div>
+  <div class="c" style="border-left:3px solid var(--g500)"><div class="nm" style="font-size:13px">❌ 散户板</div><div class="desc">买方前五全是拉萨天团。无主力参与，纯散户行情</div></div>
+</div>
+
+<h3>力度判断标准</h3>
+<div class="tw">
+<table>
+<thead><tr><th>指标</th><th>好信号</th><th>差信号</th></tr></thead>
+<tbody>
+<tr><td>净买入额</td><td><span class="tb tb-g">>5000万</span></td><td><span class="tb tb-r"><1000万或为负</span></td></tr>
+<tr><td>净买额占总成交比</td><td><span class="tb tb-g">>10%</span></td><td><span class="tb tb-r"><3%</span></td></tr>
+<tr><td>买五/卖五比值</td><td><span class="tb tb-g">>1.5</span></td><td><span class="tb tb-r"><0.8</span></td></tr>
+<tr><td>机构买入家数</td><td><span class="tb tb-g">≥3家</span></td><td>0家</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">第四章</span>必须规避的龙虎榜陷阱</h2>
+
+<div class="dg">
+  <div class="d" style="border-color:var(--rust);background:rgba(176,74,63,.04)"><span class="h" style="color:var(--rust)">#1 买入分散+卖出集中</span><span class="de">买五远小于卖五，主力出货</span><span class="do">❌ 不碰</span></div>
+  <div class="d" style="border-color:var(--rust);background:rgba(176,74,63,.04)"><span class="h" style="color:var(--rust)">#2 高位对倒</span><span class="de">同一营业部同时出现在买卖前五</span><span class="do">❌ 诱多出货</span></div>
+  <div class="d" style="border-color:var(--clay);background:rgba(217,119,87,.04)"><span class="h" style="color:var(--clay)">#3 独食加重仓</span><span class="de">单一席位>30%+股价高位</span><span class="do">❌ 高风险</span></div>
+  <div class="d" style="border-color:var(--g500)"><span class="h" style="color:var(--g500)">#4 纯散户买榜</span><span class="de">买方全是拉萨席位</span><span class="do">❌ 无主力参与</span></div>
+  <div class="d" style="border-color:var(--rust);background:rgba(176,74,63,.04)"><span class="h" style="color:var(--rust)">#5 机构集中卖出</span><span class="de">3家+机构同时净卖出</span><span class="do">❌ 即使游资在买也警惕</span></div>
+  <div class="d" style="border-color:var(--clay);background:rgba(217,119,87,.04)"><span class="h" style="color:var(--clay)">#6 量化集中卖出</span><span class="de">华鑫上分等量化大量卖出</span><span class="do">❌ 踩踏预警</span></div>
+</div>
+
+<div class="ki"><span class="l">反直觉发现："净卖出"比"净买入"更可靠</span>
+机构/外资净买入→次日可能涨但5日后回归均值。机构/外资净卖出→中长期大概率继续跌。
+因为买入可能是试探，但卖出通常是风控决策——信号更坚决。</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>可执行框架与 Rules 对照</h2>
+
+<h3>复盘必看指标</h3>
+<div class="tw">
+<table>
+<thead><tr><th>#</th><th>指标</th><th>判断标准</th><th>对应规则</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>自选股是否上榜</td><td>上榜=当日有异动</td><td>规则4.4自选池</td></tr>
+<tr><td>2</td><td>净买入额及占比</td><td>净买>5000万+占比>10%</td><td>规则4.1选标</td></tr>
+<tr><td>3</td><td>席位合力度</td><td>无独食+多游资=合力</td><td>🆕新增</td></tr>
+<tr><td>4</td><td>机构参与度</td><td>≥3家机构买入=强确认</td><td>规则4.1加分</td></tr>
+<tr><td>5</td><td>量化行为方向</td><td>量化同板块买入=确认</td><td>规则#35</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>建议新增条款</h3>
+<div class="cl">
+  <div class="it"><span class="i">A</span><div class="tx"><strong>龙虎榜验证（复盘用）</strong>——涨停不上榜=减分；合力板+≥2家=方向确认+1；≥3家机构=仓位可上调一档；6大危险信号任一=排除</div></div>
+  <div class="it"><span class="i">B</span><div class="tx"><strong>隔日溢价预判</strong>——合力板+机构+净买>5000万→可参与窗口1；合力板+游资无机构→窗口2确认；散户板/独庄板→不参与</div></div>
+  <div class="it" style="grid-column:1/-1"><span class="i">C</span><div class="tx"><strong>量化席位反向指标</strong>——单板块≥3个量化同时净卖出=板块退潮预警；量化从连续买入转卖出=趋势反转信号</div></div>
+</div>
+
+<h3>不建议做的事</h3>
+<div class="bq">
+  <span class="it d">用龙虎榜选股</span>
+  <span class="it d">盲目跟顶级游资</span>
+  <span class="it d">只看净买入不看结构</span>
+  <span class="it d">忽视三日榜陷阱</span>
+  <span class="it d">用龙虎榜做盘中决策</span>
+  <span class="it s">养家次日70%但5日后<50%</span>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第六章</span>数据源与工具</h2>
+<div class="tw">
+<table>
+<thead><tr><th>接口</th><th>功能</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td><code style="font-size:10px">stock_lhb_detail_em</code></td><td>每日龙虎榜汇总</td><td><span class="tb tb-g">✅ 可用</span></td></tr>
+<tr><td><code style="font-size:10px">stock_lhb_stock_detail_em</code></td><td>个股买卖明细</td><td><span class="tb tb-gy">⚠ 部分空</span></td></tr>
+<tr><td><code style="font-size:10px">stock_lhb_jgmx_sina</code></td><td>机构买卖明细</td><td><span class="tb tb-g">✅ 可用</span></td></tr>
+<tr><td><code style="font-size:10px">stock_lhb_hyyyb_em</code></td><td>营业部买卖明细</td><td><span class="tb tb-g">✅ 可用</span></td></tr>
+<tr><td><code style="font-size:10px">stock_lhb_traderstatistic_em</code></td><td>游资统计</td><td><span class="tb tb-g">✅ 可用</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h2><span class="num">第七章</span>关键结论</h2>
+
+<div class="sbx">
+  <div class="tt">核心价值排序</div>
+  <p style="font-size:13px;">
+  ① <strong>识别陷阱 > 发现机会</strong>——龙虎榜最大价值是告诉你<strong>不买什么</strong><br>
+  ② <strong>卖出信号 > 买入信号</strong>——机构/外资大额净卖出参考价值远高于净买入<br>
+  ③ <strong>席位结构 > 净买入金额</strong>——合力1亿 > 独庄3亿<br>
+  ④ <strong>三日榜 > 当日榜</strong>——累计数据更反映趋势
+  </p>
+</div>
+
+<div class="sp">
+  <span class="it h">机构净买入 > 游资合力买入 > 外资买入 > 量化买入 > 散户买入</span>
+  <span class="it d">机构净卖出 > 量化集中卖出 > 游资净卖出 > 外资净卖出</span>
+</div>
+
+<hr>
+<footer>
+📌 本报告基于公开资料整理。数据来源于AKShare、证券时报、东方财富等公开渠道。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-04-04</span>
+</footer>
+</div><!-- /page -->
+</body>
+</html>

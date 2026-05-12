@@ -4,61 +4,63 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>弈沐资本 · 工作平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2533;--bg4:#212d42;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--blue:#58a6ff;--red:#f23645;--green:#00c853;--yellow:#ffa726;--purple:#bc8cff}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--border-light:#F0EEEC;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-light:#FEF3C7;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-h1,h2,h3{font-weight:600;line-height:1.3}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
+body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-weight:600;line-height:1.3;letter-spacing:.02em}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-hover)}
 
 /* Header */
-.header{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;backdrop-filter:blur(8px)}
-.header .brand{display:flex;align-items:center;gap:10px}
-.header .brand .title{font-size:18px;font-weight:700;color:var(--text)}
-.header .brand .sub{font-size:12px;font-weight:400;color:var(--text2)}
+.header{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border-light);padding:14px 32px;display:flex;align-items:center;gap:20px;backdrop-filter:blur(12px)}
+.header .brand{display:flex;align-items:center;gap:8px}
+.header .brand .title{font-size:18px;font-weight:700;color:var(--text);font-family:'Noto Serif SC',serif}
+.header .brand .sub{font-size:12px;color:var(--text3)}
 .brand-link:hover{text-decoration:none}
-.nav{display:flex;gap:16px;margin-left:auto}
+.nav{display:flex;gap:20px;margin-left:auto}
 .nav a{font-size:13px;color:var(--text2);padding:4px 0;border-bottom:2px solid transparent;transition:all .12s}
-.nav a:hover{color:var(--text);border-bottom-color:var(--blue);text-decoration:none}
+.nav a:hover{color:var(--accent);border-bottom-color:var(--accent);text-decoration:none}
 
 /* Hero */
-.hero{padding:48px 32px 48px;max-width:900px;margin:0 auto;text-align:center}
-.hero .logo-main{max-width:260px;width:100%;height:auto;margin-bottom:16px}
-.hero .date{font-size:14px;color:var(--text2);margin-bottom:4px}
-.hero p{font-size:15px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
+.hero{padding:40px 32px 28px;max-width:900px;margin:0 auto;text-align:center}
+.hero .logo-main{max-width:240px;width:100%;height:auto;margin-bottom:10px}
+.hero .date{font-size:13px;color:var(--text3);margin-bottom:4px;letter-spacing:.1em}
+.hero p{font-size:14px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.6}
 
 /* Sections */
 .container{max-width:960px;margin:0 auto;padding:0 32px 64px}
 
 .section{margin-bottom:48px}
-.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.section-header .num{font-size:13px;font-weight:600;color:var(--blue);min-width:28px}
-.section-header h2{font-size:18px;color:var(--text)}
-.section-header .count{font-size:12px;color:var(--text2);background:var(--bg3);padding:2px 10px;border-radius:10px}
-.section-desc{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6}
+.section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;padding-bottom:10px;border-bottom:1px solid var(--border-light)}
+.section-header .num{font-size:12px;font-weight:600;color:var(--accent);min-width:28px;letter-spacing:.15em}
+.section-header h2{font-size:18px;color:var(--text);font-family:'Noto Serif SC',serif}
+.section-header .count{font-size:11px;color:var(--text3);background:var(--bg4);padding:2px 10px;border-radius:8px}
+.section-desc{font-size:13px;color:var(--text3);margin-bottom:16px;line-height:1.6}
 
 /* Cards Grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .15s,background .15s}
-.card:hover{border-color:var(--blue);background:var(--bg3)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;transition:all .15s}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(217,119,6,.08)}
 .card .icon{font-size:22px;margin-bottom:6px}
 .card .title{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text)}
-.card .title .tag{font-size:11px;font-weight:400;margin-left:6px;padding:1px 8px;border-radius:8px;background:var(--bg4);color:var(--text2)}
-.card .meta{font-size:12px;color:var(--text2);margin-bottom:6px}
+.card .title .tag{font-size:11px;font-weight:400;margin-left:6px;padding:1px 8px;border-radius:6px;background:var(--bg4);color:var(--text3)}
+.card .meta{font-size:12px;color:var(--text3);margin-bottom:6px}
 .card .desc{font-size:13px;color:var(--text2);line-height:1.5}
-.card .status{display:inline-block;padding:2px 10px;border-radius:8px;font-size:11px;font-weight:600;margin-top:8px}
-.card .status.live{background:rgba(0,200,83,.15);color:var(--green)}
-.card .status.soon{background:rgba(255,167,38,.15);color:var(--yellow)}
-.card .status.plan{background:rgba(88,166,255,.15);color:var(--blue)}
+.card .status{display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px}
+.card .status.live{background:rgba(5,150,105,.12);color:var(--green)}
+.card .status.soon{background:rgba(217,119,6,.12);color:var(--accent)}
+.card .status.plan{background:rgba(37,99,235,.1);color:var(--blue)}
+.card .status.internal{background:rgba(217,119,6,.12);color:var(--accent)}
 
 /* Footer */
-.footer{border-top:1px solid var(--border);padding:20px 32px;text-align:center;font-size:12px;color:var(--text2)}
-.footer a{color:var(--text2)}
-.footer a:hover{color:var(--blue)}
+.footer{border-top:1px solid var(--border-light);padding:20px 32px;text-align:center;font-size:12px;color:var(--text3)}
+.footer a{color:var(--text3)}
+.footer a:hover{color:var(--accent)}
 
-@media(max-width:640px){.hero{padding:40px 20px 32px}.hero h1{font-size:28px}.container{padding:0 20px 40px}.header{padding:12px 16px}}
+@media(max-width:640px){.hero{padding:24px 20px 20px}.container{padding:0 20px 40px}.header{padding:12px 16px}}
 </style>
 </head>
 <body>
@@ -70,15 +72,15 @@ a:hover{text-decoration:underline}
   </a>
   <div class="nav">
     <a href="#reviews">复盘笔记</a>
-    <a href="#dashboard">仪表盘</a>
-    <a href="#research">研究</a>
+    <a href="#quant">量化交易</a>
+    <a href="#research">投研资源</a>
   </div>
 </div>
 
 <div class="hero">
   <img src="logo-hero.png" alt="弈沐资本" class="logo-main">
   <div class="date">2026 年 · 第 20 周</div>
-  <p>交易复盘 · 数据看板 · 投研管理 — 一体化的投资工作平台。</p>
+  <p>交易复盘 · 量化系统 · 投研资源 — 一体化的投资工作平台。</p>
 </div>
 
 <div class="container">
@@ -102,21 +104,28 @@ a:hover{text-decoration:underline}
   </div>
 </div>
 
-<!-- Section 02: 动态仪表盘 -->
-<div class="section" id="dashboard">
+<!-- Section 02: 弈沐量化交易系统 -->
+<div class="section" id="quant">
   <div class="section-header">
     <span class="num">02</span>
-    <h2>动态仪表盘</h2>
-    <span class="count">实时数据</span>
+    <h2>弈沐量化交易系统</h2>
+    <span class="count">盘中 · 规则</span>
   </div>
-  <p class="section-desc">多组件数据看板，涵盖涨停监控、板块轮动、自选池表现、情绪指标等 16 个组件，支持自定义布局。</p>
+  <p class="section-desc">量化数据看板 + 核心交易规则体系，盘中实时监控与决策支持。</p>
   <div class="grid">
     <div class="card">
       <div class="icon">📈</div>
-      <div class="title">数据看板</div>
+      <div class="title">量化看板</div>
       <div class="meta">GridStack · 16 组件 · 4 套预设布局</div>
-      <div class="desc">盘中实时的数据监控看板，需通过本地服务器启动。点击查看使用文档。</div>
+      <div class="desc">盘中实时数据监控，涵盖涨停监控、板块轮动、自选池表现、情绪指标等。需本地服务器启动。</div>
       <span class="status soon">本地运行</span>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent);">
+      <div class="icon">📋</div>
+      <div class="title">交易规则库</div>
+      <div class="meta">Core 规则 · 操作指南 · 红线</div>
+      <div class="desc">连板/趋势/仓位管理/风控等核心规则体系，内部使用不对外开放。</div>
+      <span class="status internal">内部</span>
     </div>
   </div>
 </div>
@@ -126,31 +135,52 @@ a:hover{text-decoration:underline}
   <div class="section-header">
     <span class="num">03</span>
     <h2>投研资源</h2>
-    <span class="count">建设中</span>
+    <span class="count">6 份报告</span>
   </div>
-  <p class="section-desc">选股策略、行业研究、绩效统计等投研工具，逐步上线中。</p>
+  <p class="section-desc">深度研究报告，涵盖知识科普、量化分析、市场研判与交易人物研究。</p>
   <div class="grid">
-    <div class="card">
-      <div class="icon">🔍</div>
-      <div class="title">选股池</div>
-      <div class="meta">连板池 · 趋势池 · 观察池</div>
-      <div class="desc">多维度股票池管理，连板/趋势/观察分层筛选与跟踪。</div>
-      <span class="status plan">规划中</span>
-    </div>
-    <div class="card">
-      <div class="icon">📋</div>
-      <div class="title">绩效统计</div>
-      <div class="meta">收益率 · 回撤 · 胜率</div>
-      <div class="desc">账户绩效统计与交易日志回溯分析。</div>
-      <span class="status plan">规划中</span>
-    </div>
-    <div class="card">
-      <div class="icon">📚</div>
-      <div class="title">交易规则库</div>
-      <div class="meta">Core 规则 · 操作指南 · 红线</div>
-      <div class="desc">交易系统的核心规则体系，含连板/趋势/仓位管理等。</div>
-      <span class="status plan">规划中</span>
-    </div>
+    <a href="report/knowledge/龙虎榜深度研究报告.html" class="card" style="display:block;border-left:3px solid var(--blue);">
+      <div class="icon">📖</div>
+      <div class="title">龙虎榜深度研究报告 <span class="tag">知识科普</span></div>
+      <div class="meta">上榜资格、席位分类、数据解读方法</div>
+      <div class="desc">龙虎榜全维度拆解：上榜条件、席位特征（散户/量化/机构/游资）、极端数据警示，附扫雷清单。</div>
+      <span class="status live">已发布</span>
+    </a>
+    <a href="report/quant-research/量化交易对手研究报告.html" class="card" style="display:block;border-left:3px solid var(--purple);">
+      <div class="icon">🔬</div>
+      <div class="title">量化交易对手研究报告 <span class="tag">量化研究</span></div>
+      <div class="meta">行为模式、机构图谱、交易盲区</div>
+      <div class="desc">量化机构完整画像：高频、中频、低频策略区别，对策博弈方法，龙虎榜看量化操作痕迹。</div>
+      <span class="status live">已发布</span>
+    </a>
+    <a href="report/market/五月主线-圆桌报告.html" class="card" style="display:block;border-left:3px solid var(--green);">
+      <div class="icon">🗣️</div>
+      <div class="title">五月主线：圆桌报告 <span class="tag">市场研判</span></div>
+      <div class="meta">六角色观点交锋 · 计算机 × 军工</div>
+      <div class="desc">腾讯自选股六大角色圆桌讨论，聚焦计算机国产替代与国防军工两条主线，多空激辩含投票。</div>
+      <span class="status live">已发布</span>
+    </a>
+    <a href="report/market/五月-潜在个股分析报告.html" class="card" style="display:block;border-left:3px solid var(--green);">
+      <div class="icon">📊</div>
+      <div class="title">五月潜在个股分析报告 <span class="tag">市场研判</span></div>
+      <div class="meta">20 只标的 · 四维评分</div>
+      <div class="desc">涵盖信创、半导体、军工、新消费四大板块，从基本面、技术面、资金面、催化面打分排序。</div>
+      <span class="status live">已发布</span>
+    </a>
+    <a href="report/figure/炒股养家研究报告.html" class="card" style="display:block;border-left:3px solid var(--accent);">
+      <div class="icon">👤</div>
+      <div class="title">炒股养家研究报告 <span class="tag">人物研究</span></div>
+      <div class="meta">交易心法 · 操盘体系</div>
+      <div class="desc">养家心法完整解读：情绪周期理论、高手思维、仓位管理，从游资之路到殿堂级交易哲学。</div>
+      <span class="status live">已发布</span>
+    </a>
+    <a href="report/figure/作手新一研究报告.html" class="card" style="display:block;border-left:3px solid var(--accent);">
+      <div class="icon">👤</div>
+      <div class="title">作手新一研究报告 <span class="tag">人物研究</span></div>
+      <div class="meta">交易心法 · 操盘体系</div>
+      <div class="desc">新生代游资代表：首板启动确认、情绪周期定位、核心资产信仰，可复制的实战体系拆解。</div>
+      <span class="status live">已发布</span>
+    </a>
   </div>
 </div>
 

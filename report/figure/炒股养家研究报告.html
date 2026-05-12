@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>炒股养家研究报告</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--sky:#6A8CAF;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:900px;margin:0 auto}
+
+/* Header */
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);line-height:1.5;max-width:600px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+
+/* Chapter */
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate);display:flex;align-items:center;gap:6px}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+
+/* Bio card */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .item{font-size:13px}
+.bio .item .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block;margin-bottom:2px}
+.bio .item .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:20px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tl-item{position:relative;padding:10px 0 10px 16px;border-bottom:1px solid var(--g150)}
+.tl-item:last-child{border-bottom:0}
+.tl-item::before{content:'';position:absolute;left:-22px;top:17px;width:10px;height:10px;border-radius:50%;background:var(--clay);border:2px solid var(--ivory)}
+.tl-item .year{font-family:var(--mono);font-size:11px;color:var(--clay);font-weight:600;display:block;margin-bottom:2px}
+.tl-item .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tl-item .desc{font-size:13px;color:var(--g500);margin-top:3px;line-height:1.5}
+.tl-item .desc em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+
+/* Principle card */
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.pc-h{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pc-h:hover{background:var(--oat)}
+.pc-h .num{font-family:var(--mono);font-size:11px;color:var(--g500);background:#fff;border:1px solid var(--g300);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pc-h .tt{font-weight:600;font-size:14px;color:var(--slate);flex:1}
+.pc-h .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pc-h.open .ar{transform:rotate(180deg)}
+.pc-b{padding:16px 18px;display:none;font-size:13px;line-height:1.7}
+.pc-b.show{display:block}
+
+/* Quote block */
+.qt{background:var(--g150);border-left:3px solid var(--clay);padding:14px 18px;margin:10px 0;border-radius:0 8px 8px 0;font-style:italic;font-size:14px;line-height:1.7;color:var(--g700)}
+.qt .src{display:block;font-style:normal;font-size:11px;color:var(--g500);margin-top:6px;font-family:var(--mono)}
+.qt-cite{background:var(--g150);border-radius:8px;padding:14px 18px;margin:10px 0;border-left:3px solid var(--sky);font-size:13px;line-height:1.6}
+.qt-cite .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block;margin-bottom:4px}
+
+/* Interpretation */
+.ix{font-size:13px;line-height:1.7;margin:8px 0;color:var(--g700)}
+.ix .il{display:inline-block;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--clay);margin-right:4px}
+
+/* Tables */
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(217,119,87,.04)}
+
+/* Badges */
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-o{background:rgba(217,119,87,.12);color:var(--clay)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+
+/* Summary box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:16px 18px;margin-bottom:16px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:6px}
+
+/* Match score */
+.ms{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ms .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;flex:1;min-width:120px;font-size:12px;text-align:center}
+.ms .it .l{font-size:10px;color:var(--g500);display:block;font-family:var(--mono);text-transform:uppercase}
+.ms .it .v{font-weight:600;font-size:18px;margin-top:2px}
+
+/* Priority list */
+.pl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}@media(max-width:600px){.pl{grid-template-columns:1fr}}
+.pl .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:12px 14px;font-size:13px}
+.pl .it .rt{font-size:11px;font-weight:600;color:var(--clay);display:block;margin-bottom:2px}
+.pl .it .tt{font-weight:600;color:var(--slate)}
+.pl .it .de{font-size:12px;color:var(--g500);margin-top:3px}
+
+/* Footer */
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:48px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}
+li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>炒股养家研究报告</h1>
+  <div class="sub">从40万到10亿的短线交易体系——完整心法拆解、模式分析与rules对照</div>
+  <div class="mr">
+    <span>📅 2026-03-28</span>
+    <span class="tag">#游资研究 #养家心法 #龙头战法</span>
+    <span>稳米出品</span>
+  </div>
+</div>
+
+<!-- ===== CH1 人物故事 ===== -->
+<h2><span class="num">第一章</span>人物故事——从40万到10亿的逆袭</h2>
+
+<div class="bio">
+  <div class="item"><span class="l">网名</span><span class="v">炒股养家</span></div>
+  <div class="item"><span class="l">本名</span><span class="v">林广昌</span></div>
+  <div class="item"><span class="l">起步资金</span><span class="v">1万元（90年代末）→40万（2006）</span></div>
+  <div class="item"><span class="l">最低谷</span><span class="v">不足40万元（2008年熊市）</span></div>
+  <div class="item"><span class="l">峰值</span><span class="v">10亿+（2015牛市），传闻超30亿</span></div>
+  <div class="item"><span class="l">标志性席位</span><span class="v">华鑫上海宛平南路</span></div>
+  <div class="item"><span class="l">核心标签</span><span class="v">养家心法、情绪揣摩、龙头战法</span></div>
+  <div class="item"><span class="l">风格演变</span><span class="v">纯情绪博弈→基本面+情绪共振</span></div>
+</div>
+
+<div class="tl">
+  <div class="tl-item"><span class="year">1990年代末</span><div class="tt">入市摸索期</div><div class="desc">上海国企员工，14年未晋升。入市<em>1万元起步</em>，短线→价值→短线反复试错。</div></div>
+  <div class="tl-item"><span class="year">2006</span><div class="tt">第一桶金</div><div class="desc">A股大牛市赚到<em>约40万元</em>，但属牛市红利并非"悟道"。</div></div>
+  <div class="tl-item"><span class="year">2008</span><div class="tt" style="color:var(--rust)">至暗时刻</div><div class="desc">辞去国企工作，携90万全职炒股。熊市半年<em>亏到不足40万</em>。家庭危机——妻子要求找工作否则离婚。</div></div>
+  <div class="tl-item"><span class="year">2009</span><div class="tt" style="color:var(--olive)">关键转折</div><div class="desc"><em>停止实盘</em>，全职学习。逛淘股吧研究高手交割单，拜师学"龙头战法"。用少量资金验证模式，不追求赚钱。</div></div>
+  <div class="tl-item"><span class="year">2010</span><div class="tt">突破期</div><div class="desc">手法成熟，<em>本金一年翻7倍</em>。从"亏钱散户"变成"稳定盈利的交易者"。</div></div>
+  <div class="tl-item"><span class="year">2012.08</span><div class="tt">养家心法诞生</div><div class="desc">在淘股吧发表「养家心法」，核心：<em>基于市场情绪的揣摩</em>判断风险和收益。成为A股短线"圣经"。</div></div>
+  <div class="tl-item"><span class="year">2015</span><div class="tt">牛市巅峰</div><div class="desc">大牛市中资金突破<em>10亿元</em>。完成40万→10亿的逆袭。</div></div>
+  <div class="tl-item"><span class="year">2019</span><div class="tt">受邀清华演讲</div><div class="desc">头发花白："经历十余载，有幸一朝顿悟"。</div></div>
+</div>
+
+<div class="sbx">
+  <div class="tt" style="color:var(--clay)">💡 对弈沐的启示</div>
+  养家的"悟道"不是顿悟而是量变到质变：<strong>10年试错→崩溃→系统学习→模式成型→简单重复</strong>。我们有 trading-rules + AI辅助复盘 + 红蓝对抗，应该能大幅缩短这个过程。
+</div>
+
+<!-- ===== CH2 养家心法 ===== -->
+<h2><span class="num">第二章</span>养家心法体系——逐条解读</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:14px;">六条核心总纲，逐条原文+白话解读+实战意义。</p>
+
+<div class="pc">
+  <div class="pc-h open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">①</span><span class="tt">核心思想：市场情绪揣摩</span><span class="ar">▼</span></div>
+  <div class="pc-b show">
+    <div class="qt">"本人理论体系的核心思想是基于对市场情绪的揣摩，进而判断风险和收益的比较，并指导实际操作。"</div>
+    <div class="ix"><span class="il">白话解读</span>炒股不是看K线、看消息、看基本面。核心是<strong>猜市场里其他人在想什么</strong>——持币的人想不想买？持筹的人想不想卖？谁的意愿更强？</div>
+    <div class="ix"><span class="il">实战意义</span>这是我们 rules 的情绪驱动打法（赚钱效应校正、情绪缓冲带）的同根。</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pc-h" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">②</span><span class="tt">龙头论：高手买入龙头，超级高手卖出龙头</span><span class="ar">▼</span></div>
+  <div class="pc-b">
+    <div class="qt">"高手买入龙头，超级高手卖出龙头。"</div>
+    <div class="ix"><span class="il">解读</span>"高手买入"——知道要做最强的人已超越散户。"超级高手卖出"——能在龙头见顶前卖出才是顶级。买对龙头也拿不住是常见问题。</div>
+    <div class="ix"><span class="il">实战意义</span>买入龙头是"知"，卖出龙头是"行"。rules 已有龙头定义和止盈信号，但卖出时机判断可更精细。</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pc-h" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">③</span><span class="tt">贪婪恐慌论：别人贪婪时我更贪婪</span><span class="ar">▼</span></div>
+  <div class="pc-b">
+    <div class="qt">"别人贪婪时我更贪婪，别人恐慌时我更恐慌。"</div>
+    <div class="ix"><span class="il">解读</span>看似和巴菲特相反，实则角度不同：巴菲特是<strong>价值投资的逆向思维</strong>，养家是<strong>短线交易的顺势思维</strong>。情绪最热时赚钱效应最强应重仓跟上。</div>
+    <div class="ix"><span class="il">关系</span>rules 总体偏保守（情绪缓冲带只向保守方向降）。养家提醒：<strong>在情绪主升期，不要因为"涨了几天"就不敢上</strong>。</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pc-h" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">④</span><span class="tt">大局观：敢于大盘低位空仓，敢于大盘高位满仓</span><span class="ar">▼</span></div>
+  <div class="pc-b">
+    <div class="qt">"敢于大盘低位空仓，敢于大盘高位满仓。心中无顶底，操作自随心。"</div>
+    <div class="ix"><span class="il">解读</span>"低位空仓"——恐慌时没人想买，不抄底接飞刀。"高位满仓"——情绪高涨时确定性最高。"心中无顶底"——不猜涨跌，跟着情绪走。</div>
+    <div class="ix"><span class="il">关系</span>rules 已有类似理念（双冰空仓、高潮不买）。养家补充：情绪70-80%强势阶段，有龙头+完整梯队时，应该敢于上仓位。</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pc-h" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">⑤</span><span class="tt">买卖哲学：买入机会，卖出不确定</span><span class="ar">▼</span></div>
+  <div class="pc-b">
+    <div class="qt">"永不止损，永不止盈。只有进场，出局。买入机会，卖出不确定。出局就是出局，不管止损止盈。"</div>
+    <div class="ix"><span class="il">解读</span>不设固定比例止损止盈线，卖出不是因为亏了5%或赚了10%，而是因为<strong>逻辑变了</strong>。"忘记成本"——如果空仓还会买这个股吗？不会→该卖。</div>
+    <div class="ix"><span class="il">关系</span>rules 有明确止损区间（-3%~-8%），这是纪律保障。养家说的是决策层面的逻辑止损，两者互补：逻辑变了提前走，没等到硬线触发。</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pc-h" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">⑥</span><span class="tt">人气论：得散户心者得天下</span><span class="ar">▼</span></div>
+  <div class="pc-b">
+    <div class="qt">"得散户心者得天下。人气所向，牛股所在。"</div>
+    <div class="ix"><span class="il">解读</span>牛股不是基本面最好、图形最好、消息最先到的，而是<strong>最多人关注、最多人想买</strong>的。人气共识在哪里，资金就在哪里。</div>
+    <div class="ix"><span class="il">实战意义</span>解释了为什么基本面一般的票能涨上天，好票反而不涨。rules 的"辨识度"概念与之一致。</div>
+  </div>
+</div>
+
+<h3>心法核心模块</h3>
+<div class="tw">
+<table>
+<thead><tr><th>模块</th><th>养家理念</th><th>弈沐对应</th></tr></thead>
+<tbody>
+<tr><td>市场情绪</td><td>赚钱效应、亏钱效应、情绪蔓延</td><td>7维情绪指标、赚钱效应校正</td></tr>
+<tr><td>仓位管理</td><td>赢面60%观望→90%+满仓（5档）</td><td>情绪区间→仓位映射</td></tr>
+<tr><td>热点分类</td><td>主流(数周) / 次主流(数天) / 支流(1-2天)</td><td>主线判断框架三条件</td></tr>
+<tr><td>分阶段操作</td><td>强势追龙头 / 下跌各阶段不同策略</td><td>情绪打法映射（2.1）</td></tr>
+<tr><td>卖出逻辑</td><td>不看成本、看情绪、看板块地位</td><td>止盈信号（1.3）、持仓处理（1.2）</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH3 交易模式 ===== -->
+<h2><span class="num">第三章</span>交易模式拆解</h2>
+
+<div class="sbx">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+<div style="text-align:center;padding:10px;background:var(--g150);border-radius:8px;"><span style="font-weight:600;color:var(--clay);display:block;font-size:24px;">1</span><span style="font-size:12px;">主流强势股打板</span></div>
+<div style="text-align:center;padding:10px;background:var(--g150);border-radius:8px;"><span style="font-weight:600;color:var(--clay);display:block;font-size:24px;">2</span><span style="font-size:12px;">一字板排队买入</span></div>
+<div style="text-align:center;padding:10px;background:var(--g150);border-radius:8px;"><span style="font-weight:600;color:var(--clay);display:block;font-size:24px;">3</span><span style="font-size:12px;">低吸手法</span></div>
+<div style="text-align:center;padding:10px;background:var(--g150);border-radius:8px;"><span style="font-weight:600;color:var(--clay);display:block;font-size:24px;">4</span><span style="font-size:12px;">超跌反弹</span></div>
+<div style="text-align:center;padding:10px;background:var(--g150);border-radius:8px;"><span style="font-weight:600;color:var(--clay);display:block;font-size:24px;">5</span><span style="font-size:12px;">主流反复做</span></div>
+</div>
+</div>
+
+<h3>一字板排队买入（标志性手法）</h3>
+<div class="qt-cite"><span class="l">养家原话</span> "板上买票的操作基本占了本人操作的一半。"</div>
+<div class="ix">龙头被市场高度认可后，利用通道优势竞价挂涨停价排队买入。排到=最强票，排不到=算了。</div>
+<div class="ix"><span class="il">适用条件</span>龙头已确认（2-3连板）· 板块热度高 · 有"3-5个涨停空间"的判断 · 只用于龙头</div>
+
+<h3>主流反复做（最独特理念）</h3>
+<div class="qt-cite"><span class="l">养家原话</span> "主流反复做，支流轮动，非主流快进快出。"</div>
+<div class="ix">确认主线后在主线内反复操作——龙头涨停时持有，分歧回调时减仓，企稳再买入。同一条主线可做2-4周。核心逻辑：主流热点的赚钱效应有持续性，每天换方向效率反而低。</div>
+
+<div class="sbx">
+<div class="tt">⚡ 对弈沐启示</div>
+rules目前偏向"每天重新选标的"（自选池每天换不恋战）。在主线持续期（如算电一体化持续2-3周），可能更适合"主流反复做"——自选池保留主线核心标的，回调买入而不是每天换票。
+</div>
+
+<!-- ===== CH4 对照分析 ===== -->
+<h2><span class="num">第四章</span>与弈沐 Trading Rules 对照分析</h2>
+
+<div class="ms">
+  <div class="it"><span class="l">高度匹配章节</span><span class="v" style="color:var(--olive)">6/7</span></div>
+  <div class="it"><span class="l">待补充条款</span><span class="v" style="color:var(--clay)">5条</span></div>
+  <div class="it"><span class="l">已覆盖无需重复</span><span class="v" style="color:var(--g500)">8项</span></div>
+</div>
+
+<h3>5条待验证补充条款</h3>
+<div class="pl">
+  <div class="it"><span class="rt">⭐⭐⭐ 立即验证</span><span class="tt">假设空仓测试</span><div class="de">每日问自己：如果空仓还会买吗？不会→卖出。零成本思维工具。</div></div>
+  <div class="it"><span class="rt">⭐⭐⭐ 立即验证</span><span class="tt">下跌初期不抄底</span><div class="de">情绪70%→50%时，不因跌两天就低吸。反弹大概率是诱多。</div></div>
+  <div class="it"><span class="rt">⭐⭐ 本周验证</span><span class="tt">买入前空间判断</span><div class="de">追涨前判断至少2个涨停空间，看不到则降为观望。</div></div>
+  <div class="it"><span class="rt">⭐⭐ 本周验证</span><span class="tt">主线期放宽自选池</span><div class="de">主线持续3天+，龙头中军连续保留，不执行每天换。</div></div>
+  <div class="it" style="grid-column:1/-1;"><span class="rt">⭐ 下周验证</span><span class="tt">左右侧仓位区分</span><div class="de">左侧仓位不超20%，只有右侧确认后才能到60%。</div></div>
+</div>
+
+<h3>看似矛盾实则互补</h3>
+<div class="tw">
+<table>
+<thead><tr><th>养家观点</th><th>弈沐 rules</th><th>实际关系</th></tr></thead>
+<tbody>
+<tr><td>"别人贪婪时我更贪婪"</td><td>赚钱效应差→降档保守</td><td>不矛盾。养家是在赚钱效应好时顺势，我们在差时风控。同一枚硬币的两面</td></tr>
+<tr><td>"永不止损"</td><td>止损条件单-3%~-8%</td><td>不矛盾。决策层逻辑止损 vs 执行层硬止损。理想状态：逻辑变提前走</td></tr>
+<tr><td>"高位满仓"</td><td>强势期总仓位60%上限</td><td>有张力。P1阶段60%合理，P2/P3可适度放宽</td></tr>
+<tr><td>"心中无顶底"</td><td>情绪值有明确分档</td><td>不矛盾。情绪值是操作档位参考，不是预测顶部底部</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>总结与建议</h2>
+
+<div class="sbx">
+  <div class="tt">核心收获</div>
+  <p style="font-size:13px;">① 养家心法的本质是<strong>市场博弈论</strong>——对参与者心理的揣摩，赚钱/亏钱效应是核心。<br>
+  ② 养家的"悟道"路径对我们有参考价值——10年试错→崩溃→学习→模式→重复。<br>
+  ③ 养家与弈沐 rules 高度匹配（6/7章节一致），说明框架方向正确。<br>
+  ④ 5条补充条款都有价值，建议按流程验证后固化。</p>
+</div>
+
+<h3>下一步游资研究建议</h3>
+<ul>
+  <li><strong>赵老哥（八年一万倍）</strong>——更激进的打板风格，验证追涨打法</li>
+  <li><strong>退学炒股</strong>——同期高手，风格偏情绪博弈</li>
+  <li><strong>作手新一</strong>——新生代游资，操作贴近当前市场</li>
+</ul>
+
+<hr>
+
+<footer>
+📌 本报告基于公开资料整理。养家心法原文可在东方财富、淘股吧、雪球等平台查阅。<br>
+🆕待验证条款需经规则变更流程（提出→验证→固化）后方可成为正式规则。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-03-28</span>
+</footer>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五月主线圆桌：计算机国产替代 × 国防军工</title>
+<style>
+:root {
+  --ivory:#FAF9F5; --slate:#141413; --clay:#D97757; --oat:#E3DACC;
+  --olive:#788C5D; --rust:#B04A3F; --sky:#6A8CAF;
+  --g150:#F0EEE6; --g300:#D1CFC5; --g500:#87867F; --g700:#3D3D3A;
+  --serif:Georgia,'Noto Serif SC',ui-serif,serif;
+  --sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;padding:0 24px 80px}
+.page{max-width:1060px;margin:0 auto}
+
+/* ── header ── */
+.report-header{margin:48px 0 40px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--g500);margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap}
+h1{font-family:var(--serif);font-weight:500;font-size:36px;color:var(--slate);letter-spacing:-.01em;margin-bottom:16px;line-height:1.2}
+.meta-row{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--g500);margin-bottom:16px}
+.meta-row span{display:flex;align-items:center;gap:6px}
+.meta-row .tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:11px}
+.participant-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.pchip{padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid var(--g300);background:#fff;display:flex;align-items:center;gap:5px}
+.lead{max-width:700px;font-size:14px;color:var(--g500);line-height:1.6;padding-top:4px;border-top:1.5px solid var(--g300)}
+
+/* ── sections ── */
+section{margin-bottom:48px}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin-bottom:16px;letter-spacing:-.01em;padding-bottom:8px;border-bottom:1.5px solid var(--g300);display:flex;align-items:center;gap:8px}
+h2 .num{font-family:var(--mono);font-size:13px;color:var(--g500);font-weight:400;margin-right:4px}
+h3{font-family:var(--serif);font-weight:500;font-size:19px;color:var(--slate);margin:24px 0 10px}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+
+/* ── stats bar ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:32px}
+.stat{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px}
+.stat .val{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--slate);display:block}
+.stat .lbl{font-size:11px;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;font-family:var(--mono);margin-top:2px}
+.stat .sg{font-size:12px;margin-top:4px;display:inline-block;padding:1px 6px;border-radius:4px;font-weight:500}
+.sg-bull{background:rgba(120,140,93,.12);color:var(--olive)}
+.sg-hot{background:rgba(217,119,87,.12);color:var(--clay)}
+
+/* ── sentiment grid ── */
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:760px){.st-grid{grid-template-columns:1fr}}
+.st-panel{background:#fff;border:1.5px solid var(--g300);border-radius:12px;overflow:hidden}
+.st-panel h3{padding:12px 16px;margin:0;font-size:16px;font-family:var(--sans);font-weight:600;background:var(--g150);border-bottom:1.5px solid var(--g300)}
+.st-row{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;border-bottom:1px solid var(--g300)}
+.st-row:last-child{border-bottom:0}
+.st-row .icon{font-size:16px;width:20px;text-align:center}
+.st-row .name{font-weight:600;color:var(--slate);width:70px;flex-shrink:0;font-size:12px}
+.st-row .att{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;width:60px;text-align:center;flex-shrink:0}
+.att-bull{background:rgba(120,140,93,.15);color:var(--olive)}
+.att-strong{background:rgba(217,119,87,.15);color:var(--clay)}
+.att-neutral{background:var(--g150);color:var(--g500)}
+.st-row .logic{color:var(--g500);font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-row .stock{font-size:11px;font-family:var(--mono);color:var(--g700);flex-shrink:0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* summary bar */
+.summary-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.sbar{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:12px 16px;flex:1;min-width:180px}
+.sbar .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sbar .lbl{font-size:11px;font-family:var(--mono);text-transform:uppercase;color:var(--g500);letter-spacing:.04em}
+.sbar .cnt{font-size:18px;font-weight:700;font-family:var(--serif)}
+.sbar .sub{font-size:12px;color:var(--g500)}
+
+/* ── controversy cards ── */
+.cards{display:grid;gap:16px;margin-bottom:20px}
+.cards-2{grid-template-columns:1fr 1fr}@media(max-width:700px){.cards-2{grid-template-columns:1fr}}
+.card{border:1.5px solid var(--g300);border-radius:12px;background:#fff;overflow:hidden}
+.card-pad{padding:16px 18px}
+.card h4{margin:0 0 10px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card h4 .badge{font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:6px}
+.card-body{font-size:13px;line-height:1.6;color:var(--g700)}
+.debate-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--g150)}
+.debate-row:last-child{border-bottom:0}
+.debate-side{width:60px;flex-shrink:0;font-size:11px;font-weight:600;font-family:var(--mono);padding-top:2px}
+.debate-side.pro{color:var(--olive)}
+.debate-side.con{color:var(--clay)}
+.debate-body{flex:1;font-size:13px}
+.debate-body .who{font-weight:600;color:var(--slate)}
+.debate-body .qt{color:var(--g700);font-style:italic}
+.debate-body .note{color:var(--g500);font-size:12px;margin-top:4px}
+
+/* ── role profile cards ── */
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin-bottom:20px}
+.role{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:0;overflow:hidden}
+.role-head{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--g150)}
+.role-head .icon{font-size:22px}
+.role-head .info{flex:1}
+.role-head .role-name{font-weight:600;font-size:14px;color:var(--slate)}
+.role-head .role-title{font-size:11px;color:var(--g500);font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.role-body{padding:12px 16px 16px;font-size:13px;line-height:1.6;color:var(--g700)}
+.role-body .highlight{background:var(--g150);border-radius:6px;padding:8px 12px;margin:8px 0;border-left:3px solid var(--clay);font-style:italic;font-size:12px;line-height:1.5}
+.role-body .highlight .src{display:block;font-style:normal;font-size:11px;color:var(--g500);margin-top:4px}
+.role-body ul{padding-left:16px;margin:6px 0}
+.role-body li{font-size:12px;margin-bottom:3px}
+
+/* ── tables ── */
+.tw{overflow-x:auto;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(217,119,87,.04)}
+.cross-3{display:inline-block;background:rgba(217,119,87,.15);color:var(--clay);padding:1px 8px;border-radius:6px;font-weight:600;font-size:11px}
+.cross-4{display:inline-block;background:rgba(217,119,87,.25);color:var(--slate);padding:1px 8px;border-radius:6px;font-weight:700;font-size:11px}
+.cross-2{display:inline-block;background:var(--g150);color:var(--g500);padding:1px 8px;border-radius:6px;font-size:11px}
+
+/* ── strategy boxes ── */
+.strat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:16px}
+.strat{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px}
+.strat h4{margin:0 0 6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.strat p{font-size:12px;color:var(--g500);line-height:1.5}
+.strat .ref{font-size:11px;margin-top:6px;padding-top:6px;border-top:1px solid var(--g150);color:var(--g500)}
+
+/* ── host note ── */
+.host-box{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:16px}
+.host-box .byline{font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--g500);letter-spacing:.06em;margin-bottom:8px}
+.host-box h3{margin:0 0 8px;font-size:18px}
+.host-box p{font-size:14px;line-height:1.7;margin-bottom:10px;color:var(--g700)}
+.host-box .action-list{padding:12px 16px;background:var(--g150);border-radius:8px;margin-top:12px}
+.host-box .action-list .item{font-size:13px;padding:6px 0;border-bottom:1px solid var(--g300);display:flex;gap:8px}
+.host-box .action-list .item:last-child{border-bottom:0}
+.host-box .action-list .num{font-family:var(--mono);font-size:11px;color:var(--g500);width:20px;flex-shrink:0}
+
+/* ── risk table ── */
+.risk-table td:last-child{text-align:center}
+.sev-3{display:inline-block;background:rgba(176,74,63,.12);color:var(--rust);padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.sev-2{display:inline-block;background:rgba(217,119,87,.12);color:var(--clay);padding:1px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.sev-1{display:inline-block;background:var(--g150);color:var(--g500);padding:1px 8px;border-radius:6px;font-size:11px}
+
+/* ── position table ── */
+.pos-table td{font-size:12px}
+.pos-table .pct{font-weight:600;font-family:var(--mono);font-size:13px}
+
+/* ── divider ── */
+hr{border:0;border-top:1.5px solid var(--g300);margin:40px 0}
+hr.light{border-top:1px solid var(--g150);margin:24px 0}
+
+/* ── footer ── */
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:48px}
+
+/* ── tagline ── */
+.tagline{background:var(--g150);border:1.5px solid var(--g300);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--g700);margin-bottom:28px;line-height:1.5}
+.tagline em{font-style:italic;color:var(--slate)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ===== HEADER ===== -->
+<div class="report-header">
+  <div class="eyebrow">
+    <span>弈沐资本 · 投研部</span>
+    <span>圆桌报告</span>
+    <span>2026-05-05</span>
+  </div>
+  <h1>五月主线圆桌：<br>计算机国产替代 × 国防军工</h1>
+  <div class="meta-row">
+    <span>📅 数据截止：2026-04-30</span>
+    <span>👤 主理人：圆汇众 · 投研主编</span>
+    <span class="tag">#投研 #主线 #计算机 #国防军工</span>
+  </div>
+  <div class="participant-chips">
+    <span class="pchip">🌊 星望远 · 产业策略师</span>
+    <span class="pchip">📡 洲四方 · 信号派首席</span>
+    <span class="pchip">🧮 文衡价 · 估值分析师</span>
+    <span class="pchip">🏔️ 坤候底 · 逆向投资人</span>
+    <span class="pchip">🔬 钊审财 · 财报研究员</span>
+    <span class="pchip">⚡ 磊追浪 · 短线冲浪手</span>
+  </div>
+  <div class="lead">六大AI投研角色圆桌讨论五月双主线——计算机国产替代（Q1净利+99.49%）× 国防军工（Q1净利>70%）。最大共识标的中航光电（4/6推荐），最大争议海光信息（产业唯一性 vs PE 252倍）。</div>
+</div>
+
+<!-- ===== 一、大盘快照 ===== -->
+<section>
+<h2><span class="num">一</span>大盘快照</h2>
+<div class="stats">
+  <div class="stat"><span class="val">4,112</span><span class="lbl">上证指数</span><span class="sg sg-bull">+0.11% · 震荡偏多</span></div>
+  <div class="stat"><span class="val">15,107</span><span class="lbl">深证成指</span><span class="sg sg-bull">-0.09% · 成长占优</span></div>
+  <div class="stat"><span class="val">~2.73万亿</span><span class="lbl">两市成交额</span><span class="sg" style="color:var(--g500)">中等活跃</span></div>
+  <div class="stat"><span class="val" style="color:var(--olive)">+99.49%</span><span class="lbl">计算机Q1净利</span><span class="sg sg-hot">全市场第1</span></div>
+  <div class="stat"><span class="val" style="color:var(--olive)">>70%</span><span class="lbl">国防军工Q1净利</span><span class="sg sg-hot">全市场第5</span></div>
+</div>
+<div class="tagline">双主线景气度已获财报验证——计算机全行业归母净利同比+99.49%，国防军工>70%。5月进入业绩真空期+政策密集期，双主线具备接力演绎的基础。</div>
+</section>
+
+<!-- ===== 二、观点核心速览 ===== -->
+<section>
+<h2><span class="num">二</span>观点核心速览</h2>
+
+<div class="st-grid">
+  <div class="st-panel">
+    <h3>💾 计算机国产替代</h3>
+    <div class="st-row"><span class="icon">🌊</span><span class="name">星望远</span><span class="att att-strong">强烈看多</span><span class="logic">CPU→数据库→办公全链</span><span class="stock">海光信息、达梦数据</span></div>
+    <div class="st-row"><span class="icon">🔬</span><span class="name">钊审财</span><span class="att att-bull">看多</span><span class="logic">产品化率高、高ROE龙头</span><span class="stock">金山办公、柏楚电子</span></div>
+    <div class="st-row"><span class="icon">🧮</span><span class="name">文衡价</span><span class="att att-bull">看多(精选)</span><span class="logic">PEG<1性价比标的</span><span class="stock">浪潮信息(PEG 0.66)</span></div>
+    <div class="st-row"><span class="icon">🏔️</span><span class="name">坤候底</span><span class="att att-strong">强烈看多(逆向)</span><span class="logic">60日-11.76%被冷落</span><span class="stock">太极股份、东华软件</span></div>
+    <div class="st-row"><span class="icon">📡</span><span class="name">洲四方</span><span class="att att-bull">偏多</span><span class="logic">资金集中流入，W底</span><span class="stock">中国长城、海光信息</span></div>
+    <div class="st-row"><span class="icon">⚡</span><span class="name">磊追浪</span><span class="att att-strong">强烈确认</span><span class="logic">成交额3407亿深度介入</span><span class="stock">中国长城(83亿成交)</span></div>
+  </div>
+  <div class="st-panel">
+    <h3>🚀 国防军工</h3>
+    <div class="st-row"><span class="icon">🌊</span><span class="name">星望远</span><span class="att att-bull">看多</span><span class="logic">舰船>导弹>电子>新材料</span><span class="stock">中国船舶、航天电器</span></div>
+    <div class="st-row"><span class="icon">🔬</span><span class="name">钊审财</span><span class="att att-bull">看多(精选)</span><span class="logic">中航系为主，避整机厂</span><span class="stock">中航光电、振华科技</span></div>
+    <div class="st-row"><span class="icon">🧮</span><span class="name">文衡价</span><span class="att att-bull">看多</span><span class="logic">PB 2.9x低位有均值回归</span><span class="stock">中国动力(PEG 0.22)</span></div>
+    <div class="st-row"><span class="icon">🏔️</span><span class="name">坤候底</span><span class="att att-strong">强烈看多(逆向)</span><span class="logic">振华PE 24，极端超卖</span><span class="stock">振华科技(4指标超卖)</span></div>
+    <div class="st-row"><span class="icon">📡</span><span class="name">洲四方</span><span class="att att-bull">偏多</span><span class="logic">中期趋势修复中</span><span class="stock">中国船舶(20日+38.8亿)</span></div>
+    <div class="st-row"><span class="icon">⚡</span><span class="name">磊追浪</span><span class="att att-bull">确认(次主线)</span><span class="logic">600亿 vs 3400亿</span><span class="stock">上海瀚讯、西部材料</span></div>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="sbar"><div class="top"><span class="lbl">🔥强烈看多</span><span class="cnt" style="color:var(--clay)">3</span></div><div class="sub">计算机 · 产业/逆向/短线</div></div>
+  <div class="sbar"><div class="top"><span class="lbl">🟢看多</span><span class="cnt" style="color:var(--olive)">3</span></div><div class="sub">计算机 · 财报/估值/信号</div></div>
+  <div class="sbar"><div class="top"><span class="lbl">🔥强烈看多</span><span class="cnt" style="color:var(--clay)">1</span></div><div class="sub">军工 · 逆向</div></div>
+  <div class="sbar"><div class="top"><span class="lbl">🟢看多</span><span class="cnt" style="color:var(--olive)">5</span></div><div class="sub">军工 · 产业/财报/估值/信号/短线</div></div>
+</div>
+<div class="tagline">一致性极高——6位成员在两个板块方向上均无分歧，差异仅在于"选什么标的"和"重仓还是轻仓"。</div>
+</section>
+
+<!-- ===== 三、争议焦点 ===== -->
+<section>
+<h2><span class="num">三</span>争议焦点</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:16px;">大盘方向高度一致，但以下三个争议值得注意：</p>
+
+<div class="cards cards-2">
+  <div class="card" style="grid-column:1/-1">
+    <div class="card-pad">
+      <h4>争议 ① <span style="flex:1"></span><span class="badge" style="background:var(--g150);font-size:11px;padding:2px 10px;border-radius:999px;font-weight:400">海光信息 688041</span></h4>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px;">产业龙头 vs 估值过贵</p>
+      <div class="debate-row">
+        <div class="debate-side pro">✅ 配置</div>
+        <div class="debate-body"><span class="who">🌊星望远：</span><span class="qt">"CPU国产替代唯一性标的，Q1营收+68%，双引擎驱动"</span></div>
+      </div>
+      <div class="debate-row">
+        <div class="debate-side con">❌ 太贵</div>
+        <div class="debate-body"><span class="who">🧮文衡价：</span><span class="qt">"PE 252倍，PEG 2.18，极度高估"</span></div>
+      </div>
+      <div class="debate-row">
+        <div class="debate-side" style="color:var(--sky)">⚠️ 两面</div>
+        <div class="debate-body"><span class="who">📡洲四方：</span><span class="qt">"资金面强，RSI 72偏强+10日资金有分歧"</span><div class="note">产业逻辑（唯一性）vs 估值安全边际（252倍PE）。若Q2继续超预期增速>70%，PEG降至1.5以内，矛盾将缓解。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <h4>争议 ② 逆向机会 vs 基本面陷阱</h4>
+      <p style="font-size:12px;color:var(--g500);margin-bottom:8px;">太极股份 / 中国软件 / 用友网络</p>
+      <div class="debate-row">
+        <div class="debate-side pro">✅ 逆向</div>
+        <div class="debate-body"><span class="who">🏔️坤候底：</span><span class="qt">"太极52周低点，股东户数缩减，筹码向机构集中"</span></div>
+      </div>
+      <div class="debate-row">
+        <div class="debate-side con">❌ 陷阱</div>
+        <div class="debate-body"><span class="who">🔬钊审财：</span><span class="qt">"中国软件亏4.13亿、用友亏20.61亿，已从候选池剔除"</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-pad">
+      <h4>争议 ③ 次主线 vs 独立主线</h4>
+      <p style="font-size:12px;color:var(--g500);margin-bottom:8px;">军工板块定位</p>
+      <div class="debate-row">
+        <div class="debate-side con">跟风</div>
+        <div class="debate-body"><span class="who">⚡磊追浪：</span><span class="qt">"军工成交额600亿 vs 半导体3400亿，差距太大"</span></div>
+      </div>
+      <div class="debate-row">
+        <div class="debate-side pro">独立</div>
+        <div class="debate-body"><span class="who">🌊星望远：</span><span class="qt">"舰船+导弹+电子三条细分线各自有独立订单驱动"</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===== 四、成员深度视角 ===== -->
+<section>
+<h2><span class="num">四</span>成员深度视角</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:16px;">六位角色对两大主线的独立分析——点击每条语录可感受各自风格</p>
+
+<div class="roles">
+
+<div class="role">
+  <div class="role-head"><span class="icon">🌊</span><div class="info"><div class="role-name">星望远</div><div class="role-title">产业策略师</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"5月不是‘赌不赌’的问题，而是‘怎么配’的问题。计算机的算力底座（CPU/GPU/服务器）和数据库确定性最强，军工的舰船和军工电子是确定性子方向。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">景气排序</p>
+    <ul>
+      <li><strong>计算机：</strong>CPU/GPU > 数据库 > 办公 > 算力 > 操作系统 > 安全 > 中间件</li>
+      <li><strong>军工：</strong>舰船 > 导弹 > 电子 > 航空(上游) > 新材料 > 信息化</li>
+    </ul>
+    <p style="font-size:12px;color:var(--g500);margin-top:6px;">两条主线景气度已从"预期"变为"财报验证的既定事实"</p>
+  </div>
+</div>
+
+<div class="role">
+  <div class="role-head"><span class="icon">🔬</span><div class="info"><div class="role-name">钊审财</div><div class="role-title">财报研究员</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"我的框架是‘永远满仓靠调仓’。计算机选产品化率高的（毛利>70%），军工选确定性强的（中航系组合）。不碰亏损股，不碰高商誉。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">核心推荐</p>
+    <ul>
+      <li><strong>金山办公：</strong>毛利率85%、ROE 30%、现金流20.85亿</li>
+      <li><strong>柏楚电子：</strong>毛利率81%、净利率51%、几乎零负债</li>
+      <li><strong>中航沈飞：</strong>TTM净利31亿，经营现金流+39.86亿</li>
+      <li><strong>振华科技：</strong>PE 24、PB 1.5、ROE 15%</li>
+    </ul>
+    <p style="font-size:12px;color:var(--rust);margin-top:6px;">⚠️ 风险预警：海光PE 252倍已透支、紫光商誉139.92亿</p>
+  </div>
+</div>
+
+<div class="role">
+  <div class="role-head"><span class="icon">🧮</span><div class="info"><div class="role-name">文衡价</div><div class="role-title">估值分析师</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"浪潮信息PS 0.67倍是全A股科技板块最低档位，2026E PE仅29倍。当一家AI服务器龙头被按硬件代工厂估值时，要么市场错了，要么有什么我不知道的。到现在为止，我看不到后者的证据。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">PEG性价比排行</p>
+    <ul>
+      <li><strong style="color:var(--clay)">中国动力</strong> PEG 0.22 · 极度低估🔥</li>
+      <li><strong style="color:var(--clay)">浪潮信息</strong> PEG 0.66 · 极度低估🔥</li>
+      <li>金山办公 PEG 0.76 · 合理偏低</li>
+    </ul>
+    <p style="font-size:12px;color:var(--g500);margin-top:6px;">计算机分化严重，优质龙头被低估；军工调整充分，PB 2.9x历史低位</p>
+  </div>
+</div>
+
+<div class="role">
+  <div class="role-head"><span class="icon">🏔️</span><div class="info"><div class="role-name">坤候底</div><div class="role-title">逆向投资人</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"别人恐惧我更恐惧地抄底。振华科技PE仅24倍、PB仅1.5倍、ROE 15%，在军工板块里相当于用超市价格买奢侈品。四个技术指标同时极端超卖，这种组合一年最多出现一次。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">最强逆向信号🚨</p>
+    <ul>
+      <li><strong>振华科技：</strong>KDJ_J=-5.8、RSI_6=14.95、WR_6=88.4、CCI=-256.65——四个指标同时超卖，年内第一次</li>
+      <li><strong>太极股份：</strong>52周低点17.24，跌破布林带下轨</li>
+      <li><strong>航天彩虹：</strong>股东户数降30%，筹码向机构转移</li>
+    </ul>
+  </div>
+</div>
+
+<div class="role">
+  <div class="role-head"><span class="icon">📡</span><div class="info"><div class="role-name">洲四方</div><div class="role-title">信号派首席</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"信号不是预测，是纪律。中国长城83亿成交+涨停+机构买入，信号强度拉满，但RSI 94.88意味着追高被套的概率不低。中科曙光信号最均衡，适合核心底仓。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">信号最强标的</p>
+    <ul>
+      <li><strong>中国长城 ⭐⭐⭐⭐：</strong>主力+23.9亿（全市场第1），涨停突破新高</li>
+      <li><strong>中国船舶 ⭐⭐⭐⭐：</strong>20日主力+38.8亿，但RSI 90.67极度超买⚠️</li>
+      <li><strong>中科曙光 ⭐⭐⭐：</strong>最均衡——技术健康、资金温和、估值合理</li>
+    </ul>
+    <p style="font-size:12px;color:var(--g500);margin-top:6px;">大盘系统性风险：🟡 中等</p>
+  </div>
+</div>
+
+<div class="role">
+  <div class="role-head"><span class="icon">⚡</span><div class="info"><div class="role-name">磊追浪</div><div class="role-title">短线冲浪手</div></div></div>
+  <div class="role-body">
+    <div class="highlight">"军工板块整体成交额只有半导体的1/6，策略上应该精选个股而非板块普配。上海瀚讯KDJ仅49、MACD刚刚转正，军工里这种技术组合不常见。"</div>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">计算机龙头排序（成交额3407亿 ★★★★★）</p>
+    <ul>
+      <li><strong>中国长城：</strong>中军龙头，超买等回调</li>
+      <li><strong>芯原股份：</strong>情绪龙头，+20%，等分歧日</li>
+      <li><strong>国科微：</strong>KDJ仅62，技术最健康</li>
+    </ul>
+    <p style="font-size:12px;font-weight:600;margin:8px 0 4px;">军工龙头排序（成交额600亿 ★★★）</p>
+    <ul>
+      <li><strong>上海瀚讯 🚀：</strong>MACD刚转正、KDJ仅49</li>
+      <li><strong>西部材料：</strong>KDJ 48.56，技术最健康</li>
+    </ul>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 五、推荐标的交叉验证 ===== -->
+<section>
+<h2><span class="num">五</span>推荐标的 · 六视角交叉验证</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:12px;">至少3位成员推荐的标的，按交叉次数排序</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>标的</th><th>代码</th><th>🌊产业</th><th>🔬财报</th><th>🧮估值</th><th>🏔️逆向</th><th>📡信号</th><th>⚡短线</th><th>交叉</th></tr></thead>
+<tbody>
+<tr><td><strong>中航光电</strong></td><td>sz002179</td><td>✅</td><td>✅</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-4">4/6 🔥</span></td></tr>
+<tr><td><strong>中科曙光</strong></td><td>sh603019</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-3">3/6</span></td></tr>
+<tr><td><strong>金山办公</strong></td><td>sh688111</td><td>✅</td><td>✅</td><td>✅</td><td>—</td><td>—</td><td>—</td><td><span class="cross-3">3/6</span></td></tr>
+<tr><td><strong>达梦数据</strong></td><td>sh688692</td><td>✅</td><td>✅</td><td>✅</td><td>—</td><td>—</td><td>—</td><td><span class="cross-3">3/6</span></td></tr>
+<tr><td><strong>中航重机</strong></td><td>sh600765</td><td>—</td><td>✅</td><td>✅</td><td>✅</td><td>—</td><td>—</td><td><span class="cross-3">3/6</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;">
+  <p style="font-size:13px;font-weight:600;color:var(--clay);margin-bottom:4px;">🏆 本次圆桌最大共识：中航光电（sz002179）4/6</p>
+  <p style="font-size:12px;color:var(--g500);">产业卡位（连接器覆盖全装备体系）、财务稳健（ROE 13%、股息率2.19%）、估值合理（PEG 1.62）、信号健康（均线收敛向上发散）。</p>
+</div>
+
+<h4 style="margin-top:20px;">其他被推荐的标的</h4>
+<div class="tw">
+<table>
+<thead><tr><th>标的</th><th>代码</th><th>🌊</th><th>🔬</th><th>🧮</th><th>🏔️</th><th>📡</th><th>⚡</th><th>交叉</th></tr></thead>
+<tbody>
+<tr><td>浪潮信息</td><td>sz000977</td><td>—</td><td>—</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>海光信息</td><td>sh688041</td><td>✅</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>中国长城</td><td>sz000066</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>✅</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>振华科技</td><td>sz000733</td><td>—</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>中国船舶</td><td>sh600150</td><td>✅</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>航天电器</td><td>sz002025</td><td>✅</td><td>—</td><td>—</td><td>—</td><td>✅</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+<tr><td>中航高科</td><td>sh600862</td><td>—</td><td>✅</td><td>✅</td><td>—</td><td>—</td><td>—</td><td><span class="cross-2">2/6</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== 六、多视角参考动作 ===== -->
+<section>
+<h2><span class="num">六</span>多视角参考动作</h2>
+<div class="strat-grid">
+
+<div class="strat">
+  <h4>🏭 产业趋势优先</h4>
+  <p>参考🌊星望远+🔬钊审财：<br><strong>计算机</strong>中科曙光+达梦数据+金山办公<br><strong>军工</strong>中航光电+航天电器+中国船舶</p>
+  <div class="ref">聚焦产业链确定性最高的环节</div>
+</div>
+
+<div class="strat">
+  <h4>💰 估值安全优先</h4>
+  <p>参考🧮文衡价：<br><strong>计算机</strong>浪潮信息（PEG 0.66，低估20-36%）<br><strong>军工</strong>中国动力（PEG 0.22，极度低估）</p>
+  <div class="ref">用PEG框架找性价比</div>
+</div>
+
+<div class="strat">
+  <h4>🔄 逆向布局优先</h4>
+  <p>参考🏔️坤候底：<br><strong>计算机</strong>太极股份（52周低点+超卖）<br><strong>军工</strong>振华科技（PE 24+四指标超卖）</p>
+  <div class="ref">位置比趋势重要</div>
+</div>
+
+<div class="strat">
+  <h4>📡 资金信号优先</h4>
+  <p>参考📡洲四方：<br><strong>底仓</strong>中科曙光+中航光电<br><strong>弹性</strong>中国长城+中国船舶（等回调）</p>
+  <div class="ref">信号是纪律，不是预测</div>
+</div>
+
+<div class="strat">
+  <h4>⚡ 短线技术优先</h4>
+  <p>参考⚡磊追浪：<br><strong>计算机</strong>国科微(KDJ 62)+景嘉微(横盘突破)<br><strong>军工</strong>上海瀚讯(MACD转正)+西部材料(KDJ 48)</p>
+  <div class="ref">技术面选股，板块联动</div>
+</div>
+
+<div class="strat" style="border-color:var(--clay);background:rgba(217,119,87,.04);">
+  <h4 style="color:var(--slate)">🎯 最终选择指南</h4>
+  <p><strong>重仓一条主线</strong> → 计算机国产替代弹性更强<br><strong>均衡配置</strong> → 计算机60%+军工40%，中科曙光+中航光电底仓<br><strong>逆向操作</strong> → 等第一波追高退潮，回调布局低位标的</p>
+  <div class="ref" style="color:var(--g700)">来自主持人圆汇众的总结</div>
+</div>
+</div>
+</section>
+
+<!-- ===== 七、主持人札记 ===== -->
+<section>
+<h2><span class="num">七</span>主持人札记</h2>
+<div class="host-box">
+  <div class="byline">圆汇众（Yuan）· 投研主编</div>
+  <p>这次圆桌的一个显著特征是：<strong>6位成员在两个板块方向上的态度高度一致</strong>，这在过往讨论中并不常见。达成共识的基础是Q1财报的硬数据——计算机全行业净利+99.49%、军工>70%，这是数字本身在说话，不是情绪在驱动。</p>
+  <p>但一致不意味着简单。三个争议点值得反复掂量：</p>
+
+  <div class="action-list">
+    <div class="item"><span class="num">①</span><span><strong>估值分化</strong>——计算机内部"冰火两重天"，浪潮PEG 0.66 vs 海光PE 252倍，同一条主线收益可能差10倍</span></div>
+    <div class="item"><span class="num">②</span><span><strong>逆向 vs 基本面陷阱</strong>——坤候底的位置逻辑 vs 钊审财的财务逻辑，如果你相信采购刚性拉动盈利反转则逆向成立，否则回避</span></div>
+    <div class="item"><span class="num">③</span><span><strong>军工"强度"争议</strong>——成交额仅半导体的1/6，军工更可能是结构性行情而非板块普涨，精选个股而非买ETF</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ===== 八、风险提示 ===== -->
+<section>
+<h2><span class="num">八</span>风险提示汇总</h2>
+
+<div class="cards cards-2">
+  <div class="card"><div class="card-pad">
+    <h4>💾 计算机国产替代</h4>
+    <div class="tw"><table class="risk-table">
+    <thead><tr><th>风险</th><th>内容</th><th>程度</th></tr></thead>
+    <tbody>
+    <tr><td>高PE估值回调</td><td>海光PE 252倍，板块分化严重</td><td><span class="sev-3">⚠️⚠️⚠️</span></td></tr>
+    <tr><td>信创采购节奏</td><td>Q2可能进入政策空窗期</td><td><span class="sev-2">⚠️⚠️</span></td></tr>
+    <tr><td>美科技制裁升级</td><td>进一步限制半导体设备/EDA出口</td><td><span class="sev-3">⚠️⚠️⚠️</span></td></tr>
+    <tr><td>商誉减值风险</td><td>紫光股份商誉139.92亿</td><td><span class="sev-2">⚠️⚠️</span></td></tr>
+    <tr><td>AI主题分流</td><td>资金可能从信创转向AI</td><td><span class="sev-1">⚠️</span></td></tr>
+    </tbody></table></div>
+  </div></div>
+
+  <div class="card"><div class="card-pad">
+    <h4>🚀 国防军工</h4>
+    <div class="tw"><table class="risk-table">
+    <thead><tr><th>风险</th><th>内容</th><th>程度</th></tr></thead>
+    <tbody>
+    <tr><td>订单节奏不确定</td><td>中航沈飞Q1收入-55%</td><td><span class="sev-3">⚠️⚠️⚠️</span></td></tr>
+    <tr><td>板块短期涨幅</td><td>从3984反弹至4485，约+12.6%</td><td><span class="sev-2">⚠️⚠️</span></td></tr>
+    <tr><td>军品定价机制</td><td>中航沈飞毛利率仅12.6%</td><td><span class="sev-2">⚠️⚠️</span></td></tr>
+    <tr><td>地缘政治缓解</td><td>压制板块情绪</td><td><span class="sev-1">⚠️</span></td></tr>
+    <tr><td>个股估值过高</td><td>航天电子PE 346、航发动力PE 196</td><td><span class="sev-3">⚠️⚠️⚠️</span></td></tr>
+    </tbody></table></div>
+  </div></div>
+</div>
+
+<h4 style="margin-top:20px">仓位管理参考</h4>
+<div class="tw">
+<table class="pos-table">
+<thead><tr><th>风格</th><th>计算机国产替代</th><th>国防军工</th><th>现金</th></tr></thead>
+<tbody>
+<tr><td><strong>进攻型</strong></td><td><span class="pct">50-60%</span></td><td>20-30%</td><td>10-20%</td></tr>
+<tr><td><strong>均衡型</strong></td><td><span class="pct">35-40%</span></td><td>25-30%</td><td>30-35%</td></tr>
+<tr><td><strong>保守型</strong></td><td><span class="pct">20-25%</span></td><td>15-20%</td><td>55-60%</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<hr>
+
+<footer>
+  ⚠️ 以上内容由AI基于公开信息整理生成，仅供参考，不构成任何投资建议或个股推荐。投资有风险，决策需谨慎。<br>
+  <span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-05</span>
+</footer>
+
+</div><!-- /page -->
+</body>
+</html>

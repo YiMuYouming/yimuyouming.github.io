@@ -6,44 +6,40 @@
 <title>2026-05-12 周二 复盘笔记</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root {
-  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2533;--bg4:#212d42;
-  --border:#30363d;--text:#e6edf3;--text2:#8b949e;
-  --red:#f23645;--green:#00c853;--yellow:#ffa726;--blue:#58a6ff;--purple:#bc8cff;
-}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.topbar{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.topbar .title{font-size:18px;font-weight:700;color:var(--blue);white-space:nowrap}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
 .topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
-.topbar .back:hover{color:var(--blue);border-color:var(--blue);background:var(--bg3)}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
 .topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
-.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
 .chip.red{border-color:var(--red);color:var(--red)}
 .chip.green{border-color:var(--green);color:var(--green)}
-.chip.yellow{border-color:var(--yellow);color:var(--yellow)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
 .chip.blue{border-color:var(--blue);color:var(--blue)}
 .chip.purple{border-color:var(--purple);color:var(--purple)}
 .layout{display:flex}
 .sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
 .sidebar::-webkit-scrollbar{width:4px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text2);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
 .sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
-.sidebar a:hover{background:var(--bg3);color:var(--text)}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
 .sidebar a.s2{padding-left:24px;font-size:12px}
 .sidebar a.s3{padding-left:34px;font-size:12px}
-.sidebar a.active{color:var(--blue);background:var(--bg3);border-left-color:var(--blue)}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
 .sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
 .content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
 @media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
 .section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
-.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg3)}
-.sh:hover{background:var(--bg4)}
-.sh .tog{color:var(--text2);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
 .sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
 .sh.collapsed{border-bottom-color:transparent}
-.sh .cnt{font-size:12px;font-weight:400;color:var(--text2);margin-left:auto}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
 .sb{padding:0 18px 16px}
 .sb.hide{display:none}
 .si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
@@ -51,17 +47,17 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 .tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 .tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
 .tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
-.tw tbody tr:hover{background:rgba(88,166,255,.06)}
-.tw tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
-.tw tbody tr:nth-child(even):hover{background:rgba(88,166,255,.08)}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
 .up{color:var(--red);font-weight:600}
 .down{color:var(--green);font-weight:600}
 .badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
-.badge-red{background:rgba(242,54,69,.15);color:var(--red)}
-.badge-green{background:rgba(0,200,83,.15);color:var(--green)}
-.badge-yellow{background:rgba(255,167,38,.15);color:var(--yellow)}
-.badge-blue{background:rgba(88,166,255,.15);color:var(--blue)}
-.badge-purple{background:rgba(188,140,255,.15);color:var(--purple)}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
 .sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
 .sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
@@ -70,18 +66,18 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 .sc .st span{display:flex;align-items:center;gap:3px}
 .sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
 .cb{margin-bottom:20px}
-.ct{padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
-.ct:hover{border-color:var(--blue);background:var(--bg4)}
-.ct .ar{transition:transform .15s;color:var(--text2);font-size:13px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
 .ct.collapsed .ar{transform:rotate(-90deg)}
 .cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
 .cc.show{display:block}
 .sb2{position:relative;margin-bottom:16px}
-.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:15px;outline:none}
-.sb2 input:focus{border-color:var(--blue)}
-.sb2 input::placeholder{color:var(--text2)}
-.sbx{padding:12px 16px;background:var(--bg3);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
-.sbx.warn{border-left-color:var(--yellow)}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
 .sbx.red{border-left-color:var(--red)}
 .sbx.green{border-left-color:var(--green)}
 .sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
@@ -91,7 +87,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 .tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
 .tight-list li{margin-bottom:3px}
 [id]{scroll-margin-top:70px}
-.scnt{font-size:11px;font-weight:400;color:var(--text2)}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -102,14 +98,14 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
   <div class="meta">
     <span class="chip blue">2026-05-12 周二</span>
     <span class="chip purple">持仓 北方华创</span>
-    <span class="chip yellow">风格 50</span>
+    <span class="chip accent">风格 50</span>
     <span class="chip red">情绪 25%</span>
     <span class="chip blue">量能 3万亿</span>
     <span class="chip red">涨停 94</span>
     <span class="chip green">跌停 32</span>
     <span class="chip red">最高 5板</span>
     <span class="chip green">封板 71%</span>
-    <span class="chip yellow">炸板 29%</span>
+    <span class="chip accent">炸板 29%</span>
     <span class="chip down">上证 -0.25%</span>
   </div>
 </div>

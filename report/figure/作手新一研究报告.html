@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>作手新一研究报告：龙头接力进化论</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+
+/* Bio */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+
+/* Compare box */
+.cb{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.cb .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:8px}
+.cb .gr{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:550px){.cb .gr{grid-template-columns:1fr}}
+.cb .p{font-size:12px;background:var(--g150);border-radius:8px;padding:10px 12px}
+.cb .p .hd{font-weight:600;color:var(--slate);display:block;margin-bottom:3px}
+
+/* Principle card */
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .num{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.qt-box{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;font-style:italic;line-height:1.6}
+.qt-box .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+
+/* Phase diagram */
+.pd{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin:12px 0}
+@media(max-width:600px){.pd{grid-template-columns:1fr 1fr}}
+.pd .it{border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.pd .it .nm{font-weight:600;display:block;font-size:14px}
+.pd .it .op{color:var(--g500);font-size:11px;display:block;margin-top:2px}
+
+/* Case study */
+.cs{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.cs .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.cs .hd .nm{font-weight:600;font-size:14px;color:var(--slate)}
+.cs .hd .tag2{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--g150);color:var(--g500)}
+.cs .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin:8px 0}
+.cs .kv .it{background:var(--g150);border-radius:6px;padding:5px 8px;font-size:12px}
+.cs .kv .it .l{font-size:10px;color:var(--g500);display:block}
+.cs .kv .it .v{font-weight:600}
+.cs p{font-size:12px;line-height:1.6;color:var(--g700)}
+
+/* Framework box */
+.fb{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center}
+.fb .flow{font-family:var(--mono);font-size:13px;color:var(--slate);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .flow .step{padding:4px 12px;background:var(--g150);border-radius:6px}
+.fb .flow .arrow{color:var(--g500);font-size:16px}
+
+/* Standards */
+.std{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.std{grid-template-columns:1fr}}
+.std .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.std .it .n{font-weight:600;color:var(--sky);display:block;margin-bottom:4px;font-size:13px}
+
+/* Reward grid */
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:10px 0}
+.rg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px;text-align:center}
+.rg .it .l{font-size:10px;color:var(--g500);display:block;font-family:var(--mono)}
+.rg .it .v{font-weight:600;font-size:15px;margin-top:2px;display:block}
+
+/* Priority grid */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.pg{grid-template-columns:1fr}}
+.pg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.pg .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.pg .it .tt{font-weight:600;color:var(--slate)}
+.pg .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>作手新一研究报告</h1>
+  <div class="sub">从10万到5亿的龙头接力进化论——新生代游资交易体系完整拆解</div>
+  <div class="mr">
+    <span>📅 2026-04-25</span>
+    <span class="tag">#游资研究 #龙头战法 #交易体系</span>
+    <span>稳米出品</span>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>人物画像</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">网名</span><span class="v">作手新一</span></div>
+  <div class="it"><span class="l">出生</span><span class="v">1988年 · 江苏南京</span></div>
+  <div class="it"><span class="l">起步资金</span><span class="v">10万元（2012年）</span></div>
+  <div class="it"><span class="l">峰值规模</span><span class="v">5亿+（2024年）</span></div>
+  <div class="it"><span class="l">核心标签</span><span class="v">新生代龙头战法 · 次新狙击 · 情绪周期闭环</span></div>
+  <div class="it"><span class="l">风格演变</span><span class="v">纯情绪博弈(2012-2018)→ 基本面+情绪共振(2019至今)</span></div>
+</div>
+
+<div class="tl">
+  <div class="tli"><span class="yr">2012</span><div class="tt">起步试错</div><div class="de">10万本金全职入市，风格保守仅求覆盖工资。</div></div>
+  <div class="tli"><span class="yr">2013</span><div class="tt">激进追牛</div><div class="de">创业板牛市参与掌趣科技/中青宝，建立"追强势"思维。</div></div>
+  <div class="tli"><span class="yr">2015</span><div class="tt" style="color:var(--olive)">蜕变</div><div class="de">杠杆牛市实现<em>10万→数千万</em>的7倍增长。股灾后建立铁律风控。</div></div>
+  <div class="tli"><span class="yr">2018</span><div class="tt" style="color:var(--sky)">成名之战</div><div class="de"><em>万兴科技11连板</em>，单票浮盈超2亿元。确立"次新龙头狙击"地位。</div></div>
+  <div class="tli"><span class="yr">2019</span><div class="tt">规模跃迁</div><div class="de">资金突破3亿元，跻身顶级游资。从纯情绪博弈升级为基本面+情绪共振。</div></div>
+  <div class="tli"><span class="yr">2023</span><div class="tt">AI大捷</div><div class="de">潜伏云从科技(ChatGPT概念)，体现向基本面趋势股转型。</div></div>
+  <div class="tli"><span class="yr">2025-2026</span><div class="tt" style="color:var(--clay)">大票时代</div><div class="de">胜宏<em>+7.08亿</em>(20cm涨停237亿)、三六零+1.98亿、中国一重12天6板。风格转为趋势加速段重仓+快速兑现。</div></div>
+</div>
+
+<div class="cb">
+  <div class="tt">🏆 与炒股养家的对比定位</div>
+  <div class="gr">
+    <div class="p"><span class="hd">📜 炒股养家</span>90年代入市·1万→10亿·15年·情绪博弈理论体系·适合弈沐情绪体系的根基</div>
+    <div class="p"><span class="hd">⚡ 作手新一</span>2012年入市·10万→5亿·7年更快·实战范本更贴近注册制市场</div>
+  </div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>交易心法体系</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:12px;">"周期共振论"——基本面趋势×情绪周期×资金合力，三方共振才是出手时机。</p>
+
+<div class="fb">
+  <div class="flow"><span class="step">趋势为基</span><span class="arrow">→</span><span class="step">情绪为势</span><span class="arrow">→</span><span class="step">纪律为盾</span></div>
+  <div style="font-size:12px;color:var(--g500);margin-top:6px;">只做有产业逻辑的方向 · 在情绪周期合适位置出手 · 铁律止损+风控红线</div>
+</div>
+
+<div class="pc">
+  <div class="pch open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">①</span><span class="tt">围着主线做，多研究龙头</span><span class="ar">▼</span></div>
+  <div class="pcb show">
+    <div class="qt-box">"短线就要围着主线和龙头做，交易策略的核心是围绕主线做强势股。"</div>
+    <p>不碰支线杂毛，只在主线里做最强的。大题材才能出大牛股。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">②</span><span class="tt">空仓是最高境界</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <div class="qt-box">"弱势行情坚决空仓，屏蔽90%的诱惑。"</div>
+    <p>看不到好机会就不动。一年200多个交易日，真正值得出手的不超过30天。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">③</span><span class="tt">试错思维 + 盈亏比优先</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <div class="qt-box">"用小成本试错，对了赚大钱，错了及时离场，绝不扛单。"<br>"买入股票时要考虑盈亏比。"</div>
+    <p>买入前想好止损位，到了就走不找理由。盈亏比不到2:1就不做。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">④</span><span class="tt">趋势向下不参与小行情</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <div class="qt-box">"趋势向下时，不参与小行情；行情不好时严格进行仓位控制。"</div>
+    <p>大趋势差的时候，反弹的尽头大概率是更深的下跌。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">⑤</span><span class="tt">龙头打出空间才能由点带面</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <div class="qt-box">"龙头打出空间、打出赚钱效应的时候才能由点带面。"</div>
+    <p>先有龙头的赚钱效应（标杆），才有板块的扩散。买龙头就是买"标杆效应"的早期。</p>
+  </div>
+</div>
+
+<h3>情绪周期闭环</h3>
+<div class="pd">
+  <div class="it" style="background:rgba(106,140,175,.10);border:1.5px solid var(--sky)"><span class="nm" style="color:var(--sky)">启动期</span><span class="op">涨停回升·新题材冒头</span><span style="font-size:11px;color:var(--g500);display:block;margin-top:2px;">小仓试错 5-10%</span></div>
+  <div class="it" style="background:rgba(120,140,93,.10);border:1.5px solid var(--olive)"><span class="nm" style="color:var(--olive)">发酵期</span><span class="op">涨停持续·梯队形成</span><span style="font-size:11px;color:var(--g500);display:block;margin-top:2px;">加仓聚焦 30-50%</span></div>
+  <div class="it" style="background:rgba(217,119,87,.10);border:1.5px solid var(--clay)"><span class="nm" style="color:var(--clay)">高潮期</span><span class="op">涨停爆发·高度打开</span><span style="font-size:11px;color:var(--g500);display:block;margin-top:2px;">重仓/离场 50-80%</span></div>
+  <div class="it" style="background:rgba(176,74,63,.08);border:1.5px solid var(--rust)"><span class="nm" style="color:var(--rust)">退潮期</span><span class="op">涨停骤降·高位补跌</span><span style="font-size:11px;color:var(--g500);display:block;margin-top:2px;">空仓 0%</span></div>
+</div>
+<div class="section-tip">核心买卖点：<strong>买点=分歧转一致</strong>（高位炸板后快速回封，板块热度不减）；<strong>卖点=加速一致或情绪退潮</strong>（高开低走、炸板不回封、跟风掉队，立即离场）</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>核心战法拆解</h2>
+
+<h3>选股三大标准</h3>
+<div class="std">
+  <div class="it"><span class="n">① 主线赛道优先</span>只做政策驱动/产业变革/事件催化的核心赛道。拒绝无逻辑纯情绪炒作。</div>
+  <div class="it"><span class="n">② 趋势加速确认</span>突破关键平台+成交量达流通市值1%以上+分时强度高(10:30前封板)</div>
+  <div class="it"><span class="n">③ 板块联动验证</span>能带动3只以上跟风股涨停，避免"龙头孤岛"。</div>
+</div>
+
+<h3>龙头确认三原则（万兴科技成名战提炼）</h3>
+<div class="std">
+  <div class="it"><span class="n">稀缺性</span>同批次题材唯一+流通盘≤5亿</div>
+  <div class="it"><span class="n">爆发力</span>开板后3日内2板，第2板封单≥流通盘5%</div>
+  <div class="it"><span class="n">联动性</span>能带动≥3只同题材涨停</div>
+</div>
+
+<h3>"新一范式"操作模型</h3>
+<div class="fb">
+  <div class="flow"><span class="step" style="background:rgba(106,140,175,.15)">首板试错·5%</span><span class="arrow">→</span><span class="step" style="background:rgba(120,140,93,.15)">二板确认·30-40%</span><span class="arrow">→</span><span class="step" style="background:rgba(217,119,87,.15)">主升浪锁仓</span><span class="arrow">→</span><span class="step" style="color:var(--clay)">分歧兑现</span></div>
+</div>
+
+<div class="rg">
+  <div class="it"><span class="l">单票上限</span><span class="v" style="color:var(--rust)">40%</span><span>硬上限不超</span></div>
+  <div class="it"><span class="l">单笔止损</span><span class="v" style="color:var(--rust)">-5%</span><span>触及无条件走</span></div>
+  <div class="it"><span class="l">总回撤熔断</span><span class="v" style="color:var(--rust)">-8%</span><span>强制空仓一周</span></div>
+  <div class="it"><span class="l">涨停数阈值</span><span class="v" style="color:var(--clay)">&lt;20家</span><span>坚决不交易</span></div>
+  <div class="it"><span class="l">炸板率阈值</span><span class="v" style="color:var(--clay)">&gt;50%</span><span>坚决不交易</span></div>
+</div>
+
+<h3>实战案例</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">胜宏科技 · "大票趋势加速"范本</span><span class="tag2">2025-09</span></div>
+  <div class="kv"><div class="it"><span class="l">净买入</span><span class="v" style="color:var(--olive)">7.08亿</span></div><div class="it"><span class="l">表现</span><span class="v" style="color:var(--clay)">20cm涨停</span></div><div class="it"><span class="l">成交额</span><span class="v">237亿</span></div></div>
+  <p>AI算力产业链PCB核心，订单同比增50%，放量突破年线。北向+多路游资共振。趋势确认的加速阶段"推一把"。</p>
+</div>
+<div class="cs">
+  <div class="hd"><span class="nm">三六零 · "低位主线切换"范本</span><span class="tag2">2025-10</span></div>
+  <div class="kv"><div class="it"><span class="l">净买入</span><span class="v">1.98亿</span></div><div class="it"><span class="l">表现</span><span class="v" style="color:var(--clay)">+10.02%</span></div><div class="it"><span class="l">协同</span><span class="v">桑田路+1.34亿</span></div></div>
+  <p>月底老题材退潮→资金高低切→低位新方向。低位启动+无潜伏盘+大资金能上仓位，是核心考量。</p>
+</div>
+<div class="cs">
+  <div class="hd"><span class="nm">中国一重 · "连板接力"范本</span><span class="tag2">2026-01</span></div>
+  <div class="kv"><div class="it"><span class="l">净买入</span><span class="v">9631万</span></div><div class="it"><span class="l">连板</span><span class="v">12天6板</span></div><div class="it"><span class="l">协同</span><span class="v">量化+沪股通+游资</span></div></div>
+  <p>连板接力是底色战法。但6板位置已是中高位，买卖席位分歧明显——游资买，机构外资卖。</p>
+</div>
+<div class="cs">
+  <div class="hd"><span class="nm">通达股份 · "快速兑现"范本</span><span class="tag2">2026-04</span></div>
+  <div class="kv"><div class="it"><span class="l">操作</span><span class="v" style="color:var(--sky)">与屠文斌同步减持</span></div><div class="it"><span class="l">信号</span><span class="v">高位分歧</span></div></div>
+  <p>2024年后的新风格——"不恋战"。高位分歧第一时间跟随退出，不赌"能不能再涨一轮"。</p>
+</div>
+
+<div class="sbx">
+<div class="tt">🔄 风格演变：次新狙击 → 大票趋势加速</div>
+<div style="font-size:12px;color:var(--g500);">
+<strong>2012-2018</strong> 纯情绪博弈 · 次新+题材爆破 · 万兴科技11连板<br>
+<strong>2019-2022</strong> 转型期 · 减少纯博弈 · 增加基本面研究<br>
+<strong>2023-2026</strong> 趋势加速 · 基本面趋势股重仓 · 套利为主极少格局 · 大票为主
+</div>
+</div>
+
+<!-- ===== CH4 & 5 combined ===== -->
+<h2><span class="num">第四章</span>与弈沐 Trading-Core 对照</h2>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+<span class="tb tb-g" style="padding:3px 10px;">匹配度 13/13 高度一致</span>
+<span class="tb tb-b" style="padding:3px 10px;">5条待验证补充</span>
+<span class="tb tb-gy" style="padding:3px 10px;">8项已覆盖</span>
+</div>
+
+<h3>5条待验证补充条款</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--olive)"><span class="rt" style="color:var(--olive)">⭐⭐⭐ 立即验证</span><span class="tt">涨停数+炸板率硬门槛</span><div class="de">昨日涨停<20或炸板率>50%→当日只卖不买，先于竞价验证执行</div></div>
+  <div class="it" style="border-left:3px solid var(--olive)"><span class="rt" style="color:var(--olive)">⭐⭐⭐ 立即验证</span><span class="tt">分歧日竞价出</span><div class="de">龙头高开5%+但跟风≤1只/平开低开/跟风集体低开≥3%→竞价出</div></div>
+  <div class="it" style="border-left:3px solid var(--sky)"><span class="rt" style="color:var(--sky)">⭐⭐ 本周</span><span class="tt">情绪阶段特征辅助</span><div class="de">启动/发酵/高潮/退潮四阶段，与情绪值矛盾时以阶段特征为准</div></div>
+  <div class="it" style="border-left:3px solid var(--sky)"><span class="rt" style="color:var(--sky)">⭐⭐ 本周</span><span class="tt">二板封单质量检验</span><div class="de">2进3要求二板封单≥流通盘3%或≥前日成交额10%，烂板不纳入</div></div>
+  <div class="it" style="border-left:3px solid var(--g500);grid-column:1/-1"><span class="rt" style="color:var(--g500)">⭐ 下周</span><span class="tt">总回撤熔断线</span><div class="de">30日账户峰值回撤≥8%→强制空仓3日+仓位上限20%至创新高</div></div>
+</div>
+
+<h3>看似矛盾实则互补</h3>
+<div class="tw">
+<table>
+<thead><tr><th>新一理念</th><th>trading-core</th><th>实际关系</th></tr></thead>
+<tbody>
+<tr><td>单票40%</td><td>上限30%（P1）</td><td>资金体量差异。P1阶段15万合理，P3可考虑放宽</td></tr>
+<tr><td>满仓80%</td><td>总仓位上限60%（P1）</td><td>同上，P1风控优先</td></tr>
+<tr><td>退潮期空仓</td><td>冰点可低吸（W2）</td><td>有张力。我们有W2窗口+方向确认保护，新一大资金不做低位折腾</td></tr>
+<tr><td>分歧即走</td><td>信号止盈等确认</td><td>核心分歧。新一"分歧即走"偏保守止盈，我们信号止盈周期更长。P1优势</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第五章</span>总结与建议</h2>
+
+<div class="sbx">
+  <div class="tt">核心收获</div>
+  <p style="font-size:13px;">① 验证了框架方向正确——13个对照维度中11个高度匹配。<br>
+  ② 新一最大差异化价值在<strong>"分歧即走"</strong>——不恋战=活下去=有下次机会。<br>
+  ③ 风控体系比我们更完整：总回撤-8%熔断+涨停数<20硬门槛+炸板率>50%硬门槛。<br>
+  ④ "大票趋势加速"风格对P3阶段(300万+)有前瞻参考价值。</p>
+</div>
+
+<h3>下一步研究</h3>
+<ul>
+  <li><strong>方新侠</strong>——百亿级大资金的大票趋势战法，P3阶段参考</li>
+  <li><strong>宁波桑田路</strong>——节奏快+核按钮风格，理解"对手盘"反向指标</li>
+</ul>
+
+<hr>
+<footer>
+📌 本报告基于公开资料整理。🆕待验证条款需经规则变更流程方可成为正式规则。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-04-25</span>
+</footer>
+</div><!-- /page -->
+</body>
+</html>

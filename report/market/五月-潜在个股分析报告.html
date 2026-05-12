@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20只精选股票 · 五月份投资分析</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--sky:#6A8CAF;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:1120px;margin:0 auto}
+
+/* Header */
+.hdr{margin:40px 0 32px}
+.eye{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--g500);margin-bottom:10px;display:flex;gap:14px;flex-wrap:wrap}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:12px;line-height:1.2}
+.mr{display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--g500);margin-bottom:10px}
+.mr span{display:flex;align-items:center;gap:5px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:11px}
+.lead{max-width:720px;font-size:14px;color:var(--g500);margin-top:6px;padding-top:10px;border-top:1.5px solid var(--g300)}
+
+/* Stats bar */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:28px}
+.stat{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:12px 14px;text-align:center}
+.stat .v{font-family:var(--serif);font-size:24px;font-weight:600;display:block}
+.stat .l{font-size:10px;color:var(--g500);text-transform:uppercase;letter-spacing:.04em;font-family:var(--mono);margin-top:2px}
+
+/* Section */
+section{margin-bottom:40px}
+h2{font-family:var(--serif);font-weight:500;font-size:24px;color:var(--slate);margin-bottom:14px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);display:flex;align-items:center;gap:8px}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400}
+h3{font-size:16px;font-weight:600;margin:20px 0 8px;color:var(--slate)}
+
+/* Industry bg */
+.ibg{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--g500);margin-bottom:16px;line-height:1.6}
+.ibg ul{margin:6px 0 0 18px}
+.ibg li{margin-bottom:2px}
+
+/* Stock grid */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;margin-bottom:10px}
+.sc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .12s}
+.sc:hover{border-color:var(--clay)}
+.sc-h{padding:10px 14px;display:flex;align-items:center;gap:8px;user-select:none}
+.sc-h .rat{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.r-strong{background:rgba(217,119,87,.15);color:var(--clay)}
+.r-buy{background:rgba(120,140,93,.15);color:var(--olive)}
+.r-watch{background:var(--g150);color:var(--g700)}
+.r-gamble{background:rgba(176,74,63,.10);color:var(--rust)}
+.r-hold{background:var(--g150);color:var(--g500)}
+.r-avoid{background:rgba(176,74,63,.18);color:var(--rust)}
+.sc-h .nm{font-weight:600;font-size:13px;color:var(--slate);flex-shrink:0}
+.sc-h .cd{font-family:var(--mono);font-size:11px;color:var(--g500)}
+.sc-h .sector{font-size:11px;color:var(--g500);margin-left:auto}
+.sc-h .arr{font-size:10px;color:var(--g500);transition:transform .12s}
+.sc-h.open .arr{transform:rotate(180deg)}
+.sc-b{padding:0 14px 14px;display:none;border-top:1px solid var(--g150)}
+.sc-b.show{display:block}
+.sc-b .kv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;font-size:12px}
+.sc-b .kv .it{background:var(--g150);border-radius:6px;padding:6px 8px;text-align:center}
+.sc-b .kv .it .lb{font-size:10px;color:var(--g500);display:block}
+.sc-b .kv .it .vl{font-weight:600;font-size:13px}
+.sc-b .sec{font-size:12px;font-weight:600;margin:10px 0 4px;color:var(--slate);padding-top:4px;border-top:1px solid var(--g150)}
+.sc-b p{font-size:12px;line-height:1.6;margin-bottom:4px;color:var(--g700)}
+.sc-b .deb{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0;font-size:12px}
+.sc-b .deb .sd{padding:6px 8px;border-radius:6px}
+.sc-b .deb .bull{background:rgba(120,140,93,.08)}
+.sc-b .deb .bear{background:rgba(176,74,63,.08)}
+.sc-b .deb .sd .tl{font-weight:600;font-size:11px;display:block;margin-bottom:2px}
+.sc-b .outlook{font-size:12px;padding:6px 10px;background:var(--g150);border-radius:6px;margin:6px 0}
+.sc-b .action{font-size:12px;font-weight:600;color:var(--clay);margin-top:4px}
+
+/* Table */
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(217,119,87,.04)}
+
+/* Badges in cells */
+.tb{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-o{background:rgba(217,119,87,.12);color:var(--clay)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.tb-gy{background:var(--g150);color:var(--g500)}
+
+/* Risk */
+.rl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.rl .it{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+
+/* Section sub-labels */
+.sl{font-size:13px;color:var(--g500);margin-bottom:10px}
+
+/* Summary box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;margin-bottom:16px}
+.sbx .tt{font-weight:600;color:var(--slate);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+
+/* Footer */
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+
+/* Section divider */
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye"><span>弈沐资本 · 投研部</span><span>个股深度报告</span><span>2026-05-05</span></div>
+  <h1>📊 20只精选股票 · 五月份完整投资分析报告</h1>
+  <div class="mr">
+    <span>📅 数据截止：2026-05-05</span>
+    <span>📡 来源：NeoData + 问财OpenAPI</span>
+    <span class="tag">#军工7只 #半导体5只 #信创7只 #材料1只</span>
+  </div>
+  <div class="lead">多角色交叉验证分析（主理人 + 基本面分析师 + 技术分析师），横跨四大板块20只标的。</div>
+</div>
+
+<!-- ===== Stats ===== -->
+<div class="stats">
+  <div class="stat"><span class="v" style="color:var(--clay)">2</span><span class="l">强烈买入</span></div>
+  <div class="stat"><span class="v" style="color:var(--olive)">5</span><span class="l">买入</span></div>
+  <div class="stat"><span class="v" style="color:var(--g700)">5</span><span class="l">关注</span></div>
+  <div class="stat"><span class="v" style="color:#aa7e3f">3</span><span class="l">轻仓博弈</span></div>
+  <div class="stat"><span class="v" style="color:var(--g500)">3</span><span class="l">持有/观望</span></div>
+  <div class="stat"><span class="v" style="color:var(--rust)">2</span><span class="l">回避</span></div>
+</div>
+
+<!-- ===== 三路交叉 ===== -->
+<section>
+<h2><span class="num">①</span>总体统计与交叉验证</h2>
+<div class="tw">
+<table>
+<thead><tr><th>标的</th><th>主理人</th><th>基本面</th><th>技术面</th><th>一致性</th></tr></thead>
+<tbody>
+<tr><td>中国船舶</td><td><span class="tb tb-g">✅买入</span></td><td><span class="tb tb-o">🏆强烈看好</span></td><td><span class="tb tb-o">🏆最强多头</span></td><td><span class="tb tb-o">⭐⭐⭐</span></td></tr>
+<tr><td>海光信息</td><td><span class="tb tb-g">✅买入</span></td><td>—</td><td>—</td><td><span class="tb tb-gy">⭐⭐</span></td></tr>
+<tr><td>上海瀚讯</td><td><span class="tb tb-gy">⚠博弈</span></td><td><span class="tb tb-r">❌回避</span></td><td><span class="tb tb-gy">⚠追高</span></td><td><span class="tb tb-r">⚠分歧</span></td></tr>
+<tr><td>中航高科</td><td><span class="tb tb-gy">⏸观望</span></td><td><span class="tb tb-gy">⚠谨慎</span></td><td><span class="tb tb-r">❌空头</span></td><td><span class="tb tb-gy">⭐⭐</span></td></tr>
+<tr><td>振华科技</td><td><span class="tb tb-r">🔴回避</span></td><td><span class="tb tb-r">⚠暴跌73%</span></td><td><span class="tb tb-r">❌空头</span></td><td><span class="tb tb-r">⭐⭐⭐全票</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sbx">
+  <div class="tt">📊 评级分布</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:13px;">
+    <span><span class="tb tb-o">强烈买入2</span> 中国船舶、海光信息</span>
+    <span><span class="tb tb-g">买入5</span> 中国长城、达梦数据、国科微、芯原股份、航天电器</span>
+    <span><span class="tb tb-gy">关注5</span> 中国动力、中航光电、浪潮信息、金山办公、柏楚电子</span>
+    <span><span style="background:rgba(170,126,63,.12);color:#aa7e3f;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;">轻仓3</span> 上海瀚讯、景嘉微、西部材料</span>
+    <span><span class="tb tb-gy">持有3</span> 中科曙光、东华软件、中航高科</span>
+    <span><span class="tb tb-r">回避2</span> 振华科技、太极股份</span>
+  </div>
+</div>
+</section>
+
+<!-- ===== 军工 ===== -->
+<section>
+<h2><span class="num">②</span>🚀 军工/航空航天 <span style="font-size:14px;font-weight:400;color:var(--g500);font-family:var(--mono);">7只</span></h2>
+<div class="ibg">
+  <strong>行业背景</strong>：2026年国防预算同比+7.2% | 造船景气大周期（订单至2028年）| 军工信息化结构性亮点 | 板块内部分化明显
+</div>
+<div class="sg">
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-strong">强烈买入</span><span class="nm">中国船舶</span><span class="cd">600150</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">43.00</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+34.49%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">27.8 / 2.1</span></div></div>
+    <div class="sec">基本面</div>
+    <p>FY2025营收483亿、净利60.4亿。<strong>2026Q1净利同比+252%</strong>，业绩爆发式增长。在手订单排期至2028年。ROE提升至3.30%。</p>
+    <div class="sec">技术面</div>
+    <p>均线多头排列，MACD金叉，ADX高达69.8（趋势极强），布林带开口向上。短期涨幅大但技术面健康。</p>
+    <div class="sec">多空</div>
+    <div class="deb"><div class="sd bull"><span class="tl">✅ 多头</span>造船周期景气上行、净利润暴增、PE27.8合理、技术强势</div><div class="sd bear"><span class="tl">❌ 空头</span>月涨+34%有回调需求、换手偏高短期博弈</div></div>
+    <div class="outlook">📈 看涨 — 有望突破45.28元阻力，挑战前高</div>
+    <div class="action">操作：回调41-42元建仓，止损37元，目标45-48元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-watch">关注</span><span class="nm">中国动力</span><span class="cd">600482</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">41.97</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+19.45%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">58.6 / 2.14</span></div></div>
+    <div class="sec">基本面</div>
+    <p>2026Q1净利同比+49%，业绩拐点确认。PE处于历史低位区间。船舶动力系统龙头，受益于造船大周期。</p>
+    <div class="sec">技术面</div>
+    <p>4/30收跌-3.26%冲高回落，短期均线走平有调整迹象。20日涨幅+19.45%偏大，获利盘回吐压力。</p>
+    <div class="outlook">➡️ 先抑后扬 — 短期调整，月中后有望重拾升势</div>
+    <div class="action">操作：等回调38-39元介入，止损35.88元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-watch">关注</span><span class="nm">中航光电</span><span class="cd">002179</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">36.23</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+7.21%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">40.3 / 3.14</span></div></div>
+    <div class="sec">基本面</div>
+    <p>连接器龙头，军民品双轮驱动。利润连续下滑需关注，但龙头地位稳固。PE 40相对合理。</p>
+    <div class="sec">技术面</div>
+    <p>温和多头，MACD金叉，布林带中轨上方运行，走势稳健。适合稳健型投资者。</p>
+    <div class="outlook">📈 温和看涨 — 挑战39-40元阻力区</div>
+    <div class="action">操作：现价附近可建仓，止损32.63元，目标39元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-gamble">轻仓博弈</span><span class="nm">上海瀚讯</span><span class="cd">300762</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">38.26</span></div><div class="it"><span class="lb">4/30涨幅</span><span class="vl" style="color:var(--clay)">+13.81%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">-152 / 12.0</span></div></div>
+    <div class="sec" style="color:var(--rust)">⚠️ 三路分歧标的</div>
+    <div class="deb"><div class="sd bull"><span class="tl">🔵 主理人</span>轻仓博弈 · 技术强势+军工通信概念</div><div class="sd bear"><span class="tl">🟢 基本面</span>❌回避 · 持续亏损，PB 12倍虚高</div></div>
+    <p style="margin-top:4px;"><span style="background:var(--g150);padding:2px 7px;border-radius:4px;font-size:11px;">🔴 技术分析师：⚠️追高风险大，等回调</span></p>
+    <div class="outlook">📈 短期技术面极强，但基本面不支持。有持仓可持有，不追高建仓。</div>
+    <div class="action">操作：等回调33-35元轻仓，止损30.52元，目标42-45元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">航天电器</span><span class="cd">002025</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">68.70</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+11.96%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">176.8 / 5.01</span></div></div>
+    <div class="sec">基本面</div>
+    <p>2026Q1净利润转正+12%边际改善。PE处于历史最低区间（当前TTM 176因之前亏损）。毛利率30.07%。军工电子连接器细分龙头。</p>
+    <div class="sec">技术面</div>
+    <p>震荡筑底中，4/30放量+8.16%有突破迹象。20日涨幅+11.96%趋势转好。等明确突破信号。</p>
+    <div class="outlook">📈 震荡向上 — 基本面改善+估值底部</div>
+    <div class="action">操作：现价附近可低吸，止损60.90元，目标74元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-hold">持有/观望</span><span class="nm">中航高科</span><span class="cd">600862</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">20.00</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--rust)">-7.15%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">30.2 / 3.51</span></div></div>
+    <div class="sec">基本面</div>
+    <p>ROE 14%优秀但增速下滑。航空复合材料龙头，长期逻辑清晰。PE 30.15合理。</p>
+    <div class="sec">技术面</div>
+    <p>空头排列（MA5&lt;MA10&lt;MA20&lt;MA60），短期疲弱，4月-7.15%。需等待企稳信号。</p>
+    <div class="outlook">➡️ 震荡筑底 — 等待催化剂</div>
+    <div class="action">操作：已持有者继续持有，未持有的等18-19元再考虑</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-avoid">回避</span><span class="nm">振华科技</span><span class="cd">000733</span><span class="sector">🚀 军工</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">43.10</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--rust)">-7.35%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">24.0 / 1.50</span></div></div>
+    <div class="sec">基本面</div>
+    <p><strong>2026Q1净利润暴跌-73%</strong>。军工电子元器件需求下滑。PB 1.50接近破净。三路数据<strong>全票通过回避</strong>。</p>
+    <div class="sec">技术面</div>
+    <p>空头排列，均线全面向下。4月-7.35%弱势明显。支撑位39.19元有进一步下探风险。</p>
+    <div class="outlook">📉 看跌 — 需等净利润触底信号</div>
+    <div class="action">操作：❌ 回避，待净利润降幅收窄后再评估</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 半导体 ===== -->
+<section>
+<h2><span class="num">③</span>💾 半导体/芯片 <span style="font-size:14px;font-weight:400;color:var(--g500);font-family:var(--mono);">5只</span></h2>
+<div class="ibg">
+  <strong>行业背景</strong>：AI算力国产化加速 + 美国出口管制加码 | 板块4月整体大涨但多数仍亏损 | 短期涨幅过大，五月有震荡整固需求
+</div>
+<div class="sg">
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">海光信息</span><span class="cd">688041</span><span class="sector">💾 半导体</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">284.90</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+34.47%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">252.6 / 29.3</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>国产CPU/GPU龙头，信创+AI双轮驱动。4月涨幅+34.47%板块领涨。但PE 252极高，PB 29.3更贵。</p>
+    <div class="sec">风险</div>
+    <p>短期涨幅大有回调风险，需密切关注一季报业绩。</p>
+    <div class="outlook">📈 看涨但需防回调 — 目标334元</div>
+    <div class="action">操作：回调260-270元分批建仓，止损223元，目标334元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">国科微</span><span class="cd">300672</span><span class="sector">💾 半导体</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">161.00</span></div><div class="it"><span class="lb">4/30涨幅</span><span class="vl" style="color:var(--clay)">+11.03%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">-168.4 / 10.0</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>国产存储芯片龙头。存储涨价周期+国产替代逻辑。4/30大涨+11.03%资金关注度高。</p>
+    <div class="outlook">📈 看涨 — 挑战192元阻力</div>
+    <div class="action">操作：145-155元区间建仓，止损128元，目标192元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">芯原股份</span><span class="cd">688521</span><span class="sector">💾 半导体</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">260.00</span></div><div class="it"><span class="lb">4/30涨幅</span><span class="vl" style="color:var(--clay)">+20.00%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">-227.9 / 46.9</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>国内最大芯片IP授权供应商。4/30涨停封板极为强势。但PB 46.94极其昂贵，仍亏损。</p>
+    <div class="outlook">📈 看涨但需回调 — 涨停后需消化获利盘</div>
+    <div class="action">操作：❌ 不追涨停，等回调220-240元再考虑，止损187元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-hold">关注</span><span class="nm">中科曙光</span><span class="cd">603019</span><span class="sector">💾 半导体</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">90.98</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+15.64%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">61.3 / 6.03</span></div></div>
+    <div class="sec">基本面</div>
+    <p>FY2025营收320亿、净利22.8亿。2026Q1净利同比+14%稳健增长。算力基础设施核心标的。</p>
+    <div class="sec">技术面</div>
+    <p>均线多头排列走势稳健，4月+15.64%温和上涨。阻力位100元整数关口。</p>
+    <div class="outlook">📈 温和看涨 — 挑战99-100元阻力</div>
+    <div class="action">操作：现价附近可建仓，止损81元，目标99元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-gamble">轻仓</span><span class="nm">景嘉微</span><span class="cd">300474</span><span class="sector">💾 半导体</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">61.90</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+13.25%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">-207.9 / 5.05</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>国产GPU概念，AI算力受益标的。PB 5.05在半导体中相对合理。但持续亏损，GPU与英伟达差距大。</p>
+    <div class="outlook">📈 震荡向上 — 小仓位参与</div>
+    <div class="action">操作：55-60元区间轻仓，止损49元，目标74元</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 信创 ===== -->
+<section>
+<h2><span class="num">④</span>💻 信创/软件 <span style="font-size:14px;font-weight:400;color:var(--g500);font-family:var(--mono);">7只</span></h2>
+<div class="ibg">
+  <strong>行业背景</strong>：信创进入全面推广期，党政+行业需求爆发 | 国产数据库/办公/OS替代加速 | 板块内部分化明显
+</div>
+<div class="sg">
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">中国长城</span><span class="cd">000066</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">19.00</span></div><div class="it"><span class="lb">4/30涨幅</span><span class="vl" style="color:var(--clay)">+9.99%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">3169 / 5.85</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>信创硬件龙头，4/30涨停封板资金抢筹。20日+33.47%板块最强。但PE极高盈利能力极弱，博弈性质强。</p>
+    <div class="outlook">📈 看涨但博弈性强 — 目标21元</div>
+    <div class="action">操作：小仓位参与，止损17元，目标21元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-buy">买入</span><span class="nm">达梦数据</span><span class="cd">688692</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">257.00</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+21.63%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">52.4 / 7.69</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>国产数据库龙头，信创核心标的。PE 52在板块中相对合理。趋势稳健量价配合好。毛利率高护城河深。</p>
+    <div class="outlook">📈 看涨 — 挑战308元阻力</div>
+    <div class="action">操作：回调240-250元建仓，止损205元，目标308元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-watch">关注</span><span class="nm">浪潮信息</span><span class="cd">000977</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">69.50</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+19.27%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">40.1 / 4.59</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>AI服务器龙头。FY2025营收3547亿、净利60.5亿。PE 40合理。4/30跌-3.50%短期获利回吐。</p>
+    <div class="outlook">➡️ 先抑后扬 — 等回调到位</div>
+    <div class="action">操作：等回调65-67元介入，止损65元，目标79元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-watch">关注</span><span class="nm">金山办公</span><span class="cd">688111</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">250.00</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+3.84%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">32.2 / 7.72</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>WPS国产办公软件龙头，AI+办公概念。PE 32.17合理。业绩稳健盈利能力强。</p>
+    <div class="outlook">📈 温和看涨 — 挑战299元阻力</div>
+    <div class="action">操作：240-250元区间建仓，止损199元，目标299元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-watch">关注</span><span class="nm">柏楚电子</span><span class="cd">688188</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">140.34</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--clay)">+6.42%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">34.9 / 6.41</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>工业软件细分龙头。PE 34.88合理。业绩稳健商业模式好。</p>
+    <div class="outlook">📈 温和看涨 — 挑战166元阻力</div>
+    <div class="action">操作：现价附近可建仓，止损110元，目标166元</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-hold">持有</span><span class="nm">东华软件</span><span class="cd">002065</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">8.22</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--g500)">+1.60%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">54.5 / 2.13</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>IT服务龙头，业务稳健。波动率低趋势不明。PB 2.13较低有一定安全垫。</p>
+    <div class="outlook">➡️ 横盘震荡 — 突破9元才确认方向</div>
+    <div class="action">操作：已持有者继续持有，未持有者暂观望</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-avoid">回避</span><span class="nm">太极股份</span><span class="cd">002368</span><span class="sector">💻 信创</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">17.24</span></div><div class="it"><span class="lb">4月涨幅</span><span class="vl" style="color:var(--rust)">-13.84%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">-12.1 / 2.70</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>跌停破位技术面极弱。4月累计-13.84%板块最差。PE为负盈利能力恶化。三路数据全票回避。</p>
+    <div class="outlook">📉 看跌 — 可能继续下探，等企稳信号</div>
+    <div class="action">操作：❌ 回避，等站稳16元以上再评估</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 材料 ===== -->
+<section>
+<h2><span class="num">⑤</span>🔩 材料 <span style="font-size:14px;font-weight:400;color:var(--g500);font-family:var(--mono);">1只</span></h2>
+<div class="sg">
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-gamble">轻仓</span><span class="nm">西部材料</span><span class="cd">002149</span><span class="sector">🔩 材料</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="kv"><div class="it"><span class="lb">最新价</span><span class="vl">57.46</span></div><div class="it"><span class="lb">4/30涨幅</span><span class="vl" style="color:var(--clay)">+9.99%</span></div><div class="it"><span class="lb">PE/PB</span><span class="vl">385.6 / 8.33</span></div></div>
+    <div class="sec">核心逻辑</div>
+    <p>军工钛合金材料供应商。涨停突破资金关注。PE 385严重虚高，涨停后需确认持续性。小市值波动大。</p>
+    <div class="outlook">📈 短期看涨但波动大</div>
+    <div class="action">操作：轻仓参与，止损55元，目标63元</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 核心推荐 ===== -->
+<section>
+<h2><span class="num">⑥</span>五月份核心推荐</h2>
+
+<div class="sbx">
+<div class="tt">🏆 强烈买入（2只）</div>
+<table style="font-size:12px;"><thead><tr><th>#</th><th>标的</th><th>策略</th><th>核心逻辑</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><strong>中国船舶</strong> 600150</td><td>回调41-42元建仓</td><td>造船周期景气+净利+252%+最强多头</td></tr>
+<tr><td>2</td><td><strong>海光信息</strong> 688041</td><td>回调260-270元建仓</td><td>AI算力国产化龙头+4月+34%</td></tr>
+</tbody></table>
+</div>
+
+<div class="sbx">
+<div class="tt">✅ 买入（5只）</div>
+<table style="font-size:12px;"><thead><tr><th>#</th><th>标的</th><th>策略</th><th>核心逻辑</th></tr></thead>
+<tbody>
+<tr><td>3</td><td><strong>达梦数据</strong> 688692</td><td>回调240-250元</td><td>数据库龙头+PE 52合理</td></tr>
+<tr><td>4</td><td><strong>中国长城</strong> 000066</td><td>小仓位博弈</td><td>信创硬件涨停+政策催化</td></tr>
+<tr><td>5</td><td><strong>国科微</strong> 300672</td><td>回调145-155元</td><td>存储芯片国产替代</td></tr>
+<tr><td>6</td><td><strong>芯原股份</strong> 688521</td><td>等回调220-240元</td><td>IP授权龙头（不追高）</td></tr>
+<tr><td>7</td><td><strong>航天电器</strong> 002025</td><td>现价低吸</td><td>PE历史底部+利润改善</td></tr>
+</tbody></table>
+</div>
+
+<div class="sbx">
+<div class="tt">🟡 关注 · ⚠️ 轻仓 · ⏸ 持有 · 🔴 回避</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+<div><strong>关注：</strong><br>中国动力 等38-39元<br>中航光电 现价附近<br>浪潮信息 等65-67元<br>金山办公 等240-250元<br>柏楚电子 现价附近</div>
+<div><strong>回避：</strong><br>振华科技 Q1净利-73%<br>太极股份 跌停破位</div>
+<div><strong>轻仓：</strong><br>上海瀚讯 等33-35元<br>景嘉微 55-60元<br>西部材料 轻仓参与</div>
+<div><strong>持有：</strong><br>中科曙光 等80-85加仓<br>东华软件 等突破9元<br>中航高科 等18-19元补仓</div>
+</div>
+</div>
+</section>
+
+<!-- ===== 多空交锋 ===== -->
+<section>
+<h2><span class="num">⑦</span>多空交锋焦点</h2>
+<div class="tw">
+<table>
+<thead><tr><th>板块</th><th>多头</th><th>空头</th><th>裁决</th></tr></thead>
+<tbody>
+<tr><td>🚀 军工</td><td>国防预算增+造船景气+订单饱满</td><td>部分PE过高+内部分化+涨幅大</td><td><span class="tb tb-g">偏多 ✅</span></td></tr>
+<tr><td>💾 半导体</td><td>AI算力国产化+管制加码+替代空间大</td><td>多数亏损+估值贵+涨幅大</td><td><span class="tb tb-gy">偏多但防回调 ⚠</span></td></tr>
+<tr><td>💻 信创</td><td>政策催化强+替代空间大+需求旺</td><td>盈利弱+PE虚高+分化严重</td><td><span class="tb tb-g">精选做多 ✅</span></td></tr>
+<tr><td>🔩 材料</td><td>军品订单增长+新材料需求</td><td>估值虚高+炒作+流动性差</td><td><span class="tb tb-gy">轻仓观望 ➡</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>重点标的争议</h3>
+<div class="sg">
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-gamble">最大分歧</span><span class="nm">上海瀚讯</span><span class="cd">300762</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="deb"><div class="sd bull"><span class="tl">🔵 技术面</span>4/30大涨+13.81%，量价齐升趋势强劲</div><div class="sd bear"><span class="tl">🟢 基本面</span>持续亏损，PB 12倍虚高无支撑</div></div>
+    <div class="action">裁决：短期资金驱动而非基本面，降级为轻仓博弈</div>
+  </div>
+</div>
+<div class="sc" onclick="this.querySelector('.sc-b').classList.toggle('show');this.querySelector('.sc-h').classList.toggle('open')">
+  <div class="sc-h"><span class="rat r-gamble">追高风险</span><span class="nm">芯原股份</span><span class="cd">688521</span><span class="arr">▼</span></div>
+  <div class="sc-b">
+    <div class="deb"><div class="sd bull"><span class="tl">🔵 技术面</span>涨停20%极为强势，IP授权赛道稀缺</div><div class="sd bear"><span class="tl">🟢 基本面</span>PB 46.94，亏损，估值脱离基本面</div></div>
+    <div class="action">裁决：赛道好但估值过高，等回调再考虑</div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 风险 ===== -->
+<section>
+<h2><span class="num">⑧</span>关键风险提示</h2>
+<div class="tw">
+<table>
+<thead><tr><th>等级</th><th>标的</th><th>风险点</th></tr></thead>
+<tbody>
+<tr><td><span class="tb tb-r">🔴高</span></td><td>太极股份 002368</td><td>跌停+亏损+技术破位</td></tr>
+<tr><td><span class="tb tb-r">🔴高</span></td><td>振华科技 000733</td><td>净利润-73%+空头排列</td></tr>
+<tr><td><span class="tb tb-gy">🟡中</span></td><td>芯原股份 688521</td><td>PB 47倍+追高风险</td></tr>
+<tr><td><span class="tb tb-gy">🟡中</span></td><td>海光信息 688041</td><td>PE 252倍+月涨34%回调风险</td></tr>
+<tr><td><span class="tb tb-gy">🟡中</span></td><td>中国长城 000066</td><td>PE虚高+博弈性质</td></tr>
+<tr><td><span class="tb tb-g">🟢低</span></td><td>中国船舶 600150</td><td>基本面扎实+趋势强，回调可控</td></tr>
+<tr><td><span class="tb tb-g">🟢低</span></td><td>达梦数据 688692</td><td>PE合理+趋势稳健</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== 完整汇总 ===== -->
+<section>
+<h2><span class="num">⑨</span>操作建议汇总表</h2>
+<div class="tw">
+<table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th><th>建议</th><th>入场</th><th>止损</th><th>目标</th><th>风险</th></tr></thead>
+<tbody>
+<tr><td>600150</td><td>中国船舶</td><td>🚀军工</td><td><span class="tb tb-o">强烈买入</span></td><td>41-42</td><td>37.00</td><td>45-48</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>688041</td><td>海光信息</td><td>💾半导体</td><td><span class="tb tb-g">买入</span></td><td>260-270</td><td>223.0</td><td>334</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>688692</td><td>达梦数据</td><td>💻信创</td><td><span class="tb tb-g">买入</span></td><td>240-250</td><td>205.0</td><td>308</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>000066</td><td>中国长城</td><td>💻信创</td><td><span class="tb tb-g">买入(小仓)</span></td><td>17-18</td><td>16.22</td><td>21</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>300672</td><td>国科微</td><td>💾半导体</td><td><span class="tb tb-g">买入</span></td><td>145-155</td><td>128.0</td><td>192</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>688521</td><td>芯原股份</td><td>💾半导体</td><td><span class="tb tb-g">买入(等回调)</span></td><td>220-240</td><td>187.0</td><td>280</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>002025</td><td>航天电器</td><td>🚀军工</td><td><span class="tb tb-g">买入</span></td><td>65-68</td><td>60.90</td><td>74</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>600482</td><td>中国动力</td><td>🚀军工</td><td><span class="tb tb-gy">关注</span></td><td>38-39</td><td>35.88</td><td>43</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>002179</td><td>中航光电</td><td>🚀军工</td><td><span class="tb tb-gy">关注</span></td><td>35-36</td><td>32.63</td><td>39</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>000977</td><td>浪潮信息</td><td>💻信创</td><td><span class="tb tb-gy">关注(等回调)</span></td><td>65-67</td><td>65.00</td><td>79</td><td><span class="tb tb-gy">中</span></td></tr>
+<tr><td>688111</td><td>金山办公</td><td>💻信创</td><td><span class="tb tb-gy">关注</span></td><td>240-250</td><td>199.0</td><td>299</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>688188</td><td>柏楚电子</td><td>💻信创</td><td><span class="tb tb-gy">关注</span></td><td>135-140</td><td>110.0</td><td>166</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>603019</td><td>中科曙光</td><td>💾半导体</td><td><span class="tb tb-gy">关注</span></td><td>85-90</td><td>81.38</td><td>99</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>300762</td><td>上海瀚讯</td><td>🚀军工</td><td><span class="tb tb-r">轻仓博弈</span></td><td>33-35</td><td>30.52</td><td>42</td><td><span class="tb tb-r">高</span></td></tr>
+<tr><td>300474</td><td>景嘉微</td><td>💾半导体</td><td><span class="tb tb-r">轻仓博弈</span></td><td>55-60</td><td>49.38</td><td>74</td><td><span class="tb tb-r">高</span></td></tr>
+<tr><td>002149</td><td>西部材料</td><td>🔩材料</td><td><span class="tb tb-r">轻仓博弈</span></td><td>55-57</td><td>55.00</td><td>63</td><td><span class="tb tb-r">高</span></td></tr>
+<tr><td>600862</td><td>中航高科</td><td>🚀军工</td><td><span class="tb tb-gy">持有/观望</span></td><td>18-19</td><td>17.98</td><td>21</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>002065</td><td>东华软件</td><td>💻信创</td><td><span class="tb tb-gy">持有</span></td><td>8-9</td><td>7.41</td><td>9</td><td><span class="tb tb-g">低</span></td></tr>
+<tr><td>000733</td><td>振华科技</td><td>🚀军工</td><td><span class="tb tb-r">回避</span></td><td>—</td><td>—</td><td>—</td><td><span class="tb tb-r">高</span></td></tr>
+<tr><td>002368</td><td>太极股份</td><td>💻信创</td><td><span class="tb tb-r">回避</span></td><td>—</td><td>—</td><td>—</td><td><span class="tb tb-r">高</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<footer>
+⚠️ 本报告由AI基于公开信息整理，仅供参考，不构成投资建议。投资有风险，决策需谨慎。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-05</span>
+</footer>
+
+</div><!-- /page -->
+</body>
+</html>
