@@ -15,17 +15,19 @@ a:hover{text-decoration:underline}
 
 /* Header */
 .header{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;backdrop-filter:blur(8px)}
-.header .brand{font-size:20px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
-.header .brand span{color:var(--blue)}
-.header .brand .sub{font-size:12px;font-weight:400;color:var(--text2);margin-left:4px}
-.header .nav{display:flex;gap:16px;margin-left:auto}
-.header .nav a{font-size:13px;color:var(--text2);padding:4px 0;border-bottom:2px solid transparent;transition:all .12s}
-.header .nav a:hover{color:var(--text);border-bottom-color:var(--blue);text-decoration:none}
+.header .brand{display:flex;align-items:center;gap:10px}
+.header .brand .logo{height:28px;width:auto}
+.header .brand .title{font-size:18px;font-weight:700;color:var(--text)}
+.header .brand .sub{font-size:12px;font-weight:400;color:var(--text2)}
+.brand-link:hover{text-decoration:none}
+.nav{display:flex;gap:16px;margin-left:auto}
+.nav a{font-size:13px;color:var(--text2);padding:4px 0;border-bottom:2px solid transparent;transition:all .12s}
+.nav a:hover{color:var(--text);border-bottom-color:var(--blue);text-decoration:none}
 
 /* Hero */
-.hero{padding:64px 32px 48px;max-width:900px;margin:0 auto;text-align:center}
-.hero h1{font-size:36px;margin-bottom:12px}
-.hero .date{font-size:14px;color:var(--text2);margin-bottom:8px}
+.hero{padding:48px 32px 48px;max-width:900px;margin:0 auto;text-align:center}
+.hero .logo-main{max-width:420px;width:100%;height:auto;margin-bottom:16px}
+.hero .date{font-size:14px;color:var(--text2);margin-bottom:4px}
 .hero p{font-size:15px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
 
 /* Sections */
@@ -63,7 +65,11 @@ a:hover{text-decoration:underline}
 <body>
 
 <div class="header">
-  <div class="brand">弈沐资本 <span>·</span> <span class="sub">工作平台</span></div>
+  <a href="./" class="brand-link" style="display:flex;align-items:center;gap:10px;">
+    <img src="logo.svg" alt="弈沐资本" class="logo">
+    <span class="title">弈沐资本</span>
+    <span style="color:var(--text2);font-size:12px;margin-left:2px;">工作平台</span>
+  </a>
   <div class="nav">
     <a href="#reviews">复盘笔记</a>
     <a href="#dashboard">仪表盘</a>
@@ -72,8 +78,8 @@ a:hover{text-decoration:underline}
 </div>
 
 <div class="hero">
+  <img src="logo.svg" alt="弈沐资本" class="logo-main">
   <div class="date">2026 年 · 第 20 周</div>
-  <h1>弈沐资本</h1>
   <p>交易复盘 · 数据看板 · 投研管理 — 一体化的投资工作平台。</p>
 </div>
 

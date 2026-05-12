@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" width="800" height="320">
+  <defs>
+    <!-- Gold gradient -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8D5A3"/>
+      <stop offset="35%" stop-color="#D4AF37"/>
+      <stop offset="50%" stop-color="#C9A94E"/>
+      <stop offset="65%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B8962F"/>
+    </linearGradient>
+    <!-- Lighter gold for English subtitle -->
+    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#C9A94E"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main Chinese text: 弈沐资本 -->
+  <text x="400" y="190" font-family="'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif"
+        font-size="110" font-weight="600" letter-spacing="20"
+        fill="url(#gold)" text-anchor="middle">弈沐资本</text>
+
+  <!-- Phoenix head on top of 弈 (positioned above left side of the text) -->
+  <g transform="translate(168, 95)">
+    <!-- Phoenix head / bird silhouette -->
+    <path d="
+      M 0,5
+      Q -8,-2 -15,-10
+      Q -12,-14 -6,-16
+      Q -4,-18 0,-17
+      Q 4,-19 10,-15
+      Q 16,-11 22,-6
+      Q 28,-2 32,4
+      Q 26,2 20,-1
+      Q 14,-3 8,0
+      Q 4,3 0,5
+      Z
+    " fill="url(#gold)"/>
+    <!-- Phoenix eye/crest detail line -->
+    <path d="M -2, -8 Q 4, -13 10, -9" stroke="url(#gold)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Wing feather lines -->
+    <path d="M 18, -4 Q 30, -8 40, -2" stroke="url(#gold)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M 20, 0 Q 32, -3 42, 3" stroke="url(#gold)" stroke-width="1" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Rising arc / smile curve at bottom of 弈 with K-line candles -->
+  <g transform="translate(148, 205)">
+    <!-- Main upward curve arc -->
+    <path d="
+      M -25,35
+      Q 10,58 55,52
+      Q 100,44 140,20
+      Q 150,15 155,10
+    " stroke="url(#gold)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- K-line candlestick 1 (small) -->
+    <line x1="45" y1="48" x2="45" y2="38" stroke="url(#gold)" stroke-width="1.5"/>
+    <line x1="43" y1="45" x2="47" y2="45" stroke="url(#gold)" stroke-width="2.5"/>
+
+    <!-- K-line candlestick 2 (taller) -->
+    <line x1="62" y1="46" x2="62" y2="33" stroke="url(#gold)" stroke-width="1.5"/>
+    <line x1="60" y1="41" x2="64" y2="41" stroke="url(#gold)" stroke-width="2.5"/>
+
+    <!-- K-line candlestick 3 (medium) -->
+    <line x1="78" y1="41" x2="78" y2="30" stroke="url(#gold)" stroke-width="1.5"/>
+    <line x1="76" y1="36" x2="80" y2="36" stroke="url(#gold)" stroke-width="2.5"/>
+  </g>
+
+  <!-- English subtitle: YIMU CAPITAL -->
+  <text x="400" y="255" font-family="'Montserrat','Helvetica Neue','Arial',sans-serif"
+        font-size="24" font-weight="300" letter-spacing="14"
+        fill="url(#goldLight)" text-anchor="middle">YIMU CAPITAL</text>
+</svg>
