@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弈沐资本 · 交易系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;
+  --border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;
+  --accent:#D97706;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;
+  --up:#DC2626;--dn:#059669;
+}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Header ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(12px);flex-wrap:wrap}
+.topbar .brand{font-size:17px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .ver{font-size:11px;color:var(--text3);padding:2px 8px;background:var(--bg4);border-radius:4px}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:2px 9px;border-radius:10px;font-size:12px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2);white-space:nowrap}
+.chip.u{border-color:var(--red);color:var(--red);background:rgba(220,38,38,.04)}
+.chip.d{border-color:var(--green);color:var(--green);background:rgba(5,150,105,.04)}
+
+/* ── Layout ── */
+.layout{display:flex;max-width:1440px;margin:0 auto}
+.sidebar{width:200px;flex-shrink:0;position:sticky;top:56px;align-self:flex-start;max-height:calc(100vh - 56px);overflow-y:auto;padding:16px 0 16px 12px;border-right:1px solid var(--border);font-size:13px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .sl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;padding:8px 8px 4px;letter-spacing:.08em}
+.sidebar a{display:block;padding:4px 8px;color:var(--text2);text-decoration:none;font-size:12px;border-radius:4px;margin-bottom:1px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.act{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.content{flex:1;padding:24px 28px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+
+/* ── Sections ── */
+.sec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.sec-h{padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4);display:flex;align-items:center;gap:8px}
+.sec-h:hover{background:var(--border)}
+.sec-h .tog{font-size:10px;color:var(--text3);transition:transform .15s}
+.sec-h.closed .tog{transform:rotate(-90deg)}
+.sec-h.closed{border-bottom-color:transparent}
+.sec-b{padding:16px 18px}.sec-b.hide{display:none}
+
+/* ── Cards ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:12px}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.card .ch{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card .ch .ic{font-size:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl td,.tbl th{padding:5px 8px;border-bottom:1px solid var(--border);text-align:left}
+.tbl th{font-size:11px;color:var(--text3);font-weight:600}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td:first-child{font-weight:600;white-space:nowrap;color:var(--text2)}
+
+/* ── Flow ── */
+.flow{display:flex;flex-direction:column;gap:10px}
+.flow-h{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.flow-step{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:140px;flex:1}
+.flow-step .fs{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.flow-step .ft{font-size:13px;font-weight:600;margin-bottom:2px}
+.flow-step .fd{font-size:11px;color:var(--text3);line-height:1.5}
+.flow-step .fd em{font-style:normal;color:var(--red);font-weight:600}
+.flow-arr{display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);min-width:24px;padding-top:12px}
+.flow-dec{background:var(--bg4);border:2px solid var(--accent);border-radius:12px;padding:10px 14px;min-width:120px;text-align:center}
+.flow-dec .fq{font-size:12px;font-weight:600;margin-bottom:4px}
+.flow-dec .fa{font-size:11px;color:var(--text2)}
+.flow-go{border-color:var(--green)}.flow-go .fs{color:var(--green)}
+.flow-stop{border-color:var(--red)}.flow-stop .fs{color:var(--red)}
+.flow-warn{border-color:var(--accent)}
+
+/* ── Timeline ── */
+.timeline{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.tl-phase{flex:1;min-width:120px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.tl-phase .tp{font-size:10px;font-weight:700;letter-spacing:.06em;margin-bottom:2px}
+.tl-phase .tt{font-size:13px;font-weight:600}
+.tl-phase .td{font-size:11px;color:var(--text3);margin-top:2px}
+.tl-arr{display:flex;align-items:center;font-size:16px;color:var(--text3)}
+.tl-pre .tp{color:var(--blue)}.tl-open .tp{color:var(--green)}.tl-mid .tp{color:var(--accent)}.tl-close .tp{color:var(--purple)}
+
+/* ── Labels ── */
+.badge{display:inline-block;padding:1px 7px;border-radius:5px;font-size:10px;font-weight:600;white-space:nowrap}
+.b-up{background:rgba(220,38,38,.08);color:var(--red)}
+.b-dn{background:rgba(5,150,105,.08);color:var(--green)}
+.b-ac{background:rgba(217,119,6,.08);color:var(--accent)}
+.b-bl{background:rgba(37,99,235,.08);color:var(--blue)}
+
+/* ── Tables ── */
+.tw{overflow-x:auto;margin-bottom:10px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{background:var(--bg4);padding:7px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:11px;white-space:nowrap}
+.tw tbody td{padding:6px 10px;border-bottom:1px solid var(--border);font-size:12px}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.01)}
+
+/* ── Other ── */
+.u{color:var(--red);font-weight:600}.d{color:var(--green);font-weight:600}
+.footer{border-top:1px solid var(--border);padding:16px 24px;text-align:center;font-size:11px;color:var(--text3);margin-top:20px}
+.sb2{position:relative;margin-bottom:14px}
+.sb2 input{width:100%;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:14px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" style="font-size:13px;color:var(--text2);text-decoration:none;padding:3px 10px;border-radius:6px;border:1px solid var(--border);transition:all .12s">← 平台</a>
+  <span class="brand">弈沐资本 · 交易系统</span>
+  <span class="ver">v2.1</span>
+  <div class="meta">
+    <span class="chip u">涨红</span><span class="chip d">跌绿</span>
+    <span class="chip">自包含 · 离线可用</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="sl">流程导航</div>
+  <a href="#s1">交易日全生命周期</a>
+  <a href="#s2">风格检测 → 三层决策</a>
+  <a href="#s3">连板模式 L1–L6</a>
+  <a href="#s4">趋势模式 T1–T8</a>
+  <div class="sl" style="margin-top:4px">参考速查</div>
+  <a href="#s5">连板 vs 趋势对比</a>
+  <a href="#s6">关键阈值速查</a>
+  <a href="#s7">盘前 + 时间窗 + 熔断</a>
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索流程、阈值、规则…" oninput="search(this.value)"></div>
+
+<!-- ═══════════ §1 交易日全生命周期 ═══════════ -->
+<div class="sec" id="s1">
+<div class="sec-h" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§1 交易日全生命周期
+</div>
+<div class="sec-b">
+  <div class="timeline">
+    <div class="tl-phase tl-pre"><div class="tp">🌅 盘前</div><div class="tt">读规则+读预案</div><div class="td">9:25 竞价快照</div></div><span class="tl-arr">→</span>
+    <div class="tl-phase tl-pre"><div class="tp">🌅 竞价判定</div><div class="tt">高潮保护检测</div><div class="td">情绪 ≥90% → 双窗全关</div></div><span class="tl-arr">→</span>
+    <div class="tl-phase tl-open"><div class="tp">🌄 W1 9:30-10:00</div><div class="tt">连板追涨</div><div class="td">前半段打板 · 后半段共振</div></div><span class="tl-arr">→</span>
+    <div class="tl-phase tl-mid"><div class="tp">☀️ 盘中 10:00-14:45</div><div class="tt">只看不动</div><div class="td">13:00 午盘复核 · V反检测</div></div><span class="tl-arr">→</span>
+    <div class="tl-phase tl-mid"><div class="tp">☀️ W2 14:00-14:45</div><div class="tt">趋势回踩低吸</div><div class="td">14:45-15:00 不新开仓</div></div><span class="tl-arr">→</span>
+    <div class="tl-phase tl-close"><div class="tp">🌙 收盘后</div><div class="tt">ABCD 复盘流程</div><div class="td">D0风格→预案→红蓝对抗</div></div>
+  </div>
+</div></div>
+
+<!-- ═══════════ §2 风格检测 → 三层决策 ═══════════ -->
+<div class="sec" id="s2">
+<div class="sec-h" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§2 风格检测 → 三层决策 → 路由执行
+</div>
+<div class="sec-b">
+
+<div class="flow">
+  <div style="font-size:13px;font-weight:600;color:var(--accent)">第一层：总仓位上限</div>
+  <div class="flow-h">
+    <div class="flow-step flow-stop"><div class="fs">黑天鹅/熔断</div><div class="ft">上证>5% · 千股跌停</div><div class="fd">→ <em>全清 0%</em></div></div>
+    <div class="flow-step flow-stop"><div class="fs">回撤触发</div><div class="ft">日-3% · 周>6% · 月>10%</div><div class="fd">→ <em>空仓停止操作</em></div></div>
+    <div class="flow-step flow-stop"><div class="fs">连亏 ≥2天</div><div class="ft">连续亏损</div><div class="fd">→ <em>第3天强制空仓</em></div></div>
+    <div class="flow-step flow-go"><div class="fs">正常</div><div class="ft">以上均未触发</div><div class="fd">→ 进入第二层</div></div>
+  </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:8px">第二层：风格检测 → 分配比例</div>
+  <div class="flow-h">
+    <div class="flow-step"><div class="fs">维度一 量能 25分</div><div class="ft">成交额 + 5日均量比 + CV波动率</div></div>
+    <span class="flow-arr">+</span>
+    <div class="flow-step"><div class="fs">维度二 连板生态 35分</div><div class="ft">最高板 + 涨停收益 + 晋级率 + 风险值</div></div>
+    <span class="flow-arr">+</span>
+    <div class="flow-step"><div class="fs">维度三 趋势赚钱 25分</div><div class="ft">沪深300 + 趋势板块 + 大市值比例</div></div>
+    <span class="flow-arr">+</span>
+    <div class="flow-step"><div class="fs">维度四 情绪广度 15分</div><div class="ft">情绪值 + 涨跌比 + 赚钱效应</div></div>
+  </div>
+  <div class="flow-h" style="justify-content:center;margin-top:4px">
+    <div class="flow-dec"><div class="fq">总分 0-100</div><div class="fa">style_detect.py 输出<br>连板信号% / 趋势信号%</div></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-dec"><div class="fq">分配比例</div><div class="fa">≥80→100/0 · 75→80/20 · 60→60/40<br>50→50/50 · ≤40→0/100</div></div>
+  </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:8px">第三层：窗口执行</div>
+  <div class="flow-h">
+    <div class="flow-step flow-go"><div class="fs">W1 9:30-10:00</div><div class="ft">连板追涨 + 趋势突破</div><div class="fd">情绪≥60% · 涨停收益>2% · 高开3-7%</div></div>
+    <div class="flow-step"><div class="fs">10:00-14:00</div><div class="ft">观察窗口</div><div class="fd">趋势回踩跟踪 · V反检测 · 午盘复核</div></div>
+    <div class="flow-step flow-go"><div class="fs">W2 14:00-14:45</div><div class="ft">趋势回踩低吸</div><div class="fd">60分MA10回踩 · 缩量 · 15分钟企稳</div></div>
+    <div class="flow-step flow-stop"><div class="fs">14:45-15:00</div><div class="ft">不新开仓</div></div>
+  </div>
+</div>
+</div></div>
+
+<!-- ═══════════ §3 连板模式 ═══════════ -->
+<div class="sec" id="s3">
+<div class="sec-h" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§3 连板模式 · Core-连板 L1–L6
+</div>
+<div class="sec-b">
+
+<div class="flow">
+  <div style="font-size:12px;font-weight:600;color:var(--text2)">L1 处理持仓 → L1.5 板块合力确认 → L2 选择打法 → L3 算仓位 → L4 选标的(W1追涨) → L6 复盘输出</div>
+
+  <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+    <div class="card"><div class="ch"><span class="ic">📋</span> L1 处理持仓 · 先卖后买</div>
+      <table class="tbl">
+        <tr><td style="color:var(--red)">触及止损</td><td>竞价挂卖</td></tr>
+        <tr><td style="color:var(--accent)">止盈信号</td><td>信号卖出</td></tr>
+        <tr><td style="color:var(--green)">主线继续</td><td>持有设止损</td></tr>
+        <tr><td style="color:var(--accent)">分歧</td><td>收紧止损观望</td></tr>
+        <tr><td style="color:var(--red)">退潮</td><td>减仓/清仓</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">🔬</span> L1.5 板块合力确认</div>
+      <table class="tbl">
+        <tr><td style="color:var(--green)">合力确认</td><td>三维度达标 → 进入L2</td></tr>
+        <tr><td style="color:var(--accent)">冷启动</td><td>新方向 → 观察</td></tr>
+        <tr><td style="color:var(--red)">脉冲排除</td><td>不达标 → 放弃</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">🎯</span> L2 选择打法</div>
+      <table class="tbl">
+        <tr><td>情绪预判</td><td>→ 赚钱效应校正</td></tr>
+        <tr><td>合力高度</td><td>→ 定风格(连板/趋势)</td></tr>
+        <tr><td>竞价验证</td><td>A好+B好→执行 · 一好一差→降级 · A差+B差→只卖不买</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">💵</span> L3 算仓位 + L4 选标的</div>
+      <table class="tbl">
+        <tr><td style="color:var(--green)">仓位查表</td><td>情绪→仓位上限</td></tr>
+        <tr><td style="color:var(--red)">风控触发</td><td>→ 空仓</td></tr>
+        <tr><td style="color:var(--green)">W1硬性3条</td><td>方向确认≥3条→入</td></tr>
+        <tr><td style="color:var(--red)">条件不满足</td><td>不做</td></tr>
+      </table></div>
+  </div>
+
+  <div style="font-size:12px;font-weight:600;color:var(--accent)">连板方向确认 · SSOT 4条</div>
+  <div class="cards" style="grid-template-columns:repeat(4,1fr)">
+    <div class="card" style="text-align:center"><div style="font-weight:700">① 涨停集中度</div><div style="font-size:11px;color:var(--text3)">≥5只 · 全市场Top3</div></div>
+    <div class="card" style="text-align:center"><div style="font-weight:700">② 梯队完整度</div><div style="font-size:11px;color:var(--text3)">至少2板+首板</div></div>
+    <div class="card" style="text-align:center"><div style="font-weight:700">③ 中军资金流入</div><div style="font-size:11px;color:var(--text3)">合力质检验证</div></div>
+    <div class="card" style="text-align:center"><div style="font-weight:700">④ 5日线位置</div><div style="font-size:11px;color:var(--text3)">板块站上5日线</div></div>
+  </div>
+</div></div>
+
+<!-- ═══════════ §4 趋势模式 ═══════════ -->
+<div class="sec" id="s4">
+<div class="sec-h" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§4 趋势模式 · Core-趋势 T1–T8
+</div>
+<div class="sec-b">
+
+<div class="flow">
+  <div class="flow-h">
+    <div class="flow-step flow-go"><div class="fs">T1 大趋势确认</div><div class="ft">20日线向上</div><div class="fd">成交额趋势→趋势板块≥3个 → <em>趋势确认</em></div></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><div class="fs">T2 板块选择</div><div class="ft">主线三维度判定</div><div class="fd">趋势方向 · 资金持续 · 量能确认<br>3/3=主线 · 2/3=强支线 · ≤1=不入</div></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step"><div class="fs">T3 个股选择</div><div class="ft">中军筛选</div><div class="fd">市值≥100亿 · 成交≥15亿 · 均线多头 · Top3中军</div></div>
+    <span class="flow-arr">→</span>
+    <div class="flow-step flow-go"><div class="fs">T4 买入时机</div><div class="ft">等回踩</div><div class="fd">5日线→第一笔 · 10日线→加仓<br>60分MA10回踩(T4.1b)→半仓</div></div>
+  </div>
+</div>
+
+<div class="cards" style="grid-template-columns:1fr 1fr">
+  <div class="card"><div class="ch"><span class="ic">📊</span> T5 持仓管理 · 分歧 vs 退潮 6维判定</div>
+    <div class="tw"><table>
+    <thead><tr><th>维度</th><th style="color:var(--green)">分歧 → 持有</th><th style="color:var(--red)">退潮 → 卖出</th></tr></thead>
+    <tbody>
+    <tr><td>板块指数</td><td class="d">回踩未破20日线</td><td class="u">跌破20日线</td></tr>
+    <tr><td>龙头</td><td class="d">存活</td><td class="u">断板/炸板</td></tr>
+    <tr><td>个股跌幅</td><td class="d"><5% 缩量</td><td class="u">连续破支撑放量</td></tr>
+    <tr><td>主力</td><td class="d">累计净流入</td><td class="u">连续3天流出</td></tr>
+    <tr><td>板块内</td><td class="d">涨跌不一</td><td class="u">全线下跌</td></tr>
+    <tr><td>成交额</td><td class="d">缩量</td><td class="u">放量下跌</td></tr>
+    </tbody></table></div></div>
+  <div class="card"><div class="ch"><span class="ic">⚠️</span> T6 卖出执行 + T7 风控</div>
+    <table class="tbl">
+      <tr><td style="color:var(--red)">收盘后退潮确认</td><td>次日竞价卖出</td></tr>
+      <tr><td style="color:var(--red)">盘中放量破位</td><td>即时卖出</td></tr>
+      <tr><td style="color:var(--red)">止损触发</td><td>竞价卖出</td></tr>
+      <tr><td style="color:var(--accent)">首次涨停</td><td>减仓50%</td></tr>
+      <tr style="border-top:2px solid var(--border)"><td>第一笔5日线</td><td>止损 <span class="u">-7%</span>（仓位>20%→ <span class="u">-5%</span>）</td></tr>
+      <tr><td>加仓10日线</td><td>止损 <span class="u">-5%</span></td></tr>
+      <tr><td>总账户该股</td><td>止损 <span class="u">-10%</span></td></tr>
+      <tr><td>横盘退出</td><td><span class="badge b-ac">5</span> 天 ±2% 缩量 → 减半</td></tr>
+    </table></div>
+</div>
+
+<div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+  <div class="card"><div class="ch"><span class="ic">🔴</span> 趋势升级条件</div>
+    <table class="tbl">
+      <tr><td>1</td><td>方向确认 <span class="d">≥3条</span></td></tr>
+      <tr><td>2</td><td>持仓浮盈 <span class="d">>3%</span></td></tr>
+      <tr><td>3</td><td>板块创新高 <span class="d">20日</span></td></tr>
+      <tr><td>4</td><td>连续 <span class="d">2</span> 日无止损触发</td></tr>
+    </table></div>
+  <div class="card"><div class="ch"><span class="ic">📐</span> 主线三维度</div>
+    <table class="tbl">
+      <tr><td>趋势方向</td><td>板块站上 <span class="d">20日线</span> + <span class="d">5日线</span>向上</td></tr>
+      <tr><td>资金持续</td><td>≥ <span class="u">3</span> 只中军近3日净流入 > <span class="d">0</span></td></tr>
+      <tr><td>量能确认</td><td><span class="u">5</span> 日均量 > <span class="u">20</span> 日均量</td></tr>
+    </table></div>
+</div>
+</div></div>
+
+<!-- ═══════════ §5 连板 vs 趋势 ═══════════ -->
+<div class="sec" id="s5">
+<div class="sec-h closed" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§5 连板 vs 趋势 · 并排对比
+</div>
+<div class="sec-b hide">
+  <div class="tw"><table>
+  <thead><tr><th>维度</th><th><span class="badge b-up">连板模式</span></th><th><span class="badge b-dn">趋势模式</span></th></tr></thead>
+  <tbody>
+  <tr><td>触发条件</td><td>风格分数高分→连板占比><span class="d">0%</span></td><td>风格分数低分→趋势占比><span class="d">0%</span></td></tr>
+  <tr><td>选股框架</td><td>涨停计数+梯队+资金</td><td>均线+资金+成交额</td></tr>
+  <tr><td>板块判定</td><td>滚动3天三维度</td><td>20日线+均量+中军资金</td></tr>
+  <tr><td>个股门槛</td><td>热度TOP50 + 连板梯队 + 涨幅 <span class="u">3-10%</span></td><td>市值≥ <span class="d">100亿</span> + 成交≥ <span class="d">15亿</span> + 均线多头</td></tr>
+  <tr><td>买入窗口</td><td>W1 <span class="badge b-ac">9:30-10:00</span> 追涨</td><td>W2 <span class="badge b-ac">14:00-14:45</span> 回踩买入</td></tr>
+  <tr><td>止损</td><td><span class="u">-5%</span></td><td>第一笔 <span class="u">-7%</span> / 加仓 <span class="u">-5%</span> / 总 <span class="u">-10%</span></td></tr>
+  <tr><td>止盈</td><td>信号止盈+快速退潮加速</td><td>退潮信号止盈+涨停减半</td></tr>
+  <tr><td>仓位上限</td><td>主升 <span class="u">60%</span> / 强势 <span class="u">60%</span> / 低迷 <span class="u">40%</span></td><td>强 <span class="d">60%</span> / 中 <span class="d">40%</span> / 弱 <span class="d">20%</span></td></tr>
+  <tr><td>持仓上限</td><td>≤ <span class="badge b-ac">3</span> 只</td><td>强 ≤ <span class="badge b-ac">3</span> / 中 ≤ <span class="badge b-ac">2</span> / 弱 ≤ <span class="badge b-ac">1</span></td></tr>
+  <tr><td>自选池</td><td><span class="u">10-15</span>只</td><td><span class="d">5-8</span>只</td></tr>
+  <tr><td>出池</td><td>断板当日清</td><td>破20日线且3日未收复</td></tr>
+  </tbody></table></div>
+</div></div>
+
+<!-- ═══════════ §6 关键阈值 ═══════════ -->
+<div class="sec" id="s6">
+<div class="sec-h closed" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§6 关键阈值速查
+</div>
+<div class="sec-b hide">
+  <div class="cards">
+    <div class="card"><div class="ch"><span class="ic">🎯</span> 情绪区间</div>
+      <table class="tbl">
+      <tr><th>区间</th><th>名称</th><th>打法</th></tr>
+      <tr><td><span class="u"><20%</span></td><td><span class="badge b-up">冰点</span></td><td>空仓(W2走趋势)</td></tr>
+      <tr><td><span class="badge b-ac">20-40%</span></td><td>低迷</td><td>1进2 7折</td></tr>
+      <tr><td><span class="badge b-ac">40-60%</span></td><td>主升</td><td>1进2</td></tr>
+      <tr><td><span class="badge b-dn">60-80%</span></td><td>强势</td><td>2进3/3进4</td></tr>
+      <tr><td><span class="d">>80%</span></td><td><span class="badge b-up">高潮</span></td><td>只卖不买</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">💵</span> 仓位限制</div>
+      <table class="tbl">
+      <tr><td>P0 模拟</td><td>不限</td></tr>
+      <tr><td>P1 70→100万</td><td>≤ <span class="u">60%</span></td></tr>
+      <tr><td>P2 100→300万</td><td>≤ <span class="u">70%</span></td></tr>
+      <tr><td>P3 300万+</td><td>≤ <span class="u">80%</span></td></tr>
+      <tr><td>单日熔断</td><td><span class="u">-3%</span></td></tr>
+      <tr><td>周回撤</td><td>> <span class="u">6%</span> → 当周停</td></tr>
+      <tr><td>月回撤</td><td>> <span class="u">10%</span> → 当月停</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">📊</span> 核心指标阈值</div>
+      <table class="tbl">
+      <tr><td>涨停晋级率</td><td>> <span class="d">25%</span>主升 / > <span class="d">20%</span>低迷</td></tr>
+      <tr><td>涨停收益</td><td>> <span class="d">2%</span>及格 / > <span class="d">3%</span>正常</td></tr>
+      <tr><td>炸板率</td><td>W1追涨 <span class="u"><30%</span></td></tr>
+      <tr><td>流动性硬筛</td><td>换手 <span class="badge b-ac">5-40%</span> + 市值≥ <span class="d">30亿</span></td></tr>
+      <tr><td>盈亏比门槛</td><td>≥ <span class="d">2:1</span> 才做</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">⏰</span> 特殊场景</div>
+      <table class="tbl">
+      <tr><td>周五</td><td>W1全关 / 趋势W2正常</td></tr>
+      <tr><td>双冰</td><td>W1全关 / W2可开(更严)</td></tr>
+      <tr><td>双冰合力3/3</td><td><span class="d">10%</span>试错低吸 / 止损 <span class="u">-3%</span></td></tr>
+      <tr><td>节假日前</td><td>仓位降至 <span class="u">20%</span></td></tr>
+      <tr><td>持仓业绩日</td><td>开盘即清仓</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">🔬</span> 五步选股对比</div>
+      <table class="tbl">
+      <tr><th>步</th><th>连板</th><th>趋势</th></tr>
+      <tr><td>1</td><td>板块合力三维度</td><td>大趋势方向</td></tr>
+      <tr><td>2</td><td>涨停+梯队+主线</td><td>均线+资金+成交额</td></tr>
+      <tr><td>3</td><td>热度TOP50+涨 <span class="u">3-10%</span></td><td>中军≥ <span class="d">100亿</span>+≥ <span class="d">15亿</span></td></tr>
+      <tr><td>4</td><td>漏网扫描</td><td>分层排查+买点预判</td></tr>
+      <tr><td>5</td><td><span class="u">10-15</span>只定池</td><td><span class="d">5-8</span>只定池</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">📏</span> 铁律 9 条</div>
+      <table class="tbl">
+      <tr><td>1</td><td>仓位是赚出来的，不是一次性买出来的</td></tr>
+      <tr><td>2</td><td>宁错过勿做错 — 方向确认<3条不做</td></tr>
+      <tr><td>3</td><td>赚钱效应是检验合力的标准</td></tr>
+      <tr><td>4</td><td>高潮次日必分歧 — >80%不追涨</td></tr>
+      <tr><td>5</td><td>止损到了就走，不找理由</td></tr>
+      <tr><td>6</td><td>集中主线，不做支线对冲</td></tr>
+      <tr><td>7</td><td>预案必须绑定具体标的</td></tr>
+      <tr><td>8</td><td>规则解决90%，弈沐决定10%</td></tr>
+      <tr><td>9</td><td>先判风格再动手</td></tr>
+      </table></div>
+  </div>
+</div></div>
+
+<!-- ═══════════ §7 盘前+时间窗+熔断 ═══════════ -->
+<div class="sec" id="s7">
+<div class="sec-h closed" onclick="this.classList.toggle('closed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span>§7 盘前 Checklist · 时间窗口 · 熔断层级
+</div>
+<div class="sec-b hide">
+  <div class="cards">
+    <div class="card"><div class="ch"><span class="ic">📋</span> 盘前 Checklist</div>
+      <table class="tbl">
+      <tr><td>读规则</td><td>trading-core + 对应 Core 手册</td></tr>
+      <tr><td>读预案</td><td>昨日风格分数 + 自选池 + 附录A</td></tr>
+      <tr><td>竞价验证</td><td>信号A(高标) + 信号B(强势家数)</td></tr>
+      <tr><td>推翻窗口</td><td>9:25 前记录推翻理由</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">⏰</span> 时间窗口</div>
+      <table class="tbl">
+      <tr><th>窗口</th><th>时间</th><th>连板</th><th>趋势</th></tr>
+      <tr><td><span class="badge b-dn">W1</span></td><td>9:30-10:00</td><td>追涨</td><td>突破确认(备选)</td></tr>
+      <tr><td>观察</td><td>10:00-14:00</td><td colspan="2" style="text-align:center">只看不动</td></tr>
+      <tr><td><span class="badge b-ac">W2</span></td><td>14:00-14:45</td><td>—</td><td>回踩低吸</td></tr>
+      <tr><td>闭窗</td><td>14:45-15:00</td><td colspan="2" style="text-align:center">不新开仓</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">🔴</span> 熔断层级</div>
+      <table class="tbl">
+      <tr><td>黑天鹅</td><td>上证>5% / 千股跌停 → 全清</td></tr>
+      <tr><td>单日熔断</td><td>账户 <span class="u">-3%</span> → 停止操作</td></tr>
+      <tr><td>周回撤</td><td>> <span class="u">6%</span> → 当周停止</td></tr>
+      <tr><td>月回撤</td><td>> <span class="u">10%</span> → 当月空仓</td></tr>
+      <tr><td>连亏</td><td>≥ <span class="u">2</span> 天 → 空仓</td></tr>
+      </table></div>
+    <div class="card"><div class="ch"><span class="ic">📊</span> 复盘四阶段</div>
+      <table class="tbl">
+      <tr><td><span class="badge b-bl">A</span></td><td>数据准备 + 读规则 + 记忆注入</td></tr>
+      <tr><td><span class="badge b-bl">B</span></td><td>填当日复盘 + 心得 + B5趋势持仓</td></tr>
+      <tr><td><span class="badge b-bl">C</span></td><td>双模选股(连板+趋势分叉)</td></tr>
+      <tr><td><span class="badge b-bl">D</span></td><td>风格检测D0 + 预案D1/D2</td></tr>
+      <tr><td><span class="badge b-up">红方</span></td><td>洋米独立审阅 → 三回合辩论 → 终稿</td></tr>
+      </table></div>
+  </div>
+</div></div>
+
+<div class="footer">弈沐资本 · 交易系统 v2.1 · 自包含无外链 · 离线可用 · 涨红跌绿</div>
+
+</div></div>
+
+<script>
+// Search
+function search(q){
+  if(!q||q.length<2){resetSearch();return}
+  var lq=q.toLowerCase();
+  document.querySelectorAll('.sec,.card,.flow-step,.tl-phase').forEach(function(el){
+    el.style.opacity=el.textContent.toLowerCase().includes(lq)?'1':'0.2';
+  });
+}
+function resetSearch(){
+  document.querySelectorAll('.sec,.card,.flow-step,.tl-phase').forEach(function(el){el.style.opacity='1'});
+}
+
+// Active sidebar
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    var id=e.target.id;
+    var link=document.querySelector('.sidebar a[href="#'+id+'"]');
+    if(link&&e.isIntersecting){link.classList.add('act')}
+    else if(link){link.classList.remove('act')}
+  });
+},{rootMargin:'-10% 0px -80% 0px'});
+document.querySelectorAll('.sec[id]').forEach(function(el){obs.observe(el)});
+</script>
+</body>
+</html>
