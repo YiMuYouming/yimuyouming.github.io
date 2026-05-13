@@ -55,6 +55,15 @@ a:hover{color:var(--accent-hover)}
 .card .status.plan{background:rgba(37,99,235,.1);color:var(--blue)}
 .card .status.internal{background:rgba(217,119,6,.12);color:var(--accent)}
 
+/* Day list rows */
+.day-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.day-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px 18px;display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:all .12s;flex-wrap:wrap}
+.day-row:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(217,119,6,.08);color:var(--text);text-decoration:none}
+.day-date{font-size:14px;font-weight:600;min-width:80px;color:var(--text)}.day-date small{font-size:11px;font-weight:400;color:var(--text3)}
+.day-meta{font-size:12px;color:var(--text2);flex:1;min-width:180px}
+.day-tag{font-size:11px;color:var(--text3);padding:2px 8px;border-radius:6px;background:var(--bg4);white-space:nowrap}
+.day-arrow{font-size:13px;color:var(--text3)}
+
 /* Footer */
 .footer{border-top:1px solid var(--border-light);padding:20px 32px;text-align:center;font-size:12px;color:var(--text3)}
 .footer a{color:var(--text3)}
@@ -90,16 +99,22 @@ a:hover{color:var(--accent-hover)}
   <div class="section-header">
     <span class="num">01</span>
     <h2>复盘笔记</h2>
-    <span class="count">每周更新</span>
+    <span class="count">交易日更新</span>
+    <a href="review-notes/" style="margin-left:auto;font-size:13px;color:var(--accent)">查看全部 →</a>
   </div>
-  <p class="section-desc">每周交易日复盘，含大盘全景、情绪高标、涨停结构、自选池表现、红蓝对抗及次日预案。</p>
-  <div class="grid">
-    <a href="review-notes/W20/" class="card" style="display:block">
-      <div class="icon">📊</div>
-      <div class="title">W20 第20周 <span class="tag">最新</span></div>
-      <div class="meta">2026-05-13 · 周三 · 上证 +0.67%</div>
-      <div class="desc">风格78(连板81%/趋势76%) · 持仓北华+立讯 · 情绪58%连续4天修复</div>
-      <span class="status live">已发布</span>
+  <p class="section-desc">每日交易复盘，含大盘全景、情绪高标、涨停结构、自选池表现、红蓝对抗及次日预案。</p>
+  <div class="day-list">
+    <a href="review-notes/2026-05-13.html" class="day-row">
+      <span class="day-date">5月13日 <small>周三</small></span>
+      <span class="day-meta">上证 <strong style="color:var(--red)">+0.67%</strong> &nbsp;涨停 147 &nbsp;情绪 <strong style="color:var(--green)">58%</strong></span>
+      <span class="day-tag">电力主线 · 持仓 北华+立讯</span>
+      <span class="day-arrow">→</span>
+    </a>
+    <a href="review-notes/2026-05-12.html" class="day-row">
+      <span class="day-date">5月12日 <small>周二</small></span>
+      <span class="day-meta">上证 <strong style="color:var(--green)">-0.25%</strong> &nbsp;涨停 94 &nbsp;情绪 <strong style="color:var(--red)">25%</strong></span>
+      <span class="day-tag">低迷 · 连板分层开放</span>
+      <span class="day-arrow">→</span>
     </a>
   </div>
 </div>
