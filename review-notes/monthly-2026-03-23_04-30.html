@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>月度复盘 · 3/23 – 4/30</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:15px/1.65 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.header{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(12px)}
+.header a{font-size:13px;color:var(--text2);text-decoration:none;padding:3px 10px;border-radius:6px;border:1px solid var(--border);transition:all .12s}
+.header a:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.header .title{font-size:17px;font-weight:700;color:var(--text)}
+.header .sub{font-size:12px;color:var(--text3)}
+.container{max-width:900px;margin:0 auto;padding:24px 24px 80px}
+
+/* Hero */
+.hero{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;margin-bottom:24px}
+.hero h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.hero .verdict{font-size:15px;color:var(--text2);margin:12px 0 0;line-height:1.7;padding:14px 16px;background:var(--bg3);border-radius:10px;border-left:4px solid var(--red)}
+.hero .verdict strong{color:var(--red)}
+.kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px}
+.kpi{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;min-width:100px;flex:1}
+.kpi .kv{font-size:22px;font-weight:700}.kpi .kl{font-size:11px;color:var(--text3);margin-top:2px}
+.kpi.r .kv{color:var(--red)}.kpi.g .kv{color:var(--green)}.kpi.a .kv{color:var(--accent)}
+
+/* Sections */
+.sec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.sec-h{padding:14px 20px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4);display:flex;align-items:center;gap:8px}
+.sec-h:hover{background:var(--border)}
+.sec-h .ar{font-size:11px;color:var(--text3);transition:transform .15s}
+.sec-h.collapsed .ar{transform:rotate(-90deg)}
+.sec-h.collapsed{border-bottom-color:transparent}
+.sec-b{padding:16px 20px}.sec-b.hide{display:none}
+
+/* Tables */
+.tw{overflow-x:auto;margin-bottom:12px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{background:var(--bg4);padding:7px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.012)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap}
+.tg{background:rgba(5,150,105,.1);color:var(--green)}
+.ty{background:rgba(217,119,6,.1);color:var(--accent)}
+.tr{background:rgba(220,38,38,.1);color:var(--red)}
+.tb{background:rgba(37,99,235,.08);color:var(--blue)}
+.tp{background:rgba(124,58,237,.08);color:var(--purple)}
+
+/* Callouts */
+.callout{padding:14px 18px;border-radius:10px;margin-bottom:14px;font-size:14px;line-height:1.7}
+.callout.r{background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.2);border-left:4px solid var(--red)}
+.callout.g{background:rgba(5,150,105,.05);border:1px solid rgba(5,150,105,.2);border-left:4px solid var(--green)}
+.callout.a{background:rgba(217,119,6,.05);border:1px solid rgba(217,119,6,.2);border-left:4px solid var(--accent)}
+.callout.b{background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.2);border-left:4px solid var(--blue)}
+h3{font-size:15px;font-weight:700;margin:18px 0 8px}
+h4{font-size:13px;font-weight:600;color:var(--text2);margin:12px 0 6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:10px;color:var(--text2)}
+.footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--text3)}
+.missed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin:10px 0}
+.missed-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px}
+.missed-card .ticker{font-weight:700}
+.roots{display:flex;flex-direction:column;gap:10px;margin:10px 0}
+.root-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.root-card .num{font-size:18px;font-weight:700;min-width:28px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html">← 复盘笔记</a>
+  <span class="title">月度复盘</span>
+  <span class="sub">W13–W18 · 3/23 – 4/30</span>
+</div>
+
+<div class="container">
+
+<!-- Hero -->
+<div class="hero">
+  <h1>首次月度复盘</h1>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kv">29</div><div class="kl">交易日</div></div>
+    <div class="kpi"><div class="kv">6</div><div class="kl">周覆盖</div></div>
+    <div class="kpi r"><div class="kv">-3%~-5%</div><div class="kl">实盘估算</div></div>
+    <div class="kpi a"><div class="kv">~33%</div><div class="kl">胜率 4盈8亏1平</div></div>
+    <div class="kpi g"><div class="kv">100%</div><div class="kl">复盘执行率</div></div>
+    <div class="kpi"><div class="kv">10/29</div><div class="kl">空仓天数</div></div>
+  </div>
+  <div class="verdict">
+    <strong>防守出色，进攻严重不足。</strong>按规则做的交易全部盈利，违规操作贡献 80%+ 亏损。但规则体系为连板生态设计，4 月是趋势行情——中际旭创月涨 +50.86% 只抓到 +3.23%，博杰 +57.24% 平出。机会成本约 <strong>+20%~+40%</strong>，远超实际亏损。
+  </div>
+</div>
+
+<!-- §1 月度概览 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>一、月度概览</div>
+<div class="sec-b">
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>数据</th></tr></thead>
+<tbody>
+<tr><td>交易日</td><td>29 天（含清明假期减少）</td></tr>
+<tr><td>交易天数</td><td>~19 天（有操作或持仓）</td></tr>
+<tr><td>完全空仓</td><td>10 天</td></tr>
+<tr><td>总交易笔数</td><td>13 个独立标的（~23 笔操作）</td></tr>
+<tr><td>胜率</td><td>~33%（4盈 / 8亏 / 1平）</td></tr>
+<tr><td>模拟仓盈亏</td><td>W13约-0.67% + W14约-1.24% ≈ -1.91%</td></tr>
+<tr><td>实盘估算</td><td>约 -3%~-5%，W18光迅+6.08%回补后收窄</td></tr>
+<tr><td>最大盈利</td><td>+6.08%（光迅科技）、+4.2%（英维克）、+3.23%（中际旭创）</td></tr>
+<tr><td>最大亏损</td><td>-7.58%（睿智医药，违规操作）</td></tr>
+</tbody>
+</table></div>
+
+<h4>按周拆分</h4>
+<div class="tw"><table>
+<thead><tr><th>周</th><th>盈亏</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>W13</td><td>-0.67%</td><td>冰点→沸点极端波动；绿发电力止损-4.17%</td></tr>
+<tr><td>W14</td><td>-1.24%</td><td>睿智医药违规-7.58%占全部亏损；双冰验证</td></tr>
+<tr><td>W15</td><td>~-1.17%</td><td>2次违规（高潮期买入+周五开W1）；航天发展-1.94%</td></tr>
+<tr><td>W16</td><td>~-1.8%</td><td>航天电子三重违规-2.40%；<strong class="tg" style="color:var(--green)">中际+3.23%+英维克+4.2%最佳</strong></td></tr>
+<tr><td>W17</td><td>已实现-3,268元</td><td>预案全对但2次执行偏离；乾照违规-3.87%</td></tr>
+<tr><td>W18</td><td class="tg" style="color:var(--green)">+6.08%</td><td>全周4天3天空仓；光迅卖出+6.08%</td></tr>
+</tbody>
+</table></div>
+</div></div>
+
+<!-- §2 持仓管理 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>二、持仓管理</div>
+<div class="sec-b">
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>数据</th></tr></thead>
+<tbody>
+<tr><td>平均持仓天数</td><td>1-2 天（隔夜短线为主）</td></tr>
+<tr><td>最长持仓</td><td>5 天（华胜天成 4/17→4/21；光迅科技 4/22→4/27）</td></tr>
+<tr><td>最短持仓</td><td>1 天（中际旭创、航天发展等）</td></tr>
+<tr><td>空仓天数</td><td>10 天（占比 ~34%）</td></tr>
+<tr><td>平均仓位</td><td>~22%（有持仓时）</td></tr>
+</tbody>
+</table></div>
+
+<div class="callout a"><strong>频率判断：偏保守。</strong>10/29天空仓 + 平均持仓1-2天 = 大量观望期。规则体系在情绪高位（>70%）时强制空仓，而4月大盘在相当长时间内高位震荡继续涨，机会成本可观。</div>
+
+<h4>空仓拆解</h4>
+<div class="tw"><table>
+<thead><tr><th>类型</th><th>天数</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tg">规则要求</span></td><td>~7天</td><td>3/23冰点、3/24沸点观望、3/26冰点、4/1高潮、4/3双冰、4/7弱修复、4/28退潮</td></tr>
+<tr><td><span class="tag ty">选标窄导致</span></td><td>~2天</td><td>4/29、4/30</td></tr>
+<tr><td><span class="tag tr">主观退缩</span></td><td>~1天</td><td>4/9 冰点分化日未开新仓</td></tr>
+</tbody>
+</table></div>
+</div></div>
+
+<!-- §3 盈亏归因 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>三、盈亏归因 + 情绪相关性</div>
+<div class="sec-b">
+
+<div class="callout g"><strong>赚钱靠：</strong>方向正确 + 严格按规则执行。守规则的交易 <strong>全部盈利</strong>——光迅W2低吸+§1.1高位卖出（+6.08%）、英维克液冷主线+板块信号转弱卖出（+4.2%）、中际CPO分化止盈（+3.23%）、天际股份方向卖出（+0.71%）。</div>
+
+<div class="callout r"><strong>亏钱因为：</strong>违规操作 + 卖出犹豫。睿智医药（-7.58%）、乾照光电（-3.87%）、航天电子（-2.40%）、华胜天成（-4.32%滞后卖出）——4笔合计亏损 ~8,000+ 元。除睿智外方向本身没问题，但开仓时机/卖出执行出问题。</div>
+
+<div class="callout r" style="font-weight:700">核心模式：遵守规则时不亏钱，违反规则时一定亏。80%+ 亏损来自违规。</div>
+
+<h4>情绪值 vs 收益相关性</h4>
+<div class="tw"><table>
+<thead><tr><th>情绪区间</th><th>天数</th><th>操作</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>>80% 过热</td><td>~3天</td><td>空仓/违规买入</td><td><span class="tag tr">⚠️ 违规买入日（4/8高潮94%买入航天发展）亏-1.94%</span></td></tr>
+<tr><td>60-80% 偏热</td><td>~8天</td><td>空仓为主/少数操作</td><td><span class="tag ty">🟡 多数空仓，错过部分涨幅</span></td></tr>
+<tr><td>40-60% 中性</td><td>~8天</td><td>有操作</td><td><span class="tag tg">🟢 W2低吸+方向确认效果好（光迅+6.08%）</span></td></tr>
+<tr><td>20-40% 低迷</td><td>~7天</td><td>零星买入+持仓处理</td><td><span class="tag tr">🔴 违规集中在低迷期（乾照、航天电子）</span></td></tr>
+<tr><td><20% 冰点</td><td>~3天</td><td>空仓</td><td><span class="tag tg">🟢 100%空仓遵守规则</span></td></tr>
+</tbody>
+</table></div>
+<div class="callout a"><strong>结论：错配。</strong>情绪高时偏保守（规则要求空仓），错过了大盘股新高行情；情绪低时部分定力不够（违规开仓）。规则设计合理（高潮不买只卖），但高潮期持续时间长时纯空仓机会成本高。</div>
+</div></div>
+
+<!-- §3附加 我们错过了什么 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>⚡ 我们错过了什么 —— 规则体系的市场风格盲区<span class="tag tr" style="margin-left:8px">核心发现</span></div>
+<div class="sec-b">
+
+<div class="callout r"><strong>4月涨幅>50%的非ST个股：124只。</strong>沪深300成分股33只月涨幅>20%。锂电板块+42%、半导体设备+25%、光通信/CPO全面大涨。不是"市场没机会"，是规则体系让我们系统性地错过了。</div>
+
+<h4>参与过但卖飞的</h4>
+<div class="missed-grid">
+<div class="missed-card"><span class="ticker">中际旭创</span> 300308<br>买入741→卖出765（+3.23%）<br><span class="tr" style="color:var(--red)">月收857（+50.86%） 只吃到6%</span></div>
+<div class="missed-card"><span class="ticker">博杰股份</span> 002975<br>买入88.94→卖出88.87（平出）<br><span class="tr" style="color:var(--red)">月收110（+57.24%） 一周卖飞</span></div>
+</div>
+
+<h4>注意到但没介入的</h4>
+<div class="missed-grid">
+<div class="missed-card"><span class="ticker">深南电路</span> 002916<br>PCB龙头 +42.36%<br>W15已选入自选池 → 从未买入</div>
+<div class="missed-card"><span class="ticker">天齐锂业</span> 002466<br>锂电 +44.25%<br>W18才注意到</div>
+<div class="missed-card"><span class="ticker">PCB/算力中军</span><br>沪电+35%、生益+41%、浪潮+24%<br>都在雷达上但没出手</div>
+</div>
+
+<h3>三个根因</h3>
+<div class="roots">
+<div class="root-card"><div class="num" style="color:var(--red)">1</div><div><strong>规则体系有市场风格盲区</strong><span class="tag tr" style="margin-left:6px">根源</span><br><span style="font-size:13px;color:var(--text2)">整个系统为连板/题材短线设计——情绪指标、仓位决定、选标逻辑全部依赖短线生态。4月是大市值趋势行情（连板高度被压制、晋级率<30%），但趋势股不涨停却涨不停。系统持续给出空仓信号。</span></div></div>
+<div class="root-card"><div class="num" style="color:var(--accent)">2</div><div><strong>趋势股卖出过早</strong><span class="tag ty" style="margin-left:6px">操作层</span><br><span style="font-size:13px;color:var(--text2)">用连板卖出规则处理趋势股——连板票分歧=退潮信号；趋势股分歧=正常调整甚至加仓点。同一套卖出框架处理两种风格的票，必然卖飞。</span></div></div>
+<div class="root-card"><div class="num" style="color:var(--accent)">3</div><div><strong>方向确认到介入之间断链</strong><span class="tag ty" style="margin-left:6px">流程层</span><br><span style="font-size:13px;color:var(--text2)">方向确认框架本身好，但确认后缺乏标准动作——确认后D1观察→D2加仓→D3评估。规则告诉你能做时，你没有标准流程去执行。</span></div></div>
+</div>
+
+<div class="callout r" style="font-weight:700;font-size:15px">机会成本量化：~+20% 到 +40%（基于已触及但未深入的方向），远超实际亏损（-3%~-5%）。该改的不是某条规则的阈值，而是补充趋势行情打法和仓位规则。</div>
+</div></div>
+
+<!-- §4 rules校验 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>四、Rules 校验<span class="tag tg" style="margin-left:8px">11有效 · 4需改 · 1形同虚设</span></div>
+<div class="sec-b">
+
+<h4>本月触发的 Rules（帮你避坑的）</h4>
+<div class="tw"><table>
+<thead><tr><th>规则</th><th>触发场景</th><th>效果</th></tr></thead>
+<tbody>
+<tr><td>§1.1 止损卖出</td><td>3/26 绿发电力低开到16%冰点</td><td><span class="tag tg">规避-4.17%扩大</span></td></tr>
+<tr><td>§1.1 板块弱冲高走</td><td>4/27 光迅高开+板块弱 → 09:56卖出</td><td><span class="tag tg">锁定+6.08%</span></td></tr>
+<tr><td>§1.1a 板块弱量化</td><td>4/9 航天发展板块背离+主力-4.89亿</td><td><span class="tag tg">尾盘清仓避亏</span></td></tr>
+<tr><td>§2.3 双冰场景</td><td>4/3 连续冰点</td><td><span class="tag tg">全天空仓</span></td></tr>
+<tr><td>§2.4 双窗口关</td><td>4/28 C退潮确认+自选池全绿</td><td><span class="tag tg">避-44亿主力出逃日</span></td></tr>
+<tr><td>§2.4 方向确认<3条不做</td><td>4/29 电力梯队断裂+半导体覆没</td><td><span class="tag tg">回避假修复日</span></td></tr>
+<tr><td>§3.4 连亏减仓</td><td>本月连亏多天后始终谨慎</td><td><span class="tag tg">保护本金</span></td></tr>
+</tbody>
+</table></div>
+
+<h4>本月违反的 Rules（按频次排序）</h4>
+<div class="tw"><table>
+<thead><tr><th>规则</th><th>频次</th><th>典型场景</th><th>后果</th></tr></thead>
+<tbody>
+<tr><td>§2.1 高潮期不买只卖</td><td>2次</td><td>4/8(情绪94%)买入航天发展</td><td><span class="tr" style="color:var(--red)">-1.94%</span></td></tr>
+<tr><td>§2.5 周五不开W1</td><td>1次</td><td>4/10周五开W1买入英维克+博杰</td><td><span class="ty" style="color:var(--accent)">方向对操作错</span></td></tr>
+<tr><td>§2.4 W1前提条件</td><td>1次</td><td>4/21情绪35%开W1买入乾照</td><td><span class="tr" style="color:var(--red)">-3.87%</span></td></tr>
+<tr><td>§3.1 仓位上限</td><td>1次</td><td>4/22光迅仓位30.5%超预案10%</td><td><span class="ty" style="color:var(--accent)">方向对执行松</span></td></tr>
+<tr><td>§2.4 W1硬性条件</td><td>1次</td><td>4/2睿智医药情绪36%+高开<3%</td><td><span class="tr" style="color:var(--red)">-7.58%</span></td></tr>
+<tr><td>§1.2 止盈未执行</td><td>1次</td><td>4/23-24情绪拐点-29pp应卖未卖</td><td><span class="ty" style="color:var(--accent)">浮盈缩43%</span></td></tr>
+</tbody>
+</table></div>
+
+<h4>违反模式</h4>
+<div class="callout r">①情绪低时受个别票走强诱惑把分化当主升（睿智、乾照）②高潮期管不住手（航天发展）③仓位执行偏松（光迅）④卖出犹豫（光迅浮盈缩水43%）</div>
+
+<h4>规则效果总览</h4>
+<div class="tw"><table>
+<thead><tr><th>状态</th><th>数量</th><th>占比</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tg">✅ 有效</span></td><td>11条</td><td>61%</td></tr>
+<tr><td><span class="tag ty">⚠️ 需修改</span></td><td>4条</td><td>22%</td></tr>
+<tr><td><span class="tag tr">❌ 形同虚设</span></td><td>1条（周五不开W1）</td><td>6%</td></tr>
+<tr><td><span class="tag tb">🟡 部分有效</span></td><td>1条</td><td>6%</td></tr>
+</tbody>
+</table></div>
+
+<div class="callout b"><strong>新增规则建议：</strong><br>① §1.2补充：情绪拐点止盈硬执行——滑降>20pp+赚钱效应恶化→次日竞价止盈<br>② §4.1补充：连亏后强制空仓——连亏2天后第3天强制空仓，规避情绪化操作</div>
+</div></div>
+
+<!-- §5 认知进化 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>五、认知进化<span class="tag tg" style="margin-left:8px">7条固化</span></div>
+<div class="sec-b">
+<div class="tw"><table>
+<thead><tr><th>认知</th><th>来源</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>赚钱效应是检验情绪的唯一标准</td><td>W13-W18</td><td><span class="tag tg">🟢 已固化→原则#3</span></td></tr>
+<tr><td>脉冲修复>50pp=诱多</td><td>W14</td><td><span class="tag tg">🟢 已固化→§2.1</span></td></tr>
+<tr><td>龙头独秀+跟风杀跌=退潮</td><td>W13-14</td><td><span class="tag tg">🟢 已固化→§2.2</span></td></tr>
+<tr><td>方向确认≥3条才做，2条不做更安全</td><td>W14-15</td><td><span class="tag tg">🟢 已固化→§2.4</span></td></tr>
+<tr><td>双冰环境绝对空仓</td><td>W14</td><td><span class="tag tg">🟢 已固化→§2.3</span></td></tr>
+<tr><td>资金合力>技术指标</td><td>W17</td><td><span class="tag tg">🟢 已固化→§4.2</span></td></tr>
+<tr><td>W2低吸必须14:00后三阶段确认</td><td>W16</td><td><span class="tag tg">🟢 已固化→§4.3</span></td></tr>
+<tr><td>尾盘板块定律</td><td>W16</td><td><span class="tag ty">🟡 待验证</span></td></tr>
+<tr><td>催化剂一日改格局</td><td>W16-17</td><td><span class="tag ty">🟡 待验证</span></td></tr>
+<tr><td>散点轮动→空仓等</td><td>W17</td><td><span class="tag ty">🟡 待验证</span></td></tr>
+</tbody>
+</table></div>
+</div></div>
+
+<!-- §6 下月战略 -->
+<div class="sec">
+<div class="sec-h" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')"><span class="ar">▼</span>六、下月战略</div>
+<div class="sec-b">
+
+<div class="callout b"><strong>核心打法：先识别市场风格，再选择打法。</strong>连板生态→用现有规则体系；趋势行情→启用趋势股规则（合力量化+趋势持有+波段仓位）。</div>
+
+<h4>风控底线</h4>
+<div class="para">• 连亏2天后第3天强制空仓，不交易只复盘<br>
+• 情绪<60%不开W1，任何"个别票很强"都不作为例外<br>
+• 仓位执行必须匹配预案，超限自动触发次日减仓<br>
+• 趋势股止盈不用短线分歧信号，用趋势退潮信号</div>
+
+<h4>5月待执行任务</h4>
+<div class="para">• 补充趋势行情识别规则（合力量化+板块趋势判定）<br>
+• 建立"方向确认后自动触发评估→试错→加仓"流程<br>
+• 补充趋势股持有纪律：区分"短线分歧"和"趋势退潮"</div>
+
+<h4>重点变量</h4>
+<div class="para">• 五一后（5/6）节后资金回流方向——锂电池/算力/半导体<br>
+• 一季报窗口是否持续催化<br>
+• 梯队高度能否突破5板天花板——决定连板vs趋势风格孰强</div>
+</div></div>
+
+<div class="footer">弈沐资本 · 月度复盘 · 首次系统审计 · 3/23 – 4/30</div>
+
+</div>
+</body>
+</html>

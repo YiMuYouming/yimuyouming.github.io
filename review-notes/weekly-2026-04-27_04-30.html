@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W18 周复盘（4/27-4/30）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 W18 周复盘</div>
+  <div class="meta">
+    <span class="chip blue">4/27-4/30</span>
+    <span class="chip green">盈亏 +6.08%</span>
+    <span class="chip accent">买0/卖1</span>
+    <span class="chip purple">空仓3天</span>
+    <span class="chip blue">均情绪 53%</span>
+    <span class="chip blue">4个交易日</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s0">💡 核心发现</a>
+  <div class="sep"></div>
+  <a href="#s1">§1 本周概览</a>
+  <a href="#s2">§2 节奏与打法</a>
+  <a href="#s3">§3 主线与板块</a>
+  <a href="#s4">§4 盈亏归因</a>
+  <a href="#s5">§5 认知迭代</a>
+  <a href="#s6">§6 下周基调</a>
+  <div class="sep"></div>
+  <a href="#appendix">附录 速查</a>
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+
+<!-- ===== 核心发现 ===== -->
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>💡 核心发现（先看这里）</div>
+<div class="sb">
+
+<div class="summary-cards">
+<div class="summary-card">
+<div class="label">周盈亏</div>
+<div class="value green">+6.08%</div>
+<div class="sub">买0次 / 卖1次 / 空仓3天</div>
+</div>
+<div class="summary-card">
+<div class="label">胜率</div>
+<div class="value accent">100%</div>
+<div class="sub">1盈 / 0亏</div>
+</div>
+<div class="summary-card">
+<div class="label">预案命中率</div>
+<div class="value green">100%</div>
+<div class="sub">4/4 天全中</div>
+</div>
+<div class="summary-card">
+<div class="label">平均情绪</div>
+<div class="value">53.25%</div>
+<div class="sub">主升区间</div>
+</div>
+<div class="summary-card">
+<div class="label">主线状态</div>
+<div class="value">无明确主线</div>
+<div class="sub">3个强支线并立</div>
+</div>
+<div class="summary-card">
+<div class="label">梯队核心矛盾</div>
+<div class="value red">断层</div>
+<div class="sub">4板→5板→3板→4板，始终未突破5板天花板</div>
+</div>
+</div>
+
+<div class="sh3">本周关键结论</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>盈亏</td><td>累计+6.08%，买0次卖1次空仓3天</td></tr>
+<tr><td>节奏</td><td>预案命中率100%（4/4），C退潮路径2次精准命中</td></tr>
+<tr><td>主线</td><td>无明确主线——算力/半导体从弱主线退潮→强支线反复切换，3个强支线并立</td></tr>
+<tr><td>梯队</td><td>4板→5板→3板→4板，高度始终未突破5板天花板</td></tr>
+<tr><td>赚钱效应</td><td>差→一般→差→一般偏下，涨停收益从未稳定>2%</td></tr>
+<tr><td>盈亏模式</td><td>赚钱=按§1.1冲高卖出（光迅+6.08%）；亏钱=本周无亏损（空仓避雷）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx green"><strong>认知迭代（4条值得固化）：</strong><br>
+① 竞价情绪是W1硬门槛，不因个股表现妥协<br>
+② 高情绪低高度=退潮典型特征<br>
+③ 高开≠安全、低开≠危险<br>
+④ 竞价&lt;30%=全天空仓信号</div>
+
+<div class="sbx accent"><strong>下周目标：</strong>节后5/6验证算力/半导体+锂电池方向延续性；梯队高度能否到5板；赚钱效应能否修复到2%+。</div>
+</div>
+</div>
+
+<!-- ===== §1 ===== -->
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§1 本周概览</div>
+<div class="sb">
+
+<div class="sh3">每日交易回顾</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏%</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周一4/27</td><td>59%→主升降档</td><td>降档冰点低吸</td><td>卖光迅@132.325</td><td class="up">+6.08%</td><td><span class="badge badge-green">✅</span></td><td>V型修复+高开诱多+算力分化</td></tr>
+<tr><td>周二4/28</td><td>30%→冰点</td><td>空仓观望</td><td>无</td><td>0%</td><td><span class="badge badge-green">✅</span></td><td>C退潮确认+自选全绿+主力-44亿</td></tr>
+<tr><td>周三4/29</td><td>72%→强势降档</td><td>空仓观望</td><td>无</td><td>0%</td><td><span class="badge badge-green">✅</span></td><td>高情绪低高度+梯队断裂+电池爆发</td></tr>
+<tr><td>周四4/30</td><td>52%→主升</td><td>空仓观望</td><td>无</td><td>0%</td><td><span class="badge badge-green">✅</span></td><td>情绪断崖+中军崩盘+空仓过节</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">周总结</div>
+<div class="sbx green"><strong>周累计盈亏：+6.08%</strong></div>
+<div class="para"><strong>本周操作：买0次 / 卖1次 / 空仓3天</strong></div>
+<div class="para">一句话总结：全周4天3天空仓，唯一操作按§1.1卖出光迅+6.08%。预案4/4命中，纪律执行到位。盘面核心矛盾是"高情绪低高度"——情绪在30%-72%间剧烈波动，但梯队高度始终未打开、赚钱效应始终未修复。节前效应+梯队断层=只能空仓保本金。</div>
+</div>
+</div>
+
+<!-- ===== §2 ===== -->
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§2 节奏与打法回顾</div>
+<div class="sb">
+
+<div class="sh3">预案命中率</div>
+<div class="para">4天里预案对了4天（100%）</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>预案对错</th><th>关键操作</th></tr></thead>
+<tbody>
+<tr><td>周一4/27</td><td><span class="badge badge-green">✅ B偏C路径命中</span></td><td>按§1.1卖出光迅</td></tr>
+<tr><td>周二4/28</td><td><span class="badge badge-green">✅ C退潮命中</span></td><td>双窗全关空仓</td></tr>
+<tr><td>周三4/29</td><td><span class="badge badge-green">✅ 例外条件未满足</span></td><td>空仓观望</td></tr>
+<tr><td>周四4/30</td><td><span class="badge badge-green">✅ 情绪硬卡</span></td><td>双窗全关空仓</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">打法切换</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪</th><th>档位</th><th>打法</th><th>正确性</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>59%→主升降档</td><td>低迷（降档）</td><td>按§1.1冲高卖出持仓</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周二</td><td>30%→冰点</td><td>冰点</td><td>双窗全关空仓</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周三</td><td>72%→强势降档</td><td>强势→降档</td><td>空仓观望（情绪虚高+高度压制）</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周四</td><td>52%→主升</td><td>主升</td><td>空仓（情绪硬卡+中军崩盘）</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx green">全周打法切换顺畅，没有出现"该空仓时追涨"或"该卖出时犹豫"的问题。核心优势是纪律执行到位。</div>
+</div>
+</div>
+
+<!-- ===== §3 ===== -->
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§3 主线与板块</div>
+<div class="sb">
+
+<div class="sh3">主线演变</div>
+<div class="tw"><table>
+<thead><tr><th>时间段</th><th>主线状态</th><th>切换信号</th></tr></thead>
+<tbody>
+<tr><td>周初</td><td>算力/半导体（弱主线，1/3确认=支线规则执行）</td><td>—</td></tr>
+<tr><td>周末</td><td>无明确主线，3个强支线并立（半导体/锂电池/算力租赁）</td><td>电力4/28达5板但4/29未6板=梯队断裂退潮，算力中军4/28集体崩盘（主力-44亿）</td></tr>
+<tr><td>4/29爆发</td><td>锂电池14只+算力租赁7只=新强支线涌现</td><td>电池产业链+算力租赁成为新强支线</td></tr>
+<tr><td>4/30</td><td>算力/半导体22只涨停=方向修复但梯队仍不完整</td><td>涨停数量恢复但高度未突破</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">梯队演变</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>最高板</th><th>梯队状态</th><th>关键变化</th></tr></thead>
+<tbody>
+<tr><td>周一4/27</td><td><span class="badge badge-red">4板</span>（水发燃气）</td><td>4-3-2</td><td>算力/半导体16只最强</td></tr>
+<tr><td>周二4/28</td><td><span class="badge badge-red">5板</span>（水发燃气）</td><td>5-4-3-2 ✅完整</td><td>全周最高点</td></tr>
+<tr><td>周三4/29</td><td><span class="badge badge-yellow">3板</span>（飞马国际）</td><td>3-2断层</td><td>从5板断崖至3板</td></tr>
+<tr><td>周四4/30</td><td><span class="badge badge-yellow">4板</span>（越剑智能）</td><td>4-3-2 完整</td><td>修复但未超5板天花板</td></tr>
+</tbody>
+</table></div>
+<div class="sbx warn">高度变化：打开→压缩→修复，但始终未突破5板天花板</div>
+
+<div class="sh3">本周活跃板块（持续2天+有涨停）</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>4/27</th><th>4/28</th><th>4/29</th><th>4/30</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>算力/半导体产业链</td><td><span class="up">16只🔥</span></td><td>11只</td><td><span class="up">14只</span></td><td><span class="up">22只🔥</span></td><td><span class="badge badge-red">🔥全周最强方向</span></td></tr>
+<tr><td>电力</td><td>5只</td><td>5只</td><td>3只</td><td>0只</td><td><span class="badge badge-green">📉 退潮确认</span></td></tr>
+<tr><td>锂电池</td><td>3只</td><td>0只</td><td><span class="up">14只</span></td><td>9只</td><td><span class="badge badge-blue">🔄 4/29爆发为强支线</span></td></tr>
+<tr><td>算力租赁</td><td>5只</td><td>5只</td><td><span class="up">7只</span></td><td>0只</td><td><span class="badge badge-yellow">🔄 脉冲</span></td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- ===== §4 ===== -->
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§4 盈亏归因</div>
+<div class="sb">
+
+<div class="sh3">本周唯一交易</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日</th><th>卖日</th><th>盈亏%</th><th>归因</th></tr></thead>
+<tbody>
+<tr><td>光迅科技</td><td>光通信</td><td>4/24(上周四)</td><td>4/27(周一)</td><td class="up">+6.08%</td><td>✅ 按§1.1高开+板块弱冲高卖出。卖出后+1日+1.67%/+2日+0.41%均正，信号偏敏感但不致命</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">本周最佳/最差操作</div>
+<div class="sbx green"><strong>本周最佳操作：</strong>周一09:56卖出光迅科技+6.08%。竞价高开+2.05%但9:45板块弱确认（中军主力大面积流出），按§1.1冲高就走。</div>
+<div class="sbx"><strong>本周最差操作：</strong>无亏损操作。全周仅1笔交易且盈利。</div>
+
+<div class="sh3">盈亏模式识别</div>
+<div class="sbx green"><strong>赚钱的操作共性：</strong>按规则执行（§1.1卖出框架），不因个股盘中强势而犹豫，板块弱就卖</div>
+<div class="sbx green"><strong>避免亏损的操作共性：</strong>3天空仓避免了所有陷阱——周二自选池9只全绿主力-44亿、周三高情绪低高度陷阱、周四中军全线崩盘。空仓纪律是本周0亏损的核心原因。</div>
+</div>
+</div>
+
+<!-- ===== §5 ===== -->
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§5 认知迭代</div>
+<div class="sb">
+
+<div class="sh3">本周心得蒸馏</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>心得摘要</th><th>来源</th><th>类型</th><th>流向</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>高开≠安全，低开≠危险</td><td>4/27</td><td>🆕认知</td><td>→ insights/情绪与周期.md</td></tr>
+<tr><td>2</td><td>赚钱效应与情绪可以背离</td><td>4/27</td><td>🆕认知</td><td>→ insights/情绪与周期.md</td></tr>
+<tr><td>3</td><td>英伟达隔夜≠A股跟涨</td><td>4/28</td><td>教训</td><td>→ feedback/lesson_37_隔夜利好失效.md</td></tr>
+<tr><td>4</td><td>竞价情绪&lt;30%=全天空仓信号</td><td>4/28</td><td>议题</td><td>→ 待讨论是否固化规则</td></tr>
+<tr><td>5</td><td>高情绪低高度=退潮期典型特征</td><td>4/29</td><td>🆕认知</td><td>→ insights/情绪与周期.md</td></tr>
+<tr><td>6</td><td>竞价情绪断崖暴跌=硬卡不妥协</td><td>4/30</td><td>教训</td><td>→ feedback/lesson_38_情绪硬卡不妥协.md</td></tr>
+<tr><td>7</td><td>高标涨停≠中军安全</td><td>4/30</td><td>🆕认知</td><td>→ insights/窗口节奏与W2.md</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">需要改 rules？</div>
+<div class="sbx warn"><strong>议题：</strong>"竞价&lt;30%=全天空仓"是否固化为规则？本周2次验证（4/28竞价23%/4/30竞价34%偏弱但>30%）——数据点不足，等下次竞价&lt;30%再验证后讨论。</div>
+<div class="sbx green"><strong>写入：</strong><br>
+→ insights/情绪与周期.md（3条：高开兑现/赚钱效应为锚/高情绪低高度）<br>
+→ feedback/lesson_37_隔夜利好失效.md（severity: warn）<br>
+→ feedback/lesson_38_情绪硬卡不妥协.md（severity: warn）</div>
+
+<div class="sh3">丢弃项（不符合固化标准）</div>
+<div class="tw"><table>
+<thead><tr><th>心得</th><th>来源</th><th>丢弃原因</th></tr></thead>
+<tbody>
+<tr><td>§1.1板块弱判定时间窗口是否延后</td><td>4/27</td><td>数据点不足，仅1次案例</td></tr>
+<tr><td>五一前效应不可忽视</td><td>4/28</td><td>节前效应是常识，非新认知</td></tr>
+<tr><td>天齐独秀值得节后关注</td><td>4/30</td><td>个股观察，非认知迭代</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- ===== §6 ===== -->
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§6 下周基调（5/6起）</div>
+<div class="sb">
+
+<div class="sh3">方向判断</div>
+<div class="para">主线不确定——3个强支线并立（半导体/锂电池/算力租赁），需5/6竞价确认资金回流方向。</div>
+<div class="para">概率：<strong>锂电池延续 > 算力修复 > 新方向切换</strong></div>
+<div class="para">算力/半导体涨停22只=最强方向但趋势弱+资金节前流出；锂电池梯队最完整（3板+2板×3）但天齐独秀≠板块合力。</div>
+
+<div class="sh3">情绪预期</div>
+<div class="para">本周收盘情绪52%（主升区间）。节后首日预判55-70%——节前资金撤退后回流，大概率维持主升区间。竞价&lt;40%=节后资金未回流，需警惕。</div>
+
+<div class="sh3">重点盯的板块/标的</div>
+<div class="sbx">
+<strong>锂电池：</strong>永杉锂业4板? + 天齐锂业中军延续? + 赣锋锂业接力?<br>
+<strong>算力/半导体：</strong>宝光股份4板? + 寒武纪主力+42.7亿能否持续? + 光迅科技主力+11.7亿能否回归?<br>
+<strong>梯队高度：</strong>越剑智能5板?——市场高度能否突破5板天花板
+</div>
+
+<div class="sh3">需要调整的习惯或规则</div>
+<div class="tw"><table>
+<thead><tr><th>议题</th><th>状态</th><th>行动</th></tr></thead>
+<tbody>
+<tr><td>竞价&lt;30%=全天空仓是否固化为规则？</td><td>待讨论</td><td>等下次竞价&lt;30%再验证后讨论</td></tr>
+<tr><td>红方对抗应前置</td><td>待改进</td><td>后续周复盘红方对抗应在日复盘阶段就引入</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周目标</div>
+<div class="sbx green">节后首周（5/6-5/9）确认1个主线方向+1次有效操作。如果5/6竞价情绪≥60%+方向确认≥3条→锂电池方向小仓试探（≤10%）；如果竞价情绪&lt;40%→继续空仓观察。</div>
+</div>
+</div>
+
+<!-- ===== 附录 ===== -->
+<div class="section" id="appendix">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>📋 附录 · W18 速查</div>
+<div class="sb">
+
+<div class="sh3">本周数据总览</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>周一4/27</th><th>周二4/28</th><th>周三4/29</th><th>周四4/30</th></tr></thead>
+<tbody>
+<tr><td>情绪</td><td>59%</td><td>30%</td><td>72%</td><td>52%</td></tr>
+<tr><td>上证(%)</td><td>+0.16%</td><td>-0.19%</td><td>+0.71%</td><td>+0.11%</td></tr>
+<tr><td>涨停</td><td>84</td><td>76</td><td>119</td><td>98</td></tr>
+<tr><td>跌停</td><td>52</td><td>54</td><td>39</td><td>52</td></tr>
+<tr><td>最高板</td><td>4板</td><td>5板</td><td>3板</td><td>4板</td></tr>
+<tr><td>量能</td><td>3万亿(-2%)</td><td>3万亿(-2%)</td><td>3万亿(+2%)</td><td>3万亿(+6%)</td></tr>
+<tr><td>操作</td><td>卖光迅+6.08%</td><td>空仓</td><td>空仓</td><td>空仓过节</td></tr>
+<tr><td>盈亏</td><td class="up">+6.08%</td><td>0%</td><td>0%</td><td>0%</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周一（5/6）操作总纲</div>
+<div class="sbx green"><strong>基准预期：</strong>上证4090-4140，情绪55-70%（节后资金回流大概率维持主升区间）</div>
+<div class="sbx"><strong>自选池排序：</strong>锂电池（强支线，梯队完整）> 算力/半导体（支线，涨停22只最强但趋势弱，仓位7折）</div>
+<div class="sbx warn"><strong>节后首日保守原则：</strong>实际执行仓位≤30%、单笔≤10%、最多持2只。确认节后资金回流+方向延续后，逐步放宽至规则上限。</div>
+
+<div class="sh3">关键验证信号（5/6）</div>
+<ol class="tight-list">
+<li>竞价情绪≥40%（维持主升）</li>
+<li>锂电池方向涨停≥5只 + 天齐继续走强</li>
+<li>宝光股份/金螳螂能否4板</li>
+<li>越剑智能5板——市场高度能否突破5板天花板</li>
+<li>半导体/算力板块涨停能否维持15+只</li>
+</ol>
+</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

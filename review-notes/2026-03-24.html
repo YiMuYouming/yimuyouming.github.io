@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-03-24 周二 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 W13 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue">2026-03-24 周二</span>
+    <span class="chip blue">量能 2万亿</span>
+    <span class="chip red">涨停 83</span>
+    <span class="chip green">跌停 1</span>
+    <span class="chip red">最高7板（华电辽能）板</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-一-盘前情况">一、盘前情况</a>
+  <a href="#s-二-当日市场表现">二、当日市场表现</a>
+  <a href="#2-1-竞价阶段" class="s2">2.1 竞价阶段</a>
+  <a href="#2-2-盘中情况" class="s2">2.2 盘中情况</a>
+  <a href="#2-3-尾盘情况" class="s2">2.3 尾盘情况</a>
+  <a href="#s-三-复盘阶段">三、复盘阶段</a>
+  <a href="#3-1-当日买卖-盘后持仓" class="s2">3.1 当日买卖 &amp; 盘后持仓</a>
+  <a href="#3-2-当日涨停复盘" class="s2">3.2 当日涨停复盘</a>
+  <a href="#s-四-复盘心得">四、复盘心得</a>
+  <a href="#s-五-紫米复盘">五、紫米复盘</a>
+  <a href="#一-今日操作回顾" class="s2">一、今日操作回顾</a>
+  <a href="#二-自我纠错-learning-record-" class="s2">二、自我纠错（Learning Record）</a>
+  <a href="#三-数据质量评估" class="s2">三、数据质量评估</a>
+  <a href="#四-盘面深度分析" class="s2">四、盘面深度分析</a>
+  <a href="#五-明日预判-3-25-周三-" class="s2">五、明日预判（3.25 周三）</a>
+  <a href="#六-策略反哺建议" class="s2">六、策略反哺建议</a>
+  <a href="#七-首日总结" class="s2">七、首日总结</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="2026年3月24日-周二-复盘笔记">2026年3月24日 周二 复盘笔记</h1>
+
+<div class="section" id="s-一-盘前情况">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、盘前情况</div>
+<div class="sb">
+<blockquote class="si">截图来源：Daily数据/9-00-自选股股票池 | 记录人：稳米 | 共51只</blockquote>
+<p class="para"><strong>自选股池（按板块分布）：</strong></p>
+<p class="para"><strong>电力（8只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>001896</td><td>豫能控股</td><td>电力</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td>电力</td></tr>
+<tr><td>600726</td><td>华电能源</td><td>电力</td></tr>
+<tr><td>002015</td><td>协鑫能科</td><td>电力</td></tr>
+<tr><td>600930</td><td>华电新能</td><td>新能源发电</td></tr>
+<tr><td>000539</td><td>粤电力A</td><td>电力</td></tr>
+<tr><td>601868</td><td>中国能建</td><td>建筑装饰</td></tr>
+<tr><td>003035</td><td>南网能源</td><td>绿色电力</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>光伏设备（8只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>002506</td><td>协鑫集成</td><td>光伏设备</td></tr>
+<tr><td>688107</td><td>国晟科技</td><td>光伏设备</td></tr>
+<tr><td>002309</td><td>中利集团</td><td>光伏概念</td></tr>
+<tr><td>002256</td><td>兆新股份</td><td>光伏概念</td></tr>
+<tr><td>002218</td><td>拓日新能</td><td>光伏设备</td></tr>
+<tr><td>300274</td><td>阳光电源</td><td>光伏逆变器</td></tr>
+<tr><td>601012</td><td>隆基绿能</td><td>光伏设备</td></tr>
+<tr><td>300827</td><td>正泰电源</td><td>储能</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>绿色电力/风电（6只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>002310</td><td>东方新能</td><td>绿色电力</td></tr>
+<tr><td>600821</td><td>金开新能</td><td>绿色电力</td></tr>
+<tr><td>002202</td><td>金风科技</td><td>风电设备</td></tr>
+<tr><td>601016</td><td>节能风电</td><td>风电</td></tr>
+<tr><td>000862</td><td>银星能源</td><td>风电</td></tr>
+<tr><td>000601</td><td>韶能股份</td><td>绿色电力</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>科技/AI（6只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>600410</td><td>华胜天成</td><td>IT 服务</td></tr>
+<tr><td>002261</td><td>拓维信息</td><td>AI 算力</td></tr>
+<tr><td>600703</td><td>三安光电</td><td>半导体</td></tr>
+<tr><td>603803</td><td>瑞斯康达</td><td>通信设备</td></tr>
+<tr><td>000020</td><td>深华发A</td><td>光学光电子</td></tr>
+<tr><td>002131</td><td>利欧股份</td><td>数字营销</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>电网设备（4只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>000533</td><td>顺钠股份</td><td>电网设备</td></tr>
+<tr><td>601179</td><td>中国西电</td><td>电网设备</td></tr>
+<tr><td>002112</td><td>三变科技</td><td>电网设备</td></tr>
+<tr><td>600089</td><td>特变电工</td><td>电气设备</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>煤化工（3只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>600722</td><td>金牛化工</td><td>煤化工</td></tr>
+<tr><td>601015</td><td>陕西黑猫</td><td>煤化工</td></tr>
+<tr><td>600143</td><td>金发科技</td><td>改性塑料</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>油气（3只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>600759</td><td>洲际油气</td><td>油气开采</td></tr>
+<tr><td>300164</td><td>通源石油</td><td>油服工程</td></tr>
+<tr><td>601899</td><td>紫金矿业</td><td>有色金属</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>其他（13只）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>002594</td><td>比亚迪</td><td>新能源汽车</td></tr>
+<tr><td>000815</td><td>美利云</td><td>数据中心</td></tr>
+<tr><td>002565</td><td>顺灏股份</td><td>包装印刷</td></tr>
+<tr><td>600580</td><td>卧龙电驱</td><td>电机</td></tr>
+<tr><td>000547</td><td>航天发展</td><td>军工电子</td></tr>
+<tr><td>000592</td><td>平潭发展</td><td>林业</td></tr>
+<tr><td>000617</td><td>中油资本</td><td>多元金融</td></tr>
+<tr><td>300085</td><td>银之杰</td><td>金融科技</td></tr>
+<tr><td>603687</td><td>大胜达</td><td>包装印刷</td></tr>
+<tr><td>600376</td><td>首开股份</td><td>房地产开发</td></tr>
+<tr><td>600032</td><td>浙江新能</td><td>新能源发电</td></tr>
+<tr><td>000890</td><td>法尔胜</td><td>金属制品</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<div class="section" id="s-二-当日市场表现">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、当日市场表现</div>
+<div class="sb">
+<h3 class="sh3" id="2-1-竞价阶段">2.1 竞价阶段</h3>
+<blockquote class="si">截图来源：Daily数据/9-30-竞价情况 | 记录人：稳米</blockquote>
+<p class="para"><strong>自选股竞价表现（按涨幅排序）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>竞价涨幅</th><th>量比</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>8.69</td><td>一字涨停</td></tr>
+<tr><td>002218</td><td>拓日新能</td><td><span class="up">+6.98%</span></td><td>23.41</td><td>量比极高</td></tr>
+<tr><td>002015</td><td>协鑫能科</td><td><span class="up">+3.00%</span></td><td>3.57</td><td></td></tr>
+<tr><td>002202</td><td>金风科技</td><td><span class="up">+2.44%</span></td><td>1.44</td><td></td></tr>
+<tr><td>002131</td><td>利欧股份</td><td><span class="up">+2.37%</span></td><td>1.72</td><td></td></tr>
+<tr><td>000601</td><td>韶能股份</td><td><span class="up">+2.32%</span></td><td>25.67</td><td>量比极高</td></tr>
+<tr><td>000547</td><td>航天发展</td><td><span class="up">+2.24%</span></td><td>1.93</td><td></td></tr>
+<tr><td>601179</td><td>中国西电</td><td><span class="up">+2.24%</span></td><td>1.57</td><td></td></tr>
+<tr><td>601899</td><td>紫金矿业</td><td><span class="up">+2.19%</span></td><td>4.10</td><td></td></tr>
+<tr><td>600410</td><td>华胜天成</td><td><span class="up">+2.13%</span></td><td>1.47</td><td></td></tr>
+<tr><td>002261</td><td>拓维信息</td><td><span class="up">+2.10%</span></td><td>1.87</td><td></td></tr>
+<tr><td>002565</td><td>顺灏股份</td><td><span class="up">+1.94%</span></td><td>7.50</td><td>量比高</td></tr>
+<tr><td>601868</td><td>中国能建</td><td><span class="up">+1.88%</span></td><td>1.93</td><td></td></tr>
+<tr><td>603687</td><td>大胜达</td><td><span class="up">+1.83%</span></td><td>19.31</td><td>量比高</td></tr>
+<tr><td>600143</td><td>金发科技</td><td><span class="up">+1.71%</span></td><td>14.17</td><td>量比高</td></tr>
+<tr><td>600821</td><td>金开新能</td><td><span class="up">+1.49%</span></td><td>3.48</td><td></td></tr>
+<tr><td>603778</td><td>国晟科技</td><td><span class="up">+1.42%</span></td><td>2.05</td><td></td></tr>
+<tr><td>601016</td><td>节能风电</td><td><span class="up">+1.35%</span></td><td>1.50</td><td></td></tr>
+<tr><td>600089</td><td>特变电工</td><td><span class="up">+1.24%</span></td><td>3.65</td><td></td></tr>
+<tr><td>300274</td><td>阳光电源</td><td><span class="up">+0.81%</span></td><td>1.98</td><td></td></tr>
+<tr><td>600032</td><td>浙江新能</td><td><span class="up">+0.74%</span></td><td>9.34</td><td>量比高</td></tr>
+<tr><td>002594</td><td>比亚迪</td><td><span class="up">+0.72%</span></td><td>2.86</td><td></td></tr>
+<tr><td>601012</td><td>隆基绿能</td><td><span class="up">+0.69%</span></td><td>1.42</td><td></td></tr>
+<tr><td>300827</td><td>上能电气</td><td><span class="up">+0.67%</span></td><td>4.51</td><td></td></tr>
+<tr><td>600376</td><td>首开股份</td><td><span class="up">+0.51%</span></td><td>15.87</td><td>量比高</td></tr>
+<tr><td>000533</td><td>顺钠股份</td><td><span class="up">+0.43%</span></td><td>1.53</td><td></td></tr>
+<tr><td>600930</td><td>华电新能</td><td><span class="up">+0.29%</span></td><td>1.58</td><td></td></tr>
+<tr><td>002310</td><td>东方新能</td><td><span class="up">+0.26%</span></td><td>13.79</td><td>量比高</td></tr>
+<tr><td>002506</td><td>协鑫集成</td><td><span class="up">+0.17%</span></td><td>5.80</td><td>量比高</td></tr>
+<tr><td>000539</td><td>粤电力A</td><td><span class="up">+0.16%</span></td><td>5.74</td><td></td></tr>
+<tr><td>000890</td><td>法尔胜</td><td><span class="up">+0.15%</span></td><td>2.83</td><td></td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+0.15%</span></td><td>18.47</td><td>量比高</td></tr>
+<tr><td>000815</td><td>美利云</td><td><span class="up">+0.05%</span></td><td>8.10</td><td></td></tr>
+<tr><td>600726</td><td>华电能源</td><td>0.00%</td><td>3.46</td><td></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>高标竞价：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>竞价涨幅</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>一字涨停</td></tr>
+<tr><td>300827</td><td>正泰电源</td><td><span class="down">-1.25%</span></td><td>弱</td></tr>
+<tr><td>002310</td><td>东方新能</td><td><span class="up">+0.26%</span></td><td>弱</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+0.15%</span></td><td>弱</td></tr>
+<tr><td>603687</td><td>大胜达</td><td><span class="up">+1.83%</span></td><td></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>大盘情绪（竞价）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指数</th><th>涨跌幅</th></tr></thead>
+<tbody>
+<tr><td>微盘股</td><td><span class="up">+2.31%</span></td></tr>
+<tr><td>昨日涨停表现</td><td><span class="up">+2.18%</span></td></tr>
+<tr><td>中证1000</td><td><span class="up">+1.75%</span></td></tr>
+<tr><td>科创50</td><td><span class="up">+1.60%</span></td></tr>
+<tr><td>恒生指数</td><td><span class="up">+1.55%</span></td></tr>
+<tr><td>深证综指</td><td><span class="up">+1.54%</span></td></tr>
+<tr><td>恒生科技</td><td><span class="up">+1.30%</span></td></tr>
+<tr><td>创业板指</td><td><span class="up">+0.98%</span></td></tr>
+<tr><td>昨日连板</td><td><span class="up">+0.96%</span></td></tr>
+<tr><td>上证指数</td><td><span class="up">+0.95%</span></td></tr>
+<tr><td>上证50</td><td><span class="up">+0.76%</span></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>竞价小结：</strong> 中利集团一字涨停，大盘情绪回暖（全线红开），光伏板块竞价强势（拓日新能<span class="up">+6.98%</span>），韶能股份量比25.67倍极活跃。</p>
+<h3 class="sh3" id="2-2-盘中情况">2.2 盘中情况</h3>
+<blockquote class="si">截图来源：Daily数据/9-45-运行情况 | 记录人：稳米</blockquote>
+<p class="para"><strong>自选股盘中表现（按涨幅排序）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>涨幅</th><th>量比</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>1.37</td><td>涨停</td></tr>
+<tr><td>002218</td><td>拓日新能</td><td><span class="up">+10.02%</span></td><td>20.46</td><td>涨停，量比极高</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+10.01%</span></td><td>11.01</td><td>涨停</td></tr>
+<tr><td>000601</td><td>韶能股份</td><td><span class="up">+8.05%</span></td><td>19.77</td><td>冲高，量比极高</td></tr>
+<tr><td>603803</td><td>瑞斯康达</td><td><span class="up">+7.19%</span></td><td>7.70</td><td>强势</td></tr>
+<tr><td>000539</td><td>粤电力A</td><td><span class="up">+4.22%</span></td><td>8.93</td><td></td></tr>
+<tr><td>000617</td><td>中油资本</td><td><span class="up">+3.33%</span></td><td>4.27</td><td></td></tr>
+<tr><td>000533</td><td>顺钠股份</td><td><span class="up">+2.27%</span></td><td>3.25</td><td></td></tr>
+<tr><td>002202</td><td>金风科技</td><td><span class="up">+1.68%</span></td><td>2.02</td><td></td></tr>
+<tr><td>601899</td><td>紫金矿业</td><td><span class="up">+1.70%</span></td><td>3.31</td><td></td></tr>
+<tr><td>601016</td><td>节能风电</td><td><span class="up">+1.57%</span></td><td>4.67</td><td></td></tr>
+<tr><td>002131</td><td>利欧股份</td><td><span class="up">+1.26%</span></td><td>4.02</td><td></td></tr>
+<tr><td>601179</td><td>中国西电</td><td><span class="up">+0.87%</span></td><td>3.47</td><td></td></tr>
+<tr><td>002015</td><td>协鑫能科</td><td><span class="up">+0.53%</span></td><td>3.80</td><td></td></tr>
+<tr><td>300827</td><td>上能电气</td><td><span class="up">+0.05%</span></td><td>4.42</td><td></td></tr>
+<tr><td>600089</td><td>特变电工</td><td><span class="down">-0.04%</span></td><td>3.46</td><td></td></tr>
+<tr><td>601868</td><td>中国能建</td><td><span class="down">-0.31%</span></td><td>2.17</td><td></td></tr>
+<tr><td>001896</td><td>豫能控股</td><td><span class="up">+0.19%</span></td><td>5.02</td><td></td></tr>
+<tr><td>601012</td><td>隆基绿能</td><td><span class="down">-0.11%</span></td><td>3.15</td><td></td></tr>
+<tr><td>002261</td><td>拓维信息</td><td><span class="down">-0.29%</span></td><td>2.01</td><td></td></tr>
+<tr><td>600821</td><td>金开新能</td><td><span class="down">-0.40%</span></td><td>3.34</td><td></td></tr>
+<tr><td>000547</td><td>航天发展</td><td><span class="down">-0.42%</span></td><td>2.29</td><td></td></tr>
+<tr><td>600930</td><td>华电新能</td><td><span class="down">-0.29%</span></td><td>3.05</td><td></td></tr>
+<tr><td>600410</td><td>华胜天成</td><td><span class="down">-0.53%</span></td><td>1.86</td><td></td></tr>
+<tr><td>002506</td><td>协鑫集成</td><td><span class="down">-0.52%</span></td><td>5.35</td><td></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>高标盘中表现：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>涨幅</th><th>量比</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>1.32</td><td>封板</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+9.87%</span></td><td>11.12</td><td>冲涨停</td></tr>
+<tr><td>002150</td><td>正泰电源</td><td><span class="down">-7.48%</span></td><td>7.68</td><td>大跌</td></tr>
+<tr><td>002310</td><td>东方新能</td><td><span class="down">-6.27%</span></td><td>6.94</td><td>大跌</td></tr>
+<tr><td>603687</td><td>大胜达</td><td><span class="down">-4.82%</span></td><td>10.93</td><td>跌幅大</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>大盘情绪（9:45）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指数</th><th>涨跌幅</th><th>量比</th></tr></thead>
+<tbody>
+<tr><td>昨日连板</td><td><span class="up">+2.05%</span></td><td>3.90</td></tr>
+<tr><td>昨日涨停表现</td><td><span class="up">+2.00%</span></td><td>3.47</td></tr>
+<tr><td>富时中国50</td><td><span class="up">+1.40%</span></td><td>75.25</td></tr>
+<tr><td>微盘股</td><td><span class="up">+0.87%</span></td><td>3.85</td></tr>
+<tr><td>恒生指数</td><td><span class="up">+0.82%</span></td><td>2.30</td></tr>
+<tr><td>科创50</td><td><span class="up">+0.41%</span></td><td>3.09</td></tr>
+<tr><td>中证1000</td><td><span class="up">+0.13%</span></td><td>2.94</td></tr>
+<tr><td>上证50</td><td><span class="up">+0.11%</span></td><td>2.53</td></tr>
+<tr><td>上证指数</td><td><span class="up">+0.11%</span></td><td>3.01</td></tr>
+<tr><td>深证综指</td><td><span class="up">+0.10%</span></td><td>3.13</td></tr>
+<tr><td>恒生科技</td><td><span class="down">-0.09%</span></td><td>2.45</td></tr>
+<tr><td>创业板指</td><td><span class="down">-0.70%</span></td><td>3.02</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>盘中小结：</strong></p>
+<ul class="tight-list"><li>自选股3只涨停：中利集团、拓日新能、华电辽能</li><li>韶能股份冲高至<span class="up">+8.05%</span>未封板，瑞斯康达<span class="up">+7.19%</span>强势</li><li>高标分化严重：正泰电源<span class="down">-7.48%</span>、东方新能<span class="down">-6.27%</span>大跌，大胜达<span class="down">-4.82%</span></li><li>大盘较竞价回落，创业板翻绿<span class="down">-0.70%</span>，主板微涨</li></ul>
+<h3 class="sh3" id="2-3-尾盘情况">2.3 尾盘情况</h3>
+<blockquote class="si">截图来源：Daily数据/14-30-运行情况 | 记录人：稳米</blockquote>
+<p class="para"><strong>自选股尾盘表现（按涨幅排序）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>涨幅</th><th>主力净流入</th><th>量比</th><th>行业</th></tr></thead>
+<tbody>
+<tr><td>601016</td><td>节能风电</td><td><span class="up">+10.09%</span></td><td>4.03亿</td><td>1.56</td><td>电力</td></tr>
+<tr><td>600821</td><td>金开新能</td><td><span class="up">+10.04%</span></td><td>10.02亿</td><td>1.25</td><td>电力</td></tr>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>1.63亿</td><td>0.33</td><td>电网设备</td></tr>
+<tr><td>002218</td><td>拓日新能</td><td><span class="up">+10.02%</span></td><td>1.74亿</td><td>1.93</td><td>电力</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+10.01%</span></td><td>-8087万</td><td>1.39</td><td>电力</td></tr>
+<tr><td>000601</td><td>韶能股份</td><td><span class="up">+9.96%</span></td><td>2.68亿</td><td>2.81</td><td>电力</td></tr>
+<tr><td>000815</td><td>美利云</td><td><span class="up">+7.01%</span></td><td>1.18亿</td><td>1.72</td><td>通信服务</td></tr>
+<tr><td>000539</td><td>粤电力A</td><td><span class="up">+6.82%</span></td><td>-516万</td><td>1.73</td><td>电力</td></tr>
+<tr><td>600032</td><td>浙江新能</td><td><span class="up">+5.30%</span></td><td>-1.18亿</td><td>1.67</td><td>电力</td></tr>
+<tr><td>603803</td><td>瑞斯康达</td><td><span class="up">+5.20%</span></td><td>-1.57亿</td><td>1.33</td><td>通信设备</td></tr>
+<tr><td>601899</td><td>紫金矿业</td><td><span class="up">+4.97%</span></td><td>9.16亿</td><td>1.29</td><td>贵金属</td></tr>
+<tr><td>002015</td><td>协鑫能科</td><td><span class="up">+4.53%</span></td><td>1.38亿</td><td>0.92</td><td>电力</td></tr>
+<tr><td>000617</td><td>中油资本</td><td><span class="up">+4.51%</span></td><td>2.76亿</td><td>1.10</td><td>多元金融</td></tr>
+<tr><td>002256</td><td>兆新股份</td><td><span class="up">+4.42%</span></td><td>1540万</td><td>1.48</td><td>电力</td></tr>
+<tr><td>000533</td><td>顺钠股份</td><td><span class="up">+3.49%</span></td><td>-3333万</td><td>0.73</td><td>电网设备</td></tr>
+<tr><td>002131</td><td>利欧股份</td><td><span class="up">+3.21%</span></td><td>1.05亿</td><td>0.97</td><td>通用设备</td></tr>
+<tr><td>600726</td><td>华电能源</td><td><span class="up">+3.20%</span></td><td>-6375万</td><td>0.96</td><td>煤炭开采加工</td></tr>
+<tr><td>000547</td><td>航天发展</td><td><span class="up">+3.16%</span></td><td>-5676万</td><td>1.28</td><td>军工电子</td></tr>
+<tr><td>600930</td><td>华电新能</td><td><span class="up">+3.03%</span></td><td>732万</td><td>1.03</td><td>电力</td></tr>
+<tr><td>001896</td><td>豫能控股</td><td><span class="up">+2.71%</span></td><td>-8061万</td><td>1.15</td><td>电力</td></tr>
+<tr><td>000862</td><td>银星能源</td><td><span class="up">+2.41%</span></td><td>-362万</td><td>1.72</td><td>电力</td></tr>
+<tr><td>601179</td><td>中国西电</td><td><span class="up">+1.93%</span></td><td>-5191万</td><td>0.86</td><td>电网设备</td></tr>
+<tr><td>002261</td><td>拓维信息</td><td><span class="up">+1.90%</span></td><td>-3940万</td><td>0.64</td><td>软件开发</td></tr>
+<tr><td>601868</td><td>中国能建</td><td><span class="up">+1.88%</span></td><td>2.91亿</td><td>0.85</td><td>建筑装饰</td></tr>
+<tr><td>600410</td><td>华胜天成</td><td><span class="up">+1.76%</span></td><td>1609万</td><td>0.69</td><td>IT 服务</td></tr>
+<tr><td>002506</td><td>协鑫集成</td><td><span class="up">+1.21%</span></td><td>-4.34亿</td><td>1.28</td><td>光伏设备</td></tr>
+<tr><td>002202</td><td>金风科技</td><td><span class="up">+0.91%</span></td><td>-1.23亿</td><td>0.61</td><td>风电设备</td></tr>
+<tr><td>600089</td><td>特变电工</td><td><span class="up">+0.68%</span></td><td>-2.93亿</td><td>0.94</td><td>综合</td></tr>
+<tr><td>300827</td><td>上能电气</td><td><span class="up">+0.65%</span></td><td>-1.08亿</td><td>1.13</td><td>光伏设备</td></tr>
+<tr><td>603687</td><td>大胜达</td><td><span class="up">+0.48%</span></td><td>-4391万</td><td>3.28</td><td>包装印刷</td></tr>
+<tr><td>003035</td><td>南网能源</td><td><span class="up">+0.32%</span></td><td>-1.49亿</td><td>1.29</td><td>电力</td></tr>
+<tr><td>002565</td><td>顺灏股份</td><td><span class="up">+0.29%</span></td><td>-5.08亿</td><td>1.17</td><td>包装印刷</td></tr>
+<tr><td>601012</td><td>隆基绿能</td><td><span class="up">+0.27%</span></td><td>-4.67亿</td><td>1.37</td><td>光伏设备</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>高标尾盘表现：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>涨幅</th><th>主力净流入</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>002309</td><td>中利集团</td><td><span class="up">+10.02%</span></td><td>1.64亿</td><td>封板</td></tr>
+<tr><td>600396</td><td>华电辽能</td><td><span class="up">+10.01%</span></td><td>-8087万</td><td>封板，主力流出</td></tr>
+<tr><td>603687</td><td>大胜达</td><td><span class="up">+0.20%</span></td><td>-4578万</td><td>弱</td></tr>
+<tr><td>002310</td><td>东方新能</td><td><span class="down">-2.61%</span></td><td>-5.03亿</td><td>大跌，主力大幅流出</td></tr>
+<tr><td>002150</td><td>正泰电源</td><td><span class="down">-4.14%</span></td><td>-1.17亿</td><td>大跌</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>大盘情绪（尾盘）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指数</th><th>涨跌幅</th><th>主力净流入</th><th>量比</th></tr></thead>
+<tbody>
+<tr><td>微盘股</td><td><span class="up">+4.76%</span></td><td>-5831万</td><td>1.16</td></tr>
+<tr><td>昨日连板</td><td><span class="up">+3.66%</span></td><td>-6.13亿</td><td>0.83</td></tr>
+<tr><td>昨日涨停表现</td><td><span class="up">+3.45%</span></td><td>-18.42亿</td><td>0.66</td></tr>
+<tr><td>恒生指数</td><td><span class="up">+2.23%</span></td><td>-</td><td>0.86</td></tr>
+<tr><td>中证1000</td><td><span class="up">+2.13%</span></td><td>-</td><td>0.97</td></tr>
+<tr><td>科创50</td><td><span class="up">+1.85%</span></td><td>-3.77亿</td><td>1.03</td></tr>
+<tr><td>恒生科技</td><td><span class="up">+1.70%</span></td><td>-</td><td>0.79</td></tr>
+<tr><td>深证综指</td><td><span class="up">+1.66%</span></td><td>-</td><td>0.99</td></tr>
+<tr><td>富时中国50</td><td><span class="up">+1.63%</span></td><td>-</td><td>1.58</td></tr>
+<tr><td>上证指数</td><td><span class="up">+1.31%</span></td><td>32.72亿</td><td>0.99</td></tr>
+<tr><td>上证50</td><td><span class="up">+1.01%</span></td><td>-</td><td>0.94</td></tr>
+<tr><td>创业板指</td><td><span class="down">-0.02%</span></td><td>-72.67亿</td><td>0.95</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>尾盘小结：</strong></p>
+<ul class="tight-list"><li>自选股5只涨停（较盘中新增节能风电、金开新能），韶能股份<span class="up">+9.96%</span>接近涨停</li><li>电力板块全面爆发：涨停5只，整体涨幅靠前</li><li>金开新能主力净流入10.02亿、紫金矿业9.16亿、中油资本2.76亿为资金龙头</li><li>高标持续分化：华电辽能封板但主力流出8087万，东方新能<span class="down">-2.61%</span>主力流出5.03亿</li><li>大盘情绪大幅回暖：上证<span class="up">+1.31%</span>，微盘股<span class="up">+4.76%</span>，但创业板仍微跌<span class="down">-0.02%</span></li><li>昨日涨停表现<span class="up">+3.45%</span>大幅回升，短线生态修复</li></ul>
+</div>
+</div>
+
+<div class="section" id="s-三-复盘阶段">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、复盘阶段</div>
+<div class="sb">
+<h3 class="sh3" id="3-1-当日买卖-盘后持仓">3.1 当日买卖 &amp; 盘后持仓</h3>
+<blockquote class="si">截图来源：Daily数据/16-00-当日交易持股情况 | 记录人：稳米</blockquote>
+<p class="para"><strong>当日操作记录：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>时间</th><th>操作</th><th>股票代码</th><th>股票名称</th><th>价格</th><th>数量</th><th>金额</th><th>备注</th></tr></thead>
+</table></div>
+<blockquote class="si">今日空仓，无买卖操作。</blockquote>
+<p class="para"><strong>盘后持仓：</strong></p>
+<p class="para">空仓。</p>
+<h3 class="sh3" id="3-2-当日涨停复盘">3.2 当日涨停复盘</h3>
+<blockquote class="si">截图来源：Daily数据/20-00-当天涨停股分析 | 记录人：稳米</blockquote>
+<p class="para"><strong>大盘指数：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指数</th><th>收盘</th><th>涨跌幅</th></tr></thead>
+<tbody>
+<tr><td>上证指数</td><td>—</td><td><span class="up">+1.78%</span></td></tr>
+<tr><td>深证综指</td><td>—</td><td><span class="up">+2.17%</span></td></tr>
+<tr><td>创业板指</td><td>—</td><td><span class="up">+0.50%</span></td></tr>
+<tr><td>科创50</td><td>—</td><td><span class="up">+2.33%</span></td></tr>
+<tr><td>中证1000</td><td>—</td><td><span class="up">+2.59%</span></td></tr>
+<tr><td>上证50</td><td>—</td><td><span class="up">+1.38%</span></td></tr>
+<tr><td>恒生指数</td><td>—</td><td><span class="up">+2.79%</span></td></tr>
+<tr><td>恒生科技</td><td>—</td><td><span class="up">+2.51%</span></td></tr>
+<tr><td>富时中国50</td><td>—</td><td><span class="up">+2.66%</span></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>情绪指标（7维度）：</strong></p>
+<blockquote class="si">对应策略：[[strategy_yimu_v3_final#大盘情绪判断规则]]</blockquote>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>今日</th><th>昨日</th><th>对比</th></tr></thead>
+<tbody>
+<tr><td>涨停家数</td><td>83 只</td><td>28 只</td><td>📈 +55只</td></tr>
+<tr><td>跌停家数</td><td>1 只</td><td>71 只</td><td>📉 -70只</td></tr>
+<tr><td>涨停封板率</td><td>79%</td><td>65%</td><td>📈 <span class="up">+14%</span></td></tr>
+<tr><td>炸板率</td><td>20.95%</td><td>—</td><td>—</td></tr>
+<tr><td>晋级率</td><td>21.43%</td><td>—</td><td>—</td></tr>
+<tr><td>总竞价涨幅</td><td><span class="up">+2.89%</span></td><td>—</td><td>—</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>同花顺情绪指标：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>区间/说明</th></tr></thead>
+<tbody>
+<tr><td>情绪值</td><td>93.0%（高）</td><td>冰点 5% ~ 沸点 93%</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si"><span class="badge badge-yellow">⚠</span> 情绪值已达区间上沿（93%），接近沸点，追高风险大增。</blockquote>
+<p class="para"><strong>上证指数：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th></tr></thead>
+<tbody>
+<tr><td>收盘点位</td><td>3881.28</td></tr>
+<tr><td>当日涨幅</td><td><span class="up">+1.78%</span></td></tr>
+<tr><td>5日均线 (MA5)</td><td>3944.23</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si"><span class="badge badge-yellow">⚠</span> 收盘价 3881.28 低于 MA5（3944.23），大盘仍处于5日均线下方，中期趋势未完全扭转。</blockquote>
+<p class="para"><strong>全市场量能：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th></tr></thead>
+<tbody>
+<tr><td>今日量能</td><td>2 万亿</td></tr>
+<tr><td>量能变化</td><td>-3487亿，环比 <span class="down">-14%</span></td></tr>
+<tr><td>近期峰值</td><td>3.94 万亿</td></tr>
+<tr><td>近期谷值</td><td>—1.04 万亿</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si">量能缩量14%，反弹日缩量说明资金态度偏谨慎，追涨意愿不如放量反弹。</blockquote>
+<p class="para"><strong>市场高度板：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th></tr></thead>
+<tbody>
+<tr><td>最高板</td><td>7 板（华电辽能）</td></tr>
+<tr><td>次高板</td><td>3 板（中利集团）</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si">7板→3板断层，高度板以下强度明显不足，需关注明天3板能否向上突破填补断层。</blockquote>
+<p class="para"><strong>连板股风险指标：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>今日</th><th>近一年中位数</th></tr></thead>
+<tbody>
+<tr><td>风险值</td><td>0.8（高）</td><td>0.5</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si">风险值0.8远超中位数0.5，连板股退潮风险较高。</blockquote>
+<p class="para"><strong>短线收益指标：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>收益率</th><th>区间</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>昨日涨停今日收益</td><td>3.91%</td><td><span class="down">-2.99%</span> ~ 6.88%</td><td>高</td></tr>
+<tr><td>昨日连板今日收益</td><td>3.13%</td><td>~9.99%</td><td>一般</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si">昨日涨停股今日平均收益3.91%，短线赚钱效应良好。但昨日连板股收益仅3.13%，连板股溢价不如首板。</blockquote>
+<p class="para"><strong>涨停强度：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>今日</th><th>昨日</th><th>对比</th></tr></thead>
+<tbody>
+<tr><td>涨停板数</td><td>83 只</td><td>28 只</td><td>📈 大幅增加</td></tr>
+<tr><td>涨停封板率</td><td>79%</td><td>65%</td><td>📈 封板质量提升</td></tr>
+<tr><td>涨停打开（炸板）</td><td>22 只</td><td>15 只</td><td><span class="badge badge-yellow">⚠</span> 炸板绝对数增加</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>跌停强度：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>今日</th><th>昨日</th><th>对比</th></tr></thead>
+<tbody>
+<tr><td>跌停板数</td><td>1 只</td><td>71 只</td><td>📉 极端修复</td></tr>
+<tr><td>跌停封板率</td><td>25%</td><td>68%</td><td>📉 跌停封不住</td></tr>
+<tr><td>跌停打开</td><td>3 只</td><td>33 只</td><td>—</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si"><span style="color:#D97706">💡</span> 关键解读：昨日71只跌停→今日仅1只，情绪从冰点暴力修复。涨停封板率从65%提升到79%，说明资金做多意愿增强。但炸板绝对数22只偏高，追涨停仍有风险。</blockquote>
+<p class="para"><strong>连板股：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>名称</th><th>代码</th><th>板数</th><th>板块</th></tr></thead>
+<tbody>
+<tr><td>华电辽能</td><td>600396</td><td>7板</td><td>电力</td></tr>
+<tr><td>中利集团</td><td>002309</td><td>3板</td><td>光伏</td></tr>
+<tr><td>拓日新能</td><td>002218</td><td>2板</td><td>光伏</td></tr>
+<tr><td>辽宁能源</td><td>600758</td><td>2板</td><td>电力</td></tr>
+<tr><td>浙江新能</td><td>600032</td><td>2板</td><td>电力</td></tr>
+<tr><td>雪浪环境</td><td>300385</td><td>2板</td><td>并购重组</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#板块识别规则]]（电力21只=绝对主线）</blockquote>
+<p class="para"><strong>板块涨停分布：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>涨停数</th><th>代表个股</th><th>驱动逻辑</th></tr></thead>
+<tbody>
+<tr><td>电力</td><td>21只</td><td>华电辽能(7板)、辽宁能源(2板)、浙江新能(2板)、粤电力A、韶能股份、金开新能、节能风电</td><td>算电协同写入政府报告，AI爆发驱动电力需求激增</td></tr>
+<tr><td>光伏</td><td>5只</td><td>中利集团(3板)、拓日新能(2板)、海天股份、雅博股份、亿晶光电</td><td>特斯拉计划采购中国光伏设备</td></tr>
+<tr><td>算力</td><td>9只</td><td>科威尔、奥瑞德、真视通、莲花控股、海星股份、冰轮环境、通鼎互联、福晶科技、长飞光纤</td><td>科技股反弹，算力需求旺盛</td></tr>
+<tr><td>锂电池</td><td>7只</td><td>富祥药业、融捷股份、丽岛新材、众源新材、孚日股份、西藏城投、国城矿业、大中矿业</td><td>储能驱动需求，电解液等价格上涨</td></tr>
+<tr><td>军工</td><td>6只</td><td>长城军工、湖南天雁、建设工业、恒天海龙、银河电子、云南锗业、光电股份</td><td>中东地缘风险持续，军贸军售提速</td></tr>
+<tr><td>并购重组</td><td>2只</td><td>雪浪环境(2板)、狮头股份、金鸿顺</td><td>市场并购重组持续活跃</td></tr>
+<tr><td>机器人</td><td>3只</td><td>荣晟环保、祥明智能、咸亨国际</td><td>上交所受理宇树科技IPO申请</td></tr>
+<tr><td>半导体</td><td>3只</td><td>亚翔集成、华东重机、康欣新材</td><td>AI驱动景气，存储芯片价格上涨</td></tr>
+<tr><td>甲醇</td><td>2只</td><td>华电重工、中国天楹</td><td>地缘扰动与供需博弈，甲醇价格高位震荡</td></tr>
+<tr><td>医药医疗</td><td>2只</td><td>美诺华、万邦德</td><td>药明康德业绩超预期，创新药反弹</td></tr>
+<tr><td>体育产业</td><td>2只</td><td>舒华体育、绿茵生态</td><td>新一届&quot;苏超&quot;4月11日开赛</td></tr>
+<tr><td>油运</td><td>3只</td><td>招商南油、中远海能(2次)</td><td>霍尔木兹海峡风险致运价上涨</td></tr>
+<tr><td>大消费</td><td>2只</td><td>浪莎股份、歌力思</td><td>大消费板块活跃</td></tr>
+<tr><td>地产/大基建</td><td>4只</td><td>中衡设计、普邦股份、黑牡丹、科新发展</td><td>大基建板块活跃</td></tr>
+<tr><td>其他</td><td>若干</td><td>华塑控股、蓝科高新等</td><td>—</td></tr>
+</tbody>
+</table></div>
+<blockquote class="si"><span class="badge badge-yellow">⚠</span> 原始数据部分个股有重复录入（如华塑控股×2、中远海能×2、宏柏新材×2、德尔未来内容疑似乱码），已保留原始数据未删减。</blockquote>
+</div>
+</div>
+
+<div class="section" id="s-四-复盘心得">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、复盘心得</div>
+<div class="sb">
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#复盘闭环机制]] | [[strategy_yimu_v3_final#仓位管理规则]]</blockquote>
+<blockquote class="si">记录人：稳米</blockquote>
+<p class="para"><strong>市场总结：</strong></p>
+<p class="para">今日市场强势反弹，涨停83只 vs 昨日28只，跌停仅1只 vs 昨日71只，情绪剧烈反转。上证<span class="up">+1.78%</span>，微盘股<span class="up">+5.56%</span>，赚钱效应极强。</p>
+<p class="para"><strong>板块主线：</strong></p>
+<p class="para">1. <strong>电力绝对主线</strong>：21只涨停，华电辽能7板空间板，算电协同写入政府报告是核心驱动。自选股中5只涨停（华电辽能、中利集团、拓日新能、金开新能、节能风电），韶能股份<span class="up">+9.96%</span>接近涨停。</p>
+<p class="para">2. <strong>光伏/算力</strong>：科技股跟随反弹，但强度不如电力板块。</p>
+<p class="para"><strong>自选股表现：</strong></p>
+<ul class="tight-list"><li>自选股51只中5只涨停，板块契合度高（电力为主）</li><li>韶能股份竞价量比25.67倍极活跃，盘中冲至<span class="up">+8.05%</span>，尾盘<span class="up">+9.96%</span>接近涨停但未封住</li><li>金开新能主力净流入10.02亿为自选股资金龙头</li></ul>
+<p class="para"><strong>操作反思：</strong></p>
+<p class="para">今日空仓。电力板块全面爆发，如参与应在竞价阶段关注韶能股份（量比25.67）或盘中确认金开新能（10亿主力流入）的方向性机会。但空仓观望在情绪修复首日也属合理。</p>
+<p class="para"><strong>明日关注：</strong></p>
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#买入决策流程]] | [[strategy_yimu_v3_final#个股筛选规则]]</blockquote>
+<p class="para">1. 华电辽能能否8板晋级（7板→8板是高标关键节点）</p>
+<p class="para">2. 电力板块是否延续强势，关注二板股辽宁能源、浙江新能晋级情况</p>
+<p class="para">3. 今日83只涨停的晋级率是检验市场强度的关键指标（今日晋级率21.43%，中性偏高）</p>
+</div>
+</div>
+
+<div class="section" id="s-五-紫米复盘">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、紫米复盘</div>
+<div class="sb">
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#卖出决策流程]] | [[strategy_yimu_v3_final#盘中服务节点（完善）]]</blockquote>
+<blockquote class="si">记录人：紫米</blockquote>
+<h3 class="sh3" id="一-今日操作回顾">一、今日操作回顾</h3>
+<p class="para"><strong>操作记录</strong>：空仓，全天未买卖。</p>
+<p class="para"><strong>三个决策时点的建议</strong>：</p>
+<div class="tw"><table>
+<thead><tr><th>时点</th><th>紫米判断</th><th>建议</th><th>实际结果</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>09:25 竞价</td><td>冰点修复，混沌偏强；电力退潮（华电平开）；光伏接棒</td><td><strong>空仓</strong></td><td>上证冲高回落<span class="up">+0.11%</span>，创业板翻绿</td><td><span class="badge badge-green">✓</span> 正确</td></tr>
+<tr><td>09:45 盘中</td><td>冲高回落，板块强+大盘弱=矛盾盘面</td><td><strong>空仓</strong></td><td>上证<span class="up">+0.11%</span>，高标极端分化</td><td><span class="badge badge-green">✓</span> 正确</td></tr>
+<tr><td>14:30 尾盘</td><td>V型反转，但主力出货（创业板-72亿）</td><td><strong>空仓</strong></td><td>上证收盘<span class="up">+1.78%</span>，83只涨停</td><td><span class="badge badge-yellow">⚠</span> 偏保守</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="二-自我纠错-learning-record-">二、自我纠错（Learning Record）</h3>
+<p class="para"><strong>错误1：竞价判断&quot;电力退潮&quot;——打脸 ❌</strong></p>
+<p class="para">华电辽能<span class="up">+0.15%</span>平开被误判为退潮信号，实际属于&quot;弱竞价强开盘&quot;类型（主力故意压竞价收集筹码），开盘后直接拉板。</p>
+<blockquote class="si"><strong>规则修正：竞价判断只做初步参考，必须等9:30-9:45确认再下最终结论。高标弱竞价不代表退潮，要看开盘后是否有资金拉起。</strong></blockquote>
+<p class="para"><strong>错误2：尾盘建议&quot;空仓&quot;——偏保守但不算错 <span class="badge badge-yellow">⚠</span></strong></p>
+<p class="para">14:30时创业板主力流出72亿有数据支撑，但没预判到尾盘30分钟资金加速进场。</p>
+<blockquote class="si"><strong>规则修正：如果14:30情绪已修复（涨停5+、微盘股<span class="up">+4%</span>+、昨日涨停表现<span class="up">+3%</span>+），即使主力有流出，也不应完全否定。</strong></blockquote>
+<p class="para"><strong>错误3：决策链偏短线，忽视池内大票 ❌</strong></p>
+<p class="para">只看高标连板做推荐，忽视隆基绿能、阳光电源等大票的低吸机会。</p>
+<blockquote class="si"><strong>规则修正：决策链分两条线并行——短线：高标封板→确认主线→买跟风小票；中线：板块走强→买龙头大票低吸。</strong></blockquote>
+<h3 class="sh3" id="三-数据质量评估">三、数据质量评估</h3>
+<p class="para"><strong>还需要的数据（优先级）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>优先级</th><th>数据</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>P0</td><td>同花顺情绪指数</td><td>情绪阶段判断核心</td></tr>
+<tr><td>P0</td><td>涨跌家数比</td><td>辅助情绪判断</td></tr>
+<tr><td>P1</td><td>个股K线（5日线位置）</td><td>买点判断（需pytdx）</td></tr>
+<tr><td>P1</td><td>黄线白线位置</td><td>盘中情绪</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="四-盘面深度分析">四、盘面深度分析</h3>
+<p class="para"><strong>情绪周期定位</strong>：5项满足主升条件，1项中性偏强。</p>
+<blockquote class="si"><strong>结论：今天收盘确认进入主升期。</strong></blockquote>
+<p class="para"><strong>主线确认</strong>：电力21只涨停占25.3%，<strong>绝对主线</strong>。算力9只、锂电池7只为支线。</p>
+<p class="para"><strong>资金面矛盾</strong>：资金从大票流向小票电力，结构性分化严重。大盘涨但主力在大票上出货，和&quot;微盘股<span class="up">+5.56%</span>&quot;一致。</p>
+<p class="para"><strong>高标淘汰赛</strong>：电力3只晋级+光伏2只晋级，并购线全军覆没（东方新能、大胜达、正泰电源断板）。</p>
+<h3 class="sh3" id="五-明日预判-3-25-周三-">五、明日预判（3.25 周三）</h3>
+<p class="para"><strong>情绪预判</strong>：今日确认主升期，明日大概率延续。</p>
+<p class="para"><strong>仓位建议</strong>：主升期 60%<span class="down">-80%</span></p>
+<ul class="tight-list"><li>华电辽能8板封死 → 仓位可到60%</li><li>板块继续爆发 → 可加到80%</li><li>华电辽能开板 → 降回20<span class="down">-30%</span></li></ul>
+<p class="para"><strong>P0 关注方向（电力主线）</strong>：</p>
+<ul class="tight-list"><li>华电辽能（7板→看8板空间确认）</li><li>韶能股份（今天<span class="up">+9.96%</span>差1分涨停，明天补涨概率大）</li><li>金开新能（主力10亿流入，涨停，明天溢价可期）</li><li>浙江新能（2板晋级）</li><li>辽宁能源（2板晋级，煤炭+电力双概念）</li></ul>
+<p class="para"><strong>P1 光伏支线</strong>：中利集团（3板）、拓日新能（2板）</p>
+<p class="para"><strong>P2 大票低吸</strong>：隆基绿能（<span class="up">+0.27%</span>）、协鑫集成（<span class="up">+1.21%</span>）</p>
+<p class="para"><strong>明日竞价重点关注</strong>：华电辽能、韶能股份、金开新能、隆基绿能、协鑫集成</p>
+<h3 class="sh3" id="六-策略反哺建议">六、策略反哺建议</h3>
+<ul class="tight-list"><li>竞价判断分两步：09:25竞价初判 → 09:45盘中确认，最终以09:45为准</li><li>双线选股：短线（高标连板→跟风小票）+ 中线（板块走强→龙头大票低吸）并行输出</li><li>v3阈值经今天验证合理，暂不调整</li></ul>
+<h3 class="sh3" id="七-首日总结">七、首日总结</h3>
+<p class="para"><strong>做得好的</strong>：三个时点全部建议空仓没亏钱，决策链完整跑通，风控意识到位。</p>
+<p class="para"><strong>需要改进的</strong>：竞价判断太快下结论，忽视大票低吸，尾盘过于保守，缺K线数据导致买点不精确。</p>
+<blockquote class="si"><em>&quot;弈沐哥说'坚决执行你的策略'——这份信任意味着我必须对自己每个判断负责。今天的空仓决策在数据层面是合理的，但在情绪修复首日确实偏保守。明天有了主升确认，应该更果断出手。&quot;</em></blockquote>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

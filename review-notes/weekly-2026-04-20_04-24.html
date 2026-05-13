@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-04-20~24 W17 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 2026-04-20~24 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue">2026-04-20 ~ 2026-04-24 W17</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-核心发现-先看这里-">核心发现（先看这里）</a>
+  <a href="#s-第〇部分-本周概览">第〇部分：本周概览</a>
+  <a href="#s-一-节奏与打法回顾">一、节奏与打法回顾</a>
+  <a href="#s-二-主线与板块">二、主线与板块</a>
+  <a href="#s-三-盈亏归因">三、盈亏归因</a>
+  <a href="#s-四-认知迭代">四、认知迭代</a>
+  <a href="#s-五-下周基调">五、下周基调</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="w17-周复盘-4-20-周一-4-24-周五-">W17 周复盘（4/20 周一 ~ 4/24 周五）</h1>
+
+<hr style="border-color:var(--border);margin:14px 0;">
+
+<div class="section" id="s-核心发现-先看这里-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>核心发现（先看这里）</div>
+<div class="sb">
+<blockquote class="si">一张表总结本周。</blockquote>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><strong>盈亏</strong></td><td>已实现 -5248元（华胜-3133 + 乾照-2115），光迅浮盈+1980元未计</td></tr>
+<tr><td><strong>胜率</strong></td><td>0%（0盈2亏），光迅持有中</td></tr>
+<tr><td><strong>盈亏比</strong></td><td>无（无盈利交易）</td></tr>
+<tr><td><strong>节奏</strong></td><td>预案方向5/5全对(100%)，但执行2天偏离：周二违反情绪前提、周三仓位超标</td></tr>
+<tr><td><strong>主线</strong></td><td>CPO/光通信→算力/光通信→分歧严重→无主线共识，板块结构从集中到散点轮动</td></tr>
+<tr><td><strong>梯队</strong></td><td>周初6板→周末3板，高度压缩50%，连板接力全灭</td></tr>
+<tr><td><strong>赚钱效应</strong></td><td>一路恶化：一般→差→一般→差→极差（涨停收益3.13%→0.07%）</td></tr>
+<tr><td><strong>盈亏模式</strong></td><td>亏钱=情绪低时开W1 + 清仓时机偏晚；唯一盈利来自W2低吸+资金合力选股</td></tr>
+<tr><td><strong>认知迭代</strong></td><td>情绪拐点止盈应果断→模糊就按纪律走；赚钱效应优先于情绪值（铁律#3再验证）</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>下周目标</strong>：处理光迅持仓优先，赚钱效应&gt;2%前不新开仓。方向确认≥3条才动手。</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第〇部分-本周概览">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第〇部分：本周概览</div>
+<div class="sb">
+<blockquote class="si">一张表看清5天，只记关键结论。</blockquote>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏%</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>62%主升</td><td>W1观望/W2关闭</td><td>华胜继续持有</td><td><span class="down">-1.30%</span>浮亏</td><td><span class="badge badge-green">✓</span> 观望执行正确，但华胜未冲高走</td><td>冰点修复、CPO冲高回落、中军出货</td></tr>
+<tr><td>周二</td><td>35%低迷</td><td>空仓</td><td>华胜清仓(-3133)/乾照W1追入</td><td><span class="down">-4.32%</span>/<span class="down">-3.87%</span></td><td><span class="badge badge-yellow">⚠</span> 清仓正确但晚了→乾照全错</td><td>情绪断崖、W1不该开、板块分化≠走强</td></tr>
+<tr><td>周三</td><td>53%主升</td><td>W2低吸</td><td>乾照卖出(-2115)/光迅W2低吸</td><td><span class="down">-3.87%</span>/+浮盈</td><td><span class="badge badge-yellow">⚠</span> 仓位30.5%超标</td><td>板块切换、算力22只涨停、新主线候选</td></tr>
+<tr><td>周四</td><td>24%低迷</td><td>只W2</td><td>无操作</td><td>光迅<span class="up">+5.56%</span>浮盈</td><td><span class="badge badge-green">✓</span> 双窗口关</td><td>情绪暴跌29pp、主线分歧确认、光迅逆势验证资金合力</td></tr>
+<tr><td>周五</td><td>36%低迷</td><td>双窗口全关</td><td>无操作</td><td>光迅<span class="down">-2.26%</span>浮盈缩至<span class="up">+3.17%</span></td><td><span class="badge badge-green">✓</span> 正确</td><td>情绪假回暖、涨停收益0.07%、散点轮动</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>周累计盈亏</strong>：已实现 -5248元（华胜-3133 + 乾照-2115），光迅浮盈+1980元 → 实际 -3268元</p>
+<p class="para"><strong>本周操作</strong>：买2次 / 卖2次 / 空仓0天</p>
+<p class="para"><strong>一句话总结</strong>：预案方向全对但执行两处偏离（周二情绪低开W1 + 周三仓位超标），赚钱效应从周一一般一路恶化至周五极差，市场从有主线→分歧→散点轮动，唯一盈利来自W2低吸+资金合力选股——方向正确但仓位管理需改进。</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-一-节奏与打法回顾">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、节奏与打法回顾</div>
+<div class="sb">
+<blockquote class="si">这周的打法选择对不对？有没有系统性偏差？</blockquote>
+<p class="para"><strong>预案命中率</strong>：5天预案方向全对（100%）</p>
+<ul class="tight-list"><li>预案对的：周一偏保守/W2关闭<span class="badge badge-green">✓</span> 周二空仓/W1关<span class="badge badge-green">✓</span> 周三处理为主/W2低吸<span class="badge badge-green">✓</span> 周四W1/W2关<span class="badge badge-green">✓</span> 周五双窗口全关<span class="badge badge-green">✓</span></li><li>预案错的：无</li></ul>
+<p class="para"><strong>执行偏离日</strong>：</p>
+<ul class="tight-list"><li>周二（4/21）：预案写&quot;情绪35%→空仓，只处理持仓&quot;，但实际操作违反了——乾照36.4买入1500股。情绪是W1第一前提（§2.4），35%&lt;60%应该W1全关。本质是把&quot;商业航天个别票封板+中国卫星走强&quot;误判为&quot;板块走强&quot;。</li><li>周三（4/22）：光迅低吸方向正确，但仓位30.5%远超预案上限10%。情绪46%刚过门槛→应该缩仓而非满仓。</li></ul>
+<p class="para"><strong>方向错误日</strong>：</p>
+<ul class="tight-list"><li>周二该空仓却开了W1追涨（不该做做了）</li><li>其他天无方向错误</li></ul>
+<p class="para"><strong>打法切换</strong>：情绪档位变化快，但打法的降档/升档跟上了：</p>
+<ul class="tight-list"><li>周一情绪62%→按主升（2进3）准备，但赚钱效应一般→缩仓保守<span class="badge badge-green">✓</span></li><li>周二情绪35%→降档冰点，W1关<span class="badge badge-green">✓</span>（但实际操作违反<span class="badge badge-yellow">⚠</span>）</li><li>周三情绪53%→升档主升，W2低吸<span class="badge badge-green">✓</span></li><li>周四情绪24%→降档冰点，W1/W2关<span class="badge badge-green">✓</span></li><li>周五情绪36%→低迷/W2需≥40%→双窗口关<span class="badge badge-green">✓</span></li></ul>
+<p class="para"><strong>系统性偏差</strong>：</p>
+<p class="para">1. 情绪低时容易受&quot;板块内个别票走强&quot;的诱惑，把分化当主升——周二最典型</p>
+<p class="para">2. 仓位执行偏松——预案写≤10%但实际开30.5%，需要收紧</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-二-主线与板块">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、主线与板块</div>
+<div class="sb">
+<blockquote class="si">主线有没有切换？资金方向变了没？</blockquote>
+<p class="para"><strong>主线演变</strong>：</p>
+<ul class="tight-list"><li>周初主线（周一）：CPO/光通信（3-2-8梯队）+ 商业航天（6板独秀）+ 液冷（3-2-4）</li><li>周末主线（周五）：算力/光通信勉强主线（5/5天达标但分歧严重），电力退潮，无板块共识</li><li>切换信号：</li><li>周二：商业航天开始退潮（博云6板炸板、中国卫星<span class="down">-6.28%</span>），算力/光通信全线调整</li><li>周三：算力/光通信22只涨停反弹（新主线候选），商业航天仅3只涨停确认退潮</li><li>周四：算力/光通信核心中军全线杀跌（主力流出超70亿），主线分歧确认；电力8只涨停接棒</li><li>周五：电力全面退潮（华电辽能3板→<span class="down">-6.41%</span>），锂电池15只首板散点脉冲，无主线</li></ul>
+<p class="para"><strong>梯队演变</strong>：</p>
+<ul class="tight-list"><li>周一最高板：6板（博云新材，商业航天）</li><li>周二最高板：4板（株冶集团，业绩增长）</li><li>周三最高板：4板（金富科技，算力/液冷）</li><li>周四最高板：5板（金螳螂，非主线装修）</li><li>周五最高板：3板（水发燃气，电力）</li><li>高度变化：<strong>压缩</strong>（6→3板，降幅50%），且周五最高板非主线方向</li></ul>
+<p class="para"><strong>本周活跃板块</strong>（持续2天+有涨停的）：</p>
+<p class="para">1. 算力/光通信/CPO（5/5天，但涨停数22→7→4，降温明显）</p>
+<p class="para">2. 电力（3/5天：周一12只→周三3只→周四8只→周五5只，周四最强后周五退潮）</p>
+<p class="para">3. 商业航天（3/5天：周一11只→周二8只→周三3只→周四3只→周五0只，持续退潮）</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-三-盈亏归因">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因</div>
+<div class="sb">
+<blockquote class="si">赚在哪、亏在哪，归因到规则层面。</blockquote>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日</th><th>卖日</th><th>盈亏</th><th>归因</th></tr></thead>
+<tbody>
+<tr><td>华胜天成</td><td>算力（中长期持有）</td><td>上周</td><td>4/21周二</td><td>-3133元(<span class="down">-4.32%</span>)</td><td>板块弱已确认（§1.1a），应竞价清仓而非等开盘。卖出纪律执行偏晚。</td></tr>
+<tr><td>乾照光电</td><td>商业航天（W1追涨）</td><td>4/21周二</td><td>4/22周三</td><td>-2115元(<span class="down">-3.87%</span>)</td><td>情绪35%&lt;60%不该开W1（违反§2.4前提）。把板块分化当主升，个别封板≠板块走强。</td></tr>
+<tr><td>光迅科技</td><td>光通信（W2低吸）</td><td>4/22周三</td><td>持有中</td><td>浮盈+1980元(<span class="up">+3.17%</span>)</td><td>方向正确（W2低吸+资金合力选股），但仓位30.5%远超预案10%上限。</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>本周最佳操作</strong>：光迅W2低吸（周三14:00）。选股逻辑正确——华工技术面更好但选了光迅，看的是资金合力方向。周四光迅<span class="up">+6.22%</span>/+8.14亿 vs 华工<span class="down">-2.73%</span>/-8.97亿，验证了&quot;资金合力&gt;技术指标&quot;的判断。</p>
+<p class="para"><strong>本周最差操作</strong>：乾照周二W1追入。三重错：①情绪35%&lt;60%违反W1前提 ②平开不符合高开3<span class="down">-7%</span>条件 ③商业航天分化当主升。第二日被迫止损<span class="down">-3.87%</span>，卖后两天跌至32.07（<span class="down">-8.35%</span>），幸好早卖。</p>
+<p class="para"><strong>盈亏模式识别</strong>：</p>
+<ul class="tight-list"><li>亏钱共性：①情绪低时因个别票走强就出手（乾照）②卖出纪律执行偏晚（华胜竞价应出）</li><li>赚钱模式：W2低吸+资金合力选股+板块有涨停共振（光迅，但浮盈正在缩水）</li><li>深层问题：赚钱效应恶化周期中任何持仓都在缩水（光迅周三浮盈→周四<span class="up">+5.56%</span>→周五<span class="up">+3.17%</span>）</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-四-认知迭代">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、认知迭代</div>
+<div class="sb">
+<blockquote class="si">从5天心得中提炼共性问题，该固化还是调整？</blockquote>
+<p class="para"><strong>本周心得汇总</strong>（从日复盘提炼，只留值得固化的）：</p>
+<p class="para">1. <strong>教训：板块弱量化条件满足→冲高就走，不犹豫</strong>（4/20）— 华胜冲高<span class="down">-0.7%</span>但没走，尾盘回落。→ <strong>待固化 §1.1a</strong></p>
+<p class="para">2. <strong><span class="badge badge-blue">NEW</span>认知：CPO冲高回落模式——前排强+中军弱=合力不真实</strong>（4/20）— CPO冲高但中际旭创-5.84亿、新易盛-6.21亿出货。→ <code>insights/资金合力.md</code> 补充</p>
+<p class="para">3. <strong>教训：情绪&lt;60%→W1全关，不做&quot;个别票很强&quot;的妥协</strong>（4/21）— 乾照商业航天追入违反W1前提。→ 已有§2.4但实战仍违反</p>
+<p class="para">4. <strong><span class="badge badge-blue">NEW</span>认知：板块内个别封板≠板块走强，需要涨停集中度+连板梯队+中军同步</strong>（4/21）— 商业航天分化当主升。→ <code>insights/情绪与周期.md</code> 补充</p>
+<p class="para">5. <strong><span class="badge badge-blue">NEW</span>认知：温度计炸板且收跌=板块退潮硬信号</strong>（4/21）— 博云6板炸板收跌=商业航天退潮。→ <code>insights/情绪与周期.md</code> 补充</p>
+<p class="para">6. <strong><span class="badge badge-blue">NEW</span>认知：资金合力&gt;技术指标</strong>（4/23）— 光迅资金合力验证 vs 华工技术面更好但资金退。→ <code>insights/选股与买点.md</code> 补充</p>
+<p class="para">7. <strong>教训：情绪拐点+赚钱效应恶化=应果断止盈</strong>（4/24）— 光迅浮盈从<span class="up">+5.56%</span>缩至<span class="up">+3.17%</span>。→ <strong>待固化 §1.2</strong></p>
+<p class="para">8. <strong><span class="badge badge-blue">NEW</span>认知：弱企稳不是修复，需涨停收益&gt;2%+梯队完整+量能不缩</strong>（4/24）— 周四情绪24%周五36%，看着回暖但赚钱效应极差。→ <code>insights/情绪与周期.md</code> 新增</p>
+<p class="para">9. <strong><span class="badge badge-blue">NEW</span>认知：散点轮动=赚钱极难，不如空仓等</strong>（4/24）— 锂电池15只首板脉冲但无梯队无持续。→ <code>insights/情绪与周期.md</code> 新增</p>
+<p class="para"><strong>蒸馏判断</strong>（逐条过）：</p>
+<div class="tw"><table>
+<thead><tr><th>心得摘要</th><th>来源日期</th><th>类型</th><th>目标文件</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>板块弱量化条件满足→冲高就走，不犹豫</td><td>4/20周一</td><td>feedback（卖出纪律）</td><td><code>feedback/lesson_15.md</code> + rules §1.1a</td><td><span class="badge badge-yellow">⚠</span> 已有 lesson_15（冲高不走），但 lesson_15 聚焦个股冲7%，板块弱应竞价走是新场景 → <strong>rules §1.1a 待补充执行时机</strong></td></tr>
+<tr><td>CPO冲高回落模式：前排强+中军弱=合力不真实</td><td>4/20周一</td><td>insights（资金合力）</td><td><code>insights/资金合力.md</code></td><td>→ 追加模式识别</td></tr>
+<tr><td>晋级率22%→10%→15%→16%→16%，连续5天&lt;30%</td><td>全周</td><td>议题</td><td>—</td><td>→ 待观察：是否系统性变化</td></tr>
+<tr><td>情绪是W1第一前提，&lt;60%全关</td><td>4/21周二</td><td>feedback（已固化）</td><td><code>feedback/lesson_26.md</code> + trading-core §2.4</td><td>→ 已有 lesson_26 + 规则，但实战中仍违反 → 需强化执行（纪律问题非规则问题）</td></tr>
+<tr><td>板块内个别封板≠板块走强，需要涨停集中度+连板梯队+中军同步</td><td>4/21周二</td><td>insights（板块判断）</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加反例</td></tr>
+<tr><td>温度计炸板且收跌=板块退潮硬信号</td><td>4/21周二</td><td>insights（退潮信号）</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加收盘验证</td></tr>
+<tr><td>卖出纪律：板块弱确认→竞价挂卖</td><td>4/21周二</td><td>feedback（卖出纪律）</td><td><code>feedback/lesson_15.md</code> + rules §1.1a</td><td>→ 与第一条合并，<strong>rules §1.1a 待补充：板块弱=竞价走</strong></td></tr>
+<tr><td>资金合力&gt;技术指标</td><td>4/23周四</td><td>insights（选股）</td><td><code>insights/选股与买点.md</code></td><td>→ 追加选股方法论</td></tr>
+<tr><td>情绪拐点+赚钱效应持续恶化=应果断止盈</td><td>4/24周五</td><td>feedback（止盈纪律）</td><td><code>feedback/lesson_05.md</code> + rules §1.2</td><td>→ <strong>rules §1.2 待补充：情绪拐点触发后模棱两可按纪律走</strong></td></tr>
+<tr><td>情绪值可骗人，赚钱效应不会（铁律#3再验证）</td><td>4/24周五</td><td>insights（已固化）</td><td><code>feedback/lesson_05.md</code></td><td>→ 已有铁律，本周再确认</td></tr>
+<tr><td>高标杀跌是退潮加速信号</td><td>4/24周五</td><td>insights（退潮形态）</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加退潮信号</td></tr>
+<tr><td>弱企稳不是修复，需涨停收益&gt;2%+梯队完整+量能不缩</td><td>4/24周五</td><td>insights（阶段判断）</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加修复 vs 企稳区分</td></tr>
+<tr><td>散点轮动=赚钱极难，不如空仓等</td><td>4/24周五</td><td>insights（阶段判断）</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加阶段应对</td></tr>
+<tr><td>晋级率连续4周低位（W13-W17 &lt;30%）？</td><td>全周</td><td>议题</td><td>—</td><td>→ 待跨周验证，可能是生态变化</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>是否需要改 rules？</strong></p>
+<ul class="tight-list"><li>☑ 是 → 走规则变更流程</li><li>具体改哪条：</li></ul>
+<p class="para">1. <strong>§1.1a 板块弱卖出</strong>：补充执行时机——板块弱量化条件满足→<strong>竞价挂卖</strong>，不等开盘/不等冲高。当前只写了&quot;板块弱→冲高就走&quot;，但冲高不一定有，应直接竞价走。</p>
+<p class="para">2. <strong>§1.2 止盈规则</strong>：补充情绪拐点场景——情绪拐点触发（§2.1 情绪降两档）+ 赚钱效应恶化 → 次日竞价止盈，不等待&quot;板块明确弱&quot;。</p>
+<p class="para"><strong>是否需要写 insights/feedback？</strong></p>
+<ul class="tight-list"><li>☑ 是 → 蒸馏写入</li><li>insights 追加（已有主题补充）：</li></ul>
+<p class="para">1. 资金合力识别——前排强+中军弱=合力不真实（补充到 <code>insights/资金合力.md</code>）</p>
+<p class="para">2. 板块分化 vs 板块走强的区分标准（补充到 <code>insights/情绪与周期.md</code>）</p>
+<p class="para">3. 温度计收盘验证（补充到 <code>insights/情绪与周期.md</code>）</p>
+<p class="para">4. 修复 vs 弱企稳的区分（补充到 <code>insights/情绪与周期.md</code>）</p>
+<p class="para">5. 散点轮动阶段的应对（补充到 <code>insights/情绪与周期.md</code>）</p>
+<p class="para">6. 高标杀跌退潮加速（补充到 <code>insights/情绪与周期.md</code>）</p>
+<ul class="tight-list"><li>insights 追加（选股方法论）：</li></ul>
+<p class="para">7. 资金合力&gt;技术指标（补充到 <code>insights/选股与买点.md</code>）</p>
+<ul class="tight-list"><li>feedback 关联（已有 lesson 补 evidence，不新建）：</li><li>lesson_05 赚钱效应（本周再验证）| lesson_15 冲高不走（板块弱场景扩展）| lesson_26 打法看昨日收盘（违反记录）</li><li>☑ 否（不需要新建 feedback lesson）</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-五-下周基调">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、下周基调</div>
+<div class="sb">
+<blockquote class="si">基于本周积累，下周（W18）注意什么。</blockquote>
+<p class="para"><strong>方向判断</strong>：主线不确定。算力/光通信 5/5 天达标但分歧严重（周五4只中军收红 vs 2只龙头继续暴跌），电力周四接棒周五退潮，商业航天持续退潮。无板块共识→轮动加速→赚钱极难。</p>
+<p class="para"><strong>情绪预期</strong>：本周收盘情绪36%低迷，赚钱效应极差（涨停收益0.07%）。周初大概率延续低迷。需要看：①情绪能否修复到40%+ ②涨停收益能否回到2%+ ③有没有新方向冒出来（锂电池15只首板脉冲但梯队为零，不排除下周发酵）。</p>
+<p class="para"><strong>重点盯的板块/标的</strong>：</p>
+<ul class="tight-list"><li>算力/光通信中军（永鼎/紫光/亨通/中科曙光）→ 看能否企稳修复</li><li>锂电池（多氟多/天齐锂业）→ 观察能否从脉冲→2板→形成梯队</li><li>光迅持仓→优先处理，看板块温度+竞价</li></ul>
+<p class="para"><strong>需要调整的习惯或规则</strong>：</p>
+<p class="para">1. 收紧仓位执行——预案写的仓位上限就是上限，不许超标</p>
+<p class="para">2. 情绪&lt;60%→W1绝对关闭，不做&quot;个别票很强&quot;的妥协</p>
+<p class="para">3. 卖出纪律——板块弱确认→竞价走，不等</p>
+<p class="para"><strong>目标</strong>：处理光迅持仓优先，赚钱效应&lt;2%不新开仓。新开仓只在方向确认≥3条+仓位≤15%时进行。</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+<blockquote class="si"><span style="color:#D97706">📝</span> 稳米自审：本周最大问题是&quot;预案对但执行偏&quot;——方向判断5/5全对，但周二违反情绪前提开W1、周三仓位超标30.5%。赚钱效应一路恶化（3.13%→0.07%），在这种市场里任何持仓都在缩水。认知迭代收获大（资金合力&gt;技术指标、弱企稳≠修复、散点轮动=空仓），下周核心是：处理光迅+收紧执行纪律。</blockquote>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

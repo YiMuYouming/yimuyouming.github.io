@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-03-30~04-03 W14 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 2026-03-30~04-03 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue"> W14</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-一-本周市场概览">一、本周市场概览</a>
+  <a href="#1-1-情绪走势" class="s2">1.1 情绪走势</a>
+  <a href="#1-2-本周主线演变" class="s2">1.2 本周主线演变</a>
+  <a href="#1-3-关键数据汇总" class="s2">1.3 关键数据汇总</a>
+  <a href="#s-二-本周操作记录">二、本周操作记录</a>
+  <a href="#s-三-本周关键教训">三、本周关键教训</a>
+  <a href="#3-1-已固化到-rules-的教训" class="s2">3.1 已固化到 rules 的教训</a>
+  <a href="#3-2-核心教训-本周反复验证-" class="s2">3.2 核心教训（本周反复验证）</a>
+  <a href="#3-3-待固化的认知" class="s2">3.3 待固化的认知</a>
+  <a href="#s-四-策略系统迭代记录">四、策略系统迭代记录</a>
+  <a href="#s-五-系统建设进展">五、系统建设进展</a>
+  <a href="#s-六-下周展望-4-7-4-11-">六、下周展望（4.7-4.11）</a>
+  <a href="#6-1-持仓处理" class="s2">6.1 持仓处理</a>
+  <a href="#6-2-周一-4-7-重点观察" class="s2">6.2 周一（4/7）重点观察</a>
+  <a href="#6-3-操作预案-详见4-3复盘笔记第七节-" class="s2">6.3 操作预案（详见4/3复盘笔记第七节）</a>
+  <a href="#6-4-本周目标" class="s2">6.4 本周目标</a>
+  <a href="#s-附-每日复盘索引">附：每日复盘索引</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="2026年-第14周-周复盘-3-30-4-3-">2026年 第14周 周复盘（3.30-4.3）</h1>
+
+<blockquote class="si">周期：2026-03-30（周一）至 2026-04-03（周五）</blockquote>
+
+<blockquote class="si">记录人：稳米</blockquote>
+
+<blockquote class="si">阶段：P0 模拟仓验证期</blockquote>
+
+<hr style="border-color:var(--border);margin:14px 0;">
+
+<div class="section" id="s-一-本周市场概览">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、本周市场概览</div>
+<div class="sb">
+<h3 class="sh3" id="1-1-情绪走势">1.1 情绪走势</h3>
+<p class="para">```</p>
+<p class="para">情绪值</p>
+<p class="para">100% ┤     ●  4/1</p>
+<p class="para">93% ┤  ●</p>
+<p class="para">88% ┤</p>
+<p class="para">81% ┤                ●  4/2</p>
+<p class="para">78% ┤</p>
+<p class="para">52% ┤ ●  3/30</p>
+<p class="para">50% ┤</p>
+<p class="para">20% ┤</p>
+<p class="para">19% ┤                        ●  4/2收盘</p>
+<p class="para">18% ┤       ●  3/31</p>
+<p class="para">13% ┤                              ●  4/3</p>
+<p class="para">0% ┤</p>
+<p class="para">└───┬──────┬──────┬──────┬──────┬──</p>
+<p class="para">周一   周二   周三   周四   周五</p>
+<p class="para">```</p>
+<p class="para"><strong>本周情绪特征：脉冲→冰点→脉冲→崩塌→双冰。极端波动，赚钱效应持续恶化。</strong></p>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪值</th><th>区间</th><th>上证</th><th>量能</th><th>特征</th></tr></thead>
+<tbody>
+<tr><td>3/30 周一</td><td>52%（竞价10%→52%）</td><td>一般</td><td>3923（<span class="up">+0.24%</span>）</td><td>2万亿(<span class="up">+3%</span>)</td><td>冰点修复V型，医药+光纤最强</td></tr>
+<tr><td>3/31 周二</td><td>18%（竞价34%→早盘71%→18%）</td><td>冰点</td><td>3892（<span class="down">-0.80%</span>）</td><td>2万亿(<span class="up">+4%</span>)</td><td>诱多后崩塌，主力-417亿</td></tr>
+<tr><td>4/1 周三</td><td>81%（竞价93%→81%）</td><td>沸点→高位</td><td>3949（<span class="up">+1.46%</span>）</td><td>2万亿(<span class="up">+1%</span>)</td><td>脉冲修复但赚钱效应<span class="down">-0.18%</span></td></tr>
+<tr><td>4/2 周四</td><td>19%（从81%崩）</td><td>冰点</td><td>3919（<span class="down">-0.76%</span>）</td><td>2万亿(<span class="down">-8%</span>)</td><td>沸点崩回冰点，主力-447亿</td></tr>
+<tr><td>4/3 周五</td><td>13%</td><td>冰点</td><td>3880（<span class="down">-1.00%</span>）</td><td>2万亿(<span class="down">-10%</span>)</td><td>双冰确认（19%<span class="up">+13%</span>），主力-232亿</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="1-2-本周主线演变">1.2 本周主线演变</h3>
+<p class="para">```</p>
+<p class="para">周一：医药+光纤/算力 并列主线</p>
+<ul class="tight-list"><li>美诺华5板（医药高度锚）、亨通+长飞涨停（光纤爆发）</li><li>天际股份卖出+航天工程低吸</li></ul>
+<p class="para">周二：散乱轮动无主线</p>
+<ul class="tight-list"><li>神剑4板但跟风全军覆没（航天龙头独秀=退潮信号）</li><li>亨通<span class="down">-2.21%</span>大面（光纤一日游确认退潮）</li><li>航天工程微亏平出</li></ul>
+<p class="para">周三：医药最强（但赚钱效应极差）</p>
+<ul class="tight-list"><li>津药4板封死、九安秒板、广生堂/睿智20cm涨停</li><li>但赚钱效应<span class="down">-0.18%</span>（追涨停的人在亏钱）</li><li>脉冲修复是诱多（18%→93%→81%）</li></ul>
+<p class="para">周四：医药退潮（高潮崩回冰点）</p>
+<ul class="tight-list"><li>津药封5板但中军全线出逃（凯莱英-2.13亿、睿智-7276万）</li><li>⛔违规操作：窗口1追涨睿智医药（冰点+条件不满足）</li><li>情绪81%→19%，两天崩回冰点</li></ul>
+<p class="para">周五：光通信唯一逆势（双冰环境）</p>
+<ul class="tight-list"><li>腾景<span class="up">+19%</span>（20cm最强）、通宇+12亿主力</li><li>但新能泰山主力-1.35亿出逃、长飞-1.86亿流出</li><li>涨停38&lt;跌停41，85%下跌</li><li>全天空仓 <span class="badge badge-green">✓</span></li></ul>
+<p class="para">```</p>
+<h3 class="sh3" id="1-3-关键数据汇总">1.3 关键数据汇总</h3>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th></tr></thead>
+<tbody>
+<tr><td>上证指数</td><td>3923</td><td>3892</td><td>3949</td><td>3919</td><td>3880</td></tr>
+<tr><td>涨停数</td><td>76</td><td>53</td><td>65</td><td>55</td><td>38</td></tr>
+<tr><td>跌停数</td><td>16</td><td>17</td><td>14</td><td>16</td><td>41</td></tr>
+<tr><td>炸板率</td><td>21.52%</td><td>24.29%</td><td>~15%</td><td>39.13%</td><td>25.00%</td></tr>
+<tr><td>晋级率</td><td>15.38%</td><td>12.90%</td><td>~15%</td><td>9.43%</td><td>14.29%</td></tr>
+<tr><td>最高板</td><td>5板(美诺华)</td><td>4板(神剑)</td><td>4板(津药)</td><td>5板(津药)</td><td>6板(津药)</td></tr>
+<tr><td>量能</td><td>2万亿</td><td>2万亿</td><td>2万亿</td><td>2万亿</td><td>2万亿</td></tr>
+<tr><td>昨涨停收益</td><td>1.64%</td><td>1.24%</td><td><span class="down">-0.18%</span></td><td>1.09%</td><td>0.18%</td></tr>
+<tr><td>昨连板收益</td><td>1.04%</td><td>0.50%</td><td>5.64%</td><td>0.55%</td><td>0.28%</td></tr>
+<tr><td>主力资金</td><td>—</td><td>-417亿</td><td>+156亿</td><td>-447亿</td><td>-232亿</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-二-本周操作记录">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、本周操作记录</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>操作</th><th>股票</th><th>价格</th><th>仓位</th><th>盈亏</th><th>判断</th></tr></thead>
+<tbody>
+<tr><td>3/30</td><td>卖出</td><td>天际股份</td><td>37.60</td><td>空仓</td><td><strong><span class="up">+0.71%</span></strong>（+364元）</td><td>窗口1龙头不表态即离场 <span class="badge badge-green">✓</span></td></tr>
+<tr><td>3/30</td><td><strong>买入</strong></td><td>航天工程</td><td>30.68</td><td>21.9%</td><td><span class="down">-0.16%</span></td><td>窗口2低吸，方向确认偏弱 <span class="badge badge-yellow">⚠</span></td></tr>
+<tr><td>3/31</td><td>卖出</td><td>航天工程</td><td>30.68-30.69</td><td>空仓</td><td><strong><span class="down">-0.16%</span></strong>（约-16元）</td><td>收紧止损后主动卖出 <span class="badge badge-green">✓</span></td></tr>
+<tr><td>4/1</td><td>空仓</td><td>—</td><td>—</td><td>0%</td><td>0</td><td>脉冲诱多空仓 <span class="badge badge-green">✓</span></td></tr>
+<tr><td>4/2</td><td>⛔<strong>违规买入</strong></td><td>睿智医药</td><td>12.984</td><td>18%</td><td>—</td><td>冰点+条件不满足→窗口1追涨 ❌</td></tr>
+<tr><td>4/3</td><td><strong>卖出</strong></td><td>睿智医药</td><td>12.00</td><td>空仓</td><td><strong><span class="down">-7.58%</span></strong>（-2952元）</td><td>竞价止损执行 <span class="badge badge-green">✓</span></td></tr>
+<tr><td>4/3</td><td>空仓</td><td>—</td><td>—</td><td>0%</td><td>0</td><td>双冰空仓 <span class="badge badge-green">✓</span></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>本周交易统计</strong>：</p>
+<ul class="tight-list"><li>交易 4 次（买2卖2+1违规）</li><li>盈利 1 次（天际<span class="up">+0.71%</span>）</li><li>亏损 2 次（航天<span class="down">-0.16%</span>、睿智<span class="down">-7.58%</span>）</li><li>累计盈亏：约 <strong>-2,604 元</strong>（约<span class="down">-1.24%</span>）</li><li>1次违规操作（睿智医药），亏损占总亏损100%+</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-三-本周关键教训">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、本周关键教训</div>
+<div class="sb">
+<h3 class="sh3" id="3-1-已固化到-rules-的教训">3.1 已固化到 rules 的教训</h3>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>教训</th><th>来源</th><th>固化位置</th></tr></thead>
+<tbody>
+<tr><td>—</td><td>止盈看信号不看涨幅（1.2旧逻辑删除）</td><td>4/3 黑米规则评估</td><td>rules 1.2</td></tr>
+<tr><td>—</td><td>双冰窗口2复合条件（≥8只+有梯队+有弹性）</td><td>4/3 弈沐确认</td><td>rules 2.3</td></tr>
+<tr><td>—</td><td>窗口2方向确认加前提条件（赚钱效应&gt;0%+炸板率&lt;30%）</td><td>4/1 紫米审阅</td><td>rules 2.4</td></tr>
+<tr><td>—</td><td>涨跌停板处理（一字不追/跌停排队）</td><td>4/3 黑米规则评估</td><td>rules 1.1</td></tr>
+<tr><td>—</td><td>9:25后不改单原则</td><td>4/3 黑米规则评估</td><td>rules 2.4</td></tr>
+<tr><td>—</td><td>14:45后可卖出已有持仓</td><td>4/3 黑米规则评估</td><td>rules 4.1</td></tr>
+<tr><td>—</td><td>窗口1须先满足4.2追涨6条条件</td><td>4/3 黑米规则评估</td><td>rules 2.1</td></tr>
+<tr><td>—</td><td>烂板不计入方向确认</td><td>3/30 紫米审阅</td><td>rules 2.4</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="3-2-核心教训-本周反复验证-">3.2 核心教训（本周反复验证）</h3>
+<p class="para"><strong>1. 赚钱效应是检验情绪的唯一标准（教训#5，本周3次验证）</strong></p>
+<ul class="tight-list"><li>3/31：情绪71%→18%脉冲，赚钱效应差=诱多 <span class="badge badge-green">✓</span></li><li>4/1：情绪93%→81%脉冲，赚钱效应<span class="down">-0.18%</span>=诱多 <span class="badge badge-green">✓</span></li><li>4/2：情绪81%→19%崩塌，赚钱效应1.09%=虚假高潮 <span class="badge badge-green">✓</span></li></ul>
+<p class="para"><strong>2. 脉冲修复&gt;50pp = 诱多（教训#6延伸）</strong></p>
+<ul class="tight-list"><li>3/31：34%→71%（+37pp）= 诱多 <span class="badge badge-green">✓</span></li><li>4/1：18%→93%（+75pp）= 诱多 <span class="badge badge-green">✓</span></li><li>本周两次脉冲修复全部是主力出货，追进去的人全亏</li></ul>
+<p class="para"><strong>3. 龙头独秀+跟风杀跌 = 退潮信号（教训#6，本周2次验证）</strong></p>
+<ul class="tight-list"><li>3/31：神剑4板但航天工程<span class="down">-0.68%</span>、航天发展<span class="down">-0.77%</span> → 航天退潮 <span class="badge badge-green">✓</span></li><li>4/2：津药5板但凯莱英-2.13亿、睿智-7276万 → 医药内部大迁徙 <span class="badge badge-green">✓</span></li></ul>
+<p class="para"><strong>4. rules不满足 = 空仓，没有例外（本周血泪教训）</strong></p>
+<ul class="tight-list"><li>4/2：冰点+7项仅1项满足 → 窗口1追涨睿智医药 → 亏损-2952元（<span class="down">-7.58%</span>）</li><li>这是本周唯一的亏损来源，且100%由违规操作造成</li></ul>
+<p class="para"><strong>5. 双冰环境绝对空仓</strong></p>
+<ul class="tight-list"><li>连续两天情绪&lt;20% = 市场极度恐慌</li><li>赚钱效应归零、跌停&gt;涨停、主力-232亿</li><li>双冰后第三天大概率继续弱，不赌反弹</li></ul>
+<h3 class="sh3" id="3-3-待固化的认知">3.3 待固化的认知</h3>
+<p class="para">1. <strong>光通信/光纤是新方向</strong>：有产业逻辑（AI智算中心+光纤涨价+英伟达硅光子），走趋势非连板，主力资金大量逆势流入（通宇+12亿、天孚+9.6亿）。但当前rules无双冰+趋势方向确认标准，待短线生态恢复后评估纳入</p>
+<p class="para">2. <strong>假设空仓测试（教训#30）</strong>：如果空仓不会买→但方向未退潮→收紧止损观察（待验证中）</p>
+<p class="para">3. <strong>涨停板+主力出逃的双解读</strong>：可能是出货也可能是接力资金换手，关键看次日竞价验证（4/3新能泰山案例）</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-四-策略系统迭代记录">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、策略系统迭代记录</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>迭代内容</th><th>来源</th></tr></thead>
+<tbody>
+<tr><td>3/30</td><td>烂板不计入方向确认</td><td>紫米审阅</td></tr>
+<tr><td>3/30</td><td>窗口2方向确认加前提条件（赚钱效应&gt;0%+炸板率&lt;30%）</td><td>紫米审阅</td></tr>
+<tr><td>3/30</td><td>方向确认2/4条=不做更安全（待验证）</td><td>稳米+紫米</td></tr>
+<tr><td>4/1</td><td>情绪缓冲带边界校准（52%归主升+赚钱效应差降一档=1进2）</td><td>稳米</td></tr>
+<tr><td>4/2</td><td>高潮档赚钱效应极差→&quot;不买只卖&quot;执行确认</td><td>稳米</td></tr>
+<tr><td>4/3</td><td>双冰窗口2门槛从≥10只→复合条件（≥8只+有梯队+有弹性）</td><td>黑米审阅+弈沐确认</td></tr>
+<tr><td>4/3</td><td>删1.2止盈<span class="up">+5%</span>旧逻辑，统一引用1.3</td><td>黑米规则评估</td></tr>
+<tr><td>4/3</td><td>补充涨跌停板处理+竞价不改单+尾盘卖出规则</td><td>黑米规则评估</td></tr>
+<tr><td>4/3</td><td>窗口1打法须先满足4.2追涨6条条件</td><td>黑米规则评估</td></tr>
+<tr><td>4/3</td><td>午盘方向为预筛选标注</td><td>黑米规则评估</td></tr>
+<tr><td>4/3</td><td>赚钱效应为盘前可用指标标注</td><td>黑米规则评估</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-五-系统建设进展">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、系统建设进展</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>模块</th><th>状态</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>trading-rules.md v5+</td><td><span class="badge badge-green">✓</span> 持续迭代</td><td>本周8项修订，覆盖止盈/双冰/竞价/尾盘/窗口1等</td></tr>
+<tr><td>P0模拟仓</td><td><span class="badge badge-yellow">⚠</span> 运行中</td><td>本周亏损-2604元（<span class="down">-1.24%</span>），违规操作是主因</td></tr>
+<tr><td>红蓝对抗机制</td><td><span class="badge badge-green">✓</span> 常态化</td><td>紫米审阅（3/30、4/1）+ 黑米审阅（4/2、4/3规则评估）</td></tr>
+<tr><td>午盘动态自选池</td><td><span class="badge badge-green">✓</span> 验证通过</td><td>3/30首次实战，4/2再次验证，切换方向及时</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-六-下周展望-4-7-4-11-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>六、下周展望（4.7-4.11）</div>
+<div class="sb">
+<h3 class="sh3" id="6-1-持仓处理">6.1 持仓处理</h3>
+<p class="para"><strong>当前空仓，无持仓。</strong></p>
+<h3 class="sh3" id="6-2-周一-4-7-重点观察">6.2 周一（4/7）重点观察</h3>
+<p class="para">1. <strong>双冰后修复方向</strong>：强修复（40%+）还是弱修复（20<span class="down">-35%</span>）还是继续冰（&lt;20%）？</p>
+<p class="para">2. <strong>光通信能否持续</strong>：新能泰山4板？板块涨停≥8只+有梯队+有弹性（复合条件）？主力是否继续流入？</p>
+<p class="para">3. <strong>津药药业7板还是断板</strong>：断板=医药彻底结束，封板=独苗续命</p>
+<p class="para">4. <strong>周末消息面</strong>：有无AI/算力/光通信利好？有无重大利空？</p>
+<p class="para">5. <strong>赚钱效应</strong>：今天涨停38只周一能给多少溢价？（昨涨停收益关键指标）</p>
+<p class="para">6. <strong>主力资金</strong>：能否止血（本周连续流出-232亿）？</p>
+<h3 class="sh3" id="6-3-操作预案-详见4-3复盘笔记第七节-">6.3 操作预案（详见4/3复盘笔记第七节）</h3>
+<ul class="tight-list"><li><strong>默认：空仓</strong></li><li>窗口1关闭（双冰+周一）</li><li>窗口2：仅路径C（强修复）+ 方向确认复合条件满足时，≤20%低吸光纤弹性股</li><li><strong>关键变量</strong>：周末消息面</li><li><strong>自选池</strong>：9只（光纤8只+津药观察+重药观察）</li></ul>
+<h3 class="sh3" id="6-4-本周目标">6.4 本周目标</h3>
+<ul class="tight-list"><li>[x] 严格执行rules，零违规 <span class="badge badge-green">✓</span> 2026-04-05</li><li>[x] 双冰后不赌反弹，等确认再做 <span class="badge badge-green">✓</span> 2026-04-05</li><li>[x] 如果光通信确认方向，用复合条件验证后小仓位参与 <span class="badge badge-green">✓</span> 2026-04-05</li><li>[x] 记录每笔交易胜率和盈亏比 <span class="badge badge-green">✓</span> 2026-04-05</li><li>[x] rules v5+ 继续验证和迭代 <span class="badge badge-green">✓</span> 2026-04-05</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-附-每日复盘索引">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>附：每日复盘索引</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>文件</th><th>核心事件</th></tr></thead>
+<tbody>
+<tr><td>3/30 周一</td><td><code>复盘笔记/W14_第14周/2026_3_30_Monday_ReviewNote.md</code></td><td>天际卖出+航天低吸，紫米审阅</td></tr>
+<tr><td>3/31 周二</td><td><code>复盘笔记/W14_第14周/2026_3_31_Tuesday_ReviewNote.md</code></td><td>航天平出，脉冲诱多</td></tr>
+<tr><td>4/1 周三</td><td><code>复盘笔记/W14_第14周/2026_4_1_Wednesday_ReviewNote.md</code></td><td>脉冲93%空仓，紫米审阅rules升级</td></tr>
+<tr><td>4/2 周四</td><td><code>复盘笔记/W14_第14周/2026_4_2_Thursday_ReviewNote.md</code></td><td>⛔违规追涨睿智医药，黑米审阅</td></tr>
+<tr><td>4/3 周五</td><td><code>复盘笔记/W14_第14周/2026_4_3_Friday_ReviewNote.md</code></td><td>双冰确认空仓，黑米规则评估+rules全面修订</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

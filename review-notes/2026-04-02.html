@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-04-02 周四 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 W14 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue">2026-04-02 周四</span>
+    <span class="chip blue">量能 2万亿（-8%）</span>
+    <span class="chip red">涨停 32</span>
+    <span class="chip green">跌停 16</span>
+    <span class="chip red">最高5板（津药药业）板</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-〇-次日预案-来自-4-1-复盘-">〇、次日预案（来自 4/1 复盘）</a>
+  <a href="#持仓处理" class="s2">持仓处理</a>
+  <a href="#打法判断" class="s2">打法判断</a>
+  <a href="#数据验证" class="s2">数据验证</a>
+  <a href="#极端条件备选-仅在以下全部条件同时满足时才考虑开仓-" class="s2">极端条件备选（仅在以下全部条件同时满足时才考虑开仓）</a>
+  <a href="#自选池-12只-" class="s2">自选池（12只）</a>
+  <a href="#今日关键观察" class="s2">今日关键观察</a>
+  <a href="#s-一-竞价分析-09-25-">一、竞价分析（09:25）</a>
+  <a href="#信号a-昨日收盘情绪-预判打法" class="s2">信号A：昨日收盘情绪 → 预判打法</a>
+  <a href="#信号b-竞价验证数据" class="s2">信号B：竞价验证数据</a>
+  <a href="#预案4条门槛对照" class="s2">预案4条门槛对照</a>
+  <a href="#综合判断" class="s2">综合判断</a>
+  <a href="#s-二-早盘观察-09-30-11-30-">二、早盘观察（09:30-11:30）</a>
+  <a href="#窗口1决策" class="s2">窗口1决策</a>
+  <a href="#早盘板块动态" class="s2">早盘板块动态</a>
+  <a href="#早盘关键发现" class="s2">早盘关键发现</a>
+  <a href="#-违规操作记录" class="s2">⚠️ 违规操作记录</a>
+  <a href="#s-三-午盘动态评估-11-30-">三、午盘动态评估（11:30）</a>
+  <a href="#情绪指标快照" class="s2">情绪指标快照</a>
+  <a href="#方向确认判断" class="s2">方向确认判断</a>
+  <a href="#窗口2预判" class="s2">窗口2预判</a>
+  <a href="#s-四-窗口2决策-14-00-14-45-">四、窗口2决策（14:00-14:45）</a>
+  <a href="#睿智医药全天跟踪" class="s2">睿智医药全天跟踪</a>
+  <a href="#s-五-今日复盘">五、今日复盘</a>
+  <a href="#情绪指标-7维度-" class="s2">情绪指标（7维度）</a>
+  <a href="#情绪演变" class="s2">情绪演变</a>
+  <a href="#连板股跟踪" class="s2">连板股跟踪</a>
+  <a href="#涨停复盘全名单-按板块-" class="s2">涨停复盘全名单（按板块）</a>
+  <a href="#板块分布" class="s2">板块分布</a>
+  <a href="#自选股全天表现" class="s2">自选股全天表现</a>
+  <a href="#持仓跟踪" class="s2">持仓跟踪</a>
+  <a href="#s-六-复盘心得">六、复盘心得</a>
+  <a href="#做错了什么" class="s2">做错了什么</a>
+  <a href="#做对了什么" class="s2">做对了什么</a>
+  <a href="#关键发现" class="s2">关键发现</a>
+  <a href="#教训验证" class="s2">教训验证</a>
+  <a href="#s-七-黑米红方审阅-4-2-20-54-">七、黑米红方审阅（4/2 20:54）</a>
+  <a href="#错误a-万邦德未出池-采纳" class="s2">错误A：万邦德未出池 → ✅ 采纳</a>
+  <a href="#错误b-8只涨停-方向延续但忽略主力大迁徙-部分采纳" class="s2">错误B：8只涨停=方向延续但忽略主力大迁徙 → ⚠️ 部分采纳</a>
+  <a href="#错误c-午盘21-情绪判断理由不统一-采纳" class="s2">错误C：午盘21%情绪判断理由不统一 → ✅ 采纳</a>
+  <a href="#商榷a-主线分歧应收紧止损-采纳" class="s2">商榷A：主线分歧应收紧止损 → ✅ 采纳</a>
+  <a href="#商榷b-双鹭14-54封板质量-采纳" class="s2">商榷B：双鹭14:54封板质量 → ✅ 采纳</a>
+  <a href="#商榷c-周五3条-空仓-vs-rules-2-5-采纳" class="s2">商榷C：周五3条→空仓 vs rules 2.5 → ✅ 采纳</a>
+  <a href="#商榷d-假设空仓测试-教训-30-采纳" class="s2">商榷D：假设空仓测试（教训#30） → ✅ 采纳</a>
+  <a href="#遗漏a-情绪14-19-修正原因-采纳" class="s2">遗漏A：情绪14%→19%修正原因 → ✅ 采纳</a>
+  <a href="#遗漏b-涨停收益3个数值歧义-采纳" class="s2">遗漏B：涨停收益3个数值歧义 → ✅ 采纳</a>
+  <a href="#遗漏c-主力流出历史对比-采纳" class="s2">遗漏C：主力流出历史对比 → ✅ 采纳</a>
+  <a href="#遗漏d-主力大迁徙原因-记录但不强求" class="s2">遗漏D：主力大迁徙原因 → ⚠️ 记录但不强求</a>
+  <a href="#s-八-综合终稿-基于黑米审阅修正-">八、综合终稿（基于黑米审阅修正）</a>
+  <a href="#s-〇-修订-次日预案-4-3-friday-基于-4-2-收盘数据">〇-修订、次日预案（4/3 Friday）— 基于 4/…</a>
+  <a href="#持仓处理" class="s2">持仓处理</a>
+  <a href="#打法判断" class="s2">打法判断</a>
+  <a href="#数据验证" class="s2">数据验证</a>
+  <a href="#极端条件备选-仅在以下全部条件同时满足时才考虑开仓-" class="s2">极端条件备选（仅在以下全部条件同时满足时才考虑开仓）</a>
+  <a href="#自选池-重整后-11只-" class="s2">自选池（重整后 11只）</a>
+  <a href="#明天关键观察" class="s2">明天关键观察</a>
+  <a href="#周五特殊提醒" class="s2">周五特殊提醒</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="2026-04-02-thursday-reviewnote">2026-04-02 Thursday ReviewNote</h1>
+
+<div class="section" id="s-〇-次日预案-来自-4-1-复盘-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>〇、次日预案（来自 4/1 复盘）</div>
+<div class="sb">
+<blockquote class="si">⚡ 开盘前只看这一部分就够了。</blockquote>
+<h3 class="sh3" id="持仓处理">持仓处理</h3>
+<p class="para"><strong>无持仓，空仓状态。</strong> 不涉及卖出。</p>
+<h3 class="sh3" id="打法判断">打法判断</h3>
+<p class="para"><strong>按 rules 2.1 + 2.1 情绪缓冲带 + 赚钱效应校正，分两步：</strong></p>
+<p class="para"><strong>第一步：缓冲带定档</strong></p>
+<ul class="tight-list"><li>昨日收盘情绪：<strong>81%</strong></li><li>79<span class="down">-81%</span> 缓冲带 → 按<strong>高潮（不买只卖）</strong>处理</li></ul>
+<p class="para"><strong>第二步：赚钱效应校正</strong></p>
+<ul class="tight-list"><li>赚钱效应：涨停收益 <strong><span class="down">-0.18%</span></strong>（&lt;2%，极差）</li><li>rules 2.1：&quot;情绪&gt;70% + 赚钱效应差 → 降一档&quot;</li><li>但高潮已是最高档，无法再降</li></ul>
+<p class="para"><strong>结论：高潮档 + 赚钱效应极差 → 不买只卖。空仓观望。</strong></p>
+<h3 class="sh3" id="数据验证">数据验证</h3>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>要求</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>情绪</td><td>81%（高潮档）</td><td>—</td><td>❌ 不买只卖</td></tr>
+<tr><td>昨涨停收益</td><td><span class="down">-0.18%</span></td><td>&gt;2%</td><td>❌</td></tr>
+<tr><td>炸板率</td><td>40.43%</td><td>&lt;30%</td><td>❌</td></tr>
+<tr><td>连板风险值</td><td>0.86</td><td>&lt;0.5</td><td>❌</td></tr>
+<tr><td>晋级率</td><td>9.43%</td><td>&gt;40%（主升）</td><td>❌</td></tr>
+<tr><td>梯队完整</td><td>不完整（4板独苗+缺3板）</td><td>完整</td><td>❌</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>6项指标全不满足。空仓。</strong></p>
+<h3 class="sh3" id="极端条件备选-仅在以下全部条件同时满足时才考虑开仓-">极端条件备选（仅在以下全部条件同时满足时才考虑开仓）</h3>
+<blockquote class="si">正常情况下今天空仓。以下为极端条件备选，门槛比昨天更高。</blockquote>
+<p class="para">1. <strong>情绪回落到70%以下</strong>（从81%回落，必须回到强势区以下）</p>
+<p class="para">2. <strong>赚钱效应回暖</strong>：昨涨停收益（今天涨停的明天溢价）&gt;2% + 晋级率&gt;20%</p>
+<p class="para">3. <strong>医药方向持续确认</strong>：</p>
+<ul class="tight-list"><li>津药5板封住（或万邦德晋级）</li><li>板块涨停≥8只</li><li>跟风有涨停（不是只有龙头独秀）</li></ul>
+<p class="para">4. <strong>个股竞价满足 rules 4.2 窗口1标准</strong>：</p>
+<ul class="tight-list"><li>硬性3条：①情绪≥60% ②昨涨停收益&gt;2% ③个股高开3<span class="down">-7%</span></li><li>加分：④炸板率&lt;30% ⑤竞价量&gt;50%昨竞价量 ⑥自选80%红开</li></ul>
+<p class="para">满足全部4条 → 窗口1（9:30-9:45）策略A或B追涨，仓位不超20%</p>
+<p class="para">满足3条（缺1条非赚钱效应）→ 可半仓10%试错</p>
+<p class="para">满足2条及以下 → 坚决不做</p>
+<h3 class="sh3" id="自选池-12只-">自选池（12只）</h3>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>方向</th><th>角色</th><th>标的</th><th>代码</th><th>昨日收盘状态</th><th>今日观察点</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>🏥医药</td><td><span class="badge badge-red">●</span>高度板</td><td>津药药业</td><td>600488</td><td><span class="badge badge-green">✓</span>封死4板</td><td>5板？=高度打开。<strong>只盯不买</strong>，炸板=退潮</td></tr>
+<tr><td>2</td><td>🏥医药</td><td><span class="badge badge-red">●</span>龙头</td><td>万邦德</td><td>002082</td><td><span class="badge badge-green">✓</span>尾盘回封7天5板</td><td><span class="badge badge-yellow">⚠</span>主力-3917万出逃，8天6板？分歧板需观察</td></tr>
+<tr><td>3</td><td>🏥医药</td><td><span class="badge badge-red">●</span>龙头</td><td>九安医疗</td><td>002432</td><td><span class="badge badge-green">✓</span>秒板缩量封死</td><td><strong>质量最高</strong>（量比0.29+换手3.17%+主力+4.02亿），2板首选</td></tr>
+<tr><td>4</td><td>🏥医药</td><td><span class="badge badge-yellow">●</span>中军</td><td>凯莱英</td><td>002821</td><td><span class="badge badge-green">✓</span>封死2板</td><td>CXO龙头+成交额最大，3板？窗口2低吸候选</td></tr>
+<tr><td>5</td><td>🏥医药</td><td><span class="badge badge-green">●</span>弹性</td><td>广生堂</td><td>300436</td><td><span class="badge badge-green">✓</span>20cm封死</td><td>弹性标的，窗口1满足条件时吃中间段</td></tr>
+<tr><td>6</td><td>🏥医药</td><td><span class="badge badge-green">●</span>弹性</td><td>睿智医药</td><td>300149</td><td><span class="badge badge-green">✓</span>20cm封死放量</td><td>同上</td></tr>
+<tr><td>7</td><td>🏥医药</td><td><span class="badge badge-green">●</span>弹性</td><td>舒泰神</td><td>300204</td><td><span class="badge badge-yellow">⚠</span><span class="up">+8.56%</span>未封</td><td>换手24%高位放量未封→减分，优先级降后</td></tr>
+<tr><td>8</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>亚太药业</td><td>002370</td><td><span class="up">+3.63%</span></td><td>低位补涨备选</td></tr>
+<tr><td>9</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>联环药业</td><td>600513</td><td><span class="badge badge-yellow">⚠</span><span class="up">+8.37%</span>未封</td><td>4天3板但未封→加分项减少</td></tr>
+<tr><td>10</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>双鹭药业</td><td>002038</td><td>❌主力-4836万</td><td>连续两天主力出→<strong>优先排除</strong></td></tr>
+<tr><td>11</td><td>🌞光伏</td><td><span class="badge badge-red">●</span>龙头</td><td>国晟科技</td><td>603778</td><td><span class="badge badge-green">✓</span>封死（3天2板）</td><td>光伏方向锚，4板？=方向确认</td></tr>
+<tr><td>12</td><td>🔋电池</td><td><span class="badge badge-red">●</span>龙头</td><td>孚日股份</td><td>002083</td><td><span class="badge badge-green">✓</span>封死首板</td><td>VC方向锚，2板？=方向确认</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>出池标准提醒（rules 4.4）：</strong></p>
+<ul class="tight-list"><li>双鹭药业连续两天主力出→如果继续出→出池</li><li>舒泰神/联环未封板→如果低开→出池</li><li>万邦德尾盘回封但主力出→竞价是关键</li></ul>
+<h3 class="sh3" id="今日关键观察">今日关键观察</h3>
+<p class="para">1. <strong>津药竞价</strong>：高开5%+ = 5板预期，医药高度打开；平开/低开 = 退潮信号</p>
+<p class="para">2. <strong>万邦德</strong>：主力-3917万出逃，竞价量比和主力方向是关键——主力继续出→分歧确认</p>
+<p class="para">3. <strong>赚钱效应</strong>：昨天涨停的65只，今天给多少溢价？涨停收益&gt;2% = 环境改善</p>
+<p class="para">4. <strong>情绪方向</strong>：81%是继续回落到70%以下（环境改善）还是继续在高位（不买只卖）</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-一-竞价分析-09-25-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、竞价分析（09:25）</div>
+<div class="sb">
+<p class="para">（等待弈沐哥提供竞价数据）</p>
+<h3 class="sh3" id="信号a-昨日收盘情绪-预判打法">信号A：昨日收盘情绪 → 预判打法</h3>
+<ul class="tight-list"><li>昨日收盘情绪：<strong>81%（高潮档）</strong></li><li>预判打法：<strong>不买只卖，空仓观望</strong></li></ul>
+<h3 class="sh3" id="信号b-竞价验证数据">信号B：竞价验证数据</h3>
+<p class="para"><strong>大盘：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>上证指数</td><td>3940.80</td><td><strong><span class="down">-0.20%</span></strong> 微幅低开</td></tr>
+<tr><td>主力资金</td><td>+8401万</td><td>小幅净流入</td></tr>
+<tr><td>同花顺情绪</td><td><strong>36%</strong></td><td>低迷</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>情绪对比：昨日81%（高潮） → 今日竞价36%（低迷），跌幅45pp = 大幅回落</strong></p>
+<p class="para"><strong>赚钱效应：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>昨涨停收益</td><td><strong>4.10%</strong></td><td><span class="badge badge-green">✓</span> 极好</td></tr>
+<tr><td>昨连板收益</td><td><strong>10.01%</strong></td><td><span class="badge badge-green">✓</span> 拉满</td></tr>
+<tr><td>昨炸板收益</td><td><span class="down">-2.69%</span></td><td><span class="badge badge-yellow">⚠</span> 炸板票被惩罚</td></tr>
+<tr><td>连板风险值</td><td>0.5</td><td>中位数水平</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>涨跌分布：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>分类</th><th>家数</th></tr></thead>
+<tbody>
+<tr><td>上涨</td><td>1093</td></tr>
+<tr><td>下跌</td><td>3340</td></tr>
+<tr><td>涨幅≥7%</td><td>11</td></tr>
+<tr><td>跌幅≤<span class="down">-7%</span></td><td>3</td></tr>
+<tr><td>涨跌比</td><td>1093:3340（1:3）</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>自选池竞价表现：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>代码</th><th>涨幅</th><th>量比</th><th>主力</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>津药药业</td><td>600488</td><td><strong><span class="up">+10.07%</span></strong></td><td>19.36</td><td>+1619万</td><td><span class="badge badge-green">✓</span> 一字封死5板</td></tr>
+<tr><td>广生堂</td><td>300436</td><td><span class="up">+2.32%</span></td><td>13.01</td><td>+280万</td><td>高开</td></tr>
+<tr><td>九安医疗</td><td>002432</td><td><span class="up">+1.93%</span></td><td>3.88</td><td>0</td><td><span class="badge badge-green">✓</span> 2板预期，红开</td></tr>
+<tr><td>凯莱英</td><td>002821</td><td><span class="up">+1.80%</span></td><td>9.61</td><td>-687万</td><td>红开但主力出</td></tr>
+<tr><td>国晟科技</td><td>603778</td><td><span class="up">+1.78%</span></td><td>4.53</td><td>+490万</td><td>红开</td></tr>
+<tr><td>睿智医药</td><td>300149</td><td><span class="up">+0.64%</span></td><td>25.59</td><td>0</td><td>微红</td></tr>
+<tr><td>舒泰神</td><td>300204</td><td><span class="down">-0.03%</span></td><td>4.75</td><td>+1659万</td><td>平开</td></tr>
+<tr><td>双鹭药业</td><td>002038</td><td><span class="down">-0.13%</span></td><td>6.03</td><td>+1062万</td><td>平开，主力转正</td></tr>
+<tr><td>联环药业</td><td>600513</td><td><span class="down">-1.49%</span></td><td>7.05</td><td>+861万</td><td>低开</td></tr>
+<tr><td>孚日股份</td><td>002083</td><td><span class="down">-2.24%</span></td><td>3.64</td><td>0</td><td>低开</td></tr>
+<tr><td>万邦德</td><td>002082</td><td><strong><span class="down">-3.01%</span></strong></td><td>6.95</td><td>0</td><td><span class="badge badge-yellow">⚠</span> 大幅低开，主力出逃延续</td></tr>
+<tr><td>亚太药业</td><td>002370</td><td><span class="down">-3.12%</span></td><td>2.97</td><td>-64万</td><td><span class="badge badge-yellow">⚠</span> 低开，弱</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>自选红开率：6/12 = 50%</strong>（&lt;80%门槛）</p>
+<h3 class="sh3" id="预案4条门槛对照">预案4条门槛对照</h3>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>条件</th><th>要求</th><th>实际</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>①</td><td>情绪回落&lt;70%</td><td><span class="badge badge-green">✓</span></td><td>36%</td><td><span class="badge badge-green">✓</span></td></tr>
+<tr><td>②</td><td>赚钱效应&gt;2%+晋级率&gt;20%</td><td><span class="badge badge-green">✓</span></td><td>涨停收益4.1%<span class="badge badge-green">✓</span> + 晋级率待收盘</td><td><span style="color:#8A8480">⏳</span>半满足</td></tr>
+<tr><td>③</td><td>医药方向持续确认</td><td><span class="badge badge-green">✓</span></td><td>津药5板<span class="badge badge-green">✓</span> + 涨停数待收盘</td><td><span style="color:#8A8480">⏳</span>半满足</td></tr>
+<tr><td>④</td><td>个股竞价达标</td><td><span class="badge badge-green">✓</span></td><td>高开3<span class="down">-7%</span>无标的，津药一字不可追</td><td>❌</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="综合判断">综合判断</h3>
+<p class="para"><strong>信号A（好）：情绪从81%→36%，大幅回落到低迷区 → 环境改善</strong></p>
+<p class="para"><strong>信号B（分化）：赚钱效应极好（4.1%/10.01%）但个股竞价不达标</strong></p>
+<p class="para"><strong>关键矛盾：</strong></p>
+<ul class="tight-list"><li>赚钱效应突然变好（昨日涨停今天平均赚4.1%），说明昨天追涨停的人今天赚了——<strong>但这是4/1的情绪81%高潮期的涨停，今天情绪已回落到36%，追的是昨天的红利</strong></li><li>今天36%低迷环境下开新仓，赚钱效应会不会延续？<strong>不确定</strong></li><li>津药一字5板（10.07%）不可追，唯一可能标的九安<span class="up">+1.93%</span>不满足高开3<span class="down">-7%</span></li><li>万邦德<span class="down">-3.01%</span>大幅低开，验证昨日&quot;主力出逃&quot;判断 <span class="badge badge-green">✓</span></li></ul>
+<p class="para">→ <strong>结论：预案4条满足1.5条（①<span class="badge badge-green">✓</span> + ②半 + ③半 + ④❌）= 2条及以下 → 坚决不做</strong></p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-二-早盘观察-09-30-11-30-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、早盘观察（09:30-11:30）</div>
+<div class="sb">
+<h3 class="sh3" id="窗口1决策">窗口1决策</h3>
+<p class="para"><strong>不做。</strong> 竞价已判定空仓，窗口1不开。</p>
+<h3 class="sh3" id="早盘板块动态">早盘板块动态</h3>
+<p class="para"><strong>大盘：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>上证指数</td><td>3934.77</td><td><strong><span class="down">-0.35%</span></strong> 震荡走弱</td></tr>
+<tr><td>主力资金</td><td><strong>-154.23亿</strong></td><td><span class="badge badge-yellow">⚠</span> 大幅净流出</td></tr>
+<tr><td>情绪值</td><td>36%（开盘）→ 未更新</td><td>低迷</td></tr>
+<tr><td>涨停收益</td><td>4.1%（开盘）→ <strong>1.08%（午前）</strong></td><td><span class="badge badge-yellow">⚠</span> 大幅回落</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>涨跌分布（午前）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>分类</th><th>家数</th></tr></thead>
+<tbody>
+<tr><td>上涨</td><td>1183</td></tr>
+<tr><td>下跌</td><td>3905</td></tr>
+<tr><td>涨停</td><td>24（非一字22）</td></tr>
+<tr><td>跌停</td><td>14</td></tr>
+<tr><td>涨跌比</td><td>1183:3905（1:3.3）</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>关键变化（竞价→午前）：</strong></p>
+<ul class="tight-list"><li>涨停收益从4.1%暴跌到1.08%——<strong>竞价溢价被盘中吃掉了</strong></li><li>主力净流出154亿——<strong>资金在撤退</strong></li><li>涨停24只 vs 跌停14只——<strong>跌停比例偏高，赚钱效应正在恶化</strong></li></ul>
+<p class="para"><strong>板块异动：</strong></p>
+<ul class="tight-list"><li>09:45 光纤概念逆势走强 <span class="up">+0.53%</span>（光库科技<span class="up">+8.18%</span>、长飞光纤<span class="up">+7.81%</span>）</li><li>其余方向普跌</li></ul>
+<p class="para"><strong>自选股表现（竞价→午前变化）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>竞价</th><th>午前</th><th>变化</th><th>主力</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>津药药业</td><td><span class="up">+10.07%</span></td><td><span class="up">+10.07%</span></td><td>一字未开</td><td>+4560万</td><td><span class="badge badge-green">✓</span> 5板封死，高度打开</td></tr>
+<tr><td>广生堂</td><td><span class="up">+2.32%</span></td><td><strong><span class="up">+5.91%</span></strong></td><td><span class="up">+3.59%</span></td><td>+3602万</td><td><span class="badge badge-green">✓</span> 20cm走强</td></tr>
+<tr><td>双鹭药业</td><td><span class="down">-0.13%</span></td><td><strong><span class="up">+5.53%</span></strong></td><td><span class="up">+5.66%</span></td><td>+3114万</td><td><span class="badge badge-green">✓</span> 昨天排除的今天反转</td></tr>
+<tr><td>凯莱英</td><td><span class="up">+1.80%</span></td><td><span class="up">+3.91%</span></td><td><span class="up">+2.11%</span></td><td><strong>-8447万</strong></td><td><span class="badge badge-yellow">⚠</span> 涨但主力大出</td></tr>
+<tr><td>神剑股份</td><td><span class="up">+0.59%</span></td><td><span class="up">+3.94%</span></td><td><span class="up">+3.35%</span></td><td>+5720万</td><td>航天方向，非主线</td></tr>
+<tr><td>舒泰神</td><td><span class="down">-0.03%</span></td><td><span class="up">+2.64%</span></td><td><span class="up">+2.67%</span></td><td>-394万</td><td>微转正</td></tr>
+<tr><td>九安医疗</td><td><span class="up">+1.93%</span></td><td><span class="up">+1.32%</span></td><td><span class="down">-0.61%</span></td><td>+8924万</td><td><span class="badge badge-yellow">⚠</span> 冲高回落，主力大进</td></tr>
+<tr><td>联环药业</td><td><span class="down">-1.49%</span></td><td><span class="up">+1.62%</span></td><td><span class="up">+3.11%</span></td><td>+532万</td><td>低开高走</td></tr>
+<tr><td>睿智医药</td><td><span class="up">+0.64%</span></td><td><span class="up">+1.29%</span></td><td><span class="up">+0.65%</span></td><td><strong>-8287万</strong></td><td><span class="badge badge-yellow">⚠</span> 涨但主力大出</td></tr>
+<tr><td>亚太药业</td><td><span class="down">-3.12%</span></td><td><span class="up">+0.91%</span></td><td><span class="up">+4.03%</span></td><td>-803万</td><td>低开高走但主力出</td></tr>
+<tr><td>国晟科技</td><td><span class="up">+1.78%</span></td><td><span class="down">-0.58%</span></td><td><span class="down">-2.36%</span></td><td><strong>-1.94亿</strong></td><td>❌ 光伏退潮</td></tr>
+<tr><td>万邦德</td><td><span class="down">-3.01%</span></td><td><span class="down">-1.11%</span></td><td><span class="up">+1.90%</span></td><td>-5462万</td><td>❌ 主力持续出逃</td></tr>
+<tr><td>孚日股份</td><td><span class="down">-2.24%</span></td><td><strong><span class="down">-3.86%</span></strong></td><td><span class="down">-1.62%</span></td><td>+1480万</td><td>❌ 继续跌</td></tr>
+<tr><td>航天发展</td><td><span class="down">-0.18%</span></td><td><span class="down">-1.36%</span></td><td><span class="down">-1.18%</span></td><td>-8958万</td><td>❌ 航天退潮</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>自选池午前红开率：10/14 = 71%</strong>（剔除指数后 10/13）</p>
+<h3 class="sh3" id="早盘关键发现">早盘关键发现</h3>
+<p class="para">1. <strong>医药方向最强但内部分化严重</strong>：津药一字5板打开高度 + 广生堂/双鹭/舒泰红盘，但凯莱英/睿智主力大幅出逃（-8447万/-8287万）——<strong>龙头封但中军出货，分歧加大</strong></p>
+<p class="para">2. <strong>赚钱效应快速恶化</strong>：涨停收益从竞价4.1%→午前1.08%，说明涨停封板质量不高</p>
+<p class="para">3. <strong>大盘走弱</strong>：主力净流出154亿，跌停14只比例偏高</p>
+<p class="para">4. <strong>光纤逆势</strong>：光库<span class="up">+8%</span>但不在自选池，且非主线方向</p>
+<h3 class="sh3" id="-违规操作记录">⚠️ 违规操作记录</h3>
+<p class="para"><strong>操作：窗口1低吸睿智医药</strong></p>
+<ul class="tight-list"><li>标的：睿智医药 300149</li><li>成本：12.984元</li><li>数量：3000股</li><li>仓位：18%</li><li>时机：窗口1（9:30-9:45）</li><li>当前价：12.50（午前），浮亏约 <strong>3.7%</strong>（-1452元）</li></ul>
+<p class="para"><strong>违规点：</strong></p>
+<p class="para">1. ❌ 预案明确&quot;空仓&quot;，4条门槛只满足1.5条 → 坚决不做</p>
+<p class="para">2. ❌ 窗口1是追涨窗口，不是低吸窗口（低吸是窗口2）</p>
+<p class="para">3. ❌ 睿智午前主力净流出-8287万 → 买入标的主力在出逃</p>
+<p class="para">4. ❌ 情绪36%低迷区，不开窗口1</p>
+<p class="para"><strong>弈沐哥复盘：</strong> 看到津药封死+医药跟风+新涨停 → 情绪驱动追入，但忽略了预案纪律和标的主力出逃信号。</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-三-午盘动态评估-11-30-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、午盘动态评估（11:30）</div>
+<div class="sb">
+<h3 class="sh3" id="情绪指标快照">情绪指标快照</h3>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>竞价</th><th>10:00</th><th>午盘</th><th>趋势</th></tr></thead>
+<tbody>
+<tr><td>上证</td><td>3940.80</td><td>3934.77</td><td><strong>3927.60</strong></td><td>📉 持续走弱</td></tr>
+<tr><td>情绪值</td><td>36%</td><td>36%</td><td><strong>21%</strong></td><td>📉 进入低迷档（20<span class="down">-40%</span>）</td></tr>
+<tr><td>主力资金</td><td>+8401万</td><td>-154亿</td><td><strong>-237.68亿</strong></td><td>📉 大幅流出</td></tr>
+<tr><td>涨停收益</td><td>4.10%</td><td>1.08%</td><td><strong>1.28%</strong></td><td>📉 低位徘徊</td></tr>
+<tr><td>涨停/跌停</td><td>—</td><td>24/14</td><td><strong>23/14</strong></td><td>→ 持平</td></tr>
+<tr><td>量能</td><td>—</td><td>—</td><td>1万亿（<span class="down">-11%</span>）</td><td>📉 缩量</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>一句话：情绪从36%跌入低迷档21%，主力流出加剧到237亿，缩量普跌（941:4166）。低迷档不开窗口2。</strong></p>
+<h3 class="sh3" id="方向确认判断">方向确认判断</h3>
+<p class="para"><strong>医药方向（唯一主线）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>午盘表现</th><th>主力</th><th>判断</th></tr></thead>
+<tbody>
+<tr><td>津药药业</td><td><span class="up">+10.07%</span> 一字5板</td><td>+5019万</td><td><span class="badge badge-green">✓</span> 高度板，封死</td></tr>
+<tr><td>广生堂</td><td><span class="up">+6.70%</span></td><td>+7906万</td><td><span class="badge badge-green">✓</span> 20cm强势</td></tr>
+<tr><td>双鹭药业</td><td><span class="up">+5.02%</span></td><td>+3108万</td><td><span class="badge badge-green">✓</span> 反转昨天排除</td></tr>
+<tr><td>九安医疗</td><td><span class="down">-0.25%</span></td><td>+2099万</td><td><span class="badge badge-yellow">⚠</span> 冲高回落翻绿</td></tr>
+<tr><td>凯莱英</td><td><span class="up">+3.38%</span></td><td><strong>-1.09亿</strong></td><td>❌ 中军主力大出</td></tr>
+<tr><td>睿智医药</td><td><span class="up">+1.45%</span></td><td><strong>-9891万</strong></td><td>❌ 持仓票主力大出</td></tr>
+<tr><td>舒泰神</td><td><span class="up">+1.35%</span></td><td>-1299万</td><td><span class="badge badge-yellow">⚠</span> 微涨但主力出</td></tr>
+<tr><td>联环药业</td><td><span class="up">+0.99%</span></td><td>-2968万</td><td><span class="badge badge-yellow">⚠</span> 主力出</td></tr>
+<tr><td>万邦德</td><td><span class="down">-1.23%</span></td><td><strong>-1.30亿</strong></td><td>❌ 持续出逃</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>医药方向判断：</strong></p>
+<ul class="tight-list"><li>龙头封死（津药）+ 弹性跟涨（广生堂/双鹭）= 方向还在</li><li>但中军（凯莱英-1.09亿）+ 持仓票（睿智-9891万）+ 前龙头（万邦德-1.30亿）全部主力出逃</li><li>→ <strong>资金在医药内部从大票向小票撤退，方向在但质量下降</strong></li></ul>
+<h3 class="sh3" id="窗口2预判">窗口2预判</h3>
+<p class="para"><strong>不做。理由：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>条件</th><th>要求</th><th>实际</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>持仓处理</td><td>优先处理</td><td>睿智T+1锁死，今天卖不了</td><td>—</td></tr>
+<tr><td>情绪</td><td>≥60%（窗口2低吸，冰点&lt;20%）</td><td>21%低迷档</td><td>❌ 低迷档不开窗口2</td></tr>
+<tr><td>赚钱效应</td><td>&gt;0%（rules 2.4）</td><td>1.28%勉强&gt;0</td><td><span class="badge badge-yellow">⚠</span></td></tr>
+<tr><td>方向确认</td><td>≥3条 + 赚钱效应&gt;0% + 炸板率&lt;30%</td><td>医药方向在但分化严重</td><td><span class="badge badge-yellow">⚠</span></td></tr>
+<tr><td>加仓纪律</td><td>预案空仓违规进仓，不加仓</td><td>—</td><td>❌</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>结论：窗口2关闭，不加仓。今天下午只盯不操作。</strong></p>
+<p class="para"><strong>持仓票（睿智医药）午盘状态：</strong></p>
+<ul class="tight-list"><li>成本12.984 → 现价12.60 → <strong>浮亏约2.96%</strong>（-1152元）</li><li>止损价12.33（<span class="down">-5%</span>），还有1.2元空间</li><li>主力-9891万持续流出</li><li>T+1锁死，今天卖不了，<strong>明天竞价决策</strong></li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-四-窗口2决策-14-00-14-45-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、窗口2决策（14:00-14:45）</div>
+<div class="sb">
+<p class="para"><strong>不做。窗口2关闭。</strong></p>
+<p class="para"><strong>午后盘面继续恶化：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>午盘</th><th>收盘</th><th>变化</th></tr></thead>
+<tbody>
+<tr><td>上证</td><td>3927.60</td><td><strong>3919.29</strong></td><td>📉 -8.31，尾盘微回升</td></tr>
+<tr><td>情绪值</td><td>21%</td><td><strong>19%</strong></td><td>📉 冰点（从14上修到19）</td></tr>
+<tr><td>主力资金</td><td>-237.68亿</td><td><strong>-447.00亿</strong></td><td>📉 恐慌性流出加剧</td></tr>
+<tr><td>涨停收益</td><td>1.28%</td><td><strong>1.09%</strong></td><td>📉 赚钱效应极差</td></tr>
+<tr><td>涨停/跌停</td><td>23/14</td><td><strong>32/16</strong></td><td>涨停略增，跌停维持</td></tr>
+<tr><td>涨跌比</td><td>941:4166</td><td><strong>894:4231</strong></td><td>📉 普跌持续</td></tr>
+<tr><td>炸板率</td><td>—</td><td><strong>39.13%</strong></td><td>❌ 高于冰点40%线临界</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>窗口2条件逐条对照：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>条件</th><th>要求</th><th>实际</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>赚钱效应&gt;0%</td><td><span class="badge badge-green">✓</span></td><td>1.09%</td><td><span class="badge badge-yellow">⚠</span> 勉强&gt;0</td></tr>
+<tr><td>炸板率&lt;40%（冰点）</td><td><span class="badge badge-green">✓</span></td><td>39.13%</td><td><span class="badge badge-yellow">⚠</span> 临界</td></tr>
+<tr><td>方向确认≥3条</td><td><span class="badge badge-green">✓</span></td><td>津药5板<span class="badge badge-green">✓</span>+广生堂<span class="up">+6.81%</span><span class="badge badge-green">✓</span>+双鹭涨停<span class="up">+10.04%</span><span class="badge badge-green">✓</span>+中军凯莱英<span class="up">+3.94%</span>但主力-2.13亿❌</td><td>3/4</td></tr>
+<tr><td>情绪19%冰点</td><td>低吸窗口2可开</td><td><span class="badge badge-green">✓</span></td><td><span class="badge badge-green">✓</span></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>结论：环境极差（主力-447亿+涨停收益1.09%+涨停量能腰斩47%+炸板率39.13%临界），不做。</strong></p>
+<p class="para"><strong>且已有18%仓位（睿智），冰点总仓位上限40%，实际可用仅22%，不值得冒险。</strong></p>
+<h3 class="sh3" id="睿智医药全天跟踪">睿智医药全天跟踪</h3>
+<div class="tw"><table>
+<thead><tr><th>时点</th><th>价格</th><th>涨跌幅</th><th>浮亏</th><th>主力</th></tr></thead>
+<tbody>
+<tr><td>成本</td><td>12.984</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>竞价</td><td>12.50</td><td><span class="up">+0.64%</span></td><td><span class="down">-2.96%</span></td><td>0</td></tr>
+<tr><td>午盘</td><td>12.60</td><td><span class="up">+1.45%</span></td><td><span class="down">-2.96%</span></td><td>-9891万</td></tr>
+<tr><td><strong>收盘</strong></td><td><strong>12.74</strong></td><td><strong><span class="up">+2.58%</span></strong></td><td><strong><span class="down">-1.88%</span></strong></td><td><strong>-7276万</strong></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>浮亏：12.984 - 12.74 = 0.244元/股 × 3000股 = -732元</strong></p>
+<p class="para"><strong>止损价：12.33（<span class="down">-5%</span>），距止损还有0.41元（3.2%）</strong></p>
+<p class="para"><strong>尾盘有所回升（12.49→12.74），浮亏从3.82%收窄到1.88%</strong></p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-五-今日复盘">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、今日复盘</div>
+<div class="sb">
+<h3 class="sh3" id="情绪指标-7维度-">情绪指标（7维度）</h3>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>数值</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>涨停家数</td><td>32（非一字30）</td><td>偏少（较昨日65只腰斩）</td></tr>
+<tr><td>跌停家数</td><td>16</td><td>偏多</td></tr>
+<tr><td>封板率</td><td>32/(32+16)≈66.7%</td><td>一般</td></tr>
+<tr><td><strong>炸板率</strong></td><td><strong>39.13%</strong></td><td><span class="badge badge-yellow">⚠</span> 高于30%安全线，接近冰点40%临界</td></tr>
+<tr><td>情绪值</td><td>19%（收盘）</td><td>❌ 冰点</td></tr>
+<tr><td>上证指数</td><td>3919.29，<span class="down">-0.74%</span></td><td>❌ 跌破3920</td></tr>
+<tr><td>全市场量能</td><td>2万亿（<span class="down">-8%</span>）</td><td>缩量</td></tr>
+<tr><td>主力资金</td><td><strong>-447.00亿</strong></td><td>❌ 恐慌性流出</td></tr>
+<tr><td>高度板</td><td>5板（津药）+ 3板（新中港+通达股份+星辉环材）</td><td>梯队断层</td></tr>
+<tr><td>连板风险值</td><td>0.5</td><td>高</td></tr>
+<tr><td><strong>昨日涨停收益</strong></td><td><strong>1.09%/0.96%</strong></td><td>❌ 极差（&lt;1.5%极差线）</td></tr>
+<tr><td>昨日连板收益</td><td>10.81%</td><td>连板龙头有溢价</td></tr>
+<tr><td>昨日炸板收益</td><td><span class="down">-1.81%</span></td><td>❌ 炸板惩罚重</td></tr>
+<tr><td>总晋级率</td><td><strong>10.71%</strong></td><td>❌ 极差</td></tr>
+<tr><td>总竞价涨幅</td><td><span class="up">+2.07%</span></td><td>竞价尚可，盘中走弱</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="情绪演变">情绪演变</h3>
+<div class="tw"><table>
+<thead><tr><th>时点</th><th>情绪值</th><th>涨停收益</th><th>主力</th><th>描述</th></tr></thead>
+<tbody>
+<tr><td>昨日收盘</td><td>81%</td><td><span class="down">-0.18%</span></td><td>—</td><td>高潮档</td></tr>
+<tr><td>今日竞价</td><td>36%</td><td>4.10%</td><td>+0.84亿</td><td>大幅回落，脉冲假修复</td></tr>
+<tr><td>10:00</td><td>36%</td><td>1.08%</td><td>-154亿</td><td>赚钱效应腰斩</td></tr>
+<tr><td>午盘</td><td>21%</td><td>1.28%</td><td>-237亿</td><td>低迷档（20<span class="down">-40%</span>）</td></tr>
+<tr><td><strong>收盘</strong></td><td><strong>19%</strong></td><td><strong>1.09%</strong></td><td><strong>-447亿</strong></td><td><strong>冰点，全线崩</strong></td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>3天情绪走势：18%（3/31冰点）→ 81%（4/1脉冲高潮）→ 19%（4/2崩回冰点）</strong></p>
+<h3 class="sh3" id="连板股跟踪">连板股跟踪</h3>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>代码</th><th>昨日</th><th>今日</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>津药药业</td><td>600488</td><td>4板</td><td><strong>5板封死</strong>（一字）</td><td><span class="badge badge-green">✓</span> 最高板，一字</td></tr>
+<tr><td>万邦德</td><td>002082</td><td>7天5板</td><td><span class="up">+4.04%</span>未封</td><td>❌ 断板，主力-2.42亿</td></tr>
+<tr><td>九安医疗</td><td>002432</td><td>首板</td><td><span class="up">+0.26%</span></td><td>❌ 冲高回落，未晋级</td></tr>
+<tr><td>凯莱英</td><td>002821</td><td>2板</td><td><span class="up">+3.94%</span>未封</td><td>❌ 断板，主力-2.13亿</td></tr>
+<tr><td>广生堂</td><td>300436</td><td>首板</td><td><strong><span class="up">+6.81%</span></strong></td><td><span class="badge badge-yellow">⚠</span> 20cm强势未封</td></tr>
+<tr><td>双鹭药业</td><td>002038</td><td>—</td><td><strong>涨停<span class="up">+10.04%</span></strong>（14:54）</td><td><span class="badge badge-yellow">⚠</span> 尾盘封板（14:50后=质量差，按教训#14次日低开概率大），但主力+9583万</td></tr>
+<tr><td>北大医药</td><td>000788</td><td>—</td><td><strong>2板</strong>（T字）</td><td><span class="badge badge-green">✓</span> 新入池，创新药+获批</td></tr>
+<tr><td>益佰制药</td><td>600594</td><td>—</td><td><strong>2板</strong>（10:28）</td><td><span class="badge badge-green">✓</span> 新入池，阿扎胞苷获批</td></tr>
+<tr><td>国晟科技</td><td>603778</td><td>3天2板</td><td><span class="up">+6.04%</span></td><td><span class="badge badge-yellow">⚠</span> 未封，主力-1.94亿</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>晋级率极低：10.71%，昨日连板股多只断板（万邦德/凯莱英/九安），仅津药晋级5板。</strong></p>
+<h3 class="sh3" id="涨停复盘全名单-按板块-">涨停复盘全名单（按板块）</h3>
+<p class="para"><strong>🏥医药板块（7只涨停 = 唯一逆势主线）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>连板</th><th>代码</th><th>名称</th><th>涨停时间</th><th>逻辑</th></tr></thead>
+<tbody>
+<tr><td>5板</td><td>600488</td><td>津药药业</td><td>09:25</td><td>创新药+原料药+出口</td></tr>
+<tr><td>2板</td><td>000788</td><td>北大医药</td><td>09:49</td><td>创新药+右酮洛芬+帕利哌酮获批</td></tr>
+<tr><td>2板</td><td>600594</td><td>益佰制药</td><td>10:28</td><td>阿扎胞苷获批+抗肿瘤+民营医院</td></tr>
+<tr><td>首板</td><td>000950</td><td>重药控股</td><td>09:25</td><td>回购+连锁药房+创新药+央企</td></tr>
+<tr><td>首板</td><td>603122</td><td>合富中国</td><td>13:21</td><td>海峡两岸+AI医疗+6亿合同</td></tr>
+<tr><td>首板</td><td>603222</td><td>济民健康</td><td>13:35</td><td>创新药+医疗器械+海南自贸港</td></tr>
+<tr><td>首板</td><td>920230</td><td>欧康医药</td><td>14:18</td><td>槲皮素申报+原料药+合成生物</td></tr>
+<tr><td>首板</td><td>002038</td><td>双鹭药业</td><td>14:54</td><td>GLP-1+创新药+硝酸甘油喷雾剂</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>🛢️油气板块（6只）：</strong> 博汇股份、和顺石油、贝肯能源、蓝焰控股、康普顿、中油工程</p>
+<p class="para"><strong>⚡电力板块（6只）：</strong> 新中港（3板）、通达股份（3板）、新能泰山、汇源通信、乐山电力、大东南</p>
+<p class="para"><strong>📡光通信板块（2只）：</strong> 中利集团、华脉科技</p>
+<p class="para"><strong>⛏️锂矿板块（2只）：</strong> 川能动力、西藏矿业</p>
+<p class="para"><strong>🧪其他（3只）：</strong> 星辉环材（3板）、松炀资源、中工国际、巨星农牧</p>
+<h3 class="sh3" id="板块分布">板块分布</h3>
+<div class="tw"><table>
+<thead><tr><th>方向</th><th>涨停数</th><th>表现</th><th>判断</th></tr></thead>
+<tbody>
+<tr><td>🏥医药</td><td><strong>8只</strong>（津药5板+北大/益佰2板+重药/合富/济民/欧康/双鹭首板）</td><td>全天唯一逆势主线，涨停数量最多</td><td><strong>主线确认</strong>，但内部资金分化</td></tr>
+<tr><td>🛢️油气</td><td>6只</td><td>特朗普伊朗打击消息驱动</td><td>事件驱动，持续性待验证</td></tr>
+<tr><td>⚡电力</td><td>6只</td><td>算电协同政策+能源涨价</td><td>支线，非当前主线</td></tr>
+<tr><td>📡光通信</td><td>2只</td><td>英伟达投资Marvell+光纤涨价</td><td>支线</td></tr>
+<tr><td>⛏️锂矿</td><td>2只</td><td>津巴布韦暂停出口+碳酸锂涨17%</td><td>支线</td></tr>
+<tr><td>🌞光伏</td><td>国晟<span class="up">+6.04%</span></td><td>未封板，主力持续出</td><td>❌ 退潮</td></tr>
+<tr><td>🚀商业航天</td><td>神剑<span class="up">+1.71%</span></td><td>全天弱势</td><td>❌ 退潮</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="自选股全天表现">自选股全天表现</h3>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>竞价</th><th>午盘</th><th>收盘</th><th>全天变化</th><th>主力全天</th><th>评价</th></tr></thead>
+<tbody>
+<tr><td>津药药业</td><td><span class="up">+10.07%</span></td><td><span class="up">+10.07%</span></td><td><span class="up">+10.07%</span></td><td>一字未开</td><td>+5895万</td><td><span class="badge badge-green">✓</span> 5板封死</td></tr>
+<tr><td>双鹭药业</td><td><span class="down">-0.13%</span></td><td><span class="up">+5.02%</span></td><td><strong><span class="up">+10.04%</span></strong></td><td>低开高走涨停</td><td><strong>+9583万</strong></td><td><span class="badge badge-green">✓</span> 尾盘封板，大反转</td></tr>
+<tr><td>广生堂</td><td><span class="up">+2.32%</span></td><td><span class="up">+6.70%</span></td><td><span class="up">+6.81%</span></td><td>持续走强</td><td>+6985万</td><td><span class="badge badge-green">✓</span> 20cm强势</td></tr>
+<tr><td>国晟科技</td><td><span class="up">+1.78%</span></td><td><span class="down">-0.58%</span></td><td><span class="up">+6.04%</span></td><td>V型反转</td><td>-1.94亿</td><td><span class="badge badge-yellow">⚠</span> 涨但主力大出</td></tr>
+<tr><td>凯莱英</td><td><span class="up">+1.80%</span></td><td><span class="up">+3.38%</span></td><td><span class="up">+3.94%</span></td><td>涨但中军弱</td><td><strong>-2.13亿</strong></td><td>❌ 主力大出</td></tr>
+<tr><td>万邦德</td><td><span class="down">-3.01%</span></td><td><span class="down">-1.23%</span></td><td><span class="up">+4.04%</span></td><td>低开高走</td><td><strong>-2.42亿</strong></td><td>❌ 反弹但主力继续出</td></tr>
+<tr><td>睿智医药</td><td><span class="up">+0.64%</span></td><td><span class="up">+1.45%</span></td><td><strong><span class="up">+2.58%</span></strong></td><td>尾盘回升</td><td>-7276万</td><td><span class="badge badge-yellow">⚠</span> 持仓票，浮亏收窄</td></tr>
+<tr><td>神剑股份</td><td><span class="up">+0.59%</span></td><td><span class="up">+2.24%</span></td><td><span class="up">+1.71%</span></td><td>冲高回落</td><td>+936万</td><td>航天退潮</td></tr>
+<tr><td>舒泰神</td><td><span class="down">-0.03%</span></td><td><span class="up">+1.35%</span></td><td><span class="up">+1.01%</span></td><td>微涨</td><td>+739万</td><td>一般</td></tr>
+<tr><td>联环药业</td><td><span class="down">-1.49%</span></td><td><span class="up">+0.99%</span></td><td><span class="up">+1.49%</span></td><td>低开高走</td><td>-4547万</td><td><span class="badge badge-yellow">⚠</span> 主力出</td></tr>
+<tr><td>九安医疗</td><td><span class="up">+1.93%</span></td><td><span class="down">-0.25%</span></td><td><span class="up">+0.26%</span></td><td>冲高回落</td><td>-120万</td><td>❌ 2板失败</td></tr>
+<tr><td>亚太药业</td><td><span class="down">-3.12%</span></td><td><span class="down">-0.52%</span></td><td><span class="down">-1.17%</span></td><td>全天弱</td><td>-1543万</td><td>❌ 出池</td></tr>
+<tr><td>航天发展</td><td><span class="down">-0.18%</span></td><td><span class="down">-1.36%</span></td><td><span class="down">-2.91%</span></td><td>全天跌</td><td>-2.36亿</td><td>❌ 出池</td></tr>
+<tr><td>孚日股份</td><td><span class="down">-2.24%</span></td><td><span class="down">-3.86%</span></td><td><strong><span class="down">-3.94%</span></strong></td><td>全天跌</td><td>-388万</td><td>❌ 出池</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="持仓跟踪">持仓跟踪</h3>
+<p class="para"><strong>睿智医药 300149</strong></p>
+<ul class="tight-list"><li>成本：12.984元</li><li>收盘：12.74元</li><li>浮亏：<span class="down">-1.88%</span>（-732元）</li><li><strong>警戒止损：12.59元（<span class="down">-3%</span>，收紧，按rules 1.2主线分歧）</strong></li><li>硬止损：12.33元（<span class="down">-5%</span>），距警戒止损0.15元（1.2%）</li><li>收盘主力：-7276万（全天持续流出，但午后流出放缓）</li><li>换手：27.13%（高位换手）</li><li>尾盘回升（12.49→12.74），浮亏从3.82%收窄到1.88%</li><li><strong>当前无卖出信号，但止损已收紧。假设空仓测试（教训#30）：空仓不会买→但方向未退潮→收紧止损观察</strong></li><li>主线分歧依据：中军凯莱英-2.13亿连续2天出逃+睿智自身-7276万，但医药涨停8只方向未退潮</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-六-复盘心得">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>六、复盘心得</div>
+<div class="sb">
+<h3 class="sh3" id="做错了什么">做错了什么</h3>
+<p class="para">1. <strong>违规开仓</strong>：预案明确空仓（4条门槛不满足），窗口1硬性3条也不满足（情绪36%&lt;60%、睿智高开0.64%&lt;3%），情绪驱动追入，纪律失守</p>
+<p class="para">2. <strong>选错标的</strong>：睿智全天主力-7791万持续流出，买入标的主力在出货</p>
+<p class="para">3. <strong>窗口用错</strong>：窗口1是追涨窗口（3<span class="down">-7%</span>高开），睿智0.64%根本不符合追涨条件；如果要买应该等窗口2低吸，但窗口2条件也不满足</p>
+<h3 class="sh3" id="做对了什么">做对了什么</h3>
+<p class="para">1. <strong>午后窗口2不做</strong>：盘面继续恶化（14%冰点+主力-407亿），加仓是错上加错</p>
+<p class="para">2. <strong>预案空仓判断正确</strong>：4/1预案6项全不满足→空仓，如果严格执行今天不亏</p>
+<h3 class="sh3" id="关键发现">关键发现</h3>
+<p class="para">1. <strong>情绪81%→19%两天崩回冰点</strong>：4/1的81%是假高潮（赚钱效应<span class="down">-0.18%</span>），4/2直接崩到冰点19%。教训#6验证：<strong>高潮期赚钱效应差 = 诱多，崩起来更快</strong></p>
+<p class="para">2. <strong>赚钱效应消失</strong>：涨停收益从竞价4.1%→收盘1.09%，昨天追涨停的人几乎没赚钱</p>
+<p class="para">3. <strong>医药内部大迁徙</strong>：龙头津药+5895万封死，双鹭尾盘涨停反转+9583万，但中军凯莱英-2.13亿+睿智-7276万+万邦德-2.42亿——<strong>资金从大票撤向小票/低位补涨，医药方向在但结构在恶化。医药涨停8只未达窗口2方向确认门槛10只，且主力结构性分化（龙头进、中军出），不能简单说&quot;方向延续&quot;</strong></p>
+<p class="para">4. <strong>主力-447亿恐慌性流出</strong>：2万亿量能+缩量8%+跌停16只+涨跌比894:4231 = 全面恐慌。主力3日趋势：3/31 -417亿→4/1 +156亿→4/2 -447亿，4/1主力+156亿但情绪81%赚钱效应<span class="down">-0.18%</span>=<strong>缩量虚涨，4/2直接打回原形</strong></p>
+<p class="para">5. <strong>睿智的教训</strong>：买入前应该看主力资金方向，-7276万全天流出=有人在卖给你。<strong>但尾盘从12.49回升到12.74，浮亏收窄到1.88%，明天有机会减亏</strong></p>
+<p class="para">6. <strong>医药涨停8只 = 方向确认</strong>：津药5板+北大/益佰2板+重药/合富/济民/欧康/双鹭首板，医药是全天唯一有涨停集中度的方向</p>
+<p class="para">7. <strong>油气/电力/光通信/锂矿支线崛起</strong>：非医药方向也有涨停，但都是消息驱动（伊朗/算电/英伟达/锂矿），持续性待验证</p>
+<p class="para">8. <strong>双鹭药业反转</strong>：昨天因主力-4836万被排除出池，今天低开高走尾盘涨停+9583万。教训：<strong>不能只看一天主力方向，要结合位置和逻辑</strong>。<span class="badge badge-yellow">⚠</span>但教训#14：14:54封板=14:50后=烂板回封质量差，明天如果低开则验证</p>
+<h3 class="sh3" id="教训验证">教训验证</h3>
+<div class="tw"><table>
+<thead><tr><th>教训</th><th>验证</th></tr></thead>
+<tbody>
+<tr><td>#5 赚钱效应是检验情绪的唯一标准</td><td><span class="badge badge-green">✓</span> 情绪81%→19%崩跌，赚钱效应1.09%极差</td></tr>
+<tr><td>#6 脉冲修复是诱多</td><td><span class="badge badge-green">✓</span> 18%→81%→19%，三天过山车，追进去的人全亏</td></tr>
+<tr><td>#12 高标独秀≠板块延续</td><td><span class="badge badge-yellow">⚠</span> 津药5板独秀，但凯莱英/睿智/万邦德主力全出；不过医药涨停8只，板块不差</td></tr>
+<tr><td>#23 止损价到了不找理由</td><td>待明天验证：止损12.33</td></tr>
+<tr><td>违规操作 = 亏钱</td><td><span class="badge badge-yellow">⚠</span> 预案空仓→违规进睿智→浮亏1.88%（尾盘收窄，比盘中<span class="down">-3.82%</span>好）</td></tr>
+<tr><td>只看一天主力方向会误判</td><td><span class="badge badge-green">✓</span> 双鹭昨天-4836万被排除，今天涨停+9583万反转</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-七-黑米红方审阅-4-2-20-54-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>七、黑米红方审阅（4/2 20:54）</div>
+<div class="sb">
+<h3 class="sh3" id="错误a-万邦德未出池-采纳">错误A：万邦德未出池 → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：万邦德断板+连续3天主力出逃，同时满足4.4出池标准&quot;断板股&quot;+&quot;主力巨额流出&quot;</li><li>稳米：<strong>采纳。</strong> 确实已出池（次日预案自选池里没有万邦德），但复盘笔记&quot;关键发现&quot;第3条还把万邦德当反面案例引用，没在出池表里标注。复盘笔记&quot;出池&quot;列表已包含万邦德，此项黑米可能没看完整。不过复盘笔记自选池表现表里还留了万邦德一行，这确实应该删。</li></ul>
+<h3 class="sh3" id="错误b-8只涨停-方向延续但忽略主力大迁徙-部分采纳">错误B：8只涨停=方向延续但忽略主力大迁徙 → ⚠️ 部分采纳</h3>
+<ul class="tight-list"><li>黑米：涨停数增加但主力撤5亿（凯莱英-2.13亿+万邦德-2.42亿+睿智-7276万），涨停是&quot;虚假繁荣&quot;</li><li>稳米：<strong>部分采纳。</strong> &quot;8只涨停=方向确认&quot;的判断逻辑来自rules 4.3&quot;板块涨停≥10只=方向确认&quot;（窗口2条件），收盘8只确实没到10只门槛。但作为复盘记录&quot;医药是全天唯一有涨停集中度的方向&quot;这个事实描述没问题。</li><li>修正：关键发现第3条补充&quot;医药涨停8只但未达窗口2门槛10只，且主力结构性分化严重&quot;</li></ul>
+<h3 class="sh3" id="错误c-午盘21-情绪判断理由不统一-采纳">错误C：午盘21%情绪判断理由不统一 → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：21%按规则是&quot;低迷&quot;不是&quot;冰点&quot;，但复盘一会儿说&quot;接近冰点&quot;一会儿当冰点处理</li><li>稳米：<strong>采纳。</strong> 21%确实属于20<span class="down">-40%</span>低迷档，不是冰点。窗口2不开不是因为&quot;接近冰点&quot;，而是因为低迷档窗口2本身就不开（只有冰点才开窗口2）。理由写错了。</li></ul>
+<h3 class="sh3" id="商榷a-主线分歧应收紧止损-采纳">商榷A：主线分歧应收紧止损 → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：按rules 1.2决策树，主线分歧→持有观望+收紧止损，但复盘没写收紧止损</li><li>稳米：<strong>采纳。</strong> 医药中军凯莱英连续2天主力大出+睿智自身-7276万，确实符合&quot;主线分歧&quot;。止损从<span class="down">-5%</span>（12.33）收紧到<span class="down">-3%</span>（12.59）合理。</li></ul>
+<h3 class="sh3" id="商榷b-双鹭14-54封板质量-采纳">商榷B：双鹭14:54封板质量 → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：按rules 7.3教训#14，14:50后封板=烂板回封质量差，次日大概率低开</li><li>稳米：<strong>采纳。</strong> 双鹭药业14:54封板确实属于14:50之后，按教训#14应标注<span class="badge badge-yellow">⚠</span>。虽然主力+9583万是真金白银，但封板时间太晚，次日溢价存疑。</li></ul>
+<h3 class="sh3" id="商榷c-周五3条-空仓-vs-rules-2-5-采纳">商榷C：周五3条→空仓 vs rules 2.5 → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：rules 2.5说&quot;仓位不额外放宽&quot;，不是&quot;3条也空仓&quot;</li><li>稳米：<strong>采纳。</strong> 修改为：满足4条→窗口2开仓≤20%；满足3条→不做（非&quot;坚决不做&quot;，是正常不开窗口）；2条以下→空仓</li></ul>
+<h3 class="sh3" id="商榷d-假设空仓测试-教训-30-采纳">商榷D：假设空仓测试（教训#30） → ✅ 采纳</h3>
+<ul class="tight-list"><li>黑米：如果空仓不会买睿智（主力流出+医药分化），按教训#30应该卖出</li><li>稳米：<strong>采纳。</strong> 教训#30是<span class="badge badge-blue">NEW</span>待验证但逻辑通顺。假设空仓测试结果：不会买→但同时也认可医药方向仍在（涨停8只）→结论是<strong>收紧止损观察</strong>，不是立刻卖</li></ul>
+<h3 class="sh3" id="遗漏a-情绪14-19-修正原因-采纳">遗漏A：情绪14%→19%修正原因 → ✅ 采纳</h3>
+<ul class="tight-list"><li>稳米：<strong>采纳。</strong> 原因：弈沐哥午盘发的数据是提前快照（同花顺盘中实时值），收盘后发的数据是收盘终值。补充说明。</li></ul>
+<h3 class="sh3" id="遗漏b-涨停收益3个数值歧义-采纳">遗漏B：涨停收益3个数值歧义 → ✅ 采纳</h3>
+<ul class="tight-list"><li>稳米：<strong>采纳。</strong> 1.28%是午盘快照→1.09%是收盘后弈沐哥发的数据（午盘后快照）→0.82%是错误值（已在本次更新中修正为1.09%）。实际只有两个有效值：午盘1.28%、收盘1.09%。</li></ul>
+<h3 class="sh3" id="遗漏c-主力流出历史对比-采纳">遗漏C：主力流出历史对比 → ✅ 采纳</h3>
+<ul class="tight-list"><li>稳米：<strong>采纳。</strong> 补充：3/31 -417亿→4/1 +156亿→4/2 -447亿，4/1主力+156亿但情绪81%赚钱效应<span class="down">-0.18%</span>=缩量虚涨</li></ul>
+<h3 class="sh3" id="遗漏d-主力大迁徙原因-记录但不强求">遗漏D：主力大迁徙原因 → ⚠️ 记录但不强求</h3>
+<ul class="tight-list"><li>稳米：复盘笔记重点是记录现象和决策，深层归因（机构调仓/量化撤退/利空）需要更多信息源。记录&quot;待观察&quot;即可。</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-八-综合终稿-基于黑米审阅修正-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>八、综合终稿（基于黑米审阅修正）</div>
+<div class="sb">
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-〇-修订-次日预案-4-3-friday-基于-4-2-收盘数据">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>〇-修订、次日预案（4/3 Friday）— 基于 4/2 收盘数据</div>
+<div class="sb">
+<blockquote class="si">⚡ 明天开盘前只看这一部分。</blockquote>
+<h3 class="sh3" id="持仓处理">持仓处理</h3>
+<p class="para"><strong>睿智医药 300149</strong> — <strong>持有观察，收紧止损</strong></p>
+<ul class="tight-list"><li>成本：12.984元，收盘：12.74元，浮亏：<span class="down">-1.88%</span>（-732元）</li><li><strong>止损价收紧至12.59元（<span class="down">-3%</span>，从<span class="down">-5%</span>收紧，理由：主线分歧+持仓票主力持续流出，按rules 1.2决策树）</strong></li><li><strong>硬止损仍为12.33元（<span class="down">-5%</span>），但12.59元为警戒线</strong></li><li>当前无卖出信号：❌没触发止损（距警戒线0.15元/1.2%） ❌没止盈信号 <span class="badge badge-yellow">⚠</span>医药方向分歧（中军出逃但涨停数8只）</li><li>尾盘从12.49回升到12.74，趋势短期向好</li></ul>
+<p class="para"><strong>卖出条件（触发任一则卖）：</strong></p>
+<p class="para">1. <strong>警戒止损</strong>：盘中触及12.59元（<span class="down">-3%</span>）→ 竞价挂卖（主线分歧下的收紧止损）</p>
+<p class="para">2. <strong>硬止损</strong>：盘中触及12.33元（<span class="down">-5%</span>）→ 无条件卖出</p>
+<p class="para">3. <strong>方向退潮</strong>：医药板块涨停&lt;5只 或 津药炸板 且 无新龙头接力 → 竞价/开盘卖</p>
+<p class="para"><strong>不卖的条件（继续持有）：</strong></p>
+<ul class="tight-list"><li>止损未触发 + 医药涨停≥5只（方向未退潮）→ 继续拿，等反弹</li><li>假设空仓测试（教训#30）：空仓不会买睿智（主力流出+分化）→ 但也不卖，等收紧止损触发</li></ul>
+<h3 class="sh3" id="打法判断">打法判断</h3>
+<p class="para"><strong>第一步：缓冲带定档</strong></p>
+<ul class="tight-list"><li>今日收盘情绪：<strong>19%（冰点）</strong></li><li>冰点直接定档，无缓冲带争议</li><li>注：午盘快照14%为弈沐哥提前发送的盘中数据，收盘终值19%（同花顺APP），两者差异为数据快照时点不同</li></ul>
+<p class="para"><strong>第二步：赚钱效应校正</strong></p>
+<ul class="tight-list"><li>赚钱效应：涨停收益 <strong>1.09%</strong>（&lt;2%，极差）</li><li>rules 赚钱效应校正：&quot;情绪&lt;20% + 赚钱效应差&quot; → 仍按冰点处理（冰点已是最保守档）</li></ul>
+<p class="para"><strong>第三步：冰点打法定档</strong></p>
+<ul class="tight-list"><li>冰点打法：低吸（窗口2）</li><li>条件：炸板率&lt;40%（今天39.13%<span class="badge badge-green">✓</span>临界）+ 方向确认（≥3条）</li></ul>
+<p class="para"><strong>第四步：环境评估</strong></p>
+<ul class="tight-list"><li>主力-447亿，恐慌性流出（3日趋势：3/31 -417亿→4/1 +156亿→4/2 -447亿，4/1缩量虚涨）</li><li>涨停收益1.09%，赚钱效应极差</li><li>涨停量能腰斩47%（-240亿）</li><li>连板仅津药5板，梯队严重断层</li></ul>
+<p class="para"><strong>结论：冰点环境但赚钱效应极差 + 资金恐慌性流出 → 空仓观望。</strong></p>
+<h3 class="sh3" id="数据验证">数据验证</h3>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>要求</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>情绪</td><td>19%（冰点）</td><td>低吸窗口2可开</td><td><span class="badge badge-green">✓</span>（打法匹配）</td></tr>
+<tr><td>昨涨停收益</td><td>1.09%</td><td>&gt;2%</td><td>❌ 极差</td></tr>
+<tr><td>炸板率</td><td>39.13%</td><td>&lt;40%（冰点）</td><td><span class="badge badge-yellow">⚠</span> 临界</td></tr>
+<tr><td>连板风险值</td><td>0.5</td><td>&lt;0.5</td><td>❌</td></tr>
+<tr><td>晋级率</td><td>10.71%</td><td>&gt;30%（低迷）</td><td>❌ 极差</td></tr>
+<tr><td>梯队完整</td><td>不完整（5板独苗+缺4板）</td><td>完整</td><td>❌</td></tr>
+<tr><td>主力资金</td><td>-447亿</td><td>—</td><td>❌ 恐慌流出</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>7项指标仅1项勉强满足。空仓。</strong></p>
+<h3 class="sh3" id="极端条件备选-仅在以下全部条件同时满足时才考虑开仓-">极端条件备选（仅在以下全部条件同时满足时才考虑开仓）</h3>
+<blockquote class="si"><strong>明天是周五，按 rules 2.5 周五规则：只开窗口2，不开窗口1。</strong></blockquote>
+<p class="para">前提：睿智已卖出（或浮亏可控）</p>
+<p class="para">1. <strong>情绪修复到20%以上</strong>（从19%修复，回到低迷区）</p>
+<p class="para">2. <strong>赚钱效应回暖</strong>：今日涨停（4/3的涨停）明天给溢价&gt;2%（反映为4/3涨停收益&gt;2% → 实际要在4/4才能验证，所以4/3用替代指标：涨停量能不继续萎缩）</p>
+<p class="para">3. <strong>医药方向持续确认</strong>：</p>
+<ul class="tight-list"><li>津药6板封住（或断板后北大医药/益佰制药接力）</li><li>板块涨停≥8只（冰点门槛提高）</li><li>中军不出货（凯莱英主力不继续大幅流出）</li></ul>
+<p class="para">4. <strong>标的低位可低吸</strong>：涨幅&lt;3%+分时均线以上+量比&gt;1.5+主力不大幅流出</p>
+<p class="para">满足全部4条 → 窗口2（14:00-14:45）仓位不超20%低吸</p>
+<p class="para">满足3条 → 不开窗口（正常条件不足，非&quot;坚决不做&quot;）</p>
+<p class="para">满足2条及以下 → 空仓</p>
+<h3 class="sh3" id="自选池-重整后-11只-">自选池（重整后 11只）</h3>
+<p class="para"><strong>出池（今天表现差/方向退潮/主力持续出）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>亚太药业</td><td><span class="down">-1.17%</span>，主力-1543万，全天弱</td></tr>
+<tr><td>航天发展</td><td><span class="down">-2.91%</span>，主力-2.36亿，航天退潮</td></tr>
+<tr><td>孚日股份</td><td><span class="down">-3.94%</span>，电池方向无持续性</td></tr>
+<tr><td>万邦德</td><td><span class="up">+4.04%</span>但主力-2.42亿连续3天出逃，断板</td></tr>
+<tr><td>神剑股份</td><td><span class="up">+1.71%</span>，航天退潮方向，换手42%过高</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>入池（弈沐哥新增）：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>代码</th><th>入池理由</th></tr></thead>
+<tbody>
+<tr><td>重药控股</td><td>000950</td><td>首板一字，回购+连锁药房+创新药+央企</td></tr>
+<tr><td>北大医药</td><td>000788</td><td>2板（T字），创新药+右酮洛芬+帕利哌酮获批</td></tr>
+<tr><td>益佰制药</td><td>600594</td><td>2板，阿扎胞苷获批+抗肿瘤+民营医院</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>留池观察：</strong></p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>方向</th><th>角色</th><th>标的</th><th>代码</th><th>今天收盘状态</th><th>明天观察点</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>🏥医药</td><td><span class="badge badge-red">●</span>高度板</td><td>津药药业</td><td>600488</td><td><span class="badge badge-green">✓</span>封死5板</td><td>6板？=高度继续打开。炸板=退潮</td></tr>
+<tr><td>2</td><td>🏥医药</td><td><span class="badge badge-red">●</span>连板</td><td>北大医药</td><td>000788</td><td><span class="badge badge-green">✓</span>2板（T字）</td><td>3板？=新高度候选。低开=分歧</td></tr>
+<tr><td>3</td><td>🏥医药</td><td><span class="badge badge-red">●</span>连板</td><td>益佰制药</td><td>600594</td><td><span class="badge badge-green">✓</span>2板（10:28）</td><td>3板？=跟涨确认。低开=分歧</td></tr>
+<tr><td>4</td><td>🏥医药</td><td><span class="badge badge-yellow">●</span>中军</td><td>凯莱英</td><td>002821</td><td><span class="up">+3.94%</span>但主力-2.13亿</td><td><span class="badge badge-yellow">⚠</span>中军连续2天主力出逃，明天关键</td></tr>
+<tr><td>5</td><td>🏥医药</td><td><span class="badge badge-green">●</span>弹性</td><td>广生堂</td><td>300436</td><td><span class="up">+6.81%</span></td><td>20cm强势，明天能否再封？</td></tr>
+<tr><td>6</td><td>🏥医药</td><td><span class="badge badge-green">●</span>弹性</td><td>双鹭药业</td><td>002038</td><td><span class="badge badge-yellow">⚠</span>涨停<span class="up">+10.04%</span>（14:54封板质量差）</td><td>次日溢价存疑，如果低开则验证教训#14</td></tr>
+<tr><td>7</td><td>🏥医药</td><td><span class="badge badge-green">●</span>补涨</td><td>重药控股</td><td>000950</td><td><span class="badge badge-green">✓</span>一字首板</td><td>明天开板？开板后承接力？</td></tr>
+<tr><td>8</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>九安医疗</td><td>002432</td><td><span class="up">+0.26%</span></td><td>2板失败，明天能不能反包？</td></tr>
+<tr><td>9</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>舒泰神</td><td>300204</td><td><span class="up">+1.01%</span></td><td>一般，主力微正</td></tr>
+<tr><td>10</td><td>🏥医药</td><td><span class="badge badge-green">●</span>观察</td><td>联环药业</td><td>600513</td><td><span class="up">+1.49%</span></td><td>弱，主力-4547万</td></tr>
+<tr><td>11</td><td>🌞光伏</td><td><span class="badge badge-red">●</span>龙头</td><td>国晟科技</td><td>603778</td><td><span class="up">+6.04%</span>但主力-1.94亿</td><td><span class="badge badge-yellow">⚠</span> 涨但主力大出，非医药方向</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="明天关键观察">明天关键观察</h3>
+<p class="para">1. <strong>睿智竞价</strong>：决定卖出策略（低开&gt;3%直接挂卖 vs 等12.95+减亏/平出）</p>
+<p class="para">2. <strong>津药竞价</strong>：高开=6板预期，医药高度继续打开；低开/炸板=退潮</p>
+<p class="para">3. <strong>北大医药/益佰制药</strong>：2板晋级3板？=医药有新高度接力。低开=分歧</p>
+<p class="para">4. <strong>重药控股</strong>：一字首板明天开板？开板后承接力如何？</p>
+<p class="para">5. <strong>双鹭药业</strong>：尾盘涨停+9583万，明天溢价？=验证医药弹性</p>
+<p class="para">6. <strong>情绪方向</strong>：19%冰点后是继续冰（双冰）还是修复到20%+？</p>
+<p class="para">7. <strong>主力资金</strong>：能不能止血（-447亿→-200亿以内？）</p>
+<p class="para">8. <strong>赚钱效应</strong>：今天涨停的32只，明天给多少溢价？&gt;2% = 环境改善</p>
+<h3 class="sh3" id="周五特殊提醒">周五特殊提醒</h3>
+<blockquote class="si">rules 2.5：<strong>周五只开窗口2，不开窗口1。</strong></blockquote>
+<blockquote class="si">即使明天竞价条件满足，也不追涨。低吸仓位不超20%。</blockquote>
+<blockquote class="si">睿智止损已收紧至12.59（<span class="down">-3%</span>），触及则卖。未触及则继续持有。</blockquote>
+<blockquote class="si">T+1锁周末不是卖出的理由，按信号操作。</blockquote>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

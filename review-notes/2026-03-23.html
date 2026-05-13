@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-03-23 周一 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 W13 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue">2026-03-23 周一</span>
+    <span class="chip blue">量能 2万亿（+6%）</span>
+    <span class="chip red">涨停 28</span>
+    <span class="chip green">跌停 0</span>
+    <span class="chip red">最高6板（华电辽能）板</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-第一部分-盘前账户持仓情况">第一部分：盘前账户持仓情况</a>
+  <a href="#盘前状态" class="s2">盘前状态</a>
+  <a href="#s-第二部分-当日市场表现">第二部分：当日市场表现</a>
+  <a href="#一-大盘指数表现" class="s2">一、大盘指数表现</a>
+  <a href="#关键观察" class="s2">关键观察</a>
+  <a href="#二-市场情绪指标" class="s2">二、市场情绪指标</a>
+  <a href="#三-涨停复盘数据" class="s2">三、涨停复盘数据</a>
+  <a href="#总体数据" class="s2">总体数据</a>
+  <a href="#涨停板块分布" class="s2">涨停板块分布</a>
+  <a href="#四-关键市场特征" class="s2">四、关键市场特征</a>
+  <a href="#s-第三部分-明天市场交易计划">第三部分：明天市场交易计划</a>
+  <a href="#一-情绪判断" class="s2">一、情绪判断</a>
+  <a href="#二-板块关注优先级" class="s2">二、板块关注优先级</a>
+  <a href="#三-交易策略" class="s2">三、交易策略</a>
+  <a href="#仓位管理" class="s2">仓位管理</a>
+  <a href="#选股策略" class="s2">选股策略</a>
+  <a href="#买点选择" class="s2">买点选择</a>
+  <a href="#风险控制" class="s2">风险控制</a>
+  <a href="#四-明日观察清单" class="s2">四、明日观察清单</a>
+  <a href="#高标观察" class="s2">高标观察</a>
+  <a href="#板块龙头" class="s2">板块龙头</a>
+  <a href="#s-第四部分-盘中买卖操作动作">第四部分：盘中买卖操作动作</a>
+  <a href="#今日操作记录" class="s2">今日操作记录</a>
+  <a href="#操作说明" class="s2">操作说明</a>
+  <a href="#s-第五部分-盘后持仓情况">第五部分：盘后持仓情况</a>
+  <a href="#账户概况" class="s2">账户概况</a>
+  <a href="#持仓明细" class="s2">持仓明细</a>
+  <a href="#今日交易汇总" class="s2">今日交易汇总</a>
+  <a href="#s-第六部分-复盘心得">第六部分：复盘心得</a>
+  <a href="#一-今日市场感悟" class="s2">一、今日市场感悟</a>
+  <a href="#二-策略执行情况" class="s2">二、策略执行情况</a>
+  <a href="#三-改进方向" class="s2">三、改进方向</a>
+  <a href="#四-明日预期" class="s2">四、明日预期</a>
+  <a href="#s-附录-重要数据记录">附录：重要数据记录</a>
+  <a href="#情绪指标历史" class="s2">情绪指标历史</a>
+  <a href="#关键价位" class="s2">关键价位</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="2026-03-23-市场复盘笔记">2026-03-23 市场复盘笔记</h1>
+
+<blockquote class="si"><strong>日期</strong>: 2026年3月23日（周一）</blockquote>
+
+<blockquote class="si"><strong>数据来源</strong>: 同花顺App</blockquote>
+
+<blockquote class="si"><strong>记录时间</strong>: 21:50</blockquote>
+
+<blockquote class="si"><strong>用途</strong>: 明日盘中策略交易参考</blockquote>
+
+<hr style="border-color:var(--border);margin:14px 0;">
+
+<div class="section" id="s-第一部分-盘前账户持仓情况">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第一部分：盘前账户持仓情况</div>
+<div class="sb">
+<p class="para"><strong>账户总资金</strong>: 50万元</p>
+<p class="para"><strong>当前仓位</strong>: 空仓（0%）</p>
+<p class="para"><strong>可用资金</strong>: 50万元</p>
+<p class="para"><strong>持仓股票</strong>: 无</p>
+<h3 class="sh3" id="盘前状态">盘前状态</h3>
+<ul class="tight-list"><li>今日开盘前空仓观望</li><li>等待市场企稳信号</li><li>准备根据盘中情况择机建仓</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第二部分-当日市场表现">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第二部分：当日市场表现</div>
+<div class="sb">
+<h3 class="sh3" id="一-大盘指数表现">一、大盘指数表现</h3>
+<div class="tw"><table>
+<thead><tr><th>指数</th><th>收盘点位</th><th>涨跌幅</th><th>MA5</th></tr></thead>
+<tbody>
+<tr><td><strong>上证指数</strong></td><td>3813.28</td><td><strong><span class="down">-3.63%</span></strong> ↓</td><td>3977.95</td></tr>
+<tr><td><strong>深证成指</strong></td><td>13345.51</td><td><strong><span class="down">-3.76%</span></strong> ↓</td><td>13868.16</td></tr>
+<tr><td><strong>创业板指</strong></td><td>3235.22</td><td><strong><span class="down">-3.49%</span></strong> ↓</td><td>3304.57</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="关键观察">关键观察</h3>
+<ul class="tight-list"><li>三大指数全线大跌，跌幅均超过3%</li><li>上证指数跌破MA5（3977.95），短期趋势转弱</li><li>深证成指和创业板指同样大幅下挫，市场情绪极度悲观</li></ul>
+<h3 class="sh3" id="二-市场情绪指标">二、市场情绪指标</h3>
+<blockquote class="si">对应策略：[[strategy_yimu_v3_final#大盘情绪判断规则]]</blockquote>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td><strong>同花顺情绪指标</strong></td><td>5.0%</td><td>冰点</td></tr>
+<tr><td><strong>全市场量能</strong></td><td>2万亿</td><td>放量下跌（+1447亿，<span class="up">+6%</span>）</td></tr>
+<tr><td><strong>市场高度板</strong></td><td>6板/4板</td><td>连板高度受限</td></tr>
+<tr><td><strong>连板股风险指标</strong></td><td>0.57</td><td>高风险（&gt;0.5）</td></tr>
+<tr><td><strong>昨日涨停今日收益</strong></td><td><span class="down">-1.49%</span></td><td>负收益</td></tr>
+<tr><td><strong>昨日连板今日收益</strong></td><td>1.37%</td><td>低溢价</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="三-涨停复盘数据">三、涨停复盘数据</h3>
+<h3 class="sh3" id="总体数据">总体数据</h3>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th></tr></thead>
+<tbody>
+<tr><td>涨停个数</td><td>28只</td></tr>
+<tr><td>总晋级率</td><td>17.86%</td></tr>
+<tr><td>总炸板率</td><td>34.88%</td></tr>
+<tr><td>总竞价涨幅</td><td><span class="up">+0.63%</span></td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="涨停板块分布">涨停板块分布</h3>
+<p class="para"><strong>1. 电力板块</strong>（算电协同写入政府工作报告）</p>
+<ul class="tight-list"><li>华电辽能（600396）：6板，绿电+氢能+央企</li><li>廊坊发展、立新能源、浙江新能等首板</li></ul>
+<p class="para"><strong>2. 并购重组</strong></p>
+<ul class="tight-list"><li>大胜达（603687）：4板，拟投GPU+钙钛矿设备</li><li>东方新能（002310）：3板，重大资产重组</li></ul>
+<p class="para"><strong>3. 光伏板块</strong>（特斯拉200亿采购）</p>
+<ul class="tight-list"><li>中利集团（002309）：2板，钙钛矿电池</li><li>正泰电源（002150）：2板，光伏逆变器</li></ul>
+<p class="para"><strong>4. 机器人板块</strong>（宇树科技IPO）</p>
+<ul class="tight-list"><li>首开股份、金发科技、中大力德首板</li></ul>
+<p class="para"><strong>5. 煤炭/煤化工</strong>（焦煤期货涨停）</p>
+<ul class="tight-list"><li>辽宁能源、金煤科技、云煤能源首板</li></ul>
+<p class="para"><strong>6. 油气板块</strong>（油价突破110美元）</p>
+<ul class="tight-list"><li>博迈科、恒逸石化首板</li></ul>
+<h3 class="sh3" id="四-关键市场特征">四、关键市场特征</h3>
+<ul class="tight-list"><li><strong>情绪</strong>: 冰点（5.0%），恐慌情绪蔓延</li><li><strong>量能</strong>: 放量下跌，恐慌盘涌出</li><li><strong>连板</strong>: 高度受限，晋级率低</li><li><strong>炸板</strong>: 34.88%，封板意愿弱</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第三部分-明天市场交易计划">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第三部分：明天市场交易计划</div>
+<div class="sb">
+<h3 class="sh3" id="一-情绪判断">一、情绪判断</h3>
+<ul class="tight-list"><li>当前情绪处于冰点（5.0%），明日可能继续惯性下探</li><li>关注情绪指标是否触及0%极端冰点，可能出现反弹机会</li><li>大盘跌破MA5，短期趋势转弱，需谨慎</li></ul>
+<h3 class="sh3" id="二-板块关注优先级">二、板块关注优先级</h3>
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#板块识别规则]]</blockquote>
+<div class="tw"><table>
+<thead><tr><th>优先级</th><th>板块</th><th>逻辑</th><th>关注标的</th></tr></thead>
+<tbody>
+<tr><td><strong>P0</strong></td><td>电力</td><td>政策驱动（算电协同写入政府工作报告）</td><td>华电辽能（6板龙头）</td></tr>
+<tr><td><strong>P1</strong></td><td>光伏</td><td>特斯拉200亿大单刺激</td><td>中利集团、正泰电源</td></tr>
+<tr><td><strong>P1</strong></td><td>机器人</td><td>宇树科技IPO带动</td><td>首开股份、金发科技</td></tr>
+<tr><td><strong>P2</strong></td><td>并购重组</td><td>持续活跃</td><td>大胜达、东方新能</td></tr>
+<tr><td><strong>P2</strong></td><td>煤炭/油气</td><td>期货价格上涨</td><td>辽宁能源、博迈科</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="三-交易策略">三、交易策略</h3>
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#仓位管理规则]] | [[strategy_yimu_v3_final#买入决策流程]]</blockquote>
+<h3 class="sh3" id="仓位管理">仓位管理</h3>
+<ul class="tight-list"><li><strong>建议仓位</strong>: 20%<span class="down">-30%</span>（轻仓试探）</li><li><strong>建仓条件</strong>: 情绪指标企稳或出现反弹信号</li><li><strong>止损纪律</strong>: 单票亏损<span class="down">-5%</span>止损，总仓位亏损<span class="down">-3%</span>减仓</li></ul>
+<h3 class="sh3" id="选股策略">选股策略</h3>
+<p class="para">1. <strong>龙头战法</strong>: 关注电力龙头华电辽能的溢价情况</p>
+<p class="para">2. <strong>首板套利</strong>: 关注今日首板中逻辑硬、封板早的个股</p>
+<p class="para">3. <strong>板块轮动</strong>: 关注光伏、机器人板块的发酵程度</p>
+<h3 class="sh3" id="买点选择">买点选择</h3>
+<ul class="tight-list"><li><strong>早盘</strong>: 观察竞价情绪，若情绪回暖可轻仓试错</li><li><strong>盘中</strong>: 等待恐慌盘释放后的企稳信号</li><li><strong>尾盘</strong>: 若情绪企稳，可布局次日预期</li></ul>
+<h3 class="sh3" id="风险控制">风险控制</h3>
+<ul class="tight-list"><li>连板股风险指标0.57（高），打板需谨慎</li><li>昨日涨停今日收益为负，短线生态恶劣</li><li>建议控制仓位，等待情绪企稳</li></ul>
+<h3 class="sh3" id="四-明日观察清单">四、明日观察清单</h3>
+<h3 class="sh3" id="高标观察">高标观察</h3>
+<div class="tw"><table>
+<thead><tr><th>代码</th><th>名称</th><th>板数</th><th>板块</th><th>观察要点</th></tr></thead>
+<tbody>
+<tr><td>600396</td><td>华电辽能</td><td>6板</td><td>电力</td><td>能否继续晋级，板块跟风情况</td></tr>
+<tr><td>603687</td><td>大胜达</td><td>4板</td><td>并购重组</td><td>封板强度，资金认可度</td></tr>
+<tr><td>002310</td><td>东方新能</td><td>3板</td><td>并购重组</td><td>换手情况，是否开板</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="板块龙头">板块龙头</h3>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>龙头</th><th>代码</th><th>观察要点</th></tr></thead>
+<tbody>
+<tr><td>电力</td><td>华电辽能</td><td>600396</td><td>政策驱动持续性</td></tr>
+<tr><td>光伏</td><td>中利集团</td><td>002309</td><td>特斯拉大单发酵</td></tr>
+<tr><td>机器人</td><td>首开股份</td><td>600376</td><td>宇树科技IPO带动</td></tr>
+<tr><td>煤炭</td><td>辽宁能源</td><td>600758</td><td>期货价格联动</td></tr>
+<tr><td>油气</td><td>博迈科</td><td>603727</td><td>油价上涨持续性</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第四部分-盘中买卖操作动作">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第四部分：盘中买卖操作动作</div>
+<div class="sb">
+<h3 class="sh3" id="今日操作记录">今日操作记录</h3>
+<div class="tw"><table>
+<thead><tr><th>时间</th><th>操作</th><th>股票代码</th><th>股票名称</th><th>价格</th><th>数量</th><th>金额</th><th>备注</th></tr></thead>
+</table></div>
+<h3 class="sh3" id="操作说明">操作说明</h3>
+<ul class="tight-list"><li>今日空仓观望，未进行任何买卖操作</li><li>等待市场企稳信号，明日根据计划择机建仓</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第五部分-盘后持仓情况">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第五部分：盘后持仓情况</div>
+<div class="sb">
+<h3 class="sh3" id="账户概况">账户概况</h3>
+<div class="tw"><table>
+<thead><tr><th>项目</th><th>数值</th></tr></thead>
+<tbody>
+<tr><td><strong>账户总资产</strong></td><td>50万元</td></tr>
+<tr><td><strong>持仓市值</strong></td><td>0元</td></tr>
+<tr><td><strong>可用资金</strong></td><td>50万元</td></tr>
+<tr><td><strong>当前仓位</strong></td><td>0%</td></tr>
+<tr><td><strong>当日盈亏</strong></td><td>0元</td></tr>
+<tr><td><strong>当日收益率</strong></td><td>0%</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="持仓明细">持仓明细</h3>
+<div class="tw"><table>
+<thead><tr><th>股票代码</th><th>股票名称</th><th>持仓数量</th><th>成本价</th><th>现价</th><th>市值</th><th>盈亏</th><th>盈亏率</th></tr></thead>
+<tbody>
+<tr><td>无</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</tbody>
+</table></div>
+<h3 class="sh3" id="今日交易汇总">今日交易汇总</h3>
+<div class="tw"><table>
+<thead><tr><th>类型</th><th>股票代码</th><th>股票名称</th><th>成交价格</th><th>成交数量</th><th>成交金额</th></tr></thead>
+<tbody>
+<tr><td>买入</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>卖出</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</tbody>
+</table></div>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第六部分-复盘心得">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第六部分：复盘心得</div>
+<div class="sb">
+<blockquote class="si">策略参考：[[strategy_yimu_v3_final#复盘闭环机制]]</blockquote>
+<h3 class="sh3" id="一-今日市场感悟">一、今日市场感悟</h3>
+<p class="para">（待记录）</p>
+<h3 class="sh3" id="二-策略执行情况">二、策略执行情况</h3>
+<p class="para">（待记录）</p>
+<h3 class="sh3" id="三-改进方向">三、改进方向</h3>
+<p class="para">（待记录）</p>
+<h3 class="sh3" id="四-明日预期">四、明日预期</h3>
+<p class="para">（待记录）</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-附录-重要数据记录">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>附录：重要数据记录</div>
+<div class="sb">
+<h3 class="sh3" id="情绪指标历史">情绪指标历史</h3>
+<ul class="tight-list"><li>今日情绪: 5.0%（冰点）</li><li>近一年范围: 0% - 96.30%</li><li>历史中位数: 约50%</li></ul>
+<h3 class="sh3" id="关键价位">关键价位</h3>
+<ul class="tight-list"><li>上证指数MA5: 3977.95（已跌破）</li><li>情绪冰点阈值: 0%<span class="down">-10%</span></li><li>连板风险警戒线: 0.5</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+<p class="para"><strong>记录人</strong>: 稳米</p>
+<p class="para"><strong>记录时间</strong>: 2026-03-23 22:15</p>
+<p class="para"><strong>下次更新</strong>: 2026-03-24 盘后</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+<blockquote class="si"><strong>免责声明</strong>: 本文档仅供个人复盘记录和策略参考，不构成投资建议。股市有风险，投资需谨慎。</blockquote>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>

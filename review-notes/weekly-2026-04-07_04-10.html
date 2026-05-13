@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-04-07~10 W15 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">📊 2026-04-07~10 复盘笔记</div>
+  <div class="meta">
+    <span class="chip blue"> W15</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s-核心发现-先看这里-">核心发现（先看这里）</a>
+  <a href="#s-第〇部分-本周概览">第〇部分：本周概览</a>
+  <a href="#s-一-节奏与打法回顾">一、节奏与打法回顾</a>
+  <a href="#s-二-主线与板块">二、主线与板块</a>
+  <a href="#s-三-盈亏归因">三、盈亏归因</a>
+  <a href="#s-四-认知迭代">四、认知迭代</a>
+  <a href="#s-五-下周基调">五、下周基调</a>
+
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="main-content">
+<h1 id="w15-周复盘-4-7-4-10-">W15 周复盘（4/7-4/10）</h1>
+
+<blockquote class="si"><span style="color:#D97706">📌</span> 从4个交易日日复盘蒸馏，不重复日复盘数据。</blockquote>
+
+<blockquote class="si">目的：回答日复盘回答不了的问题——节奏对不对、主线变没变、认知有没有迭代。</blockquote>
+
+<hr style="border-color:var(--border);margin:14px 0;">
+
+<div class="section" id="s-核心发现-先看这里-">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>核心发现（先看这里）</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><strong>盈亏</strong></td><td>已实现<span class="down">-1.94%</span>（航天发展）+ 浮盈<span class="up">+0.77%</span>（英维克+博杰）≈ 约<span class="down">-1.17%</span>（不含手续费），微亏</td></tr>
+<tr><td><strong>胜率</strong></td><td>33%（1盈2亏，样本太小不具统计意义）</td></tr>
+<tr><td><strong>盈亏比</strong></td><td>1.57（平均盈利1.80% / 平均亏损1.15%）</td></tr>
+<tr><td><strong>节奏</strong></td><td>预案命中率50%，打法判断对但2次违规绕规则（4/8+4/10，均因FOMO）</td></tr>
+<tr><td><strong>主线</strong></td><td>光通信→液冷切换，4/10竞价汇源跌停=切换信号</td></tr>
+<tr><td><strong>梯队</strong></td><td>高度从7板压到4板（非主线），高度打不开=打法B市场</td></tr>
+<tr><td><strong>赚钱效应</strong></td><td>连续4天涨停收益&lt;3%，情绪值骗人贯穿全周</td></tr>
+<tr><td><strong>盈亏模式</strong></td><td>赚钱=选对方向+选中军+有回调；亏钱=选支线+FOMO+违规</td></tr>
+<tr><td><strong>认知迭代</strong></td><td>4条待专题讨论（打法A/B切换、强势量化、选股防漏、赚钱效应权重）</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>下周目标</strong>：2次违规必须归零 + 优先处理持仓 + 液冷&gt;电力&gt;光通信（回避）</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-第〇部分-本周概览">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第〇部分：本周概览</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏%</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周二 4/7</td><td>冰点→脉冲修复(72%)</td><td>弱修复B</td><td>空仓</td><td>0%</td><td><span class="badge badge-green">✓</span></td><td>双冰后弱修复第一天，涨停收益1.56%骗人</td></tr>
+<tr><td>周三 4/8</td><td>沸点(94%)</td><td>高潮→不买只卖</td><td>低吸航天发展</td><td><span class="up">+1.14%</span></td><td>❌ 违规开仓</td><td>情绪骗人第3天，预案说空实际开了</td></tr>
+<tr><td>周四 4/9</td><td>冰点(20%)</td><td>冰点低吸</td><td>清仓航天发展</td><td><span class="down">-1.94%</span></td><td><span class="badge badge-green">✓</span></td><td>冰点分化日，板块背离清仓</td></tr>
+<tr><td>周五 4/10</td><td>冰点→回暖(72%)</td><td>冰点低吸</td><td>买英维克+博杰</td><td><span class="up">+0.77%</span>浮盈</td><td>❌ 违规W1</td><td>液冷取代光通信，窗口纪律+双仓问题</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>周累计盈亏</strong>：已实现<span class="down">-1.94%</span>（航天发展）+ 浮盈<span class="up">+0.77%</span>（英维克+博杰）≈ 约<span class="down">-1.17%</span>（不含手续费）</p>
+<p class="para"><strong>本周操作</strong>：买3次 / 卖1次 / 空仓2天</p>
+<p class="para"><strong>一句话总结</strong>：情绪极端波动的一周（20%→94%→20%→72%），主线完成从光通信到液冷的切换，赚钱效应持续低迷（4天涨停收益均&lt;3%），但操作层面连续两次违规开仓暴露纪律问题。</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-一-节奏与打法回顾">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、节奏与打法回顾</div>
+<div class="sb">
+<p class="para"><strong>预案命中率</strong>：4天里预案对了2天（50%）</p>
+<ul class="tight-list"><li>预案对的：4/7空仓（弱修复不追<span class="badge badge-green">✓</span>）、4/9清仓航天发展（板块背离离场<span class="badge badge-green">✓</span>）</li><li>预案错的：</li><li>4/8预案说&quot;继续空仓&quot;，实际窗口1低吸航天发展（预案写保守，盘中看到航天启动FOMO开仓）</li><li>4/10预案说&quot;周五只开W2&quot;，实际窗口1买入英维克+博杰（冰点前提被早盘85%推翻，绕过规则）</li></ul>
+<p class="para"><strong>方向错误日</strong>：</p>
+<ul class="tight-list"><li>4/8不该做做了——沸点日违规开仓，虽然航天方向正确但违反纪律</li><li>4/10违规但有合理性——冰点前提被85%推翻，液冷方向正确，但&quot;先改预案再操作&quot;的流程缺失</li></ul>
+<p class="para"><strong>打法切换</strong>：</p>
+<ul class="tight-list"><li>情绪档位跟上了：4/7弱修复空仓、4/8高潮不追（W1计划不开）、4/9冰点低吸、4/10冰点低吸</li><li><strong>核心问题不是打法判断错，是判断对了但执行绕过了规则</strong>。两次违规都是在&quot;场景变更&quot;时跳过了&quot;修正预案→再操作&quot;的流程</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-二-主线与板块">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、主线与板块</div>
+<div class="sb">
+<p class="para"><strong>主线演变</strong>：</p>
+<ul class="tight-list"><li>周二：化工31只涨停（消息驱动），光通信4只、算力13只</li><li>周三：光通信16只涨停（汇源4板=最高板），AI应用/算力/PCB多方向共振</li><li>周四：光通信8只涨停（机构24亿+），但汇源5板后冲高回落</li><li>周五：液冷崛起（英维克+9.97亿主力），光通信高低切换（连板小票全线溃败，机构大票天量正收益）</li><li><strong>切换信号</strong>：4/10竞价汇源<span class="down">-2.07%</span>→早盘跌停，英维克<span class="up">+5.91%</span>主力+2.27亿，资金从光通信切换到液冷</li></ul>
+<p class="para"><strong>梯队演变</strong>：</p>
+<ul class="tight-list"><li>周二最高板：7板（津药药业，独苗，主力出逃）</li><li>周五最高板：4板（华远控股，并购重组非主线）</li><li><strong>高度变化：大幅压缩</strong>。从7板独苗→4板非主线，高度打不开，典型打法B市场</li></ul>
+<p class="para"><strong>本周活跃板块</strong>（持续2天+有涨停的）：</p>
+<p class="para">1. <strong>光通信</strong>（周二4只→周三16只→周四8只→周五高低切换）：周中绝对主线，连板小票退潮，机构大票天量正收益</p>
+<p class="para">2. <strong>液冷</strong>（周三7只→周四5只→周五最强方向，31.61亿净流入<span style="color:#D97706">🥇</span>）：后半周接力成为主线</p>
+<p class="para">3. <strong>算力</strong>（周二13只→周三16只→周四2只→周五11只，含液冷+光通信+算力租赁合并口径）：贯穿全周，但梯队分散</p>
+<p class="para">4. <strong>商业航天</strong>（周三7只→周四3只→周五退潮）：支线，高度不够（仅首板）</p>
+<p class="para">5. <strong>电力</strong>（周五7只涨停，梯队3+2+首板）：周五回起，梯队完整</p>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-三-盈亏归因">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因</div>
+<div class="sb">
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日</th><th>卖日</th><th>盈亏%</th><th>归因（做对/做错了什么）</th></tr></thead>
+<tbody>
+<tr><td>航天发展</td><td>商业航天</td><td>4/8 W1</td><td>4/9 尾盘</td><td><span class="down">-1.94%</span></td><td>做错：违规开仓（预案说空）+方向选了支线不是主线+中军（航天发展）在板块内最弱</td></tr>
+<tr><td>英维克</td><td>液冷</td><td>4/10 W1</td><td>持仓中</td><td><span class="up">+1.80%</span>浮盈</td><td>方向对（液冷最强主线），选股对（强势中军不看涨停），买点对（回调+均线），但违规开W1</td></tr>
+<tr><td>博杰股份</td><td>液冷</td><td>4/10 W1</td><td>持仓中</td><td><span class="down">-0.35%</span>浮亏</td><td>全错：FOMO驱动+违反窗口纪律+同方向双仓+放量滞涨（换手21.64%）</td></tr>
+</tbody>
+</table></div>
+<p class="para"><strong>本周最佳操作</strong>：4/9尾盘清仓航天发展——板块背离（唯一绿）+主力流出-4.89亿，果断离场，避免更大亏损</p>
+<p class="para"><strong>本周最差操作</strong>：4/10买入博杰股份——FOMO驱动、三错叠加（违规+双仓+放量滞涨选错标的）</p>
+<p class="para"><strong>盈亏模式识别</strong>：</p>
+<ul class="tight-list"><li><strong>赚钱的操作共性</strong>：选对了板块方向（液冷=最强主线）+ 选中军不追标（英维克）+ 有回调过程再买</li><li><strong>亏钱的操作共性</strong>：选了支线不是主线（航天=仅首板无梯队）+ FOMO驱动决策 + 违反窗口纪律</li><li><strong>核心结论</strong>：板块方向&gt;选股方法&gt;买点时机。方向错了（航天），选股再好也亏；方向对了（液冷），选错一只还有另一只救</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-四-认知迭代">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、认知迭代</div>
+<div class="sb">
+<p class="para"><strong>本周心得汇总</strong>（从4天日复盘提炼，不重复）：</p>
+<p class="para">1. <strong>情绪值连续4天骗人</strong>（4/7:72%<span class="up">+1.56%</span> / 4/8:94%<span class="up">+1.73%</span> / 4/9:20% / 4/10:85%→72%<span class="up">+2.30%</span>）——涨停收益连续4天&lt;3%，情绪值不再可信，赚钱效应4指标综合判断已固化到rules</p>
+<p class="para">2. <strong>自选股看强势不看涨停</strong>——英维克4/9没涨停但4/10最强，汇源4/9五板4/10跌停。已触发&quot;强势&quot;量化标准专题讨论</p>
+<p class="para">3. <strong>板块方向&gt;选股方法</strong>——液冷方向对了选股才有意义，光通信方向错了同样方法选也亏</p>
+<p class="para">4. <strong>高度板决定打法</strong>——本周最高板从7压到4，梯队断层，典型打法B市场（买中军不追标）。已触发打法A/B切换专题讨论</p>
+<p class="para">5. <strong>窗口纪律是底线</strong>——连续两次违规（4/8+4/10），虽然方向对但&quot;先改预案再操作&quot;的流程不能跳过</p>
+<p class="para">6. <strong>冰点分化≠无机会</strong>——4/9情绪20%但涨停61只，资金集中抱团光通信和液冷</p>
+<p class="para"><strong>是否需要改 rules？</strong></p>
+<ul class="tight-list"><li>☑ 是 → 已处理：</li><li><span class="badge badge-green">✓</span> 场景变更机制写入§2.4（4/10讨论确认）</li><li><span class="badge badge-green">✓</span> 资金合力确认写入§4.2观察信号（4/10讨论确认）</li><li><span style="color:#D97706">📋</span> 打法A/B切换 → 待专题讨论（和赚钱效应权重一起）</li><li><span style="color:#D97706">📋</span> &quot;强势&quot;量化定义 → 待专题讨论</li><li><span style="color:#D97706">📋</span> 选股防漏机制（自选股筛选标准板块扫描）→ 待专题讨论</li><li>❌ 同板块不双仓 → 弈沐哥否决（主线集中不分散）</li></ul>
+<p class="para"><strong>是否需要写 insights？</strong></p>
+<ul class="tight-list"><li>☑ 是 → 4/10资金合力认知升级 + 4/10机构vs短线合力讨论已写入 insights</li><li>☑ 是 → &quot;自选股看强势不看涨停&quot;待写入（&quot;强势&quot;量化标准确定后）</li><li>☑ 是 → &quot;高度板决定打法A/B&quot;待写入（专题讨论后）</li></ul>
+<hr style="border-color:var(--border);margin:14px 0;">
+</div>
+</div>
+
+<div class="section" id="s-五-下周基调">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、下周基调</div>
+<div class="sb">
+<p class="para"><strong>方向判断</strong>：主线切换中，液冷&gt;电力&gt;光通信（观察）</p>
+<ul class="tight-list"><li>液冷周五最强（英维克+9.97亿），但需验证周一持续性（周末获利盘兑现压力）</li><li>电力梯队最完整（3+2+首板），逻辑硬（AI数据中心电力需求），但机构买入不足，需周一验证</li><li>光通信连板小票退潮（汇源跌停），但机构大票高低切换≠全线溃败，短期回避连板方向</li></ul>
+<p class="para"><strong>情绪预期</strong>：本周收盘72%（一般），下周大概率分化震荡</p>
+<ul class="tight-list"><li>4天涨停收益均&lt;3%，赚钱效应持续低迷</li><li>高度板4板非主线+梯队断层=打法B市场</li><li>如果周一液冷/电力走强确认 → 情绪可能回升到主升档</li><li>如果液冷获利盘兑现 → 可能回到冰点</li></ul>
+<p class="para"><strong>重点盯的板块/标的</strong>：</p>
+<p class="para">1. 液冷：英维克（持仓处理）/ 申菱环境（W2低吸候选）/ 高澜股份（4/10漏网鱼，W2中军候选）</p>
+<p class="para">2. 电力：长源东谷（3板→4板？）/ 中国动力（中军W2低吸）</p>
+<p class="para">3. 情绪标：汇源通信（能否企稳=光通信生死线）/ 中嘉博创（算力方向高度）</p>
+<p class="para">4. PCB：深南电路（4/10选入自选池W1标的）</p>
+<p class="para"><strong>需要调整的习惯或规则</strong>：</p>
+<p class="para">1. <strong>先改预案再操作</strong>——场景变更时不能直接绕规则，必须先判断→改预案→再执行</p>
+<p class="para">2. <strong>FOMO是最大敌人</strong>——4/8和4/10两次违规都因FOMO，需要建立&quot;盘中看到机会→先问自己预案怎么说&quot;的肌肉记忆</p>
+<p class="para">3. <strong>光通信机构大票高低切换，连板小票回避</strong>——新易盛-13.83亿/亨通-2.34亿/通鼎<span class="down">-8.74%</span>是连板小票资金撤退，但机构大票（中际旭创/新易盛/天孚）天量成交+正收益≠出货，是风格切换</p>
+<p class="para">4. <strong>电力板块纳入自选池</strong>——4/9选股时遗漏，梯队完整度&gt;光通信</p>
+<p class="para"><strong>目标</strong>：严格执行窗口纪律，场景变更时先改预案再操作（本周2次违规必须归零），优先处理持仓，新开仓只做单票单方向。</p>
+</div>
+</div>
+</div>
+<!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) {
+  el.classList.toggle('collapsed');
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('hide');
+}
+function toggleCollapse(el) {
+  el.classList.toggle('collapsed');
+  const content = el.nextElementSibling;
+  if (content) content.classList.toggle('show');
+}
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) {
+    items.forEach(el => el.style.opacity = '1');
+    return;
+  }
+  const lq = q.toLowerCase();
+  items.forEach(el => {
+    el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15';
+  });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const cc = target.closest('.cc');
+    if (cc && !cc.classList.contains('show')) {
+      cc.classList.add('show');
+      const ct = cc.previousElementSibling;
+      if (ct) ct.classList.remove('collapsed');
+    }
+    const sb = target.closest('.sb.hide');
+    if (sb) {
+      sb.classList.remove('hide');
+      const sh = sb.previousElementSibling;
+      if (sh) sh.classList.remove('collapsed');
+    }
+  });
+});
+</script>
+</body>
+</html>
