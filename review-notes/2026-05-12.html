@@ -6,42 +6,40 @@
 <title>2026-05-12 周二 复盘笔记</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root {
-  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2533;--bg4:#212d42;
-  --border:#30363d;--text:#e6edf3;--text2:#8b949e;
-  --red:#f23645;--green:#00c853;--yellow:#ffa726;--blue:#58a6ff;--purple:#bc8cff;
-}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.topbar{position:sticky;top:0;z-index:100;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.topbar .title{font-size:18px;font-weight:700;color:var(--blue);white-space:nowrap}
-.topbar .meta{display:flex;gap:8px;flex-wrap:wrap}
-.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap}
-.chip.red{border-color:var(--red);color:var(--red)}
-.chip.green{border-color:var(--green);color:var(--green)}
-.chip.yellow{border-color:var(--yellow);color:var(--yellow)}
-.chip.blue{border-color:var(--blue);color:var(--blue)}
-.chip.purple{border-color:var(--purple);color:var(--purple)}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red);background:rgba(220,38,38,.06)}
+.chip.green{border-color:var(--green);color:var(--green);background:rgba(5,150,105,.06)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue);background:rgba(37,99,235,.06)}
+.chip.purple{border-color:var(--purple);color:var(--purple);background:rgba(124,58,237,.06)}
 .layout{display:flex}
 .sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
 .sidebar::-webkit-scrollbar{width:4px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text2);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
 .sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
-.sidebar a:hover{background:var(--bg3);color:var(--text)}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
 .sidebar a.s2{padding-left:24px;font-size:12px}
 .sidebar a.s3{padding-left:34px;font-size:12px}
-.sidebar a.active{color:var(--blue);background:var(--bg3);border-left-color:var(--blue)}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
 .sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
 .content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
 @media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
 .section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
-.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg3)}
-.sh:hover{background:var(--bg4)}
-.sh .tog{color:var(--text2);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
 .sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
 .sh.collapsed{border-bottom-color:transparent}
-.sh .cnt{font-size:12px;font-weight:400;color:var(--text2);margin-left:auto}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
 .sb{padding:0 18px 16px}
 .sb.hide{display:none}
 .si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
@@ -49,64 +47,70 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 .tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 .tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
 .tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
-.tw tbody tr:hover{background:rgba(88,166,255,.06)}
-.tw tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
-.tw tbody tr:nth-child(even):hover{background:rgba(88,166,255,.08)}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
 .up{color:var(--red);font-weight:600}
 .down{color:var(--green);font-weight:600}
 .badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
-.badge-red{background:rgba(242,54,69,.15);color:var(--red)}
-.badge-green{background:rgba(0,200,83,.15);color:var(--green)}
-.badge-yellow{background:rgba(255,167,38,.15);color:var(--yellow)}
-.badge-blue{background:rgba(88,166,255,.15);color:var(--blue)}
-.badge-purple{background:rgba(188,140,255,.15);color:var(--purple)}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-amber{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
 .sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
 .sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
 .sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
-.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
 .sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
 .sc .st span{display:flex;align-items:center;gap:3px}
 .sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
-.cb{margin-bottom:20px}
-.ct{padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
-.ct:hover{border-color:var(--blue);background:var(--bg4)}
-.ct .ar{transition:transform .15s;color:var(--text2);font-size:13px}
-.ct.collapsed .ar{transform:rotate(-90deg)}
-.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
-.cc.show{display:block}
-.sb2{position:relative;margin-bottom:16px}
-.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);font-size:15px;outline:none}
-.sb2 input:focus{border-color:var(--blue)}
-.sb2 input::placeholder{color:var(--text2)}
-.sbx{padding:12px 16px;background:var(--bg3);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
-.sbx.warn{border-left-color:var(--yellow)}
+.sbx{padding:12px 16px;background:var(--bg3);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
 .sbx.red{border-left-color:var(--red)}
 .sbx.green{border-left-color:var(--green)}
+.sbx.blue{border-left-color:var(--blue)}
 .sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
 .sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
 .para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
 .para .dim{color:var(--text2)}
 .tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
 .tight-list li{margin-bottom:3px}
+.insight{font-size:13px;padding:8px 12px;border-radius:8px;margin-bottom:8px;line-height:1.6;background:var(--bg3);border:1px solid var(--border)}
+.insight .tag{font-size:11px;font-weight:700;margin-right:6px}
+.tag-cog{color:var(--blue)}.tag-warn{color:var(--red)}.tag-issue{color:var(--purple)}.tag-data{color:var(--green)}
 [id]{scroll-margin-top:70px}
-.scnt{font-size:11px;font-weight:400;color:var(--text2)}
+.highlight{background:linear-gradient(180deg,transparent 60%,rgba(217,119,6,.2) 60%)}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.vdivider{width:1px;height:16px;background:var(--border);margin:0 6px}
+.node-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px}
+.node-card .nl{font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px}
+.node-card .nv{font-size:15px;font-weight:700}
+.node-card .nd{font-size:11px;color:var(--text3);margin-top:2px}
+.r1{color:var(--red)}.g1{color:var(--green)}.a1{color:var(--accent)}.b1{color:var(--blue)}
 </style>
+
+
 </head>
 <body>
 
 <div class="topbar">
+  <a href="index.html" class="back">← 复盘笔记</a>
   <div class="title">📊 复盘笔记</div>
   <div class="meta">
     <span class="chip blue">2026-05-12 周二</span>
     <span class="chip purple">持仓 北方华创</span>
-    <span class="chip yellow">风格 50</span>
+    <span class="chip accent">风格 50</span>
     <span class="chip red">情绪 25%</span>
     <span class="chip blue">量能 3万亿</span>
     <span class="chip red">涨停 94</span>
     <span class="chip green">跌停 32</span>
     <span class="chip red">最高 5板</span>
     <span class="chip green">封板 71%</span>
-    <span class="chip yellow">炸板 29%</span>
+    <span class="chip accent">炸板 29%</span>
     <span class="chip down">上证 -0.25%</span>
   </div>
 </div>
@@ -175,8 +179,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <span class="badge badge-red">机器人(退潮)</span>
 <span class="badge badge-green">地产(脉冲)</span>
 <span class="badge badge-red">连板W1追涨(硬卡锁仓)</span>
-<span class="badge badge-yellow">电力(中军资金极弱)</span>
-<span class="badge badge-yellow">算力(中军分化)</span>
+<span class="badge badge-amber">电力(中军资金极弱)</span>
+<span class="badge badge-amber">算力(中军分化)</span>
 </div>
 <div class="sbx warn">风险：①量能暴增+16%持续性存疑 ②CPO/半导体昨日大涨6-9%，今日获利盘兑现压力 ③连板硬卡未解除 ④空仓第一笔买入质量至关重要</div>
 </div>
@@ -201,8 +205,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="tw"><table>
 <thead><tr><th>指标</th><th>竞价</th><th>午盘</th><th>收盘</th><th>门槛</th></tr></thead>
 <tbody>
-<tr><td>涨停收益</td><td><span class="up">3.27%(一般)</span></td><td><span class="down">1.59%(低)</span></td><td><span class="yellow">2.41%(低)</span></td><td>>2%低迷/>3%正常</td></tr>
-<tr><td>连板收益</td><td><span class="up">4.81%(一般)</span></td><td><span class="down">2.32%(低)</span></td><td><span class="yellow">3.67%(一般)</span></td><td>—</td></tr>
+<tr><td>涨停收益</td><td><span class="up">3.27%(一般)</span></td><td><span class="down">1.59%(低)</span></td><td><span class="accent">2.41%(低)</span></td><td>>2%低迷/>3%正常</td></tr>
+<tr><td>连板收益</td><td><span class="up">4.81%(一般)</span></td><td><span class="down">2.32%(低)</span></td><td><span class="accent">3.67%(一般)</span></td><td>—</td></tr>
 <tr><td>炸板收益</td><td><span class="down">-0.71%(低)</span></td><td><span class="down">-1.15%(低)</span></td><td><span class="green">0.04%(一般)</span></td><td>—</td></tr>
 <tr><td>封板率</td><td>—</td><td>—</td><td>71.25%</td><td>—</td></tr>
 <tr><td>炸板率</td><td>—</td><td>—</td><td>28.75%</td><td><span class="badge badge-green">✅<30%(W1)</span></td></tr>
@@ -213,7 +217,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 </table></div>
 
 <div class="sh3" id="s1-nodes">节点说明</div>
-<div class="sbx warn"><strong>竞价</strong> 上证+0.10%略低于预期(+0.3~+0.8%)，情绪36%低，涨跌比1846:2515偏弱。连板高标全红(福达一字6板/大唐+9.69%/通鼎+7.79%)但情绪低+涨跌比差=结构分化 → <span class="badge badge-yellow">偏弱分歧</span></div>
+<div class="sbx warn"><strong>竞价</strong> 上证+0.10%略低于预期(+0.3~+0.8%)，情绪36%低，涨跌比1846:2515偏弱。连板高标全红(福达一字6板/大唐+9.69%/通鼎+7.79%)但情绪低+涨跌比差=结构分化 → <span class="badge badge-amber">偏弱分歧</span></div>
 <div class="sbx red"><strong>午盘</strong> 大盘翻绿-0.40%，情绪骤降至21%冰点，涨跌比1:4。连板高标分化（大唐封5通鼎封4 vs 福达+8.54%开板/红板+5.82%/山东翻绿）。趋势全线回调，中际+5.82%独立强/寒武纪+4.94%异动 → <span class="badge badge-red">冰点，不出手</span></div>
 <div class="sbx green"><strong>收盘</strong> 上证4214(-0.25%)，情绪25%低迷，涨停94/跌停32，量能3万亿(-8%)缩量。大唐5板/通鼎4板/宝鼎4板。北方华创+1.44%缩量回踩，W1买入100股@572.26浮盈+1.61% → <span class="badge badge-blue">低迷日，W1强回踩买入</span></div>
 
@@ -223,8 +227,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <tbody>
 <tr><td>🤖 机器人🔄</td><td><span class="badge badge-red">19</span></td><td>全首板</td><td>晋拓/百达/天永/凯众</td><td>-0.89%</td><td>—</td><td>跌破</td><td>⚠红方校准：首板潮明日看2进3</td></tr>
 <tr><td>☀️ 光伏🆕</td><td><span class="badge badge-red">12</span></td><td>首板为主</td><td>太阳能/石英股份/云南锗业</td><td>—</td><td>—</td><td>—</td><td>🆕候选观察</td></tr>
-<tr><td>光纤/光通信</td><td><span class="badge badge-yellow">8-10</span></td><td>4-2-首</td><td>通鼎4板/远东2板/通光线缆</td><td>+1.78%(光纤)</td><td>-38.54亿</td><td>站上✅</td><td>光纤涨价驱动，主线延续</td></tr>
-<tr><td>🔌 电力</td><td><span class="badge badge-yellow">6</span></td><td>5-2-首</td><td>大唐5板/华电辽能2板</td><td>+1.50%</td><td>-4.30亿</td><td>站上✅</td><td>降为强支线（涨停6<前日）</td></tr>
+<tr><td>光纤/光通信</td><td><span class="badge badge-amber">8-10</span></td><td>4-2-首</td><td>通鼎4板/远东2板/通光线缆</td><td>+1.78%(光纤)</td><td>-38.54亿</td><td>站上✅</td><td>光纤涨价驱动，主线延续</td></tr>
+<tr><td>🔌 电力</td><td><span class="badge badge-amber">6</span></td><td>5-2-首</td><td>大唐5板/华电辽能2板</td><td>+1.50%</td><td>-4.30亿</td><td>站上✅</td><td>降为强支线（涨停6<前日）</td></tr>
 <tr><td>🔶 半导体</td><td><span class="badge badge-green">1</span></td><td>3-2×4-首</td><td>康欣新材3板/汉邦2板</td><td>+0.42%</td><td>-51.75亿</td><td>站上✅</td><td>纯半导体涨停仅1只</td></tr>
 <tr><td>📟 PCB</td><td><span class="badge badge-green">4</span></td><td>4-首</td><td>宝鼎4板/华正新材</td><td>+0.34%</td><td>-29.03亿</td><td>站上✅</td><td>梯队退化</td></tr>
 <tr><td>🏠 地产</td><td><span class="badge badge-green">6</span></td><td>3-2-首</td><td>蒙娜丽莎3板</td><td>+0.36%</td><td>—</td><td>—</td><td>脉冲属性</td></tr>
@@ -239,10 +243,10 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <tr><td>大唐发电</td><td><span class="badge badge-red">5板</span></td><td>电力</td><td>蒙电入苏+央企，换手板晋级，主力-4.30亿</td></tr>
 <tr><td>通鼎互联</td><td><span class="badge badge-red">4板</span></td><td>光纤/光通信</td><td>合资投建+光纤涨价，13:04回封</td></tr>
 <tr><td>宝鼎科技</td><td><span class="badge badge-red">4板</span></td><td>PCB</td><td>PCB铜箔+黄金采选，尾盘14:09封板，主力+7584万</td></tr>
-<tr><td>康欣新材</td><td><span class="badge badge-yellow">3板</span></td><td>半导体</td><td>半导体并购+集装箱地板，一字</td></tr>
-<tr><td>蒙娜丽莎</td><td><span class="badge badge-yellow">3板</span></td><td>地产</td><td>建筑陶瓷+先进陶瓷，一字</td></tr>
-<tr><td>京投发展</td><td><span class="badge badge-yellow">3板</span></td><td>并购重组</td><td>拟收购奇芯光电</td></tr>
-<tr><td>交大昂立</td><td><span class="badge badge-yellow">3板</span></td><td>大消费</td><td>保健品+宠物新品</td></tr>
+<tr><td>康欣新材</td><td><span class="badge badge-amber">3板</span></td><td>半导体</td><td>半导体并购+集装箱地板，一字</td></tr>
+<tr><td>蒙娜丽莎</td><td><span class="badge badge-amber">3板</span></td><td>地产</td><td>建筑陶瓷+先进陶瓷，一字</td></tr>
+<tr><td>京投发展</td><td><span class="badge badge-amber">3板</span></td><td>并购重组</td><td>拟收购奇芯光电</td></tr>
+<tr><td>交大昂立</td><td><span class="badge badge-amber">3板</span></td><td>大消费</td><td>保健品+宠物新品</td></tr>
 <tr><td>华电辽能</td><td>2板</td><td>电力</td><td>绿电+央企，尾盘14:42封板</td></tr>
 <tr><td>汉邦高科</td><td>2板</td><td>半导体</td><td>GPU大单+算力，一字</td></tr>
 <tr><td>海鸥股份</td><td>2板</td><td>半导体/液冷</td><td>液冷服务器+核电</td></tr>
@@ -264,9 +268,9 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <tbody>
 <tr><td>中际旭创</td><td><span class="badge badge-red">🔴主趋势</span></td><td><span class="up">+2.22%</span></td><td><span class="up">+8.28%</span></td><td>3.12%</td><td class="up">+18.07亿</td><td>独立走强！距MA5约+15%远离</td></tr>
 <tr><td>胜宏科技</td><td><span class="badge badge-red">🔴主趋势</span></td><td class="down">-0.10%</td><td class="down">-0.74%</td><td>5.49%</td><td class="down">-12.78亿</td><td>❌转弱，主力大幅流出</td></tr>
-<tr><td>华工科技</td><td><span class="badge badge-yellow">🟡候选</span></td><td class="down">-0.39%</td><td class="down">-2.30%</td><td>9.86%</td><td class="down">-11.16亿</td><td>❌走弱</td></tr>
-<tr><td>立讯精密</td><td><span class="badge badge-yellow">🟡候选</span></td><td><span class="up">+1.75%</span></td><td><span class="up">+1.49%</span></td><td>2.72%</td><td class="up">+2.48亿</td><td>小幅回升</td></tr>
-<tr><td>光迅科技</td><td><span class="badge badge-yellow">🟡W1备选</span></td><td><span class="up">+0.61%</span></td><td><span class="up">+1.36%</span></td><td>10.94%</td><td class="down">-12.83亿</td><td>硬卡锁仓不出手</td></tr>
+<tr><td>华工科技</td><td><span class="badge badge-amber">🟡候选</span></td><td class="down">-0.39%</td><td class="down">-2.30%</td><td>9.86%</td><td class="down">-11.16亿</td><td>❌走弱</td></tr>
+<tr><td>立讯精密</td><td><span class="badge badge-amber">🟡候选</span></td><td><span class="up">+1.75%</span></td><td><span class="up">+1.49%</span></td><td>2.72%</td><td class="up">+2.48亿</td><td>小幅回升</td></tr>
+<tr><td>光迅科技</td><td><span class="badge badge-amber">🟡W1备选</span></td><td><span class="up">+0.61%</span></td><td><span class="up">+1.36%</span></td><td>10.94%</td><td class="down">-12.83亿</td><td>硬卡锁仓不出手</td></tr>
 </tbody>
 </table></div>
 
@@ -274,7 +278,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="tw"><table>
 <thead><tr><th>标的</th><th>角色</th><th>竞价</th><th>收盘%</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
 <tbody>
-<tr><td>北方华创</td><td><span class="badge badge-yellow">🟡候选→持仓</span></td><td>+0.00%</td><td><span class="up">+1.44%</span></td><td>1.55%</td><td class="up">+1.53亿(问财)</td><td>✅W1强回踩买入100股@572.26，浮盈+1.61%</td></tr>
+<tr><td>北方华创</td><td><span class="badge badge-amber">🟡候选→持仓</span></td><td>+0.00%</td><td><span class="up">+1.44%</span></td><td>1.55%</td><td class="up">+1.53亿(问财)</td><td>✅W1强回踩买入100股@572.26，浮盈+1.61%</td></tr>
 <tr><td>兆易创新</td><td><span class="badge badge-red">🔴主趋势</span></td><td>+0.00%</td><td class="down">-2.37%</td><td>6.07%</td><td class="down">-14.29亿</td><td>❌走弱</td></tr>
 <tr><td>通富微电</td><td><span class="badge badge-red">🔴主趋势</span></td><td>+0.00%</td><td class="down">-2.84%</td><td>9.09%</td><td class="down">-6.23亿</td><td>❌走弱</td></tr>
 <tr><td>海光信息</td><td><span class="badge badge-purple">⚠锚</span></td><td class="down">-1.77%</td><td>0.00%</td><td>1.86%</td><td class="up">+1.17亿</td><td>平盘</td></tr>
@@ -286,8 +290,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="sg">
 <div class="sc"><div class="nm">大唐发电<span class="tg badge badge-red">5板</span></div><div class="st"><span class="up">+10.02%</span><span>换手5.51%</span><span class="down">主力-4.30亿</span></div><div class="nt">✅封板，央企标的</div></div>
 <div class="sc"><div class="nm">通鼎互联<span class="tg badge badge-red">4板</span></div><div class="st"><span class="up">+9.99%</span><span>换手10.88%</span><span class="down">主力-1.14亿</span></div><div class="nt">✅封板，光纤龙头</div></div>
-<div class="sc"><div class="nm">福达合金<span class="tg badge badge-yellow">⚠开板</span></div><div class="st"><span class="up">+7.70%</span><span>换手24.39%</span><span class="down">主力-2.70亿</span></div><div class="nt">一字→开板回落，退潮预警</div></div>
-<div class="sc"><div class="nm">红板科技<span class="tg badge badge-yellow">⚠开板</span></div><div class="st"><span class="up">+4.53%</span><span>换手56%极高</span><span class="down">主力-1614万</span></div><div class="nt">一字→开板回落，高换手</div></div>
+<div class="sc"><div class="nm">福达合金<span class="tg badge badge-amber">⚠开板</span></div><div class="st"><span class="up">+7.70%</span><span>换手24.39%</span><span class="down">主力-2.70亿</span></div><div class="nt">一字→开板回落，退潮预警</div></div>
+<div class="sc"><div class="nm">红板科技<span class="tg badge badge-amber">⚠开板</span></div><div class="st"><span class="up">+4.53%</span><span>换手56%极高</span><span class="down">主力-1614万</span></div><div class="nt">一字→开板回落，高换手</div></div>
 </div>
 
 <div class="sh3" id="s1-risk">账户风控</div>
@@ -308,7 +312,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <tr><td>量能</td><td><span class="badge badge-green">26/30</span></td><td>成交额32697亿/持平→/波动率5.0%CV</td></tr>
 <tr><td>连板生态</td><td><span class="badge badge-red">12/40</span></td><td>最高板4板(5分)/涨停收益1%(4分)/涨停94→连板57(3分)/晋级率8.5%(0分)</td></tr>
 <tr><td>趋势赚钱效应</td><td><span class="badge badge-red">12/30</span></td><td>沪深300-0.08%(5分)/趋势板块0个(0分)/TOP50上涨58%(7分)</td></tr>
-<tr style="font-weight:600;"><td>总分</td><td><span class="badge badge-yellow">50/100</span></td><td>连板50% / 趋势50%</td></tr>
+<tr style="font-weight:600;"><td>总分</td><td><span class="badge badge-amber">50/100</span></td><td>连板50% / 趋势50%</td></tr>
 </tbody>
 </table></div>
 
@@ -317,14 +321,14 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <thead><tr><th></th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead>
 <tbody>
 <tr><td><span class="badge badge-red">窗口1</span></td><td>硬卡锁仓，连板不出手</td><td>大唐5/通鼎4/宝鼎4封板，福达+7.70%/红板+4.53%开板，情绪25%</td><td>空仓</td><td><span class="badge badge-green">✅正确</span></td></tr>
-<tr><td><span class="badge badge-yellow">趋势W1</span></td><td>趋势强回踩买入</td><td>北方华创开盘缩量下探后企稳，量比0.86，主力+1.53亿</td><td><span class="badge badge-blue">✅买入100股@572.26</span></td><td><span class="badge badge-green">✅合规</span></td></tr>
-<tr><td><span class="badge badge-yellow">窗口2</span></td><td>趋势W2弱回踩低吸</td><td>趋势全线回调，中际+8.28%大涨远离均线</td><td>空仓</td><td><span class="badge badge-green">✅正确</span></td></tr>
+<tr><td><span class="badge badge-amber">趋势W1</span></td><td>趋势强回踩买入</td><td>北方华创开盘缩量下探后企稳，量比0.86，主力+1.53亿</td><td><span class="badge badge-blue">✅买入100股@572.26</span></td><td><span class="badge badge-green">✅合规</span></td></tr>
+<tr><td><span class="badge badge-amber">窗口2</span></td><td>趋势W2弱回踩低吸</td><td>趋势全线回调，中际+8.28%大涨远离均线</td><td>空仓</td><td><span class="badge badge-green">✅正确</span></td></tr>
 </tbody>
 </table></div>
 
 <div class="sh3">预期差与盘感</div>
 <div class="para">盘前基准：上证+0.3%~+0.8%（放量延续+外围偏暖+半导体/CPO尾盘溢价）<br>
-实际竞价：<span class="down">上证+0.10%</span>，情绪36% → <span class="badge badge-yellow">低于预期</span><br>
+实际竞价：<span class="down">上证+0.10%</span>，情绪36% → <span class="badge badge-amber">低于预期</span><br>
 午盘实际：<span class="down">上证-0.40%</span>，情绪21% → <span class="badge badge-red">大幅低于预期</span><br>
 收盘实际：<span class="down">上证-0.25%</span>，情绪25% → <span class="badge badge-red">大幅低于预期</span></div>
 <div class="para dim">关键变量：大唐通鼎封板对冲福达开板+山东翻绿。趋势全线回调（唯中际+寒武纪独立强）。北方华创W1缩量回踩买入+1.44%/+1.53亿(问财)。</div>
@@ -373,13 +377,13 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 
 <div class="sh3" style="margin:4px 0 6px;">① 光纤/光通信 🔥主线延续（通鼎4板，光纤涨价）</div>
 <div class="sg">
-<div class="sc" style="border-left:3px solid var(--yellow);"><div class="nm">远东股份<span class="tg badge badge-yellow">🟡W1标的</span></div><div class="st"><span>600869</span><span>2板</span><span>换手10.91%</span></div><div class="nt">2进3候选，竞价量能>昨日50%+光纤合力</div></div>
+<div class="sc" style="border-left:3px solid var(--accent);"><div class="nm">远东股份<span class="tg badge badge-amber">🟡W1标的</span></div><div class="st"><span>600869</span><span>2板</span><span>换手10.91%</span></div><div class="nt">2进3候选，竞价量能>昨日50%+光纤合力</div></div>
 <div class="sc" style="border-left:3px solid var(--red);"><div class="nm">通鼎互联<span class="tg badge badge-red">🔴高标</span></div><div class="st"><span>002491</span><span>4板</span><span>封成比4.76</span></div><div class="nt">光通信最高板，只盯不买</div></div>
 </div>
 
 <div class="sh3" style="margin:10px 0 6px;">② 电力 🔥主线（大唐5板，国家电网投资驱动）</div>
 <div class="sg">
-<div class="sc" style="border-left:3px solid var(--yellow);"><div class="nm">华电辽能<span class="tg badge badge-yellow">🟡W2标的</span></div><div class="st"><span>600396</span><span>2板</span><span>封成比1.81</span></div><div class="nt">2进3候选，尾盘封板需分歧转一致</div></div>
+<div class="sc" style="border-left:3px solid var(--accent);"><div class="nm">华电辽能<span class="tg badge badge-amber">🟡W2标的</span></div><div class="st"><span>600396</span><span>2板</span><span>封成比1.81</span></div><div class="nt">2进3候选，尾盘封板需分歧转一致</div></div>
 <div class="sc" style="border-left:3px solid var(--red);"><div class="nm">大唐发电<span class="tg badge badge-red">🔴高标</span></div><div class="st"><span>601991</span><span>5板</span><span>封成比10.94</span></div><div class="nt">市场最高板，只盯不买</div></div>
 </div>
 
@@ -391,8 +395,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <thead><tr><th>层级</th><th>标的</th><th>操作</th><th>买点</th><th>涨跌幅</th><th>成交</th><th>主力</th><th>备注</th></tr></thead>
 <tbody>
 <tr><td><span class="badge badge-red">🔴持仓</span></td><td>北方华创</td><td>持有</td><td>止损543.65</td><td><span class="up">+1.44%</span></td><td>64.3亿</td><td class="up">+1.53亿(问财)</td><td>单票28.1%<30%上限✅，止损-5%</td></tr>
-<tr><td><span class="badge badge-yellow">🟡候选</span></td><td>兆易创新</td><td>观察等买点</td><td>回踩MA5~341</td><td class="down">-2.37%</td><td>143亿</td><td class="down">-14.19亿</td><td>距MA5~341约+3.8%</td></tr>
-<tr><td><span class="badge badge-yellow">🟡候选</span></td><td>通富微电</td><td>观察等买点</td><td>回踩MA5~57</td><td class="down">-2.84%</td><td>82亿</td><td class="down">-6.15亿</td><td>距MA5~57约+4.0%</td></tr>
+<tr><td><span class="badge badge-amber">🟡候选</span></td><td>兆易创新</td><td>观察等买点</td><td>回踩MA5~341</td><td class="down">-2.37%</td><td>143亿</td><td class="down">-14.19亿</td><td>距MA5~341约+3.8%</td></tr>
+<tr><td><span class="badge badge-amber">🟡候选</span></td><td>通富微电</td><td>观察等买点</td><td>回踩MA5~57</td><td class="down">-2.84%</td><td>82亿</td><td class="down">-6.15亿</td><td>距MA5~57约+4.0%</td></tr>
 <tr><td><span class="badge badge-blue">🆕候选</span></td><td>联动科技🆕</td><td>观察等买点</td><td>回踩确认</td><td><span class="up">+5.56%</span></td><td>—</td><td>—</td><td>近5日全正，设备中军候选</td></tr>
 </tbody>
 </table></div>
@@ -401,8 +405,8 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="tw"><table>
 <thead><tr><th>层级</th><th>标的</th><th>操作</th><th>买点</th><th>涨跌幅</th><th>成交</th><th>主力</th><th>备注</th></tr></thead>
 <tbody>
-<tr><td><span class="badge badge-yellow">🟡候选</span></td><td>胜宏科技</td><td>观察等买点</td><td>回踩MA5~346+确认</td><td class="down">-0.74%</td><td>178亿</td><td class="down">-10.49亿(问财)</td><td>CPO+PCB双概念，需板块企稳</td></tr>
-<tr><td><span class="badge badge-yellow">🟡候选</span></td><td>华工科技</td><td>观察等买点</td><td>回踩MA10~135+确认</td><td class="down">-2.30%</td><td>144亿</td><td class="down">-10.97亿</td><td>主力大幅流出后是否企稳</td></tr>
+<tr><td><span class="badge badge-amber">🟡候选</span></td><td>胜宏科技</td><td>观察等买点</td><td>回踩MA5~346+确认</td><td class="down">-0.74%</td><td>178亿</td><td class="down">-10.49亿(问财)</td><td>CPO+PCB双概念，需板块企稳</td></tr>
+<tr><td><span class="badge badge-amber">🟡候选</span></td><td>华工科技</td><td>观察等买点</td><td>回踩MA10~135+确认</td><td class="down">-2.30%</td><td>144亿</td><td class="down">-10.97亿</td><td>主力大幅流出后是否企稳</td></tr>
 <tr><td><span class="badge badge-blue">🆕候选</span></td><td>意华股份🆕</td><td>观察等买点</td><td>回踩确认</td><td><span class="up">+6.30%</span></td><td>22.9亿</td><td>—</td><td>光纤+CPO+6G，近5日4天正</td></tr>
 <tr><td><span class="badge badge-blue">🆕候选</span></td><td>立讯精密🆕</td><td>观察等买点</td><td>回踩确认</td><td><span class="up">+1.49%</span></td><td>—</td><td class="up">+7.51亿(板块最大)</td><td>光通信板块主力最大流入</td></tr>
 <tr><td><span class="badge badge-purple">⚠锚</span></td><td>中际旭创</td><td>观察不追</td><td>距MA5~883已+15%</td><td><span class="up">+8.28%</span></td><td>308亿</td><td class="up">+18.07亿</td><td>大涨不追高等回踩</td></tr>
@@ -481,7 +485,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <tr><td>4</td><td>光通信2 vs 光纤8</td><td>✅<strong>采纳。</strong>改称"光纤/光通信"</td><td><span class="badge badge-green">✅采纳</span></td></tr>
 <tr><td>5</td><td>光伏12只遗漏</td><td>✅<strong>采纳。</strong>纳入候选观察</td><td><span class="badge badge-green">✅采纳</span></td></tr>
 <tr><td>6</td><td>北方华创口径差异</td><td>✅<strong>部分采纳。</strong>核心依据实为Core-趋势§T4.1强回踩标准</td><td><span class="badge badge-green">✅采纳说明</span></td></tr>
-<tr><td>7</td><td>北方华创28.1%>20%</td><td><strong>承认违规。</strong>明日不加不减，仅处理止损</td><td><span class="badge badge-yellow">→弈沐裁决</span></td></tr>
+<tr><td>7</td><td>北方华创28.1%>20%</td><td><strong>承认违规。</strong>明日不加不减，仅处理止损</td><td><span class="badge badge-amber">→弈沐裁决</span></td></tr>
 <tr><td>8</td><td>Core-趋势改造</td><td>✅<strong>采纳。</strong>买入理由改为缩量+均线多头</td><td><span class="badge badge-green">✅采纳</span></td></tr>
 <tr><td>9</td><td>遗漏意华/联动/立讯</td><td>✅<strong>采纳。</strong>全部纳入候选</td><td><span class="badge badge-green">✅采纳</span></td></tr>
 <tr><td>10</td><td>机器人止跌反弹</td><td>✅<strong>采纳部分。</strong>改为"反弹观察"</td><td><span class="badge badge-green">✅采纳</span></td></tr>
@@ -519,7 +523,7 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="nm">🥇 半导体 · 持仓</div>
 <div class="nt">北方华创持有止损543.65<br>兆易/通富/联动科技观察等回踩</div>
 </div>
-<div class="sc" style="border-left:4px solid var(--yellow);">
+<div class="sc" style="border-left:4px solid var(--accent);">
 <div class="nm">🔦 光纤/CPO · 分歧观察</div>
 <div class="nt">胜宏/华工暂不操作（CPO主力-88亿）<br>意华/立讯纳入候选观察</div>
 </div>
@@ -556,11 +560,11 @@ body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <div class="sh3">重点观察 / 不碰</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
 <span class="badge badge-blue" style="background:rgba(88,166,255,.2);color:var(--blue);border:1px solid var(--blue);">🤖机器人重点观察</span>
-<span class="badge badge-yellow">☀️光伏候选</span>
+<span class="badge badge-amber">☀️光伏候选</span>
 <span class="badge badge-red">中际旭创(远离均线)</span>
 <span class="badge badge-red">1进2(晋级率8.77%)</span>
 <span class="badge badge-green">W1追涨(低迷不开)</span>
-<span class="badge badge-yellow">CPO(分歧观察暂不操作)</span>
+<span class="badge badge-amber">CPO(分歧观察暂不操作)</span>
 </div>
 
 <div class="sh3">风险速查</div>
