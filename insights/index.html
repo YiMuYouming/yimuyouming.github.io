@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弈沐资本 · 交易认知</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--border-light:#F0EEEC;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-bg:rgba(217,119,6,.08);--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth}
+body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.header{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:20px;backdrop-filter:blur(12px)}
+.header a{font-size:13px;color:var(--text2);text-decoration:none;padding:3px 10px;border-radius:6px;border:1px solid var(--border);transition:all .12s}
+.header a:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.header .brand{font-size:18px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.header .brand span{color:var(--accent)}
+.header .sub{font-size:13px;color:var(--text3);margin-left:auto}
+
+.hero{padding:48px 32px 32px;max-width:720px;margin:0 auto;text-align:center}
+.hero h1{font-size:26px;font-weight:700;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--text2);line-height:1.6}
+.hero .stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.hero .stats span{font-size:12px;color:var(--text3);background:var(--bg4);padding:3px 10px;border-radius:8px}
+
+.container{max-width:1100px;margin:0 auto;padding:0 32px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+@media(max-width:720px){.container{grid-template-columns:1fr;padding:0 20px 60px}.hero h1{font-size:22px}.header{padding:12px 16px}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .15s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 16px rgba(217,119,6,.08)}
+.card-header{padding:16px 18px 0;display:flex;align-items:flex-start;gap:10px}
+.card-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.card-title{font-size:16px;font-weight:700;color:var(--text)}
+.card-subtitle{font-size:11px;color:var(--text3);margin-top:1px}
+
+.card-core{margin:10px 18px 0;padding:10px 14px;background:var(--bg4);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.6}
+
+.card-tags{padding:8px 18px;display:flex;gap:5px;flex-wrap:wrap}
+.tag{padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--bg4);color:var(--text3)}
+
+.card-body{padding:0 18px 4px;flex:1}
+.insight-item{border-top:1px solid var(--border-light);padding:8px 0}
+.insight-item:first-child{border-top:none}
+.insight-summary{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.insight-summary .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dot.red{background:var(--red)}.dot.green{background:var(--green)}.dot.blue{background:var(--blue)}.dot.purple{background:var(--purple)}.dot.amber{background:var(--accent)}
+.insight-text{font-size:12px;color:var(--text);line-height:1.6;flex:1}
+.insight-text strong{color:var(--accent)}
+.insight-detail{display:none;margin-top:6px;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.7}
+.insight-detail.show{display:block}
+.insight-toggle{font-size:10px;color:var(--text3);flex-shrink:0;transition:transform .15s}
+.insight-toggle.open{transform:rotate(180deg)}
+
+.card-footer{padding:6px 18px 14px;margin-top:auto}
+.count-badge{display:inline-block;padding:1px 8px;border-radius:5px;font-size:10px;font-weight:600;background:var(--bg4);color:var(--text3)}
+
+.footer{border-top:1px solid var(--border);padding:20px 32px;text-align:center;font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="../index.html">← 平台</a>
+  <div class="brand"><span>弈沐资本</span> · 交易认知</div>
+  <span class="sub">8 个主题</span>
+</div>
+
+<div class="hero">
+  <h1>交易认知</h1>
+  <p>从实战中提纯的认知片段。每条都改变了看市场的方式。<br>不写操作、不写仓位、不写具体股票。</p>
+  <div class="stats">
+    <span>8 个主题</span><span>7 已验证</span><span>1 部分验证</span><span>持续积累</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- 资金合力 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">💰</div><div><div class="card-title">资金合力</div><div class="card-subtitle">赚的不是情绪的钱，是合力的钱</div></div></div>
+  <div class="card-core">中军资金是合力的质检员。没有中军的主线，止于连板情绪标的。</div>
+  <div class="card-tags"><span class="tag">真假突破</span><span class="tag">主线vs支线</span><span class="tag">打法切换</span><span class="tag">合力判定</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>合力 > 大盘情绪</strong>。选板块不赌大盘</span><span class="insight-toggle">▼</span></div><div class="insight-detail">大盘情绪反映全市场平均，短线交易是选板块。情绪差+板块合力强 → 仍可做。情绪好+板块合力散 → 应减仓。情绪是温度，合力是方向。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>零和 vs 增量</strong>。增量资金入场才有合力</span><span class="insight-toggle">▼</span></div><div class="insight-detail">增量：涨停+放量+中军同步+主力连续净流入 → 合力形成。零和：涨停+缩量+中军不跟+主力净流出 → 拉高出货。短线赚钱的本质是增量资金入场。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot purple"></span><span class="insight-text"><strong>打法 A/B</strong>：高度够追情绪标，不够买中军</span><span class="insight-toggle">▼</span></div><div class="insight-detail">最高板≥7+梯队完整 → 打法A：追情绪标有连板溢价。≤5或断层 → 打法B：直接买中军。底层信号是合力结构变化。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>背离判定</strong>：大单流出+股价不跌 = 洗盘</span><span class="insight-toggle">▼</span></div><div class="insight-detail">不看净流向绝对值，看"资金 vs 价格"的背离。大单流出+股价没跌→有更强的买方在接。大单流入+股价滞涨→对倒做量，高位危险。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>中军资金 = 合力质检员</strong></span><span class="insight-toggle">▼</span></div><div class="insight-detail">涨停数/梯队→情绪热度。中军主力流入→机构态度。标准：板块内≥3只中军近3日主力累计净流入>0。5/12电力13涨停无中军→选光通信验证正确。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">5 条认知 · 已验证</span></div>
+</div>
+
+<!-- 情绪与周期 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">🔥</div><div><div class="card-title">情绪与周期</div><div class="card-subtitle">情绪是温度计，不是方向盘</div></div></div>
+  <div class="card-core">情绪一天波动超 30pp = 不可信。赚钱效应差时涨停多也是诱多。</div>
+  <div class="card-tags"><span class="tag">诱多判定</span><span class="tag">量能异动</span><span class="tag">脉冲识别</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text">脉冲式情绪修复<strong>也是诱多</strong></span><span class="insight-toggle">▼</span></div><div class="insight-detail">不仅沸点是脉冲，修复也是。判断标准：情绪脉冲+赚钱效应差（涨停收益&lt;2%）+主力净流出=诱多。3/31竞价34%→早盘71%→收盘18%，完美诱多剧本。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text">赚钱效应差时，<strong>涨停数多也不追</strong></span><span class="insight-toggle">▼</span></div><div class="insight-detail">涨停多但质量差（尾盘封板+虚涨）=诱多。3/30光纤12涨停→次日龙头-2.21%、中军主力-3.98亿。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text">放量下跌<strong>比缩量下跌更危险</strong></span><span class="insight-toggle">▼</span></div><div class="insight-detail">放量下跌=有人在割有人在接，但接盘的不是主力→还会继续跌。缩量下跌=没人卖也没人买→可能只是观望。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">3 条认知 · 已验证</span></div>
+</div>
+
+<!-- 选股与买点 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">🎯</div><div><div class="card-title">选股与买点</div><div class="card-subtitle">买"明天有机会的票"，不是"今天强的票"</div></div></div>
+  <div class="card-core">回踩买的是距支撑位近+缩量的票，不是今天弹得高的票。</div>
+  <div class="card-tags"><span class="tag">低吸选标</span><span class="tag">龙头买点</span><span class="tag">盘口识别</span><span class="tag">冰点类型</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>低吸 = 买前排龙头回调低点</strong>，不是买后排便宜货</span><span class="insight-toggle">▼</span></div><div class="insight-detail">板块进主升时资金只推前排。后排"低点"是补涨不是低吸。航天工程热榜800+的教训：资金轮不到800名开外。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>龙头买点</strong>：不追3板，买"即将成为龙头"</span><span class="insight-toggle">▼</span></div><div class="insight-detail">W1追首板→2板（性价比最高）。3板以上不追（除非一字），从"买手"变"观察者"。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>假突破 vs 真合力</strong>：直线拉升无承接 = 量化钓鱼</span><span class="insight-toggle">▼</span></div><div class="insight-detail">假突破：直线拉>5%，下方无阶梯买单，量能不持续。真合力：45°缓慢推升，压单被持续啃食，量能温和放大。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot purple"></span><span class="insight-text"><strong>两种冰点</strong>：情绪冰点 vs 高标冰点，操作逻辑不同</span><span class="insight-toggle">▼</span></div><div class="insight-detail">情绪冰点（大盘恐慌）→弱修复后低吸前排龙头。高标冰点（连板压缩）→等高度板重新打开3→4→5板。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>回踩选股</strong>：距支撑近+缩量 > 当天涨幅大</span><span class="insight-toggle">▼</span></div><div class="insight-detail">修复快≠明天继续涨，反而透支买盘。修复慢但距MA5近→明天缩量一碰就是标准买点。5/13通富vs兆易对比验证。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">5 条认知 · 已验证</span></div>
+</div>
+
+<!-- 窗口节奏与W2 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">⏱️</div><div><div class="card-title">窗口节奏与 W2</div><div class="card-subtitle">爆发日无W2，缩量回踩才是真正的W2机会</div></div></div>
+  <div class="card-core">W2 低吸 = 强势缩量回踩到支撑位企稳，不是找还没涨的低位票。</div>
+  <div class="card-tags"><span class="tag">W2时机</span><span class="tag">缩量回踩</span><span class="tag">爆发日规则</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>爆发日无 W2</strong>。冲高回落 = 兑现不是回踩</span><span class="insight-toggle">▼</span></div><div class="insight-detail">正确节奏：爆发日观察→次日龙头延续确认→正常缩量回踩→W2低吸。4/15电力5只首板全涨停，当天做W2=买兑现。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>缩量回踩 vs 高位兑现</strong>：4 指标区分</span><span class="insight-toggle">▼</span></div><div class="insight-detail">可买：龙头封板+缩量30%++主力仍流入+企稳在均线上。不买：龙头炸板+放量+主力转负+跌破均线支撑。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">2 条认知 · 已验证</span></div>
+</div>
+
+<!-- 尾盘与回勾 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">🌅</div><div><div class="card-title">尾盘与回勾</div><div class="card-subtitle">尾盘拉升是偷袭，不等回勾是纪律</div></div></div>
+  <div class="card-core">板块尾盘拉升+次日低开+主力出 = 偷袭出货，不是合力。</div>
+  <div class="card-tags"><span class="tag">尾盘异动</span><span class="tag">回勾判断</span><span class="tag">卖出纪律</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>尾盘板块定律</strong>：最后30分钟集中拉升 = 偷袭</span><span class="insight-toggle">▼</span></div><div class="insight-detail">次日竞价低开+主力出=偷袭确认。只有龙头可能独立走妖，跟风不追。4/14锂电尾盘拉升→4/15全线崩盘。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>回勾是意外不是预期</strong>。不等回勾</span><span class="insight-toggle">▼</span></div><div class="insight-detail">持仓走弱时等"尾盘回勾"是幻想。走弱是事实，回勾是概率。大盘弱+板块弱+个股弱=走，不等回勾。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">2 条认知 · 已验证</span></div>
+</div>
+
+<!-- 对手研究 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">♟️</div><div><div class="card-title">对手研究</div><div class="card-subtitle">知己知彼。养家心法+量化弱点</div></div></div>
+  <div class="card-core">量化只能统计过去，不能理解现在。新概念萌芽期是散户的黄金窗口。</div>
+  <div class="card-tags"><span class="tag">养家心法</span><span class="tag">量化识别</span><span class="tag">散户优势</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>别人贪婪时我更贪婪</strong> = 顺势时别怂</span><span class="insight-toggle">▼</span></div><div class="insight-detail">赚钱效应好时重仓跟上，不要因为"涨了几天了"就主动缩手。Rules偏保守是对的，但主升期可以更果敢。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>量化最大弱点</strong>：只能统计过去，不能理解现在</span><span class="insight-toggle">▼</span></div><div class="insight-detail">新概念萌芽期量化无历史数据，因子全部失效。这就是散户黄金窗口。盘口语言是量化永远学不会的技能。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>"假设空仓测试"</strong>：最简单有效的思维工具</span><span class="insight-toggle">▼</span></div><div class="insight-detail">每天收盘问"空仓还买吗？"如果不会→持有理由已不存在，只是亏了不舍得走。成本是最大的心理锚点。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">3 条认知 · 部分验证</span></div>
+</div>
+
+<!-- 对话与原则 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">💬</div><div><div class="card-title">对话与原则</div><div class="card-subtitle">没有对抗的决策 = 自己骗自己</div></div></div>
+  <div class="card-core">止损价到了不要找理由。纪律是昨晚冷静时定的，盘中大概率会骗自己。</div>
+  <div class="card-tags"><span class="tag">交易心态</span><span class="tag">红蓝对抗</span><span class="tag">自我校正</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>止损到了不要找理由</strong>。竞价低开本身就是最强信号</span><span class="insight-toggle">▼</span></div><div class="insight-detail">纪律是昨晚冷静时定的，盘中大概率会骗自己。止损不是给浮动时间的。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>亏钱根源</strong>：怕亏多+怕错过，买卖双输</span><span class="insight-toggle">▼</span></div><div class="insight-detail">卖时被恐惧支配→不止损扛单。买时被贪婪支配→追高不给合理价位。两个极端导致买卖双输。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>情绪决定打法，打法决定标的</strong></span><span class="insight-toggle">▼</span></div><div class="insight-detail">确定性优先于弹性。情绪主升打最高，刚确认打确定性。板块合力是核心，大盘情绪是风控。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>我为主，AI 为辅</strong>。AI 会顺着说</span><span class="insight-toggle">▼</span></div><div class="insight-detail">自己必须有主见和盘感。AI用来验证补充，不是替代决策。红蓝对抗对冲AI天然偏向。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">4 条认知 · 已验证</span></div>
+</div>
+
+<!-- 操作评估 -->
+<div class="card">
+  <div class="card-header"><div class="card-icon">⚖️</div><div><div class="card-title">操作评估</div><div class="card-subtitle">操作对不对，看理由不是看结果</div></div></div>
+  <div class="card-core">赚钱不能证明操作对，亏钱不能证明操作错。判断标准是理由基于板块信号还是情绪。</div>
+  <div class="card-tags"><span class="tag">复盘归因</span><span class="tag">对错判定</span><span class="tag">情绪校准</span></div>
+  <div class="card-body">
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>正确操作</strong>：英维克卖出，理由="液冷板块转弱"</span><span class="insight-toggle">▼</span></div><div class="insight-detail">新朋开板+中军涨速放缓→板块信号驱动。即使收盘涨了也不该后悔。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>错误操作</strong>：理由是"我慌了"→情绪驱动</span><span class="insight-toggle">▼</span></div><div class="insight-detail">即使跌了也不该庆幸。复盘时先写理由再看结果，不倒果为因。</div></div>
+  </div>
+  <div class="card-footer"><span class="count-badge">2 条认知 · 已验证</span></div>
+</div>
+
+</div>
+
+<div class="footer">弈沐资本 · 交易认知 · 从实战中持续积累</div>
+
+</body>
+</html>
