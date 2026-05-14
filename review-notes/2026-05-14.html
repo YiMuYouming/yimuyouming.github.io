@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-05-14 周四 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:11px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px;color:var(--text3)}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+hr.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+.cb{margin-bottom:14px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title">2026-05-14 周四 复盘笔记</div>
+  <div class="meta">
+    <span class="chip red">情绪 18% 冰点</span>
+    <span class="chip amber">上证 4177.92 -1.52%</span>
+    <span class="chip blue">80涨停 / 44跌停</span>
+    <span class="chip purple">持仓 北方华创 ~28%</span>
+    <span class="chip green">终稿 (红蓝对抗通过)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">涨停结构</a>
+  <a href="#s1d" class="s2">自选池表现</a>
+  <a href="#s1e" class="s2">持仓与交易</a>
+  <a href="#s1f" class="s2">风格检测</a>
+  <a href="#s1g" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s3c" class="s2">操作指南</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+</div>
+
+<div class="content">
+
+<!-- ====== 第〇部分 ====== -->
+<div class="section" id="s0">
+<div class="sh collapsed"><span class="tog">▼</span> 第〇部分：昨日预案（5/13 附录A终审定稿）<span class="cnt">风格65分 · 仓位上限60%</span></div>
+<div class="sb hide">
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="val amber">65分</div><div class="lbl">风格分数 (混合行情)</div></div>
+  <div class="stat-card"><div class="val">60%/40%</div><div class="lbl">连板/趋势</div></div>
+  <div class="stat-card"><div class="val">60%</div><div class="lbl">总仓位上限</div></div>
+  <div class="stat-card"><div class="val">47.5%</div><div class="lbl">当前仓位</div></div>
+</div>
+
+<div class="para dim">基准预期：上证 +0.2%~+0.5%（情绪连续修复 + 特朗普访华正面催化）</div>
+
+<div class="sh3">持仓处理</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>572.26</td><td>100股(~28%)</td><td>543.65(-5%)</td><td>高开→持有，平开→看半导体温度，低开>3%→检查MA5(559.73)</td></tr>
+<tr><td>立讯精密</td><td>80.15</td><td>500股(~19.5%)</td><td>76.14(-5%)/MA10(78.06)</td><td>高开→持有，跌破MA10+15分钟未站回→止损</td></tr>
+</tbody></table></div>
+
+<div class="sh3">连板操作映射</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>温度标</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td>电力🔥🔥</td><td>大唐发电6板</td><td><strong>华电辽能</strong> 3进4</td><td>W1</td><td>情绪≥60%+高开3-7%+量比>3+大唐未断板</td></tr>
+<tr><td>电力🔥🔥</td><td>大唐发电6板</td><td>韶能股份 1进2</td><td>W1</td><td>情绪≥60%+高开+电力跟风</td></tr>
+<tr><td>数据中心🔥</td><td>万控智造2板</td><td>万控智造 1进2</td><td>W1</td><td>情绪≥60%+一字→等T板回封/高开3-7%</td></tr>
+</tbody></table></div>
+
+<div class="sh3">趋势操作映射</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>观察标的</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td>🥇CPO</td><td>立讯MA10 / 胜宏MA10</td><td>T4.1b：60分MA10回踩+缩量+15分钟企稳→半仓</td></tr>
+<tr><td>🥈半导体</td><td>北华MA5(559.73)</td><td>T4.1：日线MA5回踩+量比<0.8→全仓</td></tr>
+<tr><td>🟡CPO关注</td><td>天孚通信 / 中际旭创</td><td>等开板后回踩确认</td></tr>
+</tbody></table></div>
+
+<div class="warn-box"><div class="wtitle">不碰</div>通鼎互联(出货❌)、兆易/通富(T4.1b不适用)、关注CPO(天孚/胜宏/中际)</div>
+</div></div>
+
+<!-- ====== §一 当日复盘 ====== -->
+<div class="section" id="s1">
+<div class="sh"><span class="tog">▼</span> §一 当日复盘 <span class="cnt">情绪 18% 冰点 · 上证 -1.52% · 电力主线一日游退潮</span></div>
+<div class="sb">
+
+<!-- 大盘全景 -->
+<div class="sh2" id="s1a">大盘全景</div>
+<div class="tw"><table>
+<thead><tr><th>节点</th><th>情绪</th><th>上证</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>关键异动</th></tr></thead>
+<tbody>
+<tr><td>竞价</td><td>54%</td><td class="up">+0.32%</td><td>26/4</td><td>—</td><td>2817/1563</td><td>大唐7板一字/韶能一字/万控一字</td></tr>
+<tr><td>早盘</td><td><span class="badge badge-red">27%</span></td><td class="down">-0.70%</td><td>79/29</td><td>2万亿+19%</td><td>1371/3719</td><td>电力全线炸板退潮：大唐炸/韶能天地板/华电翻绿/万控炸，立讯破止损</td></tr>
+<tr><td>午盘</td><td><span class="badge badge-red">20%</span></td><td class="down">-1.02%</td><td>62/25</td><td>2万亿+15%</td><td>1093/4033</td><td>持续走弱。天孚逆市+5.69%独秀，通达跌停，胜宏-6.94%</td></tr>
+<tr><td>尾盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>与收盘合并，无独立异动</td></tr>
+<tr style="font-weight:700"><td>收盘</td><td><span class="badge badge-red">18%</span></td><td class="down">-1.52%</td><td>80/44</td><td>3万亿+4%</td><td>1006/4108</td><td>炸板率36.05%。大唐-2.31%完成7板炸板→收绿。立讯-5.93%止损正确</td></tr>
+</tbody></table></div>
+
+<!-- 情绪高标 -->
+<div class="sh2" id="s1b">情绪高标</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>竞价</th><th>早盘</th><th>午盘</th><th>收盘</th><th>门槛</th></tr></thead>
+<tbody>
+<tr><td>竞价强势</td><td>26只</td><td>79</td><td>80</td><td>109</td><td>>10降温/>30高位</td></tr>
+<tr><td>涨停收益</td><td class="up">3.04%</td><td class="down">0.87%❌</td><td class="down">0.58%❌</td><td class="down">-0.05%❌</td><td>>2%低迷/>3%正常</td></tr>
+<tr><td>连板收益</td><td class="up">5.72%</td><td class="down">2.48%❌</td><td class="down">2.78%❌</td><td class="down">1.11%❌</td><td>—</td></tr>
+<tr><td>炸板收益</td><td>-0.48%</td><td class="down">-2.03%❌</td><td class="down">-2.39%❌</td><td class="down">-3.03%❌</td><td>—</td></tr>
+<tr><td>炸板率</td><td>—</td><td>—</td><td>—</td><td>36.05%</td><td><30%W1/<40%W2</td></tr>
+<tr><td>一进二</td><td>—</td><td>—</td><td>—</td><td class="down">8.3%❌</td><td>>15%低迷</td></tr>
+<tr><td>二进三</td><td>—</td><td>—</td><td>—</td><td class="up">29%✅</td><td>>25%策略</td></tr>
+<tr><td>三进四</td><td>—</td><td>—</td><td>—</td><td class="down">0%❌</td><td>>35%策略</td></tr>
+<tr><td>梯队</td><td>7-4-3-2✅</td><td>5-4断层</td><td>5-4断层</td><td>5-4断层</td><td>完整/断层</td></tr>
+</tbody></table></div>
+
+<div class="node-grid">
+<div class="node-card"><div class="nhead">竞价 <span class="badge badge-yellow">三件套不全</span></div><div class="nbody">情绪54%(差6pp到60%)，涨停收益3.04%✅，连板收益5.72%高🔥。大唐7板一字、韶能一字、万控一字。<br><strong>→ 降级，不做高位接力</strong></div></div>
+<div class="node-card"><div class="nhead">早盘 <span class="badge badge-red">崩盘</span></div><div class="nbody">情绪54%→27%。普跌3719家。电力全线溃败——大唐炸(+10%→+3.93%)，韶能天地板(+10%→-5.51%)，华电翻绿，万控炸。立讯破止损线。<br><strong>→ 持币观望，不抄底</strong></div></div>
+<div class="node-card"><div class="nhead">午盘 <span class="badge badge-red">冰点确认</span></div><div class="nbody">情绪20%，4033家下跌。天孚逆市+5.69%唯一亮点(主力+7.25亿)。立讯新低75.67，胜宏-6.94%。<br><strong>→ 持币观望，不做左侧抄底</strong></div></div>
+<div class="node-card"><div class="nhead">收盘 <span class="badge badge-red">冰点 18%</span></div><div class="nbody">4108家下跌。炸板率36.05%。大唐-2.31%、韶能-7.53%、通达跌停。天孚+3.65%独秀。新方向散乱。<br><strong>→ 冰点无主线，持币观望</strong></div></div>
+</div>
+
+<!-- 涨停结构 -->
+<div class="sh2" id="s1c">涨停结构</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>涨停数</th><th>梯队</th><th>核心</th><th>板块涨跌</th><th>板块主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>算力/半导体</td><td>4首板+蒙娜5板+合肥3板+华升2板+欧克2板</td><td>5-3-2-首</td><td>蒙娜丽莎5板</td><td>—</td><td>—</td><td>新方向候选</td></tr>
+<tr><td>电力(退潮)</td><td>3二板+4首板</td><td>2-首</td><td>京能电力2板</td><td class="down">-2.56%</td><td class="down">-124亿❌</td><td>主线一日游退潮</td></tr>
+<tr><td>并购重组/股权</td><td>利仁4板+花王3板+威龙2板+首板N</td><td>4-3-2-首</td><td>利仁科技4板</td><td>—</td><td>—</td><td>独立题材非主线</td></tr>
+<tr><td><strong>第三代半导体</strong></td><td><strong>6首板</strong></td><td>全首板</td><td>露笑科技</td><td class="up">+0.84%</td><td class="down">-50.4亿</td><td>新方向萌芽</td></tr>
+<tr><td>电子特气/化工</td><td>中船2板+5首板</td><td>2-首</td><td>中船特气2板</td><td class="up">+2.39%</td><td>—</td><td>存储上游</td></tr>
+<tr><td><strong>光通信</strong></td><td>可川3板+3首板</td><td>3-首</td><td>可川科技3板</td><td class="down">-1.28%</td><td>—</td><td>硅光芯片主题</td></tr>
+<tr><td>光伏</td><td>4首板</td><td>全首板</td><td>耀皮玻璃</td><td>—</td><td>—</td><td>散点</td></tr>
+<tr><td><strong>猪肉(防御)</strong></td><td><strong>4首板</strong></td><td>全首板</td><td>天域生物</td><td class="up">+2.64%</td><td class="up">+7.6亿</td><td>防御+猪周期</td></tr>
+<tr><td>机器人</td><td>4首板</td><td>全首板</td><td>侨银股份</td><td>—</td><td>—</td><td>散点</td></tr>
+</tbody></table></div>
+
+<!-- 连板股 -->
+<div class="sh3">连板股</div>
+<div class="sg">
+<div class="sc"><div class="nm">蒙娜丽莎 <span class="tg">5板 最高板</span></div><div class="st"><span>算力/先进陶瓷</span> <span class="badge badge-green">09:32封板</span></div></div>
+<div class="sc"><div class="nm">利仁科技 <span class="tg">4板</span></div><div class="st"><span>并购重组</span> <span class="badge badge-blue">09:25一字</span></div></div>
+<div class="sc"><div class="nm">合肥城建 <span class="tg">3板</span></div><div class="st"><span>算力/半导体</span> <span class="badge badge-green">10:42封板</span></div></div>
+<div class="sc"><div class="nm">花王股份 <span class="tg">3板</span></div><div class="st"><span>并购重组</span> <span class="badge badge-blue">09:25一字</span></div></div>
+<div class="sc"><div class="nm">可川科技 <span class="tg">3板</span></div><div class="st"><span>光通信</span> <span class="badge badge-green">11:17封板</span></div></div>
+<div class="sc" style="opacity:.6"><div class="nm">大唐发电 <span class="tg">6→7板炸→收绿</span></div><div class="st"><span>电力</span> <span class="badge badge-red">-2.31% 退潮标志</span></div></div>
+<div class="sc" style="opacity:.6"><div class="nm">韶能股份 <span class="tg">1→2板炸</span></div><div class="st"><span>电力</span> <span class="badge badge-red">天地板 -7.53%</span></div></div>
+<div class="sc" style="opacity:.6"><div class="nm">万控智造 <span class="tg">1→2进3炸</span></div><div class="st"><span>数据中心</span> <span class="badge badge-red">一字→-2.29%</span></div></div>
+</div>
+
+<!-- 自选池表现 -->
+<div class="sh2" id="s1d">当日自选池表现</div>
+
+<div class="sh3">① 电力 <span class="badge badge-red">退潮</span></div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价</th><th>早盘</th><th>午盘</th><th>收盘</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>大唐发电</td><td>情绪标</td><td class="up">+10.04%</td><td>+3.93%</td><td>+4.21%</td><td class="down">-2.31%❌</td><td>14.98%</td><td class="down">-14.41亿</td><td>一字→炸板→收绿</td></tr>
+<tr><td>华电辽能</td><td>W1标的</td><td class="up">+6.58%</td><td>+0.60%</td><td>+1.51%</td><td>+0.48%</td><td>24.54%</td><td class="down">-8.56亿</td><td>高开低走坚守红盘</td></tr>
+<tr><td>韶能股份</td><td>W1标的</td><td class="up">+10.00%</td><td class="down">-5.51%</td><td class="down">-4.27%</td><td class="down">-7.53%❌</td><td>34.57%</td><td class="down">-2.78亿</td><td>全天天地板</td></tr>
+<tr><td>通达股份</td><td>W2候选</td><td class="down">-1.71%</td><td class="down">-9.77%</td><td class="down">-10.00%</td><td class="down">-10.00%❌</td><td>28.81%</td><td class="down">-3.32亿</td><td>跌停封死</td></tr>
+</tbody></table></div>
+
+<div class="sh3">② CPO/光通信 <span class="badge badge-yellow">趋势关注</span></div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价</th><th>早盘</th><th>午盘</th><th>收盘</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>立讯精密</td><td>已止损</td><td class="down">-1.07%</td><td class="down">-5.03%❌</td><td class="down">-5.59%❌</td><td class="down">-5.93%❌</td><td>3.05%</td><td class="down">-16.86亿</td><td>止损@76.40✅</td></tr>
+<tr><td>胜宏科技</td><td>趋势候选</td><td>+0.15%</td><td class="down">-6.55%❌</td><td class="down">-6.94%❌</td><td class="down">-8.41%❌</td><td>8.64%</td><td class="down">-48.23亿</td><td>逼近60分MA10(352)</td></tr>
+<tr style="background:rgba(5,150,105,.06)"><td><strong>天孚通信</strong></td><td>情绪锚</td><td class="up">+4.32%</td><td class="up">+4.57%✅</td><td class="up">+5.69%✅</td><td class="up">+3.65%✅</td><td>8.74%</td><td class="up">+6.13亿🔥</td><td><strong>全天唯一强势</strong></td></tr>
+</tbody></table></div>
+
+<div class="sh3">③ 半导体 <span class="badge badge-yellow">持仓+候选</span></div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价</th><th>早盘</th><th>午盘</th><th>收盘</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td><strong>北方华创</strong></td><td>持仓</td><td>0.00%</td><td class="down">-1.40%</td><td class="down">-2.42%</td><td class="down">-2.86%</td><td>1.42%</td><td class="down">-4.03亿</td><td>缩量0.89 距止损3.8%</td></tr>
+<tr><td>澜起科技</td><td>趋势锚</td><td class="up">+8.19%</td><td class="up">+5.73%✅</td><td class="up">+3.85%✅</td><td class="up">+2.43%✅</td><td>9.39%</td><td class="down">-4.27亿</td><td>冲高回落但仍收红</td></tr>
+<tr><td>联动科技</td><td>降级观察</td><td class="down">-1.68%</td><td class="down">-5.74%</td><td class="down">-6.91%</td><td class="down">-2.01%</td><td>9.54%</td><td class="down">-0.23亿</td><td>午后反弹收窄跌幅</td></tr>
+<tr><td>兆易创新</td><td>排除</td><td>—</td><td>—</td><td>—</td><td class="down">-2.41%</td><td>6.12%</td><td class="down">-6.91亿</td><td>MA5=354.19 缩量下跌</td></tr>
+<tr><td>通富微电</td><td>排除</td><td>—</td><td>—</td><td>—</td><td class="down">-5.69%</td><td>8.58%</td><td class="down">-8.64亿</td><td>MA5=59.22 缩量下跌</td></tr>
+</tbody></table></div>
+
+<!-- 持仓与交易 -->
+<div class="sh2" id="s1e">持仓与交易</div>
+<div class="stats-grid">
+  <div class="stat-card"><div class="lbl">当前持仓</div><div class="val">北方华创</div><div class="lbl">100股 ~28%仓位</div></div>
+  <div class="stat-card"><div class="lbl">成本</div><div class="val">572.26</div><div class="lbl">现价 564.40</div></div>
+  <div class="stat-card"><div class="lbl">浮盈率</div><div class="val red">-1.37%</div><div class="lbl">止损 543.65(-5%)</div></div>
+  <div class="stat-card"><div class="lbl">立讯止损</div><div class="val red">-4.68%</div><div class="lbl">@76.40 收盘75.40</div></div>
+</div>
+
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>半导体</td><td>持有</td><td>北方华创</td><td>100股(~28%)</td><td class="down">-1.37%</td><td>量比0.89缩量，距止损尚远</td></tr>
+<tr><td>CPO/光通信</td><td><span class="badge badge-red">清仓</span></td><td><s>立讯精密</s></td><td>已清仓</td><td class="down">-4.68%</td><td>止损@76.40 ✅ 收盘75.40更低</td></tr>
+</tbody></table></div>
+
+<div class="warn-box"><div class="wtitle">账户风控</div>
+当日盈亏：立讯-4.68% + 北华-0.93% → <strong>熔断触发</strong>（立讯止损）。连亏1天，未触发≥2天空仓。</div>
+
+<!-- 风格检测 -->
+<div class="sh2" id="s1f">风格检测结果</div>
+<div class="stats-grid">
+  <div class="stat-card"><div class="val">19<span style="font-size:14px;color:var(--text3)">/25</span></div><div class="lbl">维度一：量能</div></div>
+  <div class="stat-card"><div class="val">16<span style="font-size:14px;color:var(--text3)">/35</span></div><div class="lbl">维度二：连板生态</div></div>
+  <div class="stat-card"><div class="val red">3<span style="font-size:14px;color:var(--text3)">/25</span></div><div class="lbl">维度三：趋势赚钱效应</div></div>
+  <div class="stat-card"><div class="val red">5<span style="font-size:14px;color:var(--text3)">/15</span></div><div class="lbl">维度四：情绪广度</div></div>
+  <div class="stat-card" style="grid-column:1/-1;background:var(--bg4)"><div class="val amber">43<span style="font-size:14px;color:var(--text3)">/100</span></div><div class="lbl">总分 · 连板58%/趋势42% · 仓位上限30%</div></div>
+</div>
+<div class="para dim">明细：成交额33881亿 / 5日均量33126亿 / 量比1.02x / 波动率4.9% &nbsp;|&nbsp; 最高板5板 / 晋级率14.16% / 涨停收益-0.05% / 涨停80家 &nbsp;|&nbsp; 沪深300 -1.68% / 走强板块0个 / 大市值18%</div>
+
+<!-- 趋势持仓复盘 -->
+<div class="sh3">趋势持仓复盘</div>
+<div class="tw"><table>
+<thead><tr><th>项目</th><th>北方华创</th></tr></thead>
+<tbody>
+<tr><td>趋势强度</td><td><span class="badge badge-yellow">🟡中等趋势 (跌破MA5)</span></td></tr>
+<tr><td>较昨日变化</td><td class="down">今日-2.86%，跌破MA5(568.17)⚠️</td></tr>
+<tr><td>板块指数</td><td>半导体-0.70%，站上20日线✅</td></tr>
+<tr><td>主力资金</td><td class="down">近3日持续流出，今日-4.03亿</td></tr>
+<tr><td>分歧vs退潮</td><td>退潮初期（放量跌+跌破5日线）</td></tr>
+<tr><td>预警信号</td><td><span class="badge badge-red">⚠️ 跌破MA5(568.17)</span></td></tr>
+</tbody></table></div>
+
+<!-- 窗口操作 -->
+<div class="sh3">窗口操作记录</div>
+<div class="tw"><table>
+<thead><tr><th></th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead>
+<tbody>
+<tr><td>W1</td><td>情绪≥60%→华电2进3；<60%→1进2</td><td>情绪54%❌，但电力仍强</td><td>空仓</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>W2</td><td>电力分歧+趋势等MA10回踩</td><td>电力全线炸板，立讯破止损</td><td>立讯止损@76.40</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+</tbody></table></div>
+
+<!-- 结论 -->
+<div class="sh2" id="s1g">预期差与结论</div>
+<div class="node-grid">
+<div class="node-card"><div class="nhead">盘前基准</div><div class="nbody">上证 +0.2%~+0.5%</div></div>
+<div class="node-card"><div class="nhead">实际竞价</div><div class="nbody">+0.32% → 预期差≈0</div></div>
+<div class="node-card"><div class="nhead">实际早盘</div><div class="nbody" style="color:var(--red)">-0.70% → 大幅低于预期❌</div></div>
+<div class="node-card"><div class="nhead">实际收盘</div><div class="nbody" style="color:var(--red)">-1.52% → 全天冰点大跌❌❌</div></div>
+</div>
+<div class="sbx red"><strong>一句话结论</strong>：冰点(18%)，电力主线一日游退潮确认，立讯止损正确✅，北华缩量持有，持币观望等新主线。</div>
+
+</div></div>
+
+<!-- ====== §二 心得与教训 ====== -->
+<div class="section" id="s2">
+<div class="sh collapsed"><span class="tog">▼</span> §二 心得与教训 <span class="cnt">2条教训 + 1条认知 + 1条议题</span></div>
+<div class="sb hide">
+<ol class="tight-list" style="font-size:14px">
+<li><strong>[教训] 竞价情绪不足=果断降级</strong>：竞价54%未达60%，按预案放弃高位接力。全天电力从一字涨停到全线炸板退潮，空仓是正确的选择。若因"电力看起来很强势"破例追高，将吃到天地板。</li>
+<li><strong>[教训] 止损纪律执行到位</strong>：立讯竞价低开-1.07%→持续下行破-5%止损线，13:10执行止损@76.40，收盘75.40更低。纪律是昨晚冷静时定的，盘中不能犹豫。</li>
+<li><strong>[教训] 一字涨停≠安全</strong>：大唐7板一字、韶能一字2板、万控一字2进3，全部在开盘后炸板。一字板在非主升期（情绪不足60%）是高风险信号。</li>
+<li><strong>[认知] 主线一日游的特征</strong>：电力昨天17涨停+6-3-2梯队，今天全部炸板退潮。特征：①情绪不支持主线级别 ②首板过多稀释晋级率 ③高标一字封死但没有板块中军支撑 ④跟风票开盘即分歧</li>
+<li><strong>[议题] 北华跌破MA5后如何应对</strong>：收盘564.40跌破MA5(568.17)，量比0.89缩量。弱势信号出现但距止损543.65尚有3.8%空间。需关注明日能否站回MA5。</li>
+</ol>
+</div></div>
+
+<!-- ====== §三 次日预案 ====== -->
+<div class="section" id="s3">
+<div class="sh"><span class="tog">▼</span> §三 次日预案（终稿，红蓝对抗后定稿） <span class="cnt">风格43分 · 仓位上限30% · 方向试探期</span></div>
+<div class="sb">
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="val amber">43分</div><div class="lbl">风格分数 (连板行情 置信40%)</div></div>
+  <div class="stat-card"><div class="val">58%/42%</div><div class="lbl">连板/趋势 资金分配</div></div>
+  <div class="stat-card"><div class="val red">30%</div><div class="lbl">总仓位上限 (当前28%)</div></div>
+  <div class="stat-card"><div class="val">不开新仓</div><div class="lbl">趋势信号34%极弱</div></div>
+</div>
+
+<div class="sbx warn"><strong>总基调</strong>：冰点观望，周五W1关闭，不做追涨不开新仓。北华持仓管理。<strong>方向试探期，光通信/第三代半导体为重点观察方向。</strong></div>
+<div class="para dim">为什么：情绪18%冰点+方向试探期+电力退潮+周五W1关闭。左侧不抄底。基准预期：上证惯性下探但连续大跌概率低。<br>特朗普访华最后一天：释放科技缓和→半导体/CPO跳空高开；无实质成果→预期落空资金撤退。</div>
+
+<div class="sh2" id="s3a">连板自选池（W1关闭，纯观察池）</div>
+
+<div class="sh3">① 光通信/CPO <span class="badge badge-green">🟢新方向候选</span></div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-red">🔴情绪标</span></td><td>可川科技</td><td>603052</td><td>只盯</td><td>4板溢价</td><td>光通信新方向最高板</td><td>3板封板，硅光芯片</td></tr>
+<tr><td><span class="badge badge-red">🔴情绪标</span></td><td>天孚通信</td><td>300394</td><td>只盯</td><td>趋势延续+MA10回踩</td><td>CPO中军，逆市+3.65%</td><td>主力+6.13亿🔥</td></tr>
+<tr><td><span class="badge badge-yellow">🟡W2候选</span></td><td>天孚通信</td><td>300394</td><td>W2</td><td>缩量回踩60分MA10</td><td>冰点下硬板后回踩</td><td>60分MA10约352</td></tr>
+<tr><td><span class="badge badge-yellow">🟡W2候选</span></td><td>可川科技</td><td>603052</td><td>W2</td><td>分歧转一致/龙头首阴</td><td>冰点高标分歧低吸</td><td>3板封板</td></tr>
+<tr style="background:rgba(217,119,6,.06)"><td><span class="badge badge-yellow">🟡W2候选</span></td><td><strong>领益智造</strong></td><td><strong>002600</strong></td><td><strong>W2</strong></td><td><strong>回踩5日线/MA10</strong></td><td><strong>CPO散热中军 +6.70%</strong></td><td><strong>成交98亿 主力+18亿🔥 热度#10</strong></td></tr>
+<tr style="background:rgba(217,119,6,.06)"><td><span class="badge badge-yellow">🟡W2候选</span></td><td><strong>德明利</strong></td><td><strong>001309</strong></td><td><strong>W2</strong></td><td><strong>回踩5日线/MA10</strong></td><td><strong>存储+CPO双属性中军 +6.16%</strong></td><td><strong>成交138亿 主力+11亿🔥 热度#35</strong></td></tr>
+</tbody></table></div>
+
+<div class="sh3">② 算力/半导体 <span class="badge badge-yellow">🟡候选观察</span></div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-red">🔴情绪标</span></td><td>蒙娜丽莎</td><td>002918</td><td>6板空间</td><td>当前最高板5板</td><td>5板09:32封板</td></tr>
+<tr><td><span class="badge badge-yellow">🟡情绪标</span></td><td>合肥城建</td><td>002208</td><td>4板空间</td><td>长鑫存储方向</td><td>3板10:42封板</td></tr>
+</tbody></table></div>
+
+<div class="sbx warn"><strong>移除</strong>：大唐发电/华电辽能/韶能股份/通达股份（电力退潮）、万控智造（数据中心退潮）</div>
+
+<div class="sh3">积极观察 <span class="badge badge-purple">红方推荐</span></div>
+<div class="sg">
+<div class="sc"><div class="nm">露笑科技 <span class="tg">第三代半导体首板</span></div><div class="st"><span class="up">+9.98%</span> <span>主力+4.28亿</span></div><div class="nt">等2板确认。热度#16</div></div>
+<div class="sc"><div class="nm">赛微电子 <span class="tg">第三代半导体中军</span></div><div class="st"><span class="up">+6.38%</span> <span>主力+9.23亿</span></div><div class="nt">成交56亿 换手18.23%</div></div>
+<div class="sc"><div class="nm">中船特气 <span class="tg">电子特气2板</span></div><div class="st"><span>存储上游</span> <span>梯队完整</span></div></div>
+</div>
+
+<div class="sh3">防御观察 <span class="badge badge-blue">仅温度参考</span></div>
+<div class="sg">
+<div class="sc"><div class="nm">正邦科技 <span class="tg">猪肉涨停</span></div><div class="st"><span class="up">+10.04%</span> <span>主力+1.80亿</span></div></div>
+<div class="sc"><div class="nm">海大集团 <span class="tg">猪肉+4.38%</span></div><div class="st"><span class="up">+4.38%</span> <span>主力+0.97亿</span></div></div>
+</div>
+
+<div class="sh2" id="s3b">趋势自选池（不做新开仓，仅持仓管理）</div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>看什么</th><th>选入理由</th><th>数据</th></tr></thead>
+<tbody>
+<tr><td><span class="badge badge-red">🔴持仓</span></td><td><strong>北方华创</strong></td><td>002371</td><td>持有，止损543.65</td><td>趋势持仓</td><td>收盘564.40 跌破MA5⚠️</td></tr>
+<tr><td><span class="badge badge-yellow">🟡趋势锚</span></td><td>澜起科技</td><td>688008</td><td>观察</td><td>红方推荐 +2.43%收红</td><td>—</td></tr>
+</tbody></table></div>
+<div class="para dim"><strong>排除</strong>：胜宏科技(-8.41%主力-48亿)、兆易创新(-2.41%主力-6.91亿)、通富微电(-5.69%主力-8.64亿)</div>
+
+<div class="sh2" id="s3c">操作指南</div>
+
+<div class="node-grid">
+<div class="node-card"><div class="nhead">W1 <span class="badge badge-red">关闭</span></div><div class="nbody">周五规则 + 冰点18%，不操作</div></div>
+<div class="node-card"><div class="nhead">趋势观察 10:00-14:50</div><div class="nbody"><strong>早盘光通信监控(10:00前)：</strong>板块竞价高开>3%？天孚高开？领益/德明利放量？三条件全满足→方向加速→准备W2<br><br><strong>北华管理：</strong>站回MA5则持有；放量破560→减半仓；继续缩量→观望</div></div>
+<div class="node-card"><div class="nhead">W2 <span class="badge badge-yellow">极轻仓≤5%</span></div><div class="nbody"><strong>触发：情绪≥30%</strong> + 天孚/可川/领益/德明利中≥2只分歧回踩 + 板块维持强势<br>否则空仓（冰点+周五，不做）</div></div>
+<div class="node-card"><div class="nhead">不碰清单</div><div class="nbody">全部电力退潮股 · 全部一字板票 · 胜宏科技 · 立讯精密</div></div>
+</div>
+
+<div class="warn-box"><div class="wtitle">风险</div>①情绪18%冰点继续下探 ②周五效应 ③新方向可能一日游 ④北华跌破MA5趋势转弱 ⑤特朗普访华最后一天（两条路径）</div>
+<div class="para dim">仓位上限30%（当前28%），不开新仓。路径：冰点→方向试探期→空仓/仅W2极轻仓→北华持仓管理。</div>
+
+</div></div>
+
+<!-- ====== §四 红方对抗 ====== -->
+<div class="section" id="s4">
+<div class="sh"><span class="tog">▼</span> §四 红方对抗 <span class="cnt">全部12条质疑闭环 · 零分歧</span></div>
+<div class="sb">
+
+<div class="cb" id="s4a">
+<div class="ct collapsed"><span>Round 1：红方质疑（洋米）</span><span class="ar">▼</span></div>
+<div class="cc">
+
+<div class="warn-box"><div class="wtitle">⚠️ 数据口径差异警告</div>北方华创主力净流入：稳米 -4.03亿（同花顺口径）vs 问财OpenAPI -0.77亿，差异 423%。R1 所有主力数据统一用问财口径。</div>
+
+<div class="sh3">五维强制清单</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th><th>依据</th></tr></thead>
+<tbody>
+<tr><td><strong>1. 定性校准</strong></td><td><span class="badge badge-yellow">部分异议</span></td><td>冰点正确，但"无新主线"过强。光通信三中军逆市吸金35亿+，第三代半导体涨停，猪肉防御走强。建议"冰点+方向试探"</td></tr>
+<tr><td><strong>2. 操作漏判</strong></td><td><span class="badge badge-red">北华跌破MA5未主动管理</span></td><td>触发"跌破MA5+15分钟未站回→减半"条件但未执行。收盘564.40距MA5(568.17)差3.77</td></tr>
+<tr><td><strong>3. 规则执行</strong></td><td><span class="badge badge-green">无明显违规</span></td><td>仓位28%✅ 立讯止损✅ W1未开✅。建议W2门槛27%→30%</td></tr>
+<tr><td><strong>4. 反向情景</strong></td><td><span class="badge badge-yellow">冰点可能是新主线最后上车窗口</span></td><td>光通信吸金35亿+。历史"冰点转势"往往在所有人悲观时发生</td></tr>
+<tr><td><strong>5. 盲区扫描</strong></td><td><span class="badge badge-red">4项遗漏</span></td><td>①北向资金 ②龙虎榜 ③特朗普访华影响路径 ④猪肉防御持续性</td></tr>
+</tbody></table></div>
+
+<div class="sh3">自选池对抗</div>
+<div class="tw"><table>
+<thead><tr><th>挑战</th><th>稳米原判</th><th>红方质疑</th><th>数据依据</th></tr></thead>
+<tbody>
+<tr><td><strong>遗漏标的</strong></td><td>光通信：可川+天孚</td><td>缺少中军：领益智造(+6.70%/主力+18亿)、德明利(+6.16%/主力+11亿)</td><td>Q3中军扫描 + Q6板块资金</td></tr>
+<tr><td><strong>遗漏标的</strong></td><td>第三代半导体：降级观察</td><td>露笑涨停+赛微中军(+6.38%/主力+9.23亿)，不应只降级</td><td>Q2第三代半导体52只 + Q6资金</td></tr>
+<tr><td><strong>遗漏标的</strong></td><td>猪肉防御：未纳入预案</td><td>正邦涨停+海大+4.38%，冰点防御方向值得观察</td><td>Q2猪肉8只 + Q6资金</td></tr>
+<tr><td><strong>排除有误</strong></td><td>8只排除</td><td><span class="badge badge-green">全部正确✅</span></td><td>Q4验证：8只全跌+主力全流出</td></tr>
+<tr><td><strong>忽略板块</strong></td><td>—</td><td>猪肉防御板块在当日复盘中记录但次日预案未提</td><td>Q2+Q6 板块整体+2.64%/主力+7.6亿</td></tr>
+</tbody></table></div>
+
+</div></div>
+
+<div class="cb" id="s4b">
+<div class="ct collapsed"><span>Round 2：蓝方回应（稳米）</span><span class="ar">▼</span></div>
+<div class="cc">
+
+<div class="tw"><table>
+<thead><tr><th>红方质疑</th><th>蓝方回应</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>定性校准</td><td>采纳。措辞→"冰点+方向试探期，光通信/第三代半导体为重点观察方向"</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>操作漏判（北华MA5）</td><td>采纳。承认纪律不严，明日预案已补放量破560减半仓</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>W2门槛27%过低</td><td>采纳。收紧至≥30%（脱离冰点档）</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>反向情景</td><td>部分采纳。加入光通信早盘量价监控（10:00前），W2来得及跟</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>盲区①-④</td><td>全部采纳。北向/龙虎榜/特朗普两条路径/猪肉观察</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>遗漏领益+德明利</td><td>部分采纳。入池W2候选，触发：情绪≥30%+天孚强势+不补跌</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>遗漏露笑+赛微</td><td>部分采纳。升级"积极观察"，等2板确认</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>遗漏猪肉</td><td>采纳。入观察池，不设操作窗口</td><td><span class="badge badge-green">采纳</span></td></tr>
+<tr><td>排除验证</td><td>全部认可✅</td><td><span class="badge badge-green">认可</span></td></tr>
+</tbody></table></div>
+
+</div></div>
+
+<div class="cb" id="s4c">
+<div class="ct"><span>Round 3：综合终稿（洋米）</span><span class="ar">▼</span></div>
+<div class="cc show">
+<div class="verdict"><div class="vt">全部 12 条质疑已闭环。零分歧待弈沐裁决。</div>
+<div class="vb">
+  稳米逐条回应，全部采纳/部分采纳/认可。反驳理由均合理有据：量化回补可能性、全首板需等2板确认、W2尾盘来得及等。<br><br>
+  <strong>对抗价值最高的改动</strong>：W2门槛 27%→30%、光通信补入领益/德明利、第三代半导体升级积极观察、北华MA5纪律漏洞记录、特朗普两条路径预案。
+</div></div>
+</div></div>
+
+</div></div>
+
+<!-- ====== 附录A ====== -->
+<div class="section" id="sa">
+<div class="sh"><span class="tog">▼</span> 附录A：次日盘前速查（终稿定稿） <span class="cnt">开盘前只看这里</span></div>
+<div class="sb">
+
+<div class="sh3">持仓处理</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead>
+<tbody>
+<tr><td><strong>北方华创</strong></td><td>572.26</td><td>100股(~28%)</td><td>543.65(-5%)</td><td>持有。关注站回MA5(568.17)。缩量可持，放量破560→减半仓</td></tr>
+</tbody></table></div>
+
+<div class="sh3">连板操作映射</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>温度标</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr style="background:rgba(5,150,105,.04)"><td>光通信🟢</td><td>可川3板/天孚+3.65%/领益+6.70%/德明利+6.16%</td><td>天孚回踩/领益回踩/德明利回踩/可川分歧</td><td>W2</td><td><strong>情绪≥30%</strong>+标的回踩确认，≤5%仓位</td></tr>
+<tr><td>算力🟡</td><td>蒙娜丽莎5板/合肥城建3板</td><td>观察</td><td>—</td><td>只盯不买</td></tr>
+</tbody></table></div>
+
+<div class="sh3">观察池（仅参考，不操作）</div>
+<div class="tw"><table>
+<thead><tr><th>方向</th><th>标的</th><th>看什么</th></tr></thead>
+<tbody>
+<tr><td>第三代半导体</td><td>露笑科技(涨停首板) / 赛微电子(中军+6.38%)</td><td>等2板确认</td></tr>
+<tr><td>猪肉防御</td><td>正邦科技(涨停) / 海大集团(+4.38%)</td><td>市场温度参考</td></tr>
+<tr><td>电子特气</td><td>中船特气(2板)</td><td>存储上游梯队观察</td></tr>
+</tbody></table></div>
+
+<div class="node-grid">
+<div class="node-card"><div class="nhead">总基调</div><div class="nbody">冰点观望，方向试探期。周五W1关闭。</div></div>
+<div class="node-card"><div class="nhead">W1</div><div class="nbody"><span class="badge badge-red">关闭</span> 周五+冰点</div></div>
+<div class="node-card"><div class="nhead">W2</div><div class="nbody">情绪≥30%+方向确认，极轻仓≤5%</div></div>
+<div class="node-card"><div class="nhead">仓位上限</div><div class="nbody">30%（当前28%），不开新仓</div></div>
+</div>
+<div class="para dim"><strong>风险</strong>：冰点下探 · 周五效应 · 新方向一日游 · 北华趋势转弱 · 特朗普最后一天</div>
+
+</div></div>
+
+<!-- ====== 数据附录 ====== -->
+<div class="section">
+<div class="sh collapsed"><span class="tog">▼</span> 数据附录（机器解析用） <span class="cnt">持仓 · 自选池 · 板块 · 操作</span></div>
+<div class="sb hide">
+
+<div class="sh3">持仓明细</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>002371</td><td>趋势</td><td>100股</td><td>572.26</td><td>564.40</td><td class="down">-1.37%</td><td>543.65(-5%)</td><td><span class="badge badge-yellow">持有⚠️跌破MA5</span></td></tr>
+</tbody></table></div>
+
+<div class="sh3">连板自选池</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>板块</th><th>角色</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>换手</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>蒙娜丽莎</td><td>002918</td><td>算力/半导体</td><td>情绪标</td><td class="up">+10.00%</td><td>16.94</td><td>14.13</td><td>12.41%</td><td>最高板5板</td></tr>
+<tr><td>合肥城建</td><td>002208</td><td>算力/半导体</td><td>情绪标</td><td class="up">+10.00%</td><td>19.80</td><td>16.63</td><td>12.04%</td><td>3板，长鑫存储</td></tr>
+<tr><td>可川科技</td><td>603052</td><td>光通信</td><td>情绪标</td><td class="up">+10.00%</td><td>115.38</td><td>98.31</td><td>3.99%</td><td>3板，硅光芯片</td></tr>
+<tr><td>利仁科技</td><td>001259</td><td>并购重组</td><td>情绪标</td><td class="up">+10.00%</td><td>55.00</td><td>45.87</td><td>0.88%</td><td>4板一字</td></tr>
+<tr><td>花王股份</td><td>603007</td><td>并购重组</td><td>情绪标</td><td class="up">+9.98%</td><td>9.26</td><td>7.77</td><td>4.16%</td><td>3板一字</td></tr>
+<tr><td>中船特气</td><td>688146</td><td>电子特气</td><td>观察</td><td class="up">+20.00%</td><td>141.12</td><td>106.47</td><td>18.60%</td><td>2板，科创20cm</td></tr>
+</tbody></table></div>
+
+<div class="sh3">趋势自选池</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>板块</th><th>角色</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>MA20</th><th>量比</th><th>换手</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>002371</td><td>半导体</td><td>持仓</td><td class="down">-2.86%</td><td>564.40</td><td>568.17</td><td>513.34</td><td>0.89</td><td>1.42%</td><td>跌破MA5⚠️</td></tr>
+<tr><td>天孚通信</td><td>300394</td><td>CPO</td><td>情绪锚</td><td class="up">+3.65%</td><td>392.00</td><td>354.17</td><td>342.70</td><td>1.29</td><td>8.74%</td><td>主力+6.13亿🔥</td></tr>
+<tr><td>领益智造</td><td>002600</td><td>CPO</td><td>趋势候选</td><td class="up">+6.70%</td><td>16.40</td><td>15.41</td><td>14.49</td><td>3.37</td><td>8.38%</td><td>主力+18亿🔥</td></tr>
+<tr><td>德明利</td><td>001309</td><td>CPO/存储</td><td>趋势候选</td><td class="up">+6.16%</td><td>721.65</td><td>651.27</td><td>552.70</td><td>1.06</td><td>11.83%</td><td>主力+11亿🔥</td></tr>
+<tr><td>澜起科技</td><td>688008</td><td>半导体</td><td>趋势锚</td><td class="up">+2.43%</td><td>265.08</td><td>244.81</td><td>186.49</td><td>1.21</td><td>9.39%</td><td>收红✅</td></tr>
+</tbody></table></div>
+
+<div class="sh3">板块状态</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>算力/半导体</td><td>候选</td><td>8</td><td>5-3-2-首</td><td>蒙娜丽莎5板</td><td>新方向候选</td></tr>
+<tr><td>电力</td><td>退潮</td><td>7</td><td>2-首</td><td>京能电力2板</td><td><span class="badge badge-red">退潮不做</span></td></tr>
+<tr><td>并购重组</td><td>独立题材</td><td>7</td><td>4-3-2-首</td><td>利仁科技4板</td><td>非主线</td></tr>
+<tr><td>第三代半导体</td><td>萌芽</td><td>6</td><td>全首板</td><td>露笑科技</td><td>新方向萌芽</td></tr>
+<tr><td>电子特气</td><td>候选</td><td>6</td><td>2-首</td><td>中船特气2板</td><td>存储上游</td></tr>
+<tr><td>光通信</td><td>候选</td><td>4</td><td>3-首</td><td>可川科技3板</td><td>新方向关注</td></tr>
+<tr><td>猪肉</td><td>防御</td><td>4</td><td>全首板</td><td>天域生物</td><td>防御板块</td></tr>
+</tbody></table></div>
+
+<div class="sh3">今日操作</div>
+<div class="tw"><table>
+<thead><tr><th>时间</th><th>动作</th><th>标的</th><th>价格</th><th>盈亏</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>13:10</td><td><span class="badge badge-red">止损清仓</span></td><td>立讯精密</td><td>76.40</td><td class="down">-4.68%(-1875元)</td><td>破-5%止损线+3小时未站回+主力-14亿出逃</td></tr>
+</tbody></table></div>
+
+<div class="sh3">锚定股状态</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>状态</th><th>影响</th><th>灯</th></tr></thead>
+<tbody>
+<tr><td>大唐发电</td><td>601991</td><td>一字7板→炸板收盘-2.31%</td><td>电力主线退潮标志</td><td><span class="badge badge-red">red</span></td></tr>
+<tr><td>蒙娜丽莎</td><td>002918</td><td>5板封板，最高板</td><td>算力半导体方向空间板</td><td><span class="badge badge-green">green</span></td></tr>
+<tr><td>可川科技</td><td>603052</td><td>3板封板</td><td>光通信新方向最高板</td><td><span class="badge badge-green">green</span></td></tr>
+<tr><td>天孚通信</td><td>300394</td><td>+3.65%逆市收红</td><td>光通信中军方向锚</td><td><span class="badge badge-green">green</span></td></tr>
+<tr><td>北方华创</td><td>002371</td><td>收盘564.40 跌破MA5⚠️</td><td>趋势持仓预警</td><td><span class="badge badge-yellow">amber</span></td></tr>
+</tbody></table></div>
+
+</div></div>
+
+</div></div>
+
+<script>
+document.querySelectorAll('.sh').forEach(h=>{h.addEventListener('click',()=>{h.classList.toggle('collapsed');const b=h.nextElementSibling;if(b)b.classList.toggle('hide')})});
+document.querySelectorAll('.ct').forEach(h=>{h.addEventListener('click',()=>{h.classList.toggle('collapsed');const b=h.nextElementSibling;if(b)b.classList.toggle('show')})});
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('[id]').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
