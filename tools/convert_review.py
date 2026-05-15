@@ -325,128 +325,154 @@ def parse_s0(text):
     return html
 
 
+def find_h3_blocks(text):
+    """Split text by ### headings. Returns list of (heading, body_text)."""
+    blocks = []
+    pattern = r'^### (.+)$'
+    lines = text.split('\n')
+    i = 0
+    current_heading = None
+    current_body = []
+    while i < len(lines):
+        m = re.match(pattern, lines[i])
+        if m:
+            if current_heading is not None:
+                blocks.append((current_heading, '\n'.join(current_body)))
+            current_heading = m.group(1).strip()
+            current_body = []
+        elif current_heading is not None:
+            current_body.append(lines[i])
+        i += 1
+    if current_heading is not None:
+        blocks.append((current_heading, '\n'.join(current_body)))
+    return blocks
+
+
+def heading_has(heading, keyword):
+    """Check if heading contains keyword (substring match)."""
+    return keyword in heading
+
+
 def parse_s1(text):
     """Parse §一 当日复盘."""
     html = html_section_header("s1", "§一 · 当日复盘", "")
 
-    # 表1: 大盘全景
-    section, _ = extract_section(text, '### 表1：大盘全景')
-    if not section:
-        # try finding directly
-        t1 = extract_between(text, '### 表1：大盘全景', '### 表2')
-        if t1:
-            headers, rows = parse_md_table('\n'.join(t1.strip().split('\n')))
-            # Filter empty rows
-            rows = [r for r in rows if r.get('节点','').strip()]
-            if headers:
+    blocks = find_h3_blocks(text)
+    if not blocks:
+        html += html_section_footer()
+        return html
+
+    # Process blocks in order
+    for heading, body in blocks:
+        body = body.strip()
+        if not body:
+            continue
+
+        # Skip empty or template placeholder rows
+        tables_raw = extract_tables(body)
+        tables = []
+        for t in tables_raw:
+            h, r = parse_md_table(t)
+            # Filter out template placeholder rows
+            r = [row for row in r if row.get(list(row.keys())[0] if row else '', '') not in ('...', 'TBD', 'N板', 'N%')]
+            if h and r:
+                tables.append((h, r))
+
+        # ── Route to appropriate renderer ──
+        h = heading
+
+        if heading_has(h, '大盘全景') or heading_has(h, '表1'):
+            if tables:
                 html += html_subheading("📊 表1：大盘全景", "s1a")
-                html += html_table(headers, rows, cell_color)
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 表2: 情绪高标
-    t2 = extract_between(text, '### 表2：情绪高标', '### 节点说明')
-    if t2:
-        headers, rows = parse_md_table('\n'.join(t2.strip().split('\n')))
-        if headers:
-            html += html_subheading("📈 表2：情绪高标", "s1b")
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '情绪高标') or heading_has(h, '表2'):
+            if tables:
+                html += html_subheading("📈 表2：情绪高标", "s1b")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 节点说明
-    nodes = extract_between(text, '### 节点说明', '### 涨停结构')
-    if nodes:
-        html += html_subheading("🔍 节点说明", "s1c")
-        html += '<div class="node-grid">'
-        for node_name in ['竞价', '早盘', '午盘']:
-            node_text = extract_between(nodes, f'**{node_name}**', '**')
-            if not node_text:
-                # try alternative format
-                parts = nodes.split(f'**{node_name}**')
-                if len(parts) > 1:
-                    node_text = parts[1].split('**')[0] if '**' in parts[1] else parts[1][:300]
-            if node_text:
-                node_text = node_text.strip().lstrip('\n- 说明：').lstrip('\n- 结论：').strip()
-                head = node_text.split('\n')[0][:60] if '\n' in node_text else node_text[:60]
-                body = node_text.replace('\n', '<br>')
-                html += f'<div class="node-card"><div class="nhead">{node_name}</div><div class="nbody">{md_text_to_html(body)}</div></div>'
-        html += '</div>'
+        elif heading_has(h, '节点说明'):
+            html += html_subheading("🔍 节点说明", "s1c")
+            html += '<div class="node-grid">'
+            for node_name in ['竞价', '早盘', '午盘']:
+                node_text = extract_between(body, f'**{node_name}**', '**')
+                if not node_text:
+                    parts = body.split(f'**{node_name}**')
+                    if len(parts) > 1:
+                        node_text = parts[1][:400]
+                if node_text:
+                    node_text = node_text.strip().lstrip('\n- 说明：').lstrip('\n- 结论：')
+                    lines = node_text.strip().split('\n')
+                    head = next((l for l in lines if l.strip()), node_text[:80])
+                    body_text = '<br>'.join(l.strip() for l in lines)
+                    html += f'<div class="node-card"><div class="nhead">{node_name}</div><div class="nbody">{md_text_to_html(body_text)}</div></div>'
+            html += '</div>'
 
-    # 涨停结构
-    struct = extract_between(text, '### 涨停结构', '### 连板股')
-    if struct:
-        headers, rows = parse_md_table('\n'.join(struct.strip().split('\n')))
-        rows = [r for r in rows if r.get('板块','').strip() and r.get('板块','') not in ('...', 'TBD')]
-        if headers and rows:
-            html += html_subheading("🏗️ 涨停结构", "s1d")
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '涨停结构'):
+            if tables:
+                html += html_subheading("🏗️ 涨停结构", "s1d")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 连板股
-    lb = extract_between(text, '### 连板股', '### 当日自选池表现')
-    if lb:
-        headers, rows = parse_md_table('\n'.join(lb.strip().split('\n')))
-        rows = [r for r in rows if r.get('股票','').strip() and r.get('股票','') not in ('...', 'TBD')]
-        if headers and rows:
-            html += html_subheading("🔗 连板股")
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '连板股') and not heading_has(h, '自选'):
+            if tables:
+                html += html_subheading("🔗 连板股")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 当日自选池表现 - handle per-sector tables
-    pool = extract_between(text, '### 当日自选池表现', '### 持仓与交易')
-    if pool:
-        html += html_subheading("🎯 当日自选池表现", "s1e")
-        # Find sector headings like **电力/储能**：
-        sectors = re.split(r'\*\*(.+?)\*\*[:：]?\s*\n', pool)
-        i = 1
-        while i < len(sectors):
-            sector_name = sectors[i].strip()
-            sector_body = sectors[i+1] if i+1 < len(sectors) else ""
-            headers, rows = parse_md_table('\n'.join(sector_body.strip().split('\n')))
-            if headers:
-                html += f'<div class="sh3" style="font-size:14px">{sector_name}</div>'
-                html += html_table(headers, rows, cell_color)
-            i += 2
+        elif heading_has(h, '自选池表现'):
+            html += html_subheading("🎯 当日自选池表现", "s1e")
+            # Find sector sub-headings in body text
+            sector_blocks = re.split(r'\*\*(.+?)\*\*.*?\n', body)
+            si = 1
+            while si < len(sector_blocks):
+                sname = sector_blocks[si].strip()
+                sbody = sector_blocks[si+1] if si+1 < len(sector_blocks) else ""
+                stables = extract_tables(sbody)
+                for st in stables:
+                    sh, sr = parse_md_table(st)
+                    sr = [row for row in sr if row.get(list(row.keys())[0] if row else '', '') not in ('...',)]
+                    if sh and sr:
+                        html += f'<div class="sh3" style="font-size:14px">{sname}</div>'
+                        html += html_table(sh, sr, cell_color)
+                si += 2
 
-    # 持仓与交易
-    pos = extract_between(text, '### 持仓与交易', '### 账户风控')
-    if pos:
-        html += html_subheading("💰 持仓与交易", "s1f")
-        # Extract current position info
-        cur_pos = extract_between(pos, '**当前持仓', '\n\n') or extract_between(pos, '**当前持仓', '###')
-        if not cur_pos:
-            cur_pos = extract_between(pos, '当前持仓', '###')
-        # Tables
-        tables = extract_tables(pos)
-        for t in tables:
-            headers, rows = parse_md_table(t)
-            if headers:
-                html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '持仓与交易'):
+            html += html_subheading("💰 持仓与交易", "s1f")
+            for hdr, rows in tables:
+                html += html_table(hdr, rows, cell_color)
 
-    # 风格检测
-    style = extract_between(text, '### 风格检测结果', '### 卖出追踪')
-    if style:
-        html += html_subheading("📐 风格检测", "s1g")
-        headers, rows = parse_md_table('\n'.join(style.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '账户风控'):
+            if tables:
+                html += html_subheading("🛡️ 账户风控")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 趋势持仓复盘
-    trend = extract_between(text, '### 趋势持仓复盘', '### 窗口操作记录')
-    if trend:
-        html += html_subheading("📈 趋势持仓复盘", "s1h")
-        headers, rows = parse_md_table('\n'.join(trend.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '风格检测'):
+            if tables:
+                html += html_subheading("📐 风格检测", "s1g")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 窗口操作记录
-    win = extract_between(text, '### 窗口操作记录', '### 预期差与盘感')
-    if win:
-        html += html_subheading("🪟 窗口操作记录", "s1i")
-        headers, rows = parse_md_table('\n'.join(win.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '卖出追踪'):
+            if tables:
+                html += html_subheading("📤 卖出追踪")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 一句话结论
-    concl = extract_between(text, '### 一句话结论', '---')
-    if concl:
-        html += html_subheading("💡 一句话结论", "s1j")
-        html += f'<div class="sbx">{md_text_to_html(concl.strip())}</div>'
+        elif heading_has(h, '趋势持仓复盘'):
+            if tables:
+                html += html_subheading("📈 趋势持仓复盘", "s1h")
+                html += html_table(*tables[0], cell_fn=cell_color)
+
+        elif heading_has(h, '窗口操作记录'):
+            if tables:
+                html += html_subheading("🪟 窗口操作记录", "s1i")
+                html += html_table(*tables[0], cell_fn=cell_color)
+
+        elif heading_has(h, '预期差'):
+            # Render as text
+            html += html_subheading("🎭 预期差与盘感")
+            html += f'<div class="si">{md_text_to_html(body)}</div>'
+
+        elif heading_has(h, '一句话结论'):
+            html += html_subheading("💡 一句话结论", "s1j")
+            html += f'<div class="sbx">{md_text_to_html(body.strip())}</div>'
 
     html += html_section_footer()
     return html
@@ -491,47 +517,64 @@ def parse_s3(text):
     if summary_parts:
         html += f'<div class="sbx warn">{"<br>".join(summary_parts)}</div>'
 
-    # 明日连板判定
-    hard_check = extract_between(text, '### 明日连板判定', '### 连板自选池')
-    if hard_check:
-        html += html_subheading("🔮 明日连板判定")
-        headers, rows = parse_md_table('\n'.join(hard_check.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+    # Process ### blocks
+    blocks = find_h3_blocks(text)
+    for heading, body in blocks:
+        body = body.strip()
+        if not body:
+            continue
+        tables_raw = extract_tables(body)
+        tables = []
+        for t in tables_raw:
+            hdr, rows = parse_md_table(t)
+            rows = [r for r in rows if r.get(list(r.keys())[0] if r else '', '') not in ('...',)]
+            if hdr and rows:
+                tables.append((hdr, rows))
 
-    # 连板自选池
-    pool = extract_between(text, '### 连板自选池', '### 趋势自选池')
-    if pool:
-        html += html_subheading("🎯 连板自选池", "s3a")
-        sectors = re.split(r'\*\*[①②③④⑤]\s*(.+?)\*\*.*?\n', pool)
-        i = 1
-        while i < len(sectors):
-            sector_name = sectors[i].strip()
-            sector_body = sectors[i+1] if i+1 < len(sectors) else ""
-            headers, rows = parse_md_table('\n'.join(sector_body.strip().split('\n')))
-            if headers:
-                html += f'<div class="sh3" style="font-size:14px">{sector_name}</div>'
-                html += html_table(headers, rows, cell_color)
-            i += 2
+        h = heading
 
-    # 趋势自选池
-    trend = extract_between(text, '### 趋势自选池', '### 连板窗口1')
-    if trend:
-        html += html_subheading("📈 趋势自选池", "s3b")
-        headers, rows = parse_md_table('\n'.join(trend.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        if heading_has(h, '连板判定'):
+            if tables:
+                html += html_subheading("🔮 明日连板判定")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 风险
-    risk = extract_between(text, '### 风险', '### rules校验')
-    if risk:
-        html += html_subheading("⚠️ 风险")
-        items = re.findall(r'\d+\.\s+(.+)', risk)
-        if items:
-            html += '<div class="tight-list">'
-            for item in items:
-                html += f'<li>{md_text_to_html(item)}</li>'
-            html += '</div>'
+        elif heading_has(h, '连板自选池'):
+            html += html_subheading("🎯 连板自选池", "s3a")
+            # Sector blocks
+            sector_blocks = re.split(r'\*\*[①②③④⑤]\s*(.+?)\*\*.*?\n', body)
+            si = 1
+            while si < len(sector_blocks):
+                sname = sector_blocks[si].strip()
+                sbody = sector_blocks[si+1] if si+1 < len(sector_blocks) else ""
+                stables = extract_tables(sbody)
+                for st in stables:
+                    sh, sr = parse_md_table(st)
+                    if sh and sr:
+                        html += f'<div class="sh3" style="font-size:14px">{sname}</div>'
+                        html += html_table(sh, sr, cell_color)
+                si += 2
+
+        elif heading_has(h, '趋势自选池'):
+            if tables:
+                html += html_subheading("📈 趋势自选池", "s3b")
+                html += html_table(*tables[0], cell_fn=cell_color)
+
+        elif heading_has(h, '风险'):
+            items = re.findall(r'\d+\.\s+(.+)', body)
+            if items:
+                html += html_subheading("⚠️ 风险")
+                html += '<div class="tight-list">'
+                for item in items:
+                    html += f'<li>{md_text_to_html(item)}</li>'
+                html += '</div>'
+
+        elif heading_has(h, '不碰'):
+            html += html_subheading("🚫 不碰")
+            html += f'<div class="si">{md_text_to_html(body.strip())}</div>'
+
+        elif heading_has(h, 'rules校验'):
+            html += html_subheading("📏 Rules 校验")
+            html += f'<div class="si">{md_text_to_html(body.strip())}</div>'
 
     html += html_section_footer()
     return html
@@ -539,29 +582,117 @@ def parse_s3(text):
 
 def parse_s4(text):
     """Parse §四 红方对抗."""
-    html = html_section_header("s4", "§四 · 红方对抗", "红蓝辩论完整记录")
-    # Just include all the text content, relatively raw but formatted
-    # Extract Round 1, 2, 3
+    # Try to summarize if content is too complex for auto-parsing
+    total_rounds = len(re.findall(r'### Round [123]', text))
+
+    html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
+
     for round_id, round_label, round_anchor in [
         ("Round 1", "🔴 Round 1：洋米红方质疑", "s4a"),
         ("Round 2", "🔵 Round 2：蓝方回应（稳米）", "s4b"),
         ("Round 3", "🟢 Round 3：洋米终审", "s4c"),
     ]:
         html += html_subheading(round_label, round_anchor)
-        # Try to find round content
-        round_text = extract_between(text, f'### {round_id}', '### ')
-        if round_text:
-            # Extract verdict-style boxes
-            verdict = extract_between(round_text, '**终审定论**', '\n\n')
-            if verdict:
-                html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict)}</div></div>'
+        round_text = extract_between(text, f'### {round_id}', '### ' if round_id != 'Round 3' else None)
+        if not round_text:
+            # Try matching with Chinese colon variants
+            round_text = extract_between(text, f'### {round_id}：', '### ')
+        if not round_text:
+            continue
 
-            # Extract tables
-            tables = extract_tables(round_text)
-            for t in tables:
-                headers, rows = parse_md_table(t)
-                if headers:
-                    html += html_table(headers, rows, cell_color)
+        # ── Round 1 specific: warn-box + 五维 + 三问 + 写法校验 ──
+        if round_id == "Round 1":
+            # Warn box (口径差异)
+            warn_text = extract_between(round_text, '#### ⚠️', '#### ')
+            if not warn_text:
+                warn_text = extract_between(round_text, '⚠️', '#### ')
+            if warn_text:
+                warn_title = warn_text.strip().split('\n')[0][:80]
+                warn_body = warn_text.strip()
+                # Try to extract the table from warn box
+                warn_tables = extract_tables(warn_text)
+                html += '<div class="warn-box"><div class="wtitle">⚠️ 数据口径差异警告</div>'
+                if warn_tables:
+                    hdr, rows = parse_md_table(warn_tables[0])
+                    if hdr:
+                        html += html_table(hdr, rows, cell_color)
+                # Conclusion text after table
+                concl_marker = '**结论**'
+                if concl_marker in warn_text:
+                    html += f'<div class="si" style="margin-top:8px">{md_text_to_html(warn_text.split(concl_marker)[-1])}</div>'
+                html += '</div>'
+
+            # 五维清单 — look for ##### numbered items
+            for dim_num, dim_name in [('1', '定性校准'), ('2', '操作漏判'), ('3', '规则执行'), ('4', '反向情景'), ('5', '盲区扫描')]:
+                dim_text = extract_between(round_text, f'##### {dim_num}. {dim_name}', '##### ')
+                if not dim_text:
+                    dim_text = extract_between(round_text, f'{dim_num}. {dim_name}', '##### ')
+                if dim_text:
+                    # Try to find tables in this dimension
+                    dim_tables = extract_tables(dim_text)
+                    if dim_tables:
+                        for t in dim_tables:
+                            hdr, rows = parse_md_table(t)
+                            if hdr:
+                                html += html_subheading(f"📋 {dim_name}")
+                                html += html_table(hdr, rows, cell_color)
+
+            # 三问 section
+            for q_id, q_name in [('Q1', '遗漏标的'), ('Q2', '排除有误'), ('Q3', '忽略板块')]:
+                q_text = extract_between(round_text, f'##### {q_id} {q_name}', '##### ')
+                if q_text:
+                    q_tables = extract_tables(q_text)
+                    if q_tables:
+                        html += html_subheading(f"🔥 {q_id}：{q_name}")
+                        for t in q_tables:
+                            hdr, rows = parse_md_table(t)
+                            if hdr:
+                                html += html_table(hdr, rows, cell_color)
+
+        # ── Round 2 specific: debate rows ──
+        elif round_id == "Round 2":
+            # Main response table
+            r2_tables = extract_tables(round_text)
+            if r2_tables:
+                hdr, rows = parse_md_table(r2_tables[0])
+                if hdr:
+                    html += html_subheading("逐条回应")
+                    html += html_table(hdr, rows, cell_color)
+
+            # Summary (修正总览 / 终审待定)
+            for key in ['**修正总览**', '**终审待定事项**']:
+                summary = extract_between(round_text, key, '\n\n')
+                if summary:
+                    html += f'<div class="sbx">{md_text_to_html(key.strip("*") + "：" + summary.strip())}</div>'
+
+            # Debate categories: 采纳 / 部分采纳 / 反驳
+            for cat, cls in [('采纳', 'accept'), ('部分采纳', 'partial'), ('反驳', '')]:
+                cat_text = extract_between(round_text, f'☑ {cat}', '\n')
+                if not cat_text:
+                    # Try multiline
+                    cat_items = re.findall(rf'(☑\s*{cat}[^\n]*)', round_text)
+                    if cat_items:
+                        cat_text = '；'.join(cat_items)
+                if cat_text:
+                    cat_cls = f' {cls}' if cls else ''
+                    html += f'<div class="debate-row"><div class="dr-label">{cat}</div><div class="dr-body{cat_cls}">{md_text_to_html(cat_text)}</div></div>'
+
+        # ── Round 3 specific: verdict box ──
+        elif round_id == "Round 3":
+            # Final verdict
+            verdict_text = extract_between(round_text, '**终审定论**', '**')
+            if not verdict_text:
+                verdict_text = extract_between(round_text, '**终审定论**', '---')
+            if verdict_text:
+                html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text.strip())}</div></div>'
+
+            # Confirmation table
+            r3_tables = extract_tables(round_text)
+            if r3_tables:
+                hdr, rows = parse_md_table(r3_tables[0])
+                if hdr:
+                    html += html_subheading("逐条确认")
+                    html += html_table(hdr, rows, cell_color)
 
     html += html_section_footer()
     return html
@@ -605,57 +736,49 @@ def parse_data_appendix(text):
     """Parse 数据附录."""
     html = html_section_header("sd", "数据附录", "机器解析用")
 
-    # 持仓明细
-    pos = extract_between(text, '### 持仓明细', '### 连板自选池')
-    if pos:
-        html += html_subheading("持仓明细")
-        headers, rows = parse_md_table('\n'.join(pos.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+    blocks = find_h3_blocks(text)
+    for heading, body in blocks:
+        body = body.strip()
+        if not body:
+            continue
+        tables_raw = extract_tables(body)
+        tables = []
+        for t in tables_raw:
+            hdr, rows = parse_md_table(t)
+            if hdr and rows:
+                tables.append((hdr, rows))
 
-    # 连板自选池
-    lb = extract_between(text, '### 连板自选池', '### 趋势自选池')
-    if lb:
-        html += html_subheading("连板自选池")
-        headers, rows = parse_md_table('\n'.join(lb.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        h = heading
 
-    # 趋势自选池
-    trend = extract_between(text, '### 趋势自选池', '### 板块状态')
-    if not trend:
-        trend = extract_between(text, '### 趋势自选池', '### 今日操作')
-    if trend:
-        html += html_subheading("趋势自选池")
-        headers, rows = parse_md_table('\n'.join(trend.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        if heading_has(h, '持仓明细'):
+            if tables:
+                html += html_subheading("持仓明细")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 板块状态
-    state = extract_between(text, '### 板块状态', '### 今日操作')
-    if state:
-        html += html_subheading("板块状态")
-        headers, rows = parse_md_table('\n'.join(state.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '连板自选池'):
+            if tables:
+                html += html_subheading("连板自选池")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 今日操作
-    ops = extract_between(text, '### 今日操作', '### 锚定股状态')
-    if ops:
-        html += html_subheading("今日操作")
-        headers, rows = parse_md_table('\n'.join(ops.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '趋势自选池'):
+            if tables:
+                html += html_subheading("趋势自选池")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
-    # 锚定股状态
-    anchor = extract_between(text, '### 锚定股状态', '---')
-    if not anchor:
-        anchor = extract_between(text, '### 锚定股状态', '$')
-    if anchor:
-        html += html_subheading("锚定股状态")
-        headers, rows = parse_md_table('\n'.join(anchor.strip().split('\n')))
-        if headers:
-            html += html_table(headers, rows, cell_color)
+        elif heading_has(h, '板块状态'):
+            if tables:
+                html += html_subheading("板块状态")
+                html += html_table(*tables[0], cell_fn=cell_color)
+
+        elif heading_has(h, '今日操作'):
+            if tables:
+                html += html_subheading("今日操作")
+                html += html_table(*tables[0], cell_fn=cell_color)
+
+        elif heading_has(h, '锚定股状态'):
+            if tables:
+                html += html_subheading("锚定股状态")
+                html += html_table(*tables[0], cell_fn=cell_color)
 
     html += html_section_footer()
     return html
