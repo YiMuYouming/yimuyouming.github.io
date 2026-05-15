@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W20 周复盘（5/11-5/15）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.85);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1060px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+.cb{margin-bottom:20px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../index.html" class="back">← 平台</a>
+  <div class="title">W20 周复盘（5/11-5/15）</div>
+  <div class="meta">
+    <span class="chip blue">5/11-5/15 5天</span>
+    <span class="chip green">盈亏 +459元</span>
+    <span class="chip accent">买3/卖1</span>
+    <span class="chip purple">北华全周持有</span>
+    <span class="chip blue">均情绪 37.8%</span>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s0">💡 核心发现</a>
+  <div class="sep"></div>
+  <a href="#s1">§1 本周概览</a>
+  <a href="#s2">§2 节奏与打法</a>
+  <a href="#s3">§3 主线与板块</a>
+  <a href="#s4">§4 盈亏归因</a>
+  <a href="#s5">§5 认知迭代</a>
+  <a href="#s6">§6 下周基调</a>
+  <div class="sep"></div>
+  <a href="#appendix">附录 速查</a>
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+
+<!-- ===== §0 核心发现 ===== -->
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>💡 核心发现（先看这里）</div>
+<div class="sb">
+
+<div class="summary-cards">
+<div class="summary-card"><div class="label">周盈亏</div><div class="value green">+459元</div><div class="sub">买3次 / 卖1次 / 空仓1天</div></div>
+<div class="summary-card"><div class="label">胜率</div><div class="value accent">67%</div><div class="sub">2盈 / 1亏</div></div>
+<div class="summary-card"><div class="label">预案命中率</div><div class="value green">100%</div><div class="sub">5/5 天全中</div></div>
+<div class="summary-card"><div class="label">平均情绪</div><div class="value">37.8%</div><div class="sub">低迷区间（18-58%）</div></div>
+<div class="summary-card"><div class="label">主线状态</div><div class="value">无持续主线</div><div class="sub">电力一日游→机器人萌芽</div></div>
+<div class="summary-card"><div class="label">当前持仓</div><div class="value accent">39%</div><div class="sub">北华+3.45% / 领益+0.71%</div></div>
+</div>
+
+<div class="sh3">本周关键结论</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>盈亏</td><td>累计+459元（北华+1,974 + 领益+360 - 立讯-1,875）。2盈1亏，胜率67%。当前持仓北华+3.45%/领益+0.71%，总仓位39%。</td></tr>
+<tr><td>节奏</td><td>预案命中率100%（5/5）。周一空仓等收敛✅→周二情绪崩塌北华建仓✅→周三电力主线加仓立讯⚠️→周四冰点立讯止损✅→周五W2领益试探✅</td></tr>
+<tr><td>主线</td><td>无持续主线——趋势行情（周一）→电力一日游（周三→周四退潮）→机器人16涨停冷启动（周五）。最持久的反而是北华（半导体中军）全周+9.47%。</td></tr>
+<tr><td>梯队</td><td>5板→4板→6板→5板。大唐发电从2板一路冲到6板（周三）→7板炸板（周四）→反包涨停（周五）——电力方向的全生命周期。</td></tr>
+<tr><td>赚钱效应</td><td>一般→差→好→差→差。赚钱效应从周三"好"档暴跌至周四"差"档，情绪58%→18%的40pp崩塌是本周最大风险事件。</td></tr>
+<tr><td>最大亮点</td><td>①北华选股精准（半导体中军+全周+9.47%）②立讯止损果断（-5%线一到即卖）③红蓝对抗发现氟化工误判（和远2板非全首板）。</td></tr>
+<tr><td>最大问题</td><td>①北华涨停遇阻未减仓（冲620→回592，T6.3违规）②周三加仓立讯后周四冰点被迫止损——选股方向对但节奏偏快③总仓位39%近上限40%缓冲不足。</td></tr>
+</tbody></table></div>
+
+<div class="sbx green"><strong>认知迭代（5条值得固化）：</strong><br>
+① 情绪30pp+波动=假信号，应看涨停质量和中军资金而非情绪绝对值<br>
+② 爆发日无W2——正确节奏：爆发日观察→次日龙头确认→第三天回踩→W2低吸<br>
+③ 新主线崛起会分流旧方向资金（5/15 机器人16涨停→光通信领益从+9%回落至+3.29%）<br>
+④ 中军资金确认的优先级高于涨停数量——周三电力17涨停无中军=周四崩盘<br>
+⑤ 板块间资金零和竞争：持仓需关注是否有更强势的新方向在抢夺资金</div>
+
+<div class="sbx warn"><strong>下周目标（W21）：</strong>周一验证机器人2板延续性（北自/骏亚→3板）；北华移动止盈；领益双概念+机器人博弈；关注氟化工3板确认。总仓位从39%至少减到35%以下。</div>
+</div>
+</div>
+
+<!-- ===== §1 本周概览 ===== -->
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§1 本周概览</div>
+<div class="sb">
+
+<div class="sh3">每日交易回顾</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏%</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周一 5/11</td><td>56%→一般</td><td>空仓等方向收敛</td><td>无</td><td>0%</td><td><span class="badge badge-green">✅</span></td><td>放量+1.08%+涨停135+趋势走强16板块过多</td></tr>
+<tr><td>周二 5/12</td><td>25%→低迷</td><td>趋势W2回踩</td><td>买北华 @572.26 14%</td><td class="up">+1.61%</td><td><span class="badge badge-green">✅</span></td><td>情绪-31pp崩塌+半导体逆势+北华中军确认</td></tr>
+<tr><td>周三 5/13</td><td>58%→一般</td><td>主线确认+加仓</td><td>买立讯 @80.15 17%</td><td class="up">+3.83%</td><td><span class="badge badge-yellow">⚠️</span></td><td>电力绝对主线(6-3-2梯队)+加仓偏快</td></tr>
+<tr><td>周四 5/14</td><td>18%→冰点</td><td>退潮确认→止损</td><td>卖立讯 @76.40 全仓</td><td class="down">-4.68%</td><td><span class="badge badge-green">✅</span></td><td>情绪-40pp冰点+电力一日游退潮+立讯止损果断</td></tr>
+<tr><td>周五 5/15</td><td>32%→低迷</td><td>冰点修复+W2试探</td><td>买领益 @16.82 25%</td><td class="up">+0.71%</td><td><span class="badge badge-yellow">⚠️</span></td><td>情绪55%→32%跳水+机器人16涨停+红蓝完成</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">周总结</div>
+<div class="sbx green"><strong>周累计盈亏：+459元（北华+1,974 + 领益+360 - 立讯-1,875）</strong></div>
+<div class="para"><strong>本周操作：买3次 / 卖1次 / 空仓1天</strong></div>
+<div class="para">一句话总结：情绪过山车56%→25%→58%→18%→32%，电力周三17涨停主线确立→周四直接冰点一日游退潮。北华全周持有是最大亮点（+9.47%近5日），立讯止损-1,875元是本周唯一亏损但执行正确。周五机器人16涨停冷启动+红蓝对抗完成氟化工误判修正。当前持仓北华+领益39%仓位偏满。</div>
+</div>
+</div>
+
+<!-- ===== §2 节奏与打法 ===== -->
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§2 节奏与打法回顾</div>
+<div class="sb">
+
+<div class="sh3">预案命中率</div>
+<div class="para">5天里预案对了5天（100%）</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>预案对错</th><th>关键操作</th></tr></thead>
+<tbody>
+<tr><td>周一 5/11</td><td><span class="badge badge-green">✅ 空仓等收敛命中</span></td><td>趋势走强16板块过多=无聚焦，空仓正确</td></tr>
+<tr><td>周二 5/12</td><td><span class="badge badge-green">✅ 趋势W2方向确认命中</span></td><td>半导体逆势+北华中军确认→建仓</td></tr>
+<tr><td>周三 5/13</td><td><span class="badge badge-green">✅ 主线确认路径命中</span></td><td>电力6-3-2梯队→加仓立讯（但加仓偏快）</td></tr>
+<tr><td>周四 5/14</td><td><span class="badge badge-green">✅ 退潮止损路径命中</span></td><td>冰点+电力退潮→立讯止损</td></tr>
+<tr><td>周五 5/15</td><td><span class="badge badge-green">✅ 冰点修复+W2试探命中</span></td><td>情绪修复55%→W2买领益（仓位偏大25%）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">打法切换</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪</th><th>档位</th><th>打法</th><th>正确性</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>56%→一般</td><td>一般（趋势主导）</td><td>空仓等方向收敛</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周二</td><td>25%→低迷</td><td>低迷（硬卡降档）</td><td>W1全关+W2趋势试探</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周三</td><td>58%→一般</td><td>一般→主升</td><td>W1半开（电力）+W2趋势持有</td><td><span class="badge badge-yellow">⚠️ 偏激进</span></td></tr>
+<tr><td>周四</td><td>18%→冰点</td><td>冰点</td><td>W1全关+W2止损</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+<tr><td>周五</td><td>32%→低迷</td><td>低迷</td><td>W1不开+W2试探+北华持有</td><td><span class="badge badge-green">✅ 正确</span></td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx green">全周打法切换顺畅，没有出现冰点追涨或退潮期犹豫的问题。主要瑕疵：①周三情绪54%→加仓立讯偏快（应等竞价确认后9:45再做）②周五领益25%仓位在低迷档偏大。</div>
+</div>
+</div>
+
+<!-- ===== §3 主线与板块 ===== -->
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§3 主线与板块</div>
+<div class="sb">
+
+<div class="sh3">主线演变</div>
+<div class="tw"><table>
+<thead><tr><th>时间段</th><th>主线状态</th><th>切换信号</th></tr></thead>
+<tbody>
+<tr><td>周一 5/11</td><td>趋势行情，16个板块走强→无聚焦方向</td><td>风格74/100趋势，但板块过多=无主线</td></tr>
+<tr><td>周二 5/12</td><td>情绪崩塌至25%，半导体逆势走强</td><td>北华+4.09%+4.3亿主力，半导体成为唯一逆势方向</td></tr>
+<tr><td>周三 5/13</td><td>电力绝对主线（6-3-2梯队+17首板）</td><td>大唐发电6板封死+华电辽能3板→主线确认</td></tr>
+<tr><td>周四 5/14</td><td>电力一日游退潮（大唐7板炸板翻绿）</td><td>情绪18%冰点+涨停80骤降+电力全退</td></tr>
+<tr><td>周五 5/15</td><td>机器人16涨停冷启动+氟化工9涨停</td><td>北自/骏亚2板+14首板→新方向候选</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">梯队演变</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>最高板</th><th>梯队状态</th><th>关键变化</th></tr></thead>
+<tbody>
+<tr><td>周一 5/11</td><td><span class="badge badge-red">5板</span>（福达合金）</td><td>5-3-2 断层</td><td>福达5板但梯队断层（缺4板）</td></tr>
+<tr><td>周二 5/12</td><td><span class="badge badge-red">5板</span>（大唐发电）</td><td>5-4-3-2 ✅完整</td><td>大唐接棒，梯队首次完整</td></tr>
+<tr><td>周三 5/13</td><td><span class="badge badge-green">6板</span>（大唐发电）</td><td>6-3-2 断层</td><td>突破5板天花板！全周最高</td></tr>
+<tr><td>周四 5/14</td><td><span class="badge badge-red">5板</span>（蒙娜丽莎）</td><td>5-4-3-2 ✅完整</td><td>大唐7板炸板退潮，蒙娜丽莎接最高板</td></tr>
+<tr><td>周五 5/15</td><td><span class="badge badge-red">6板</span>（蒙娜丽莎）</td><td>6-5-3-2 ✅完整</td><td>蒙娜丽莎14:21才封+换手22%=筹码松动</td></tr>
+</tbody>
+</table></div>
+<div class="sbx green">高度变化：5→6板（突破天花板）→7板炸板→6板筹码松动。大唐全生命周期（2板→6板→7板炸板→反包涨停）是本周最完整的龙头轨迹。梯队从断层逐步修复到完整。</div>
+
+<div class="sh3">本周活跃板块（持续1天+有涨停）</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>5/11</th><th>5/12</th><th>5/13</th><th>5/14</th><th>5/15</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>电力</td><td>—</td><td>大唐5板</td><td><span class="up">17只涨停🔥</span></td><td>0只（大唐炸板）</td><td>大唐反包</td><td><span class="badge badge-red">📉 一日游退潮</span></td></tr>
+<tr><td>半导体</td><td>走强</td><td><span class="up">北华+4.09%</span></td><td>北华持有</td><td>北华-1.52%</td><td><span class="up">北华+4.89%</span></td><td><span class="badge badge-green">🔄 全周走强+9.47%</span></td></tr>
+<tr><td>机器人</td><td>0只</td><td>0只</td><td>0只</td><td>0只</td><td><span class="up">16只涨停🔥</span></td><td><span class="badge badge-blue">🆕 冷启动</span></td></tr>
+<tr><td>光通信/CPO</td><td>走强</td><td>中军分化</td><td>走强</td><td>退潮</td><td>领益+3.29%</td><td><span class="badge badge-yellow">🔄 内部分化</span></td></tr>
+<tr><td>氟化工</td><td>0只</td><td>0只</td><td>0只</td><td>0只</td><td><span class="up">9只涨停</span></td><td><span class="badge badge-blue">🆕 氢氟酸涨价驱动</span></td></tr>
+<tr><td>算力</td><td>—</td><td>分化</td><td>走弱</td><td>退潮</td><td>蒙娜丽莎6板</td><td><span class="badge badge-yellow">🔄 高位独苗</span></td></tr>
+<tr><td>光伏/储能</td><td>0只</td><td>0只</td><td>0只</td><td>0只</td><td>阳光电源+13.27%</td><td><span class="badge badge-yellow">🔄 事件脉冲</span></td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- ===== §4 盈亏归因 ===== -->
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§4 盈亏归因</div>
+<div class="sb">
+
+<div class="sh3">本周全部交易</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日/价</th><th>卖日/价</th><th>持仓天数</th><th>盈亏</th><th>归因</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>半导体中军</td><td>5/12 @572.26</td><td>持有中 @592.00</td><td>4天</td><td class="up">+3.45%（+1,974元）</td><td>✅ 选股精准（半导体逆势中军）+建仓时机好（情绪25%低迷低吸）</td></tr>
+<tr><td>立讯精密</td><td>消费电子</td><td>5/13 @80.15</td><td>5/14 @76.40</td><td>1天</td><td class="down">-4.68%（-1,875元）</td><td>⚠️ 加仓偏快（周三情绪54%→周四冰点被迫止损）+选股方向不够聚焦</td></tr>
+<tr><td>领益智造</td><td>CPO/机器人</td><td>5/15 @16.82</td><td>持有中 @16.94</td><td>1天</td><td class="up">+0.71%（+360元）</td><td>✅ 双概念布局+W2回踩企稳买点+机器人方向共振；⚠️ 仓位25%偏大</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">本周最佳/最差操作</div>
+<div class="sbx green"><strong>本周最佳操作：</strong>周二 5/12 情绪崩塌至25%时逆势买入北方华创。半导体当日唯一逆势方向+北华+4.09%+4.3亿主力流入=中军确认。4天后浮盈+3.45%（+1,974元）。"别人恐惧时贪婪"的经典执行。</div>
+<div class="sbx red"><strong>本周最差操作：</strong>北华周五冲涨停620回落至592未按T6.3减仓50%。虽然100股无法减半，但应设移动止盈替代方案。利润从+6.77%缩至+3.45%，回撤3.32pp=约1,900元。这不是仓位问题，是规则执行问题。</div>
+
+<div class="sh3">盈亏模式识别</div>
+<div class="sbx green"><strong>赚钱的操作共性：</strong>①逆情绪买——北华25%低迷建仓、领益55%→32%跳水时W2回踩②中军资金确认——北华+4.3亿、领益+9.65亿③趋势方向清晰——半导体/光通信均有基本面支撑。</div>
+<div class="sbx red"><strong>亏损的操作共性：</strong>立讯亏损=选股方向模糊（消费电子非本周主线）+追涨周三情绪高潮+仓位偏重（17%）。如果立讯换成北华加仓或者直接空仓等冰点，可以避免这-1,875元。</div>
+</div>
+</div>
+
+<!-- ===== §5 认知迭代 ===== -->
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§5 认知迭代</div>
+<div class="sb">
+
+<div class="sh3">本周心得蒸馏</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>心得摘要</th><th>来源</th><th>类型</th><th>流向</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>情绪30pp+波动=假信号——周二-31pp和周四-40pp都是过山车，应看涨停质量和中军资金</td><td>5/12+5/14</td><td>🆕认知</td><td>→ insights/情绪与周期.md</td></tr>
+<tr><td>2</td><td>爆发日无W2——周三电力17涨停→周四全部退潮，爆发次日无溢价</td><td>5/13-5/14</td><td>教训</td><td>→ Core-W2 爆发日规则</td></tr>
+<tr><td>3</td><td>新主线会分流旧方向资金——周五机器人16涨停后光通信领益从+9%跌到+3.29%</td><td>5/15</td><td>🆕认知</td><td>→ insights/资金合力.md</td></tr>
+<tr><td>4</td><td>涨停数量≠主线确认——电力17涨停但中军资金极弱→次日全退</td><td>5/13-5/14</td><td>🆕认知</td><td>→ insights/资金合力.md</td></tr>
+<tr><td>5</td><td>趋势股涨停遇阻=必须减仓——北华冲620→回592，T6.3规则被验证有效</td><td>5/15</td><td>教训</td><td>→ Core-趋势 T6.3 规则强化</td></tr>
+<tr><td>6</td><td>逆情绪低吸中军>追情绪高潮热点——北华25%低迷建仓(+3.45%) vs 立讯58%主升追涨(-4.68%)</td><td>5/12-5/14</td><td>🆕认知</td><td>→ insights/选股与买点.md</td></tr>
+<tr><td>7</td><td>红蓝对抗价值：稳米氟化工"全首板"误判→和远气体已是2板</td><td>5/15</td><td>流程改进</td><td>→ 红方数据协议新增Q2e板块涨停验证</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">需要改 rules？</div>
+<div class="sbx green"><strong>新增规则候选：</strong>"板块资金竞争监控"——当新方向单日涨停≥10只+有2板梯队时，检查现有持仓是否属于被分流方向。若是→降低仓位或收紧止损。5/15 机器人16涨停分流光通信资金已验证此规则必要性。</div>
+<div class="sbx warn"><strong>已有规则强化：</strong>T6.3趋势涨停处理规则——北华冲涨停620回落至592未执行减仓。需要补充"无法减半时的替代方案"（移动止盈或全仓减1/3）。</div>
+<div class="sbx green"><strong>写入：</strong><br>
+→ insights/情绪与周期.md（1条：情绪剧烈波动=假信号）<br>
+→ insights/资金合力.md（2条：新主线分流+涨停数≠主线确认）<br>
+→ insights/选股与买点.md（1条：逆情绪低吸>追情绪高潮）</div>
+
+<div class="sh3">丢弃项（不符合固化标准）</div>
+<div class="tw"><table>
+<thead><tr><th>心得</th><th>来源</th><th>丢弃原因</th></tr></thead>
+<tbody>
+<tr><td>周五午后跳水风险</td><td>5/15</td><td>周五兑现压力是已知规律，非新认知</td></tr>
+<tr><td>北华100股无法减半</td><td>5/15</td><td>操作细节非认知迭代，改为补充T6.3替代方案</td></tr>
+<tr><td>领益仓位25%偏大</td><td>5/15</td><td>单次执行问题，非规律性认知</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- ===== §6 下周基调 ===== -->
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§6 下周基调（W21 5/18起）</div>
+<div class="sb">
+
+<div class="sh3">方向判断</div>
+<div class="para">主线不确定——机器人冷启动（16涨停+2只2板）是最值得关注的方向，但周五首板潮周一大概率分化。氟化工9涨停+和远气体2板是第二候选。</div>
+<div class="para">概率：<strong>机器人延续（等2板确认）> 氟化工3板确认 > 半导体趋势延续 > 新方向切换</strong></div>
+<div class="para">关键矛盾：趋势侧北华全周+9.47%确认半导体中军地位，但2/3半导体指数MA20向下→板块层面不确认。连板侧机器人首板潮次日分化概率大→需2板确认后才可追W1。</div>
+
+<div class="sh3">情绪预期</div>
+<div class="para">本周收盘情绪32%（低迷区间）。周一预判30-50%——周五跳水惯性+周末消息面影响。情绪≥30%则低迷但不恶化，情绪&lt;20%→总仓位降至20%以内。关注周末特朗普访华相关消息。</div>
+
+<div class="sh3">重点盯的板块/标的</div>
+<div class="sbx">
+<strong>机器人（最强候选）：</strong>北自科技3板? + 骏亚科技3板? + 巨轮智能2板确认? + 雷赛智能/三丰智能W1候选<br>
+<strong>氟化工（第二候选）：</strong>和远气体3板确认? + 多氟多延续? + 氢氟酸涨价逻辑持续性<br>
+<strong>半导体（持仓延续）：</strong>北华能否站稳590+ → 移动止盈582；关注芯源微/华海清科趋势候选<br>
+<strong>光通信/CPO（持仓延续）：</strong>领益16.50支撑+光通信竞价强度；天孚稳守但PE偏高(158)<br>
+<strong>光伏/储能（观察）：</strong>阳光电源+13.27%能否持续→等2天确认
+</div>
+
+<div class="sh3">需要调整的习惯或规则</div>
+<div class="tw"><table>
+<thead><tr><th>议题</th><th>状态</th><th>行动</th></tr></thead>
+<tbody>
+<tr><td>T6.3涨停减仓替代方案（无法减半时）</td><td>待补充</td><td>补充规则：无法减半时→全仓设移动止盈价（回撤最高点×0.97）</td></tr>
+<tr><td>"板块资金竞争监控"是否新增为规则？</td><td>🆕 候选</td><td>W21再验证一次，如果再次出现方向切换分流→固化</td></tr>
+<tr><td>领益仓位管理</td><td>已修正</td><td>周一若领益低开>2%不修复→减半至~1500股（12.5%）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周目标</div>
+<div class="sbx green">W21核心目标：①周一验证机器人2板延续性（竞价≥3只高开3%+→小仓10%试探W1）②北华从"持有"过渡到"移动止盈"管理 ③领益看机器人方向强度调整仓位 ④总仓位从39%降到35%以下（减北华或领益之一）⑤关注氟化工3板确认信号。</div>
+</div>
+</div>
+
+<!-- ===== 附录 ===== -->
+<div class="section" id="appendix">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>📋 附录 · W20 速查</div>
+<div class="sb">
+
+<div class="sh3">本周数据总览</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>周一 5/11</th><th>周二 5/12</th><th>周三 5/13</th><th>周四 5/14</th><th>周五 5/15</th></tr></thead>
+<tbody>
+<tr><td>情绪</td><td>56%</td><td>25%</td><td>58%</td><td>18%</td><td>32%</td></tr>
+<tr><td>上证(%)</td><td class="up">+1.08%</td><td class="down">-0.25%</td><td class="up">+0.67%</td><td class="down">-1.52%</td><td class="down">-1.02%</td></tr>
+<tr><td>涨停</td><td>135</td><td>94</td><td>147</td><td>80</td><td>72</td></tr>
+<tr><td>跌停</td><td>27</td><td>32</td><td>17</td><td>44</td><td>44</td></tr>
+<tr><td>最高板</td><td>5板</td><td>5板</td><td>6板</td><td>5板</td><td>6板</td></tr>
+<tr><td>量能</td><td>3.57万亿(+16%)</td><td>3万亿(-8%)</td><td>3万亿(0%)</td><td>3万亿</td><td>3万亿(-1%)</td></tr>
+<tr><td>晋级率</td><td>19.39%</td><td>18.09%</td><td>29.82%</td><td>14.16%</td><td>10.91%</td></tr>
+<tr><td>操作</td><td>空仓</td><td>买北华14%</td><td>买立讯17%</td><td>卖立讯止损</td><td>买领益25%</td></tr>
+<tr><td>盈亏</td><td>0%</td><td class="up">+1.61%</td><td class="up">+3.83%</td><td class="down">-4.68%</td><td class="up">+0.71%</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周一（5/18）操作总纲</div>
+<div class="sbx green"><strong>基准预期：</strong>上证4100-4150，情绪28-40%（低迷区间延续，关注机器人竞价）</div>
+<div class="sbx"><strong>自选池排序：</strong>机器人（冷启动等2板确认）> 氟化工（观察等3板）> 半导体（北华移动止盈）> CPO（领益看方向强度）</div>
+<div class="sbx warn"><strong>仓位管理：</strong>总仓位上限40%但当前39%→优先降仓到35%以下。北华设移动止盈582。领益若低开>2%→减半至12.5%。不新增开仓除非机器人/氟化工满足窗口条件。</div>
+
+<div class="sh3">关键验证信号（5/18）</div>
+<ol class="tight-list">
+<li>竞价情绪≥30%（维持低迷不恶化）</li>
+<li>机器人竞价≥3只高开3%+ 且北自/骏亚至少1只高开→W1可考虑（≤10%仓位）</li>
+<li>和远气体能否3板→氟化工从观察升级为候选方向</li>
+<li>北华能否站稳590+（跌破585→执行移动止盈）</li>
+<li>光通信竞价强度 vs 机器人竞价强度→决定领益仓位方向</li>
+<li>情绪跌破20%→总仓位降至20%以内</li>
+</ol>
+</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) { el.classList.toggle('collapsed'); const b = el.nextElementSibling; if (b) b.classList.toggle('hide'); }
+function toggleCollapse(el) { el.classList.toggle('collapsed'); const c = el.nextElementSibling; if (c) c.classList.toggle('show'); }
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .sc, .para, .tight-list li, .tw table, .sh');
+  if (!q.trim()) { items.forEach(el => el.style.opacity = '1'); return; }
+  const lq = q.toLowerCase();
+  items.forEach(el => { el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15'; });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const target = document.getElementById(this.getAttribute('href').slice(1));
+    if (!target) return;
+    const cc = target.closest('.cc'); if (cc && !cc.classList.contains('show')) { cc.classList.add('show'); cc.previousElementSibling?.classList.remove('collapsed'); }
+    const sb = target.closest('.sb.hide'); if (sb) { sb.classList.remove('hide'); sb.previousElementSibling?.classList.remove('collapsed'); }
+  });
+});
+</script>
+</body>
+</html>
