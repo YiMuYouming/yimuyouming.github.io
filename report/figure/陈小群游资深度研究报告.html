@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>陈小群研究报告：7年2万倍的龙头战法全解构</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .n{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.qt{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;line-height:1.6;font-style:italic}
+.qt .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.pd{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin:12px 0}
+@media(max-width:600px){.pd{grid-template-columns:1fr 1fr}}
+.pd .it{border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.pd .it .nm{font-weight:600;display:block;font-size:14px}
+.pd .it .op{color:var(--g500);font-size:11px;display:block;margin-top:2px}
+.warn{background:rgba(176,74,63,.06);border:1px solid rgba(176,74,63,.15);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.7}
+.warn .wt{font-weight:600;color:var(--rust);margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 游资对手研究</div>
+  <h1>陈小群：从30万到65亿的龙头战法全解构</h1>
+  <div class="sub">新生代游资第一人。军旅出身，纪律为王。情绪周期 + 龙头战法 + 极致执行 = 7年2万倍。</div>
+  <div class="mr">
+    <span class="tag">人物研究</span>
+    <span class="tag">2026.05</span>
+    <span class="tag">陈小群</span>
+    <span class="tag">龙头战法</span>
+    <span class="tag">情绪周期</span>
+  </div>
+</div>
+
+<!-- Bio card -->
+<div class="bio">
+  <div class="it"><span class="l">本名</span><span class="v">陈宴群</span></div>
+  <div class="it"><span class="l">市场称呼</span><span class="v">陈小群 / 群神 / 游资皇帝</span></div>
+  <div class="it"><span class="l">出生</span><span class="v">1995年 · 辽宁大连</span></div>
+  <div class="it"><span class="l">淘股吧ID</span><span class="v">心跳r</span></div>
+  <div class="it"><span class="l">入市本金</span><span class="v">30万元（2018年）</span></div>
+  <div class="it"><span class="l">当前体量</span><span class="v">约65亿元（2026年3月自晒）</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">中国银河大连黄河路</span></div>
+  <div class="it"><span class="l">胜率</span><span class="v">~57%（2025年）</span></div>
+</div>
+
+<!-- Quick ref: seat data -->
+<div class="sbx">
+  <div class="tt">席位演变</div>
+  <table>
+    <tr><th>时期</th><th>席位</th><th>上榜/年</th><th>成交/年</th></tr>
+    <tr><td>2022-2023</td><td>中国银河大连金马路</td><td>37只</td><td>36.52亿</td></tr>
+    <tr><td>2023</td><td>中国银河大连黄河路</td><td>63只</td><td>36.64亿</td></tr>
+    <tr><td>2024</td><td>中国银河大连黄河路</td><td>71只</td><td>92.97亿</td></tr>
+    <tr><td>2025</td><td>中国银河大连黄河路</td><td>121只</td><td><strong>324.91亿</strong></td></tr>
+    <tr><td>2026.1</td><td>中国银河大连黄河路</td><td>—</td><td>77.18亿</td></tr>
+    <tr style="color:var(--rust)"><td>疑似关联</td><td>国泰海通重庆解放碑</td><td colspan="2">市场质疑为「暗席出货」</td></tr>
+  </table>
+</div>
+
+<!-- ===== 一、成长轨迹 ===== -->
+<h2><span class="num">01</span>成长轨迹：7年2万倍的四个阶段</h2>
+
+<h3>阶段一：军旅淬炼（2014-2017）</h3>
+<p>大二休学入伍两年。部队的紧急集合、精准执行、令行禁止——重塑了他的性格。<strong>「纪律性」</strong>后来成为他交易体系最核心的支柱。退伍后没有找工作，在家埋头复盘了<strong>2008-2017 整整十年的 A 股行情</strong>，这段苦功夫奠定了他对情绪周期的直觉。</p>
+
+<h3>阶段二：摸索试错（2018-2019）</h3>
+<p>2018年以30万入市，打板、低吸、套利全试过。早期「模式杂是大忌」——什么都做，什么都做不好。确立第一条铁律：<strong>单笔亏损超过5%强制离场</strong>。2019年抓到创投行情，30万→500万，真正「开窍」。</p>
+
+<h3>阶段三：一战成名（2020-2022）</h3>
+<p>2020年突破千万。2022年突破亿元，靠两只票封神：<em>浙江建投</em>从头吃到尾（单股+50%），<em>中交地产</em>跌停板加仓8600万3天获利40%。大连金马路席位当年登榜37只个股，成交36.52亿。</p>
+
+<h3>阶段四：登顶与争议（2023-2026）</h3>
+
+<div class="tl">
+  <div class="tli"><span class="yr">2023</span><span class="tt">席位迁移</span><span class="de">主阵地从金马路迁至<em>大连黄河路</em>，全年上榜63只。</span></div>
+  <div class="tli"><span class="yr">2024</span><span class="tt">成交近百亿</span><span class="de">全年上榜71只，成交<em>92.97亿</em>。永辉超市两度重仓，视觉中国博弈。</span></div>
+  <div class="tli"><span class="yr">2025</span><span class="tt">巅峰之年</span><span class="de">全年上榜121只，成交<em>324.91亿</em>。华胜天成22亿、航天发展20亿。自称收益<em>20倍</em>。抖音200万粉。捐赠1000万给青少年基金会。</span></div>
+  <div class="tli"><span class="yr">2026.1</span><span class="tt">塌房争议</span><span class="de">商业航天崩盘，单日净卖出金风5.93亿+华胜5.13亿+鲁信2.10亿。海格通信被套5亿。关闭社交媒体隐退。</span></div>
+  <div class="tli"><span class="yr">2026.3</span><span class="tt">晒单回应</span><span class="de">自晒账户总资产<em>65亿元</em>。从30万→65亿，约2万倍。</span></div>
+</div>
+
+<!-- ===== 二、交易体系 ===== -->
+<h2><span class="num">02</span>交易体系深度解构</h2>
+
+<div class="pd">
+  <div class="it" style="background:rgba(106,140,175,.08)"><span class="nm">主线思维</span><span class="op">只做市场共识方向</span></div>
+  <div class="it" style="background:rgba(217,119,87,.08)"><span class="nm">龙头战法</span><span class="op">分歧介入 · 一致离场</span></div>
+  <div class="it" style="background:rgba(176,74,63,.08)"><span class="nm">极致纪律</span><span class="op">错了一刀砍掉</span></div>
+  <div class="it" style="background:rgba(120,140,93,.08)"><span class="nm">互联网战法</span><span class="op">席位溢价收割</span></div>
+</div>
+
+<h3>支柱一：主线思维</h3>
+<div class="qt">「你做不起来的原因，就是不去做主线，却幻想新主线出现。」<span class="src">— 陈小群</span></div>
+<p>陈小群认为A股底层逻辑是<strong>资金合力</strong>——热钱高度趋同，主线一旦确立（放量+涨停潮），全市场资金达成共识，容错率远超杂毛。主线内部三层结构：<strong>核心龙头</strong>（人气标杆）→ <strong>跟风股</strong>→ <strong>低位补涨</strong>。操作节奏：初期全力参与龙头 → 中期切换补涨 → 末期逐步撤离。</p>
+
+<h3>支柱二：龙头战法</h3>
+<div class="qt">「涨出来的逻辑才是真逻辑，没涨的逻辑都是自嗨。」<span class="src">— 陈小群</span></div>
+<p>只做能带动板块起涨的「真龙头」，敢于在已经涨了很多的位置重仓。70%+交易为1-2天隔日交易，题材发酵时做3-7天波段。经典节奏四步：<strong>分歧试错 → 转势加仓 → 主升锁仓 → 退潮空仓</strong>。</p>
+
+<h3>支柱三：极致纪律</h3>
+<table>
+  <tr><th>规则</th><th>内容</th></tr>
+  <tr><td>止损</td><td>单笔亏损超5%强制离场，不意淫反包</td></tr>
+  <tr><td>卖点</td><td>次日不涨停就走，跌停必走</td></tr>
+  <tr><td>仓位</td><td>单票不超总资金15%，退潮期空仓</td></tr>
+  <tr><td>杠杆</td><td>永远不用——「腰斩已是极限，杠杆会让你爆仓归零」</td></tr>
+  <tr><td>情绪</td><td>连续两次大亏后强制空仓，治愈上头的唯一办法是亏钱</td></tr>
+</table>
+
+<h3>卖点体系：三层卖出逻辑</h3>
+<p><strong>纪律性卖点</strong>：不涨停就卖、跌停必走（非核心标的）。<strong>情绪拐点卖点</strong>：龙头出现天地板/放量滞涨 → 跟风股同步止盈。<strong>逻辑失效卖点</strong>：上涨逻辑被证伪（利好兑现/监管打压）→ 无论盈亏离场。</p>
+
+<!-- ===== 三、互联网战法 ===== -->
+<h2><span class="num">03</span>「互联网战法」：造神流水线与塌房</h2>
+
+<div class="sbx">
+  <div class="tt">造神流水线</div>
+  <p style="margin:0">淘股吧（心跳r）同步分享操盘思路 → 龙虎榜频繁现身 → 行情软件打上「陈小群」标签 → 抖音200万粉丝晒收益/炫富 → <strong>「席位溢价」效应：散户看到陈小群买入就跟风</strong> → 利用跟风盘推高股价 → 高位出货</p>
+</div>
+
+<div class="warn">
+  <div class="wt">⚠️ 2026年1月「塌房」事件</div>
+  <p>1月16日商业航天板块集体跌停。陈小群席位单日：金风科技净卖出<strong>5.93亿</strong>、华胜天成净卖出<strong>5.13亿</strong>、鲁信创投净卖出<strong>2.10亿</strong>。海格通信连吃三个一字跌停，自曝「手里还有15+在跌停板上」，被套约<strong>5亿元</strong>。此后关闭社交媒体，简介改为「有人的地方就有江湖。谣言止于智者，休息了。」</p>
+</div>
+
+<h3>对弈沐的实战意义</h3>
+<ul>
+  <li><strong>识别席位溢价</strong>：龙虎榜出现「大连黄河路」→ 核查是建仓期还是出货期 → 决定跟随还是规避</li>
+  <li><strong>警惕明暗席联动</strong>：大连黄河路（明）吸引跟风，重庆解放碑（暗）可能提前建仓高位兑现</li>
+  <li><strong>出货日不接盘</strong>：单日净卖出超2亿 + 个股放量滞涨 = 游资正在离场</li>
+</ul>
+
+<!-- ===== 四、经典战役 ===== -->
+<h2><span class="num">04</span>经典战役</h2>
+
+<table>
+  <tr><th>时间</th><th>标的</th><th>操作</th><th>结果</th></tr>
+  <tr><td>2022</td><td>浙江建投</td><td>两波主升浪全程参与</td><td><span class="tb tb-g">+50%</span></td></tr>
+  <tr><td>2022</td><td>中交地产</td><td>跌停板加仓8600万</td><td><span class="tb tb-g">3天+40%</span></td></tr>
+  <tr><td>2024.11-12</td><td>永辉超市</td><td>两阶段重仓+大量做T</td><td>成交超20亿</td></tr>
+  <tr><td>2024.12</td><td>视觉中国</td><td>第一阶段亏损→第二阶段精准操作</td><td>整体盈利</td></tr>
+  <tr><td>2025.8</td><td>华胜天成</td><td>单日买入5.42亿，介入后翻倍</td><td>大赚</td></tr>
+  <tr><td>2025.11-12</td><td>航天发展</td><td>12天8板，累计买卖均约6.3亿</td><td>高调爆炒</td></tr>
+  <tr><td>2025.12</td><td>通宇通讯</td><td>2.2亿打板+9000万加仓</td><td>—</td></tr>
+  <tr><td>2026.1</td><td>金风科技</td><td>单日净卖出5.93亿</td><td><span class="tb tb-r">引发崩盘</span></td></tr>
+</table>
+
+<!-- ===== 五、核心语录 ===== -->
+<h2><span class="num">05</span>核心语录精选</h2>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">1</span><span class="tt">关于主线与龙头</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「你做不起来的原因，就是不去做主线，却幻想新主线出现。」</div>
+    <div class="qt">「只做主线，只做龙头。杂毛板块一旦退潮就是核按钮伺候。」</div>
+    <div class="qt">「涨出来的逻辑才是真逻辑，没涨的逻辑都是自嗨。」</div>
+    <div class="qt">「龙头股的三重价值：流动性溢价、情绪标杆、认知提升加速器。」</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">2</span><span class="tt">关于纪律与风控</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「做大的纪律都特别强，做错了就得割。」</div>
+    <div class="qt">「治愈上头的唯一办法是亏钱，痛到不敢再犯。」</div>
+    <div class="qt">「腰斩是极限，杠杆会让你爆仓归零。」</div>
+    <div class="qt">「不要指望卖在最高点，没有人是神仙。」</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">3</span><span class="tt">关于市场认知</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「不要预判，要跟随。市场永远是对的。」</div>
+    <div class="qt">「如果你硬想一个问题想不明白，那就退出股市。」</div>
+    <div class="qt">「跌10%就怪庄家砸盘——其实他们可能是被动止损，根本没参与。」</div>
+    <div class="qt">「买一到买五那些数据是AI模拟的，别被误导。」</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">4</span><span class="tt">关于成长与盘感</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「盘感是盯出来的，盯几年盘自然有感觉。」</div>
+    <div class="qt">「模式杂是大忌，1-2年锁定适合自己的模式才能突破。」</div>
+    <div class="qt">「在龙头身上多赚几次钱，认知自然提高。」</div>
+    <div class="qt">「不要追求月收益三倍五倍，能稳定盈利才是真悟道。」</div>
+  </div>
+</div>
+
+<!-- ===== 六、重仓股附录 ===== -->
+<h2><span class="num">06</span>重仓股数据附录</h2>
+
+<h3>2024.9-2025.12 重仓股TOP5</h3>
+<table>
+  <tr><th>标的</th><th>累计成交</th><th>方向</th><th>操作特点</th></tr>
+  <tr><td>华胜天成</td><td><strong>22.13亿</strong></td><td>算力/AI</td><td>单日买入5.42亿，介入后翻倍</td></tr>
+  <tr><td>航天发展</td><td><strong>20.63亿</strong></td><td>商业航天</td><td>12天8板，买卖均约6.3亿</td></tr>
+  <tr><td>永辉超市</td><td>10.48亿</td><td>消费</td><td>两阶段重仓+大量做T</td></tr>
+  <tr><td>视觉中国</td><td>8.54亿</td><td>AI</td><td>两阶段博弈，整体盈利</td></tr>
+  <tr><td>中国卫通</td><td>8.47亿</td><td>卫星通信</td><td>高位接力</td></tr>
+</table>
+
+<h3>操作风格画像</h3>
+<table>
+  <tr><th>维度</th><th>特征</th></tr>
+  <tr><td>选股偏好</td><td>AI算力/商业航天/卫星通信/消费等热门题材，市值50-300亿龙头</td></tr>
+  <tr><td>持仓周期</td><td>70%+为1-2天隔日交易；题材发酵时3-7天波段</td></tr>
+  <tr><td>风控纪律</td><td>单票≤15%总资金；亏损超4-5%强制止损；退潮期空仓</td></tr>
+  <tr><td>操作模式</td><td>分歧介入、一致离场；敢于高位重仓；频繁做T</td></tr>
+  <tr><td>资金特征</td><td>单票0.5-3亿，偏爱高位接力/主封</td></tr>
+</table>
+
+<!-- ===== 七、研究结论 ===== -->
+<h2><span class="num">07</span>研究结论：什么值得内化</h2>
+
+<p>陈小群不是一个可以模仿的对象——他的路径（30万→65亿）有极强的时代特殊性（短视频流量红利 + 龙虎榜标签化 + 散户跟风文化）。但他体系中的<strong>三样东西值得每个交易者内化</strong>：</p>
+
+<div class="sbx">
+  <div class="tt">① 主线思维</div>
+  <p style="margin:0">只做市场选出来的方向，不做自己觉得「应该涨」的方向。主线的确认需要持续的资金合力支撑——单日巨额流入都无法推动板块走强，后续反包需要成倍资金。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">② 纪律至上</div>
+  <p style="margin:0">错了就砍，不留幻想。纪律不是为了完美，是为了活下来。止损的本质是控制风险敞口，而非追求「卖在最低点」。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">③ 龙头信仰</div>
+  <p style="margin:0">在主线里做最强的那个，不贪便宜买杂毛。「为什么老做杂毛？因为主线赚钱太慢，想赚快钱。」——用龙头股的超额收益替代杂毛的赌博式交易。</p>
+</div>
+
+<div class="sbx" style="border-color:var(--clay)">
+  <div class="tt">对弈沐的实战意义</div>
+  <ul style="margin:0">
+    <li>龙虎榜出现「大连黄河路」→ 核查建仓期/出货期 → 决定跟随或规避</li>
+    <li>陈小群重仓方向 → 可能是短期主线信号，但警惕随时出货</li>
+    <li>最核心的对手行为模式：<strong>利用散户「跟着大佬买」心理反向收割</strong></li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:var(--g500);font-size:12px;margin-top:40px">弈沐资本 · 游资对手研究系列 · 2026年5月</p>
+
+</div>
+</body>
+</html>
