@@ -979,8 +979,16 @@ def update_review_notes_index(date_str, fm):
     pattern = r'(<div class="month-label[^>]*>.*?2026年5月.*?</div>\s*<div class="day-list">\s*)'
     content = re.sub(pattern, r'\1' + new_entry, content, count=1)
 
-    # Update count
+    # Update month count
     content = re.sub(r'(2026年5月.*?<span class="cnt">)(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+
+    # Update hero stats: total count
+    content = re.sub(r'(全部记录 · )(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+    content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+    # Update date range
+    month = date_str[5:7].lstrip('0')
+    day = date_str[8:10].lstrip('0')
+    content = re.sub(r'(– )\d+/\d+', f'\\1{month}/{day}', content)
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)
