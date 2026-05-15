@@ -289,15 +289,86 @@ def html_subheading(text, id_=None):
 
 
 def md_text_to_html(text):
-    """Basic markdown-to-HTML inline conversion."""
+    """Convert markdown text block to HTML, preserving paragraphs/lists/quotes."""
     if not text:
         return ""
-    # bold
-    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
-    # inline code
-    text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
-    # emoji pass-through
-    return text
+    lines = text.strip().split('\n')
+    out = []
+    i = 0
+    in_list = False
+    in_quote = False
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        # Blockquote
+        if line.startswith('>'):
+            if not in_quote:
+                out.append('<div class="si">')
+                in_quote = True
+            content = line.lstrip('> ').strip()
+            content = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', content)
+            out.append(f'{content}<br>')
+            i += 1
+            continue
+        elif in_quote:
+            out.append('</div>')
+            in_quote = False
+
+        # Horizontal rule
+        if line == '---':
+            out.append('<hr class="divider">')
+            i += 1
+            continue
+
+        # Empty line
+        if not line:
+            if in_list:
+                out.append('</div>')
+                in_list = False
+            i += 1
+            continue
+
+        # Numbered list item
+        m = re.match(r'^(\d+)\.\s+(.+)', line)
+        if m:
+            if not in_list:
+                out.append('<ol class="tight-list">')
+                in_list = True
+            item = m.group(2)
+            item = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', item)
+            out.append(f'<li>{item}</li>')
+            i += 1
+            continue
+
+        # Heading
+        m = re.match(r'^#{2,5}\s+(.+)', line)
+        if m:
+            if in_list:
+                out.append('</ol>')
+                in_list = False
+            level = len(line) - len(line.lstrip('#'))
+            cls = 'sh2' if level <= 3 else 'sh3'
+            h_text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', m.group(1))
+            out.append(f'<div class="{cls}">{h_text}</div>')
+            i += 1
+            continue
+
+        # Regular paragraph line
+        if in_list:
+            out.append('</ol>')
+            in_list = False
+        para = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', line)
+        para = re.sub(r'`([^`]+)`', r'<code>\1</code>', para)
+        out.append(f'<div class="para">{para}</div>')
+        i += 1
+
+    if in_list:
+        out.append('</ol>')
+    if in_quote:
+        out.append('</div>')
+
+    return '\n'.join(out)
 
 
 # ── Section parsers ──
@@ -305,22 +376,18 @@ def md_text_to_html(text):
 def parse_s0(text):
     """Parse §〇 昨日预案."""
     html = html_section_header("s0", "第〇部分 · 昨日预案", "昨日终审定稿")
-    # Extract key info
-    parts = []
-    for line in text.split('\n'):
-        line = line.strip()
-        if not line or line.startswith('#'):
-            continue
-        if line.startswith('>'):
-            parts.append(f'<div class="si">{md_text_to_html(line.lstrip("> "))}</div>')
-    html += '\n'.join(parts)
-    # Extract tables
+
+    # Render all text content with markdown formatting
+    # First, render the blockquote metadata
+    html += md_text_to_html(text)
+
+    # Then render all tables
     tables = extract_tables(text)
     for t in tables:
-        headers, rows = parse_md_table(t)
-        if headers:
-            html += html_subheading("📋 " + (rows[0].get('标的','') and '持仓处理' or ''))
-            html += html_table(headers, rows, cell_color)
+        hdr, rows = parse_md_table(t)
+        if hdr and rows:
+            html += html_table(hdr, rows, cell_color)
+
     html += html_section_footer()
     return html
 
@@ -582,10 +649,17 @@ def parse_s3(text):
 
 def parse_s4(text):
     """Parse §四 红方对抗."""
-    # Try to summarize if content is too complex for auto-parsing
     total_rounds = len(re.findall(r'### Round [123]', text))
-
     html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
+
+    # Split entire text into rounds by ### Round boundaries
+    round_splits = re.split(r'^### (Round [123])[：:].*$', text, flags=re.MULTILINE)
+    # round_splits: [pre, 'Round 1', r1_body, 'Round 2', r2_body, 'Round 3', r3_body]
+    round_bodies = {}
+    for i in range(1, len(round_splits), 2):
+        round_id = round_splits[i].strip()
+        round_body = round_splits[i+1] if i+1 < len(round_splits) else ""
+        round_bodies[round_id] = round_body.strip()
 
     for round_id, round_label, round_anchor in [
         ("Round 1", "🔴 Round 1：洋米红方质疑", "s4a"),
@@ -593,65 +667,23 @@ def parse_s4(text):
         ("Round 3", "🟢 Round 3：洋米终审", "s4c"),
     ]:
         html += html_subheading(round_label, round_anchor)
-        round_text = extract_between(text, f'### {round_id}', '### ' if round_id != 'Round 3' else None)
-        if not round_text:
-            # Try matching with Chinese colon variants
-            round_text = extract_between(text, f'### {round_id}：', '### ')
+        round_text = round_bodies.get(round_id, "")
         if not round_text:
             continue
 
-        # ── Round 1 specific: warn-box + 五维 + 三问 + 写法校验 ──
+        # ── Round 1: full narrative + tables ──
         if round_id == "Round 1":
-            # Warn box (口径差异)
-            warn_text = extract_between(round_text, '#### ⚠️', '#### ')
-            if not warn_text:
-                warn_text = extract_between(round_text, '⚠️', '#### ')
-            if warn_text:
-                warn_title = warn_text.strip().split('\n')[0][:80]
-                warn_body = warn_text.strip()
-                # Try to extract the table from warn box
-                warn_tables = extract_tables(warn_text)
-                html += '<div class="warn-box"><div class="wtitle">⚠️ 数据口径差异警告</div>'
-                if warn_tables:
-                    hdr, rows = parse_md_table(warn_tables[0])
-                    if hdr:
-                        html += html_table(hdr, rows, cell_color)
-                # Conclusion text after table
-                concl_marker = '**结论**'
-                if concl_marker in warn_text:
-                    html += f'<div class="si" style="margin-top:8px">{md_text_to_html(warn_text.split(concl_marker)[-1])}</div>'
-                html += '</div>'
+            # Render everything: first pass md→html, then overlay tables
+            html += md_text_to_html(round_text)
+            # Add tables that md_text_to_html missed (it doesn't handle tables)
+            for t in extract_tables(round_text):
+                hdr, rows = parse_md_table(t)
+                if hdr and rows:
+                    html += html_table(hdr, rows, cell_color)
 
-            # 五维清单 — look for ##### numbered items
-            for dim_num, dim_name in [('1', '定性校准'), ('2', '操作漏判'), ('3', '规则执行'), ('4', '反向情景'), ('5', '盲区扫描')]:
-                dim_text = extract_between(round_text, f'##### {dim_num}. {dim_name}', '##### ')
-                if not dim_text:
-                    dim_text = extract_between(round_text, f'{dim_num}. {dim_name}', '##### ')
-                if dim_text:
-                    # Try to find tables in this dimension
-                    dim_tables = extract_tables(dim_text)
-                    if dim_tables:
-                        for t in dim_tables:
-                            hdr, rows = parse_md_table(t)
-                            if hdr:
-                                html += html_subheading(f"📋 {dim_name}")
-                                html += html_table(hdr, rows, cell_color)
-
-            # 三问 section
-            for q_id, q_name in [('Q1', '遗漏标的'), ('Q2', '排除有误'), ('Q3', '忽略板块')]:
-                q_text = extract_between(round_text, f'##### {q_id} {q_name}', '##### ')
-                if q_text:
-                    q_tables = extract_tables(q_text)
-                    if q_tables:
-                        html += html_subheading(f"🔥 {q_id}：{q_name}")
-                        for t in q_tables:
-                            hdr, rows = parse_md_table(t)
-                            if hdr:
-                                html += html_table(hdr, rows, cell_color)
-
-        # ── Round 2 specific: debate rows ──
+        # ── Round 2: response table + summary ──
         elif round_id == "Round 2":
-            # Main response table
+            html += md_text_to_html(round_text)
             r2_tables = extract_tables(round_text)
             if r2_tables:
                 hdr, rows = parse_md_table(r2_tables[0])
@@ -659,39 +691,21 @@ def parse_s4(text):
                     html += html_subheading("逐条回应")
                     html += html_table(hdr, rows, cell_color)
 
-            # Summary (修正总览 / 终审待定)
-            for key in ['**修正总览**', '**终审待定事项**']:
-                summary = extract_between(round_text, key, '\n\n')
-                if summary:
-                    html += f'<div class="sbx">{md_text_to_html(key.strip("*") + "：" + summary.strip())}</div>'
-
-            # Debate categories: 采纳 / 部分采纳 / 反驳
-            for cat, cls in [('采纳', 'accept'), ('部分采纳', 'partial'), ('反驳', '')]:
-                cat_text = extract_between(round_text, f'☑ {cat}', '\n')
-                if not cat_text:
-                    # Try multiline
-                    cat_items = re.findall(rf'(☑\s*{cat}[^\n]*)', round_text)
-                    if cat_items:
-                        cat_text = '；'.join(cat_items)
-                if cat_text:
-                    cat_cls = f' {cls}' if cls else ''
-                    html += f'<div class="debate-row"><div class="dr-label">{cat}</div><div class="dr-body{cat_cls}">{md_text_to_html(cat_text)}</div></div>'
-
-        # ── Round 3 specific: verdict box ──
+        # ── Round 3: verdict + table ──
         elif round_id == "Round 3":
-            # Final verdict
-            verdict_text = extract_between(round_text, '**终审定论**', '**')
-            if not verdict_text:
-                verdict_text = extract_between(round_text, '**终审定论**', '---')
-            if verdict_text:
-                html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text.strip())}</div></div>'
-
-            # Confirmation table
-            r3_tables = extract_tables(round_text)
-            if r3_tables:
-                hdr, rows = parse_md_table(r3_tables[0])
-                if hdr:
-                    html += html_subheading("逐条确认")
+            html += md_text_to_html(round_text)
+            # Verdict box
+            for vt_key in ['**终审定论**', '**终稿定论**']:
+                verdict_text = extract_between(round_text, vt_key, '---')
+                if not verdict_text:
+                    verdict_text = extract_between(round_text, vt_key, '\n\n')
+                if verdict_text:
+                    html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text.strip())}</div></div>'
+                    break
+            # Tables
+            for t in extract_tables(round_text):
+                hdr, rows = parse_md_table(t)
+                if hdr and rows:
                     html += html_table(hdr, rows, cell_color)
 
     html += html_section_footer()
