@@ -45,3 +45,20 @@ git push
 - portal 项目: `~/Documents/YM_Capital/portal/`
 - html-effectiveness skill: `~/.claude/skills/html-effectiveness/`
 - insights 源: `~/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/insights/`
+
+## 设计规范（DESIGN.md 精简）
+
+本项目遵循「暖砚」设计系统，完整规范见根目录 `DESIGN.md`。
+
+**CSS 关键规则**：
+- 标题用 `Noto Serif SC` 衬线字体，正文用 `system-ui` 无衬线
+- 卡片圆角 12px，容器最大宽度 960px，居中
+- 背景 `#F7F5F3`，卡片白色 `#FFFFFF`，边框 `#E5E2DE`
+- 品牌色调 `#D97706`（琥珀），链接色 `#D97706`，悬浮 `#B45309`
+- 正文 15px，行高 1.6，不缩字体
+- 不使用数据表格样式（portal 不是 dashboard）
+
+**生成新页面时**：
+1. 阅读型内容 → Portal 样式集（衬线标题、宽松间距、12px 圆角）
+2. 混合型 → Portal 骨架 + 数据组件样式
+3. 不被 dashboard 的等宽字体和紧凑间距影响
