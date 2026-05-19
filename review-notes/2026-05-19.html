@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-05-19 周二 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:11px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg);border-bottom-color:transparent}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sc .nm{font-size:15px;font-weight:600;margin-bottom:4px}
+.sc .nm .tg{font-size:11px;font-weight:400;margin-left:6px;color:var(--text3)}
+.sc .st{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
+.sc .st span{display:flex;align-items:center;gap:3px}
+.sc .nt{font-size:12px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);line-height:1.5}
+
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+
+[id]{scroll-margin-top:70px}
+.scnt{font-size:11px;font-weight:400;color:var(--text3)}
+hr.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+.cb{margin-bottom:14px}
+.ct{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:700;user-select:none}
+.ct:hover{border-color:var(--accent);background:var(--border)}
+.ct .ar{transition:transform .15s;color:var(--text3);font-size:13px}
+.ct.collapsed .ar{transform:rotate(-90deg)}
+.cc{border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px;padding:18px;display:none}
+.cc.show{display:block}
+
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+
+.debate-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
+.debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title">2026-05-19 周二 复盘笔记</div>
+  <div class="meta">
+    <span class="chip amber">情绪 65% 强势</span>
+    <span class="chip red">上证 4169.54 +0.92%</span>
+    <span class="chip blue">122涨停 / 26跌停</span>
+    <span class="chip purple">持仓 雷赛智能 ~26%</span>
+    <span class="chip green">终稿 (红蓝对抗完成 ✅)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">涨停结构</a>
+  <a href="#s1d" class="s2">自选池表现</a>
+  <a href="#s1e" class="s2">持仓与交易</a>
+  <a href="#s1f" class="s2">账户风控</a>
+  <a href="#s1g" class="s2">风格检测</a>
+  <a href="#s1h" class="s2">窗口操作</a>
+  <a href="#s1i" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s3c" class="s2">操作窗口</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+  <a href="#sd">数据附录</a>
+</div>
+
+<div class="content">
+
+<!-- ====== 第〇部分 ====== -->
+<div class="section" id="s0">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 第〇部分 · 昨日预案（5/18 终审定稿）<span class="cnt">连板行情置信40% / 仓位上限60% / B路径存储超预期</span>
+</div>
+<div class="sb">
+<div class="si">
+  <strong>昨日风格</strong>：连板行情（置信40%），连板56%/趋势44%<br>
+  <strong>仓位</strong>：总仓位上限60%（当前~25%）<br>
+  <strong>总基调</strong>：缩量修复日，新主线（存储芯片）首板潮启动。领益持有管理，连板硬卡兜底空仓。设B路径防踏空存储芯片最佳上车窗口。
+</div>
+<div class="sh3">📋 持仓处理</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead>
+<tbody>
+<tr><td>领益智造</td><td>16.82</td><td>3000股(~25%)</td><td>15.98(-5%)/放量破16.50→减仓</td><td>持有。关注消费电子方向强度。低开>2%或30分钟走弱→减半仓</td></tr>
+</tbody></table></div>
+<div class="sh3">🎯 连板板块→操作映射</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>温度标</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td>存储芯片🔥</td><td>柏诚2板/合肥城建/深科技/德明利</td><td>B路径：深科技/万润科技/大普微中最强</td><td>W1后段</td><td>B路径：2板≥5只+柏诚3板+情绪≥50%→轻仓10%追</td></tr>
+<tr><td>机器人🔄</td><td>北自3板/雷赛/达实2板/震裕</td><td>雷赛W1候选</td><td>W1观察</td><td>情绪≥60%+涨停收益>2%才考虑</td></tr>
+</tbody></table></div>
+</div>
+</div>
+
+<!-- ====== §一 当日复盘 ====== -->
+<div class="section" id="s1">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §一 · 当日复盘<span class="cnt">强修复日🔥 情绪35%→65%(+30pp)，机器人主线确认</span>
+</div>
+<div class="sb">
+
+<!-- 大盘全景 -->
+<div class="sh3" id="s1a">📊 表1：大盘全景</div>
+<div class="tw"><table>
+<thead><tr><th>节点</th><th>情绪</th><th>上证(%)</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>关键异动</th></tr></thead>
+<tbody>
+<tr><td>竞价</td><td>35%❄️</td><td class="down">-0.21%(4122)</td><td>—</td><td>—</td><td>1852/2463</td><td>冰点附近，上证低开。领益+2.40%红开✅，存储方向柏诚平开❌</td></tr>
+<tr><td>午盘</td><td>44%</td><td class="up">+0.02%(4132)</td><td>78/26</td><td>2万亿(-6%)</td><td>2175/2848</td><td>情绪修复至44%，机器人北自4板带队🔥</td></tr>
+<tr><td>收盘</td><td><span class="up">65%🔥</span></td><td class="up">+0.92%(4169)</td><td>122/26</td><td>3万亿(0%)</td><td>3347/1711</td><td>强修复！涨停收益3.22%✅，炸板率11.76%🔥，机器人+电力双主线</td></tr>
+</tbody></table></div>
+
+<!-- 情绪高标 -->
+<div class="sh3" id="s1b">📈 表2：情绪高标（窗口核心指标）</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>竞价</th><th>午盘</th><th>收盘</th><th>门槛</th></tr></thead>
+<tbody>
+<tr><td>涨停收益</td><td>1.77%❌</td><td>2.48%⚠️</td><td class="up">3.22%✅</td><td>>2%(低迷)/>3%(正常)</td></tr>
+<tr><td>连板收益</td><td>—</td><td>4.95%</td><td class="up">5.46%✅</td><td>—</td></tr>
+<tr><td>炸板收益</td><td>—</td><td>-0.13%⚠️</td><td class="up">0.91%✅</td><td>—</td></tr>
+<tr><td>封板率</td><td>—</td><td>—</td><td class="up">88.24%🔥</td><td>—</td></tr>
+<tr><td>炸板率</td><td>—</td><td>—</td><td class="down">11.76%🔥</td><td><30%(W1)/<40%(W2)</td></tr>
+<tr><td>赚钱效应</td><td>差❌</td><td>一般⚠️</td><td>一般⚠️</td><td>好(>3%+>40%)/差(<2%+<20%)</td></tr>
+<tr><td>最高板/次高板</td><td>5板/3板</td><td>7板/5板</td><td>7板/5板</td><td>—</td></tr>
+<tr><td>梯队</td><td>—</td><td>7-5-3-2</td><td>完整(7-5-4-3-2)🔥</td><td>—</td></tr>
+<tr><td><strong>竞价验证结论</strong></td><td colspan="3"><span class="badge badge-red">A差+B差 → 只卖不买</span></td><td></td></tr>
+</tbody></table></div>
+
+<!-- 涨停结构 -->
+<div class="sh3" id="s1c">🏗️ 涨停结构</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>涨停数</th><th>连板梯队</th><th>核心</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>机器人/物理AI 🔥</td><td><strong>13</strong></td><td>4-3-首×11</td><td>北自科技4板/达实智能3板</td><td>**当日主线确认🔥** 北自4板+达实3板+11首板</td></tr>
+<tr><td>电力/算电协同 🔥</td><td><strong>13</strong></td><td>2-首×12</td><td>辽宁能源2板/正泰电源等</td><td>**新方向🔥** 国家能源局推动算电协同，+71.72亿主力</td></tr>
+<tr><td>半导体产业链 🟡</td><td>12</td><td>全首板</td><td>尚纬股份/亚厦股份/灿勤科技</td><td>长鑫IPO催化延续，+205.60亿主力🔥</td></tr>
+<tr><td>算力租赁 🟡</td><td>9</td><td>2-首×8</td><td>嘉环/川润/弘信2板</td><td>Token工厂催化，3只2板晋级</td></tr>
+<tr><td>公告/并购重组</td><td>6</td><td>7-5-3-2-首</td><td>利仁7板/威龙5板/金海3板</td><td>独立题材非主线</td></tr>
+<tr><td>存储芯片 🟡</td><td>5</td><td>2-首×4</td><td>合百集团2板/合肥城建2板(反包)</td><td>分化，柏诚3板失败</td></tr>
+<tr><td>光通信 🆕</td><td>5</td><td>全首板</td><td>光迅科技/剑桥科技</td><td>光纤价格暴涨催化</td></tr>
+<tr><td>AI硬件 🟡</td><td>5</td><td>2-首×3</td><td>宝鼎科技2板/海星股份2板</td><td>AI产业景气度</td></tr>
+</tbody></table></div>
+
+<!-- 连板股 -->
+<div class="sh3">🔗 连板股</div>
+<div class="tw"><table>
+<thead><tr><th>股票</th><th>连板</th><th>方向</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>利仁科技</td><td><strong>7板</strong></td><td>公告</td><td>股份转让，独立题材最高板</td></tr>
+<tr><td>威龙股份</td><td><strong>5板</strong></td><td>公告</td><td>淄博国资入主，一字板</td></tr>
+<tr><td>北自科技</td><td><strong>4板</strong></td><td>机器人</td><td>09:30封板！机器人龙头🔥 换手12.73%</td></tr>
+<tr><td>达实智能</td><td><strong>3板</strong></td><td>机器人/液冷</td><td>09:25一字封板🔥</td></tr>
+<tr><td>金海高科</td><td><strong>3板</strong></td><td>公告</td><td>控制权变更</td></tr>
+<tr><td>辽宁能源</td><td>2板</td><td>电力/算电协同</td><td>10:05封板</td></tr>
+<tr><td>嘉环科技</td><td>2板</td><td>算力</td><td>09:37封板</td></tr>
+<tr><td>川润股份</td><td>2板</td><td>算力/液冷</td><td>09:37封板</td></tr>
+<tr><td>弘信电子</td><td>2板</td><td>算力/Token工厂</td><td>09:37封板</td></tr>
+<tr><td>宝鼎科技</td><td>2板</td><td>AI硬件/PCB</td><td>09:35封板</td></tr>
+<tr><td>合百集团</td><td>2板</td><td>存储芯片</td><td>09:25一字封板</td></tr>
+<tr><td>合肥城建</td><td>2板</td><td>存储芯片</td><td>13:59反包封板🔥</td></tr>
+</tbody></table></div>
+
+<!-- 自选池表现 -->
+<div class="sh3" id="s1d">🎯 当日自选池表现</div>
+
+<div class="sh3" style="font-size:14px">机器⼈/物理AI（当日主线🔥）</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>午盘%</th><th>收盘%</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>北自科技</td><td>情绪标</td><td class="up">+9.99%🔒</td><td class="up">+9.99%✅</td><td class="up"><strong>+9.99%✅</strong></td><td>12.73%</td><td class="up">+7963万</td><td>4板封板！机器人龙头🔥</td></tr>
+<tr><td>达实智能</td><td>观察</td><td class="up">+9.92%🔒</td><td class="up">+9.92%✅</td><td class="up"><strong>+9.92%✅</strong></td><td>3.12%</td><td class="up">+7953万</td><td>3板封板！机器人跟风🔥</td></tr>
+<tr><td>雷赛智能</td><td>⭐持仓</td><td class="down">-0.14%</td><td class="up">+1.06%</td><td class="up"><strong>+2.00%✅</strong></td><td>16.18%</td><td class="up">+2823万</td><td><strong>W2买入@66.37，收盘66.39/+2%基本持平</strong></td></tr>
+<tr><td>震裕科技</td><td>趋势中军</td><td class="down">-0.96%</td><td class="down">-0.56%</td><td class="down"><strong>-0.82%</strong></td><td>4.06%</td><td class="up">+221万</td><td>小幅回调</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">存储芯片（候选主线分化）</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>午盘%</th><th>收盘%</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>合肥城建</td><td>情绪标</td><td class="up">+2.89%</td><td class="up">+9.37%🔥</td><td class="up"><strong>+9.98%✅</strong></td><td>23.64%</td><td class="down">-4.97亿⚠️</td><td>反包封板！但主力继续流出</td></tr>
+<tr><td>深科技</td><td>观察</td><td>0.00%</td><td class="up">+1.03%</td><td class="up"><strong>+1.73%</strong></td><td>19.15%</td><td class="down">-5.02亿</td><td>弱涨</td></tr>
+<tr><td>柏诚股份</td><td>情绪标</td><td>0.00%</td><td class="down">-4.19%❌</td><td class="down"><strong>-2.35%❌</strong></td><td>9.67%</td><td class="down">-2263万</td><td>3板失败，首板潮分化</td></tr>
+<tr><td>德明利</td><td>W2候选</td><td class="down">-3.13%</td><td class="down">-5.11%❌</td><td class="down"><strong>-4.88%❌</strong></td><td>9.33%</td><td>—</td><td>存储走弱</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">消费电子/半导体</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>午盘%</th><th>收盘%</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>已清仓</td><td class="down">-1.33%</td><td class="up">+2.60%</td><td class="up"><strong>+3.63%</strong></td><td>2.00%</td><td class="up">+2922万</td><td>反弹，已清仓不追</td></tr>
+<tr><td>蓝思科技</td><td>观察</td><td class="down">-1.81%</td><td class="up">+0.26%</td><td class="down"><strong>-1.91%</strong></td><td>4.83%</td><td class="down">-4.63亿</td><td>走弱</td></tr>
+<tr><td><strong>领益智造</strong></td><td>⭐已清仓</td><td class="up">+2.40%</td><td class="down">-1.52%❌</td><td class="down"><strong>-0.82%</strong></td><td>4.36%</td><td class="down">-2.22亿</td><td><strong>清仓@16.69✅ 收盘-0.82%，卖对了</strong></td></tr>
+</tbody></table></div>
+
+<!-- 持仓与交易 -->
+<div class="sh3" id="s1e">💰 持仓与交易</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="lbl">总仓位</div><div class="val amber">~26%</div></div>
+<div class="stat-card"><div class="lbl">雷赛智能</div><div class="val green">+0.03%</div><div class="lbl">800股@66.37</div></div>
+<div class="stat-card"><div class="lbl">领益清仓</div><div class="val green">-0.77%</div><div class="lbl">@16.69 ≈ -390元</div></div>
+<div class="stat-card"><div class="lbl">当日盈亏</div><div class="val green">≈-390元</div></div>
+</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>消费电子/机器人</td><td>📤清仓</td><td>领益智造</td><td>3000股(已清)</td><td class="down">-0.77%(-390元)</td><td>竞价+2.40%红开后走弱，弈沐盘感清仓@16.69</td></tr>
+<tr><td>机器人</td><td>📥买入</td><td>雷赛智能</td><td>800股(~26%)</td><td>—</td><td>W2低吸，机器人方向龙头强势(北自4板+达实3板)</td></tr>
+</tbody></table></div>
+
+<!-- 账户风控 -->
+<div class="sh3" id="s1f">🛡️ 账户风控（当日）</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="lbl">当日盈亏</div><div class="val green">≈-390元</div><div class="lbl">阈值 -3%熔断</div></div>
+<div class="stat-card"><div class="lbl">周累计回撤</div><div class="val green">盈利中</div><div class="lbl">6%预警</div></div>
+<div class="stat-card"><div class="lbl">连亏天数</div><div class="val green">0天</div><div class="lbl">≥2天空仓</div></div>
+</div>
+
+<!-- 风格检测 -->
+<div class="sh3" id="s1g">📐 风格检测结果</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>分数</th><th>明细</th></tr></thead>
+<tbody>
+<tr><td>维度一：量能</td><td><strong>10/25</strong></td><td>成交额3万亿，量比持平</td></tr>
+<tr><td>维度二：连板生态</td><td><strong>27/35</strong></td><td>最高板7板+涨停收益3.22%✅+炸板收益0.91%✅+封板率88.2%🔥</td></tr>
+<tr><td>维度三：趋势赚钱效应</td><td><strong>13/25</strong></td><td>沪深300待确认，趋势板块待确认</td></tr>
+<tr><td>维度四：情绪广度</td><td><strong>10/15</strong></td><td>情绪65%强势区间，赚钱效应一般</td></tr>
+<tr style="font-weight:700"><td>总分</td><td colspan="2">连板行情(置信40%) — 连板57% / 趋势43% / 总仓位上限60%</td></tr>
+</tbody></table></div>
+
+<!-- 窗口操作 -->
+<div class="sh3" id="s1h">🪟 窗口操作记录</div>
+<div class="tw"><table>
+<thead><tr><th></th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead>
+<tbody>
+<tr><td><strong>窗口1</strong></td><td>A路径=仅观察；B路径=存储超预期→W1追</td><td>情绪35%低迷，A差+B差，B路径不触发。机器人北自4板+达实3板封板</td><td>W1不开仓，空仓观望</td><td>✅ 正确</td></tr>
+<tr><td><strong>窗口2</strong></td><td>极轻仓观察，等方向确认</td><td>情绪修复至65%，涨停收益3.22%✅。机器人方向确认</td><td><strong>W2买入雷赛@66.37</strong>（收盘+2.00%）</td><td>✅ 方向正确</td></tr>
+</tbody></table></div>
+
+<!-- 结论 -->
+<div class="sh3" id="s1i">💡 一句话结论</div>
+<div class="sbx green">强修复日🔥 情绪35%→65%(+30pp)，涨停收益3.22%✅站上3%。机器人主线确认(北自4板+达实3板)，算电协同新方向(13涨停)。领益清仓✅(-0.77%)，W2买入雷赛@66.37(持平)。炸板率仅11.76%🔥封板质量极致，涨停量能+31%短线资金积极回流。当前持仓：雷赛智能800股(~26%)。</div>
+
+<div class="sh3">🎭 预期差与盘面定性</div>
+<div class="para"><strong>盘前基准</strong>：平开偏弱（外围涨跌不一+昨日缩量修复）</div>
+<div class="para"><strong>实际竞价</strong>：上证-0.21% → 符合预期（平开偏弱）</div>
+<div class="para"><strong>实际收盘</strong>：上证+0.92% → <span class="badge badge-green">超预期（全天强修复）</span></div>
+<div class="para"><strong>盘面定性</strong>：强修复日。情绪35%→65%（+30pp），涨停收益1.77%→3.22%。机器人主线确认，电力算电协同新方向启动。W1空仓✅，W2雷赛低吸时机合理。</div>
+<div class="si"><strong>关键变量</strong>：情绪35%→65%修复+30pp🔥 · 涨停收益3.22%站上3%✅ · 涨停量能+31%🔥 · 炸板率仅11.76%🔥 · 梯队完整7-5-4-3-2🔥 · 机器人13涨停成主线 · 电力算电协同13涨停新方向 · 领益清仓@16.69✅ · 雷赛W2买入@66.37</div>
+
+</div>
+</div>
+
+<!-- ====== §二 心得与教训 ====== -->
+<div class="section" id="s2">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §二 · 心得与教训<span class="cnt">2条</span>
+</div>
+<div class="sb">
+<ol class="tight-list">
+<li><strong>[操作] 领益清仓</strong>：竞价+2.40%红开后走弱，弈沐盘感清仓@16.69(-0.77%)✅ 收盘-0.82%。卖对了。属于90/10分工中弈沐的10%盘感决策。</li>
+<li><strong>[操作] 雷赛W2低吸</strong>：情绪35%→65%强修复日，机器人主线确认(北自4板+达实3板)，W2低吸逻辑合理。收盘+2.00%基本持平，方向正确等待验证。</li>
+</ol>
+</div>
+</div>
+
+<!-- ====== §三 次日预案 ====== -->
+<div class="section" id="s3">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §三 · 次日预案终稿<span class="cnt">连板57%/趋势43% / 仓位上限60% / 雷赛持有管理</span>
+</div>
+<div class="sb">
+<div class="stats-grid">
+<div class="stat-card"><div class="lbl">风格</div><div class="val amber">连板40%</div></div>
+<div class="stat-card"><div class="lbl">资金分配</div><div class="val">连板57% / 趋势43%</div></div>
+<div class="stat-card"><div class="lbl">仓位上限</div><div class="val amber">60%</div></div>
+<div class="stat-card"><div class="lbl">当前仓位</div><div class="val green">~26%</div></div>
+</div>
+
+<div class="sbx warn"><strong>总基调</strong>：强修复日，机器人主线确认(北自4板+达实3板)。雷赛持有管理为主，明日关注机器人方向2板确认+电力方向持续性。W1设B路径防分歧。<br><strong>为什么</strong>：情绪35%→65%(+30pp🔥)，涨停收益1.77%→3.22%✅，炸板率仅11.76%🔥。涨停量能+31%短线资金积极回流。梯队完整(7-5-4-3-2)。<br><strong>基准预期</strong>：情绪65%强势区间，炸板率11.76%极致低点→明日大概率分歧，但65%未到80%高潮。预计震荡偏强。</div>
+
+<div class="sh3">🔮 明日连板判定</div>
+<div class="tw"><table>
+<thead><tr><th>板层</th><th>晋级率</th><th>阈值</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>一进二</td><td>14%</td><td>>15%</td><td class="down">❌ 排除</td></tr>
+<tr><td>二进三(今日)</td><td>40%</td><td>>25%</td><td class="up">✅</td></tr>
+<tr><td>二进三(近3日均值)</td><td>30.5%</td><td>>20%环境</td><td class="up">✅ 连板侧开放</td></tr>
+<tr><td>三进四+</td><td>100%</td><td>>35%</td><td class="up">✅</td></tr>
+<tr><td><strong>大环境</strong></td><td>30.5%</td><td>>20%开放</td><td class="up">✅ 开放</td></tr>
+<tr><td><strong>情绪</strong></td><td>65%</td><td>—</td><td>强势档→推荐2进3/3进4→<strong>两者均达标</strong></td></tr>
+</tbody></table></div>
+
+<!-- 连板自选池 -->
+<div class="sh3" id="s3a">🎯 连板自选池</div>
+
+<div class="sh3" style="font-size:14px">① 机器人 🔥🔥 主线（13涨停，北自4板+达实3板+11首板）</div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th></tr></thead>
+<tbody>
+<tr><td>🔴持仓</td><td>雷赛智能</td><td>002979</td><td>持有</td><td>持有管理，止损63.05(-5%)</td><td>W2低吸@66.37，收盘66.39/+2.00%浮盈持平</td></tr>
+<tr><td>🔴情绪标</td><td>北自科技(4板)</td><td>603082</td><td>只盯不买</td><td>5板晋级</td><td>机器人龙头，09:30封板+7963万🔥</td></tr>
+<tr><td>🔴情绪标</td><td>达实智能(3板)</td><td>002421</td><td>只盯不买</td><td>4板晋级</td><td>09:25一字封板+7953万🔥</td></tr>
+<tr><td>🟡W1候选</td><td>福莱新材(首板)</td><td>605488</td><td>W1竞价确认</td><td>2板晋级</td><td>人形机器人+柔性传感器，09:31封板</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">② 电力/算电协同 🔥（13涨停，辽宁能源2板）</div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th></tr></thead>
+<tbody>
+<tr><td>🟡观察</td><td>辽宁能源(2板)</td><td>600758</td><td>—</td><td>3板晋级</td><td>电力龙头，10:05封板</td></tr>
+<tr><td>🟡观察</td><td>大唐发电</td><td>601991</td><td>—</td><td>热度跟踪</td><td>热度#1，算电协同</td></tr>
+<tr><td>🟡观察</td><td>京能电力</td><td>600578</td><td>—</td><td>热度跟踪</td><td>热度#3，+7.26%🔥</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">③ 算力/光通信 🟡</div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th></tr></thead>
+<tbody>
+<tr><td>🟡候选</td><td>弘信电子(2板)</td><td>300657</td><td>W1候选</td><td>3板晋级</td><td>Token工厂+昇腾集群，09:37封板🔥</td></tr>
+<tr><td>🟡候选观察</td><td>光迅科技</td><td>002281</td><td>—</td><td>2板确认</td><td>光纤价格暴涨，成交140亿级🔥</td></tr>
+</tbody></table></div>
+
+<div class="si"><strong>移除</strong>：柏诚股份(3板失败)、德明利(-4.88%)、万润科技(-3.84%)、蓝思科技(-1.91%)<br>
+<strong>降级观察</strong>：存储芯片方向(分化确认，合肥城建反包但主力-4.97亿⚠️)</div>
+
+<!-- 趋势自选池 -->
+<div class="sh3" id="s3b">📈 趋势自选池</div>
+<div class="tw"><table>
+<thead><tr><th>层级</th><th>标的</th><th>代码</th><th>操作</th><th>止损</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>🟡观察</td><td>北方华创</td><td>002371</td><td>已清仓，等回踩MA5</td><td>—</td><td>+3.63%反弹，+2922万主力</td></tr>
+<tr><td>🟢观察</td><td>雅克科技</td><td>002409</td><td>等回踩5日线</td><td>—</td><td>+1.55%/+1.04亿主力🔥</td></tr>
+<tr><td>🟢观察</td><td>亨通光电</td><td>600487</td><td>光纤涨价观察</td><td>—</td><td>+5.11%/热度#6</td></tr>
+</tbody></table></div>
+
+<!-- 操作窗口 -->
+<div class="sh3" id="s3c">📋 操作指南</div>
+
+<div class="sh3" style="font-size:14px">连板窗口1（9:30-10:00）</div>
+<div class="si">环境强势65%，W1可开放（非周五）。</div>
+<div class="tw"><table>
+<thead><tr><th>条件</th><th>操作</th></tr></thead>
+<tbody>
+<tr><td><strong>A路径（默认）</strong></td><td>竞价情绪≥60%+北自高开>3%+涨停收益>2%→W1追福莱新材/弘信电子竞价确认</td></tr>
+<tr><td><strong>B路径</strong></td><td>竞价情绪<60%或北自不开高开>3%→W1不开仓，等W2分歧确认</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">趋势观察窗口（10:00-14:50）</div>
+<div class="si">
+<strong>10:00-14:00 观察</strong>：雷赛分时均线位置、机器人方向2板数、电力方向是否延续<br>
+<strong>14:00-14:50</strong>：雷赛回踩65企稳则持有；放量跌破63.05→止损<br>
+<strong>减仓条件</strong>：雷赛低开>2%或30分钟分时持续走弱且机器人跟风未跟上→减半仓(400股)
+</div>
+
+<div class="sh3">🚫 不碰</div>
+<div class="tight-list">
+<li>柏诚股份（3板失败-2.35%❌）</li>
+<li>德明利（-4.88%❌）</li>
+<li>万润科技（-3.84%❌）</li>
+<li>蓝思科技(-1.91%/-4.63亿)</li>
+<li>领益智造(已清仓✅)</li>
+<li>合肥城建(⚠️反包诱多，主力-4.97亿)</li>
+</div>
+
+<div class="sh3">⚠️ 风险</div>
+<div class="tight-list">
+<li>情绪65%强势区间，高潮次日必分歧</li>
+<li>炸板率11.76%低点→次日大概率回升，追涨需谨慎</li>
+<li>机器人11只首板潮→明日2板确认是关键（≥3只延续，≥5只确认主线）</li>
+<li>电力13涨停新方向→明日2板决真伪</li>
+<li>连板风险值0.58（高）→高位接力仍需谨慎</li>
+<li>雷赛W2低吸仅浮盈持平，若机器人方向弱化需及时止损</li>
+</div>
+
+</div>
+</div>
+
+<!-- ====== §四 红方对抗 ====== -->
+<div class="section" id="s4">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §四 · 红方对抗<span class="cnt">12质疑 → 11采纳 + 1部分采纳 = 0分歧</span>
+</div>
+<div class="sb">
+
+<!-- Round 1 -->
+<div class="sh3" id="s4a">🔴 Round 1：洋米红方质疑</div>
+
+<div class="warn-box"><div class="wtitle">⚠️ Q4 数据缺失标注</div>
+今日 iwencai OpenAPI 对批量查询返回 401。排除验证结论来自稳米初稿自报数据，非独立采集。Q4 相关质疑置信度降级。</div>
+
+<div class="sh3" style="font-size:14px">五维强制清单摘要</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>核心发现</th></tr></thead>
+<tbody>
+<tr><td>1.定性校准</td><td>同意"强修复日"判断。量化数据全部支持：情绪+30pp🔥、涨停收益3.22%✅、涨停量能+31%🔥、炸板率11.76%🔥、梯队完整</td></tr>
+<tr><td>2.操作漏判</td><td>雷赛W2买入方向正确，但预案缺少"雷赛弱于板块时的处置机制"（仅写了止损63.05）</td></tr>
+<tr><td>3.规则执行</td><td>无违规。建议：连板风险值0.58（高），明日预案应体现对持仓管理的影响</td></tr>
+<tr><td>4.反向情景</td><td>高潮次日分歧可能大于预期。建议B路径：竞价情绪<60%或北自不开一字→W1不开仓</td></tr>
+<tr><td>5.盲区扫描</td><td>光通信方向(光迅#2/亨通#6/华工#8)热度被低估；算力3只2板晋级；合肥城建反包但主力-4.97亿=诱多；电力热度极高</td></tr>
+</tbody></table></div>
+
+<div class="sh3" style="font-size:14px">🔥 自选池对抗</div>
+<div class="tw"><table>
+<thead><tr><th>问题</th><th>发现</th></tr></thead>
+<tbody>
+<tr><td>Q1 遗漏标的</td><td>光迅科技(光通信候选)、亨通光电(光纤涨价趋势)、大唐发电/京能电力(电力方向)</td></tr>
+<tr><td>Q2 排除有误</td><td>Q4数据为稳米自报（非独立），置信度降级。排除清单初步确认正确</td></tr>
+<tr><td>Q3 忽略板块</td><td>光通信(5涨停+光纤暴涨)需独立列为观察板块</td></tr>
+</tbody></table></div>
+
+<!-- Round 2 -->
+<div class="sh3" id="s4b">🔵 Round 2：蓝方回应（稳米）</div>
+<div class="si"><strong>修正总览</strong>：12条质疑中，11条采纳、1条部分采纳、0条反驳。</div>
+
+<div class="debate-row"><div class="dr-label">采纳 11条</div><div class="dr-body accept">定性校准无异议 · 雷赛弱于板块减仓机制 · 连板风险值高位影响补充 · W1设B路径 · 光通信独立观察板块 · 合肥城建降级警示 · 电力新增大唐/京能 · 光迅/亨通加入候选 · 算力升级候选 · 电力方向观察补充 · 排除确认正确</div></div>
+<div class="debate-row"><div class="dr-label">部分采纳 1条</div><div class="dr-body partial">算力方向从🟡观察升级为🟡候选（3只2板晋级确认强度），弘信电子升级W1候选</div></div>
+
+<!-- Round 3 -->
+<div class="sh3" id="s4c">🟢 Round 3：洋米终审</div>
+<div class="verdict">
+<div class="vt">终审定论：0分歧，全部达成共识</div>
+<div class="vb">
+<strong>11条采纳 ✅ · 1条部分采纳 ✅ · 0条反驳</strong><br><br>
+红蓝双⽅对"强修复日、机器⼈主线确认、高潮次⽇必分歧"的核心判断一致。<br><br>
+<strong>终稿状态</strong>：🔵 红蓝对抗完成，附录A即为周三盘前定稿。
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ====== 附录A ====== -->
+<div class="section" id="sa">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 附录A · 盘前速查<span class="cnt">周三开盘只看这里</span>
+</div>
+<div class="sb">
+
+<div class="sh3">📋 持仓处理</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead>
+<tbody>
+<tr><td>雷赛智能</td><td>66.37</td><td>800股(~26%)</td><td>63.05(-5%)</td><td>持有。关注机器人方向强度(北自5板竞价+达实4板竞价)。低开>2%或30分钟持续走弱且跟风未跟上→减半仓(400股)。机器人退潮(北自断板+达实断板)→全部止损。回踩65企稳则持有确认</td></tr>
+</tbody></table></div>
+
+<div class="sh3">🎯 连板板块→操作映射</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>温度标（只盯）</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td>机器人🔥</td><td>北自5板/达实4板/福莱新材</td><td>福莱新材W1竞价确认</td><td>W1</td><td>A路径：竞价情绪≥60%+北自>3%+涨停收益>2%→W1追福莱 B路径：条件不满足→不开仓等W2</td></tr>
+<tr><td>电力🔥</td><td>辽宁能源3板/大唐/京能</td><td>观察</td><td>—</td><td>只盯不买，等2板确认</td></tr>
+<tr><td>算力🟡</td><td>弘信电子3板(候选)</td><td>弘信W1候选</td><td>—</td><td>3只2板晋级，弘信升级W1候选</td></tr>
+<tr><td>光通信🆕</td><td>光迅科技(涨停+140亿)</td><td>候选观察</td><td>—</td><td>光纤价格暴涨，持续性待确认</td></tr>
+</tbody></table></div>
+
+<div class="sh3">📋 操作指南</div>
+<div class="si">
+<strong>总基调</strong>：强修复日，机器人主线确认。雷赛持有管理，W1设B路径防分歧。<br>
+<strong>连板窗口1</strong>：A路径=情绪≥60%+北自>3%→W1追福莱；B路径=不满足→不开仓等W2<br>
+<strong>连板窗口2</strong>：分歧回踩+机器人未退潮→极轻仓试错<br>
+<strong>趋势窗口</strong>：10:00-14:00观察雷赛+机器人方向，14:00-14:50确认持有/减仓<br>
+<strong>仓位</strong>：上限60%（当前~26%），新开仓上限10%<br>
+<strong>不碰</strong>：柏诚/德明利/万润/蓝思/领益；合肥城建(⚠️反包诱多)
+</div>
+
+</div>
+</div>
+
+<!-- ====== 数据附录 ====== -->
+<div class="section" id="sd">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 数据附录<span class="cnt">机器解析用</span>
+</div>
+<div class="sb">
+
+<div class="sh3">持仓明细</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th></tr></thead>
+<tbody>
+<tr><td>领益智造</td><td>002600</td><td>趋势</td><td>3000股(已清)</td><td>16.82</td><td>16.69(清)</td><td class="down">-0.77%</td><td>已清仓✅</td></tr>
+<tr><td>雷赛智能</td><td>002979</td><td>连板/趋势</td><td>800股</td><td>66.37</td><td>66.39</td><td class="up">+0.03%</td><td>63.05(-5%)</td></tr>
+</tbody></table></div>
+
+<div class="sh3">连板自选池</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>涨幅</th><th>收盘价</th><th>量比</th><th>换手</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>北自科技</td><td>603082</td><td>机器人</td><td>—</td><td>情绪标</td><td class="up">+9.99%</td><td>51.18</td><td>0.63</td><td>12.73%</td><td>4板封板+7963万🔥</td></tr>
+<tr><td>达实智能</td><td>002421</td><td>机器人</td><td>—</td><td>情绪标</td><td class="up">+9.92%</td><td>3.88</td><td>0.41</td><td>3.12%</td><td>3板一字封板+7953万🔥</td></tr>
+<tr><td>雷赛智能</td><td>002979</td><td>机器人</td><td>W2</td><td>⭐持仓</td><td class="up">+2.00%</td><td>66.39</td><td>1.35</td><td>16.18%</td><td>W2买入@66.37，+2823万🔥</td></tr>
+<tr><td>福莱新材</td><td>605488</td><td>机器人</td><td>W1</td><td>W1候选</td><td class="up">+10.00%</td><td>—</td><td>—</td><td>—</td><td>机器人首板最早封板09:31</td></tr>
+<tr><td>弘信电子</td><td>300657</td><td>算力</td><td>W1</td><td>W1候选</td><td class="up">+20.00%</td><td>52.08</td><td>—</td><td>18.23%</td><td>Token工厂2板+09:37封板🔥</td></tr>
+<tr><td>光迅科技</td><td>002281</td><td>光通信</td><td>—</td><td>候选观察</td><td class="up">+10.00%</td><td>230.89</td><td>8.66</td><td>—</td><td>光纤暴涨，140亿成交🔥</td></tr>
+</tbody></table></div>
+
+<div class="sh3">趋势自选池</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>板块</th><th>涨幅</th><th>收盘价</th><th>量比</th><th>换手</th><th>主力</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>北方华创</td><td>002371</td><td>半导体</td><td class="up">+3.63%</td><td>619.70</td><td>0.95</td><td>2.00%</td><td class="up">+2922万</td><td>清仓@605.6✅ 反弹不追</td></tr>
+<tr><td>雅克科技</td><td>002409</td><td>半导体</td><td class="up">+1.55%</td><td>115.96</td><td>1.28</td><td>12.73%</td><td class="up">+1.04亿🔥</td><td>趋势候选</td></tr>
+<tr><td>震裕科技</td><td>300953</td><td>机器人</td><td class="down">-0.82%</td><td>241.69</td><td>0.78</td><td>4.06%</td><td class="up">+221万</td><td>趋势中军回调</td></tr>
+<tr><td>亨通光电</td><td>600487</td><td>光通信</td><td class="up">+5.11%</td><td>75.47</td><td>—</td><td>—</td><td>—</td><td>光纤涨价，热度#6</td></tr>
+</tbody></table></div>
+
+<div class="sh3">板块状态</div>
+<div class="tw"><table>
+<thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>机器人/物理AI</td><td>主线</td><td>13</td><td>4-3-首×11</td><td>北自4板/达实3板</td><td>🔥主线确认</td></tr>
+<tr><td>电力/算电协同</td><td>新方向</td><td>13</td><td>2-首×12</td><td>辽宁能源2板</td><td>🔥新方向启动</td></tr>
+<tr><td>半导体产业链</td><td>候选</td><td>12</td><td>全首板</td><td>—</td><td>🟡长鑫催化</td></tr>
+<tr><td>算力租赁</td><td>候选</td><td>9</td><td>2-首×8</td><td>嘉环/川润/弘信2板</td><td>🟡Token催化</td></tr>
+<tr><td>存储芯片</td><td>分歧</td><td>5</td><td>2-首×4</td><td>合百集团2板</td><td>🟡分化，柏诚3板失败</td></tr>
+<tr><td>光通信</td><td>候选</td><td>5</td><td>全首板</td><td>光迅科技</td><td>🆕光纤涨价催化</td></tr>
+</tbody></table></div>
+
+<div class="sh3">今日操作</div>
+<div class="tw"><table>
+<thead><tr><th>时间</th><th>动作</th><th>标的</th><th>价格</th><th>盈亏</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>10:20</td><td>📤清仓</td><td>领益智造</td><td>16.69</td><td class="down">-0.77%(-390元)</td><td>竞价红开后走弱，弈沐执行清仓</td></tr>
+<tr><td>13:00-14:00</td><td>📥W2买入</td><td>雷赛智能</td><td>66.37</td><td>—</td><td>W2低吸，机器人方向确认</td></tr>
+</tbody></table></div>
+
+<div class="sh3">锚定股状态</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>代码</th><th>窗口</th><th>状态</th><th>影响</th><th>灯</th></tr></thead>
+<tbody>
+<tr><td>利仁科技</td><td>001259</td><td>—</td><td>7板封板</td><td>并购重组最高板🔥</td><td>🟢</td></tr>
+<tr><td>北自科技</td><td>603082</td><td>—</td><td>4板封板(+7963万)</td><td>机器人龙头🔥</td><td>🟢</td></tr>
+<tr><td>达实智能</td><td>002421</td><td>—</td><td>3板封板(+7953万)</td><td>机器人跟风🔥</td><td>🟢</td></tr>
+<tr><td>雷赛智能</td><td>002979</td><td>W2持仓</td><td>+2.00%收66.39，+2823万</td><td>W2低吸方向正确</td><td>🟢</td></tr>
+<tr><td>合肥城建</td><td>002208</td><td>—</td><td>反包封板(主力-4.97亿⚠️)</td><td>存储反抽但资金出逃</td><td>🟡</td></tr>
+<tr><td>领益智造</td><td>002600</td><td>—</td><td>已清仓@16.69 (收盘-0.82%)</td><td>清仓正确</td><td>🟢</td></tr>
+</tbody></table></div>
+
+</div>
+</div>
+
+</div><!-- content -->
+</div><!-- layout -->
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
