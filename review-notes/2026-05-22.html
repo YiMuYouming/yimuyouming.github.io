@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-05-22 周五 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+[id]{scroll-margin-top:70px}
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+.debate-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
+.debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title">2026-05-22 周五 复盘笔记</div>
+  <div class="meta">
+    <span class="chip green">情绪 72.2%</span>
+    <span class="chip red">上证 4112.9 +0.87%</span>
+    <span class="chip blue">116涨停 / 5跌停</span>
+    <span class="chip purple">持仓 中芯国际500股@135.27</span>
+    <span class="chip green">终稿 (红蓝对抗完成)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">节点说明</a>
+  <a href="#s1d" class="s2">涨停结构</a>
+  <a href="#s1e" class="s2">自选池表现</a>
+  <a href="#s1f" class="s2">持仓与交易</a>
+  <a href="#s1g" class="s2">风格检测</a>
+  <a href="#s1h" class="s2">趋势持仓复盘</a>
+  <a href="#s1i" class="s2">窗口操作</a>
+  <a href="#s1j" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+  <a href="#sd">数据附录</a>
+</div>
+
+<div class="content">
+
+<div class="section" id="s0">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 第〇部分 · 昨日预案<span class="cnt">昨日终审定稿</span>
+</div>
+<div class="sb"><div class="para">（5/21 附录A终审定稿）</div>
+<div class="si">
+来源：5/21复盘笔记附录A（Round 3红蓝对抗终审定稿）<br>
+风格：偏趋势(47分) | 连板30% / 趋势70%<br>
+仓位：总仓位上限20%（情绪<20%×0.5折扣）<br>
+总基调：冰点延续+周五，持仓止损为第一优先级。竞价<20%则全天空仓。<br>
+</div>
+<div class="sh2">持仓处理</div>
+<div class="sh2">连板板块→操作映射（连板不操作）</div>
+<div class="si">
+策略gate全排除。诚邦4板仅作为竞价情绪锚。<br>
+</div>
+<div class="sh2">趋势板块→操作映射</div>
+<div class="sh2">操作指南</div>
+<div class="para"><strong>总基调</strong>：冰点延续+周五，持仓止损为第一优先级。新开仓仅限趋势W2尾盘条件满足时，单票≤10%。</div>
+<div class="para"><strong>连板窗口1</strong>：❌关闭（情绪冰点13.4%+涨停收益-0.97%+全部策略gate排除）</div>
+<div class="para"><strong>连板窗口2</strong>：❌关闭（冰点档不适用W2连板尾吸）</div>
+<div class="para"><strong>趋势观察窗口</strong>：10:00-14:00等回踩(双环/三花/机器人MA5)，14:00-14:50轻仓买入</div>
+<div class="para"><strong>仓位</strong>：总仓位≤20%（情绪<20%×0.5折扣），单票≤10%。周五过周末仓位再减半</div>
+<div class="para"><strong>不碰</strong>：存储芯片/半导体全线、AI硬件全灭、威龙(独立题材+主力-10.58亿出货)、中芯(止损处理)</div>
+<div class="para"><strong>风险</strong>：①竞价<20%→全天空仓 ②中芯止损必须执行 ③减速器逆势≠明日持续 ④周五V反不适用</div>
+<hr class="divider"><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead><tbody><tr><td>中芯国际🚨</td><td>135.27</td><td>500股(~35%)</td><td>已破-5.95%</td><td>竞价必须处理。低开>3%→竞价卖；平开/小幅低开→9:30立即卖</td></tr><tr><td>柏诚股份⚠️</td><td>34.74</td><td>1500股(~26%)</td><td>-5%(33.00)</td><td>低开>2%→竞价卖；平开→看半导体方向，续跌→走，企稳→持有</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作标的（回踩买）</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇减速器/机器人🔥</td><td>昊志机电/双环传动/福莱新材</td><td>双环传动W2回踩5日线 / 昊志机电W2回踩5日线 / 福莱新材W2观察等回踩</td><td>缩量+板块未破位；周五仓位再×0.5</td></tr><tr><td>🥈面板/显示🆕</td><td>彩虹股份/京东方A</td><td>彩虹股份W2回踩5日线</td><td>面板板块效应确认(京东方/彩虹/秋田微3只涨停/近涨停)</td></tr><tr><td>🥉华为汽车🟡</td><td>三花智控/中鼎股份</td><td>中鼎股份W2回踩5日线+缩量</td><td>板块资金趋势仍为正</td></tr><tr><td>🟡电力分歧观察</td><td>京能电力/豫能控股</td><td>观察不操作，板块-36.96亿流出</td><td>京能/豫能双涨停但板块分化严重</td></tr></tbody></table></div></div>
+</div>
+<div class="section" id="s1">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §一 · 当日复盘
+</div>
+<div class="sb"><div class="sh3" id="s1a">📊 表1：大盘全景</div><div class="tw"><table><thead><tr><th>节点</th><th>情绪</th><th>上证(%)</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>总竞价涨幅</th><th>关键异动</th></tr></thead><tbody><tr><td>竞价</td><td>—🔵</td><td><span class="up">+0.46%(4096.17)</span></td><td>4/1(竞价)</td><td>256亿竞价量</td><td>—</td><td>+0.76%(涨停收益)</td><td>竞价阶段涨跌3953/797失真;威龙竞价-9.99%跌停断板;半导体竞价+12.78亿</td></tr><tr><td>早盘</td><td>53.0%🟡</td><td><span class="up">+0.05%(4079.31)</span></td><td>38/6</td><td>1.30万亿+</td><td>2688/2383</td><td>—</td><td>情绪53%修复;炸板率65%🚨极高;半导体惊天逆转(+12.78亿→-27.20亿🚨)</td></tr><tr><td>午盘</td><td>69.4%🟠</td><td><span class="up">+0.47%(4096.24)</span></td><td>67/5</td><td>1.78万亿+</td><td>3562/1573</td><td>—</td><td>情绪69%强势修复;元件+104.9亿🔥(PCB/MLCC);涨停67只大增;炸板率71%🚨仍高</td></tr><tr><td>尾盘</td><td>%</td><td>点位(%)</td><td>/</td><td>亿</td><td>/</td><td>—</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1b">📈 表2：情绪高标</div><div class="tw"><table><thead><tr><th>指标</th><th>竞价</th><th>早盘</th><th>午盘</th><th>尾盘</th><th>收盘</th><th>门槛</th></tr></thead><tbody><tr><td>竞价强势家数</td><td>只</td><td>—</td><td>—</td><td>—</td><td>只</td><td>>10(降温)/>30(高位)</td></tr><tr><td>涨停收益</td><td>0.76%❌</td><td>0.25%❌</td><td>0.85%❌</td><td>%</td><td>3.2%✅</td><td>>2%(低迷)/>3%(正常)</td></tr><tr><td>连板收益</td><td>5.31%</td><td>5.38%</td><td>6.12%</td><td>%</td><td>6.49%</td><td>—</td></tr><tr><td>炸板收益</td><td>0.18%❌</td><td>-0.07%❌</td><td>0.59%❌</td><td>%</td><td>1.79%❌</td><td>—</td></tr><tr><td>封板率</td><td>—</td><td>35.0%🚨</td><td>28.57%🚨</td><td>%</td><td>23.81%🚨</td><td>—</td></tr><tr><td>炸板率</td><td>—</td><td>65.0%🚨</td><td>71.43%🚨</td><td>%</td><td>76.19%🚨</td><td><30%(W1追涨)/<40%(W2冰点)</td></tr><tr><td>整体晋级率</td><td>—</td><td>23.53%</td><td>23.53%</td><td>%</td><td>32.35%</td><td>辅助参考（非硬卡）</td></tr><tr><td>一进二晋级率</td><td>—</td><td>14.29%❌</td><td>14.29%❌</td><td>%</td><td>25.0%✅</td><td>>15%(低迷)/>18%(主升)</td></tr><tr><td>二进三晋级率</td><td>—</td><td>100.0%✅</td><td>100.0%✅</td><td>%</td><td>100.0%✅</td><td>>20%(环境)/>25%(2进3策略)</td></tr><tr><td>三进四晋级率</td><td>—</td><td>0.0%❌</td><td>0.0%❌</td><td>%</td><td>0.0%❌</td><td>>35%(3进4+策略)</td></tr><tr><td>赚钱效应</td><td>—</td><td>差🔴</td><td>差🔴</td><td>好/一般/差</td><td>一般🟡</td><td>好(>3%+>40%)/差(<2%+<20%)</td></tr><tr><td>梯队</td><td>—</td><td>3(4)-2(4)-首30</td><td>3(4)-2(4)-首59</td><td>完整/断层</td><td>3(4)-2(7)-首105</td><td>—</td></tr><tr><td>最高板/次高板</td><td>3板/2板</td><td>3板/2板</td><td>3板/2板</td><td>板</td><td>3板/2板</td><td>—</td></tr><tr><td>竞价验证结论</td><td>A好+B差</td><td>—</td><td>—</td><td>—</td><td>—</td><td>A好+B好/A好+B差/A差+B好/A差+B差</td></tr></tbody></table></div><div class="sh3" id="s1c">🔍 节点说明</div><div class="node-grid"><div class="node-card"><div class="nhead">竞价</div><div class="nbody"><div class="para">竞价阶段上证+0.46%(4096.17)高开，量能256亿。涨停4/跌停1（竞价快照），涨停收益0.76%❌低于2%门槛，连板收益5.31%强势，炸板收益0.18%❌。<strong>注意：竞价阶段涨跌比(3953/797)失真</strong>——大量股票竞价仅几手撮合使涨跌比虚高，不代表真实市场情绪。实际开盘后情绪约43.9%(2159/2763)更准确。<br>- <strong>持仓端</strong>：中芯129.61(+1.88%)高开，较成本135.27浮亏约-4.18%。柏诚33.35(+0.66%)小幅高开，较成本34.74浮亏约-4.00%。<br>- <strong>连板端</strong>：最高板从7板(威龙)骤降至3板(金利华电/大众交通)。威龙股份<strong>-9.99%跌停断板</strong>，验证昨日主力-10.58亿出货信号。诚邦股份26.60(-2.39%)低开，4板面临断板风险。合百集团9.78(+5.05%)高开走强。金利华电3板、大众交通3板、恒林股份2板——梯队3-2-1×4，高度骤降。<br>- <strong>趋势端</strong>：半导体板块竞价+12.78亿🔥主力流入。北华666.04(+0.46%)，中芯+1.88%，双环+1.21%，中鼎+1.88%高开。昊志87.00(+0.03%)平开。<strong>彩虹股份10.84(-5.08%)</strong> 大幅低开（昨日+9.91%今日低开），面板方向持续性存疑。<br>- 结论：<strong>冰点后竞价高开修复，涨停收益0.76%仍低于2%门槛，连板生态退化（威龙跌停/诚邦低开）。中芯/+1.88%高开但仍在止损外，柏诚平开修复。</strong>[待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">早盘</div><div class="nbody"><div class="para">情绪53.0%🟡主升，较竞价43.9%温和修复+9pp。上证+0.05%(4079.31)几乎平盘——竞价高开+0.46%后回落但稳住，未出现昨日尾盘崩盘。涨跌比2688/2383偏多，量能1.30万亿(较昨早盘1万亿+30%放量)。炸板率65%🚨极高，封板率35%🚨极低——涨停38/跌停6虽较昨日36/25改善，但封板质量极差(20只涨停封住7只/炸13只)。涨停收益0.25%❌仍低于2%门槛，连板收益5.38%尚可，炸板收益-0.07%❌。梯队3-2-首38，最高板3板(四环生物/金利华电/龙星科技/大众交通4个3板并行)，次高2板(4个)。<br>- <strong>持仓端</strong>：中芯127.79(+0.45%)持续缩量(量比1.89)，从竞价+1.88%→开盘+0.73%→当前+0.45%单边回落。<strong>柏诚已清仓@32.74</strong>（弈沐操作）。早盘柏诚最高冲至34.54(+4.26%)后缩量回落→拐头向下→清仓@32.74，浮亏约-5.76%(成本34.74→卖出32.74)，加上此前浮亏，为冰点追涨买单。<br>- <strong>连板端</strong>：最高板维持3板(四环生物/金利华电/龙星科技/大众交通4个3板并行)，梯队3-2结构完整但三进四晋级率0.0%❌。威龙-9.99%封死跌停。诚邦-7.82%🚨深跌断板(从昨4板→暴跌)。合百+4.62%维持强势但在炸板日可能随时炸开。<strong>连板侧仅剩4个3板且三进四0%，高位接力完全断层。</strong><br>- <strong>趋势端</strong>：⚠️<strong>半导体板块惊天逆转</strong>——竞价+12.78亿主力流入→早盘-27.20亿🚨主力巨量流出，完全反转。北华-2.87%(从+0.46%→-2.87%)趋势中军走弱。中芯+0.45%靠尾盘支撑。元件板块异军突起(+92.26亿🔥/+5.34%)为今日最强板块。<strong>减速器/机器人方向：福莱+3.93%🔥逆势，昊志-0.41%平盘，双环+0.27%，三花+0.09%——方向未崩但资金转移至元件。</strong> 面板：彩虹-2.98%较竞价-5.08%修复，资金回流不明显。<br>- 结论：<strong>冰点后温和修复日，情绪53%正常，上证平盘稳住。但炸板率65%🚨+涨停收益0.25%❌+半导体-27.20亿🚨+封板率35%🚨——修复质量差，属于"有温度没质量"的修复。元件+92亿为今日最强板块(PCB/MLCC/电容涨价周期)。柏诚已清仓，中芯+0.45%缩量持有。</strong>[待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">午盘</div><div class="nbody"><div class="para">情绪<strong>69.4%🟠强势</strong>，较早盘53%修复+16.4pp，较昨日13.4%冰点<strong>暴力修复+56pp</strong>。上证+0.47%(4096.24)——从早盘+0.05%持续走强，收盘前站上4096。涨跌比3562/1573偏多，量能1.78万亿(半日，预估全天约3.5万亿+)。涨停67/跌停5，涨停收益0.85%❌仍低于2%门槛但较早盘0.25%大幅修复，连板收益6.12%尚可。<strong>炸板率71.43%🚨进一步恶化</strong>（早盘65%→午盘71%），封板率28.57%🚨极低——涨停虽多但质量差。梯队3(4)-2(4)-首59，最高板维持3板(连板结构同早盘基本一致，仅首板从30增至59)。<br>- <strong>持仓端</strong>：中芯127.33(+0.09%)几乎平盘，量比0.99缩量至均值以下，从竞价+1.88%→早盘+0.45%→午盘+0.09%逐级走弱。<strong>柏诚(已清)32.19(-2.84%)清仓后继续下跌</strong>，验证卖出决策正确。长电+3.62%🔥半日走强。<br>- <strong>连板端</strong>：最高板3板未突破，三进四0.0%❌连续两天零晋级。四环生物(医药)/龙星科技(化工)/金利华电(电力)/大众交通(交通)4个3板，梯队未扩张。威龙从-9.99%回弹至-7.64%但仍在深跌。诚邦-5.87%持续深跌。合百+4.08%维持强势。<br>- <strong>趋势端</strong>：<strong>元件+104.9亿🔥/+6.6%为全场绝对最强方向</strong>(PCB/MLCC电容涨价周期)，通信设备+94.88亿🔥异军突起(英伟达财报催化光通信)。半导体-19.25亿🚨从早盘-27亿略有收窄但仍大幅流出。<strong>减速器/机器人方向：福莱+3.98%🔥继续逆势，昊志+0.16%回稳，双环-0.11%平盘，三花+0.32%——方向未崩但弱于元件/通信设备。</strong> 北华-2.68%趋势中军继续走弱。<br>- 结论：**半日强势修复但质量分化——情绪69%+涨</div></div></div></div><div class="sh3" id="s1d">🏗️ 涨停结构</div><div class="tw"><table><thead><tr><th>板块</th><th>涨停数</th><th>连板梯队</th><th>核心</th><th>板块涨跌幅</th><th>板块主力净流入</th><th>5日线</th><th>备注</th></tr></thead><tbody><tr><td>元件/PCB🔥</td><td>>15只</td><td>3-2-首</td><td>鹏鼎控股/风华高科/景旺电子涨停</td><td><span class="up">+7.85%</span></td><td>+165亿🔥</td><td>站上</td><td>PCB/MLCC涨价周期，全场最强势方向</td></tr><tr><td>通信设备🔥</td><td>>10只</td><td>首</td><td>海星股份/景旺电子等涨停</td><td><span class="up">+3.09%</span></td><td>+179亿🔥</td><td>站上</td><td>英伟达财报超预期催化光通信，资金流入最大</td></tr><tr><td>光学光电子</td><td>~8只</td><td>2-首</td><td>京东方A2板/彩虹股份等</td><td><span class="up">+2.67%</span></td><td>+84亿🔥</td><td>站上</td><td>面板涨价概念，京东方2板确认</td></tr><tr><td>消费电子</td><td>~8只</td><td>首</td><td>鹏鼎控股/深南电路等</td><td><span class="up">+3.09%</span></td><td>+84亿🔥</td><td>站上</td><td>元件联动，多为PCB相关</td></tr><tr><td>半导体产业链</td><td>~6只</td><td>首</td><td>长电科技+9.04%🔥/中芯+3.23%</td><td><span class="up">+2.92%</span></td><td>+44亿🔥</td><td>站上</td><td>午后V反，从-27亿→+44亿惊天逆转</td></tr><tr><td>医药</td><td>~3只</td><td>3-首</td><td>四环生物3板/三力制药涨停</td><td><span class="up">+1.35%</span></td><td>-3.20亿</td><td>—</td><td>四环生物3板但板块资金流出</td></tr><tr><td>电力设备</td><td>~3只</td><td>3-首</td><td>金利华电3板/晋控电力/大连热电涨停</td><td><span class="up">+1.23%</span></td><td>+3.15亿</td><td>—</td><td>金利华电3板(收购中科西光)</td></tr><tr><td>基础化工</td><td>~4只</td><td>3-首</td><td>龙星科技3板/三美股份等</td><td><span class="up">+2.69%</span></td><td>+36亿</td><td>—</td><td>龙星化工3板，化工涨价联动</td></tr><tr><td>交通运输</td><td>~2只</td><td>3-首</td><td>大众交通3板</td><td><span class="up">+1.50%</span></td><td>-3.94亿</td><td>—</td><td>大众交通3板(长江存储概念)</td></tr><tr><td>其他散点</td><td>~50只</td><td>全首板</td><td>—</td><td>—</td><td>—</td><td>—</td><td>剩余首板散点，无明确板块效应</td></tr></tbody></table></div><div class="sh3">🔗 连板股</div><div class="tw"><table><thead><tr><th>股票</th><th>连板</th><th>方向</th><th>备注</th></tr></thead><tbody><tr><td>四环生物</td><td>3板</td><td>医药</td><td>摘帽+生物医药，3板</td></tr><tr><td>龙星科技</td><td>3板</td><td>化工</td><td>炭黑龙头+董事长增持，3板</td></tr><tr><td>金利华电</td><td>3板</td><td>电力设备</td><td>收购中科西光+商业航天，3板</td></tr><tr><td>大众交通</td><td>3板</td><td>交通</td><td>间接投资长江存储，3板</td></tr><tr><td>南玻A</td><td>2板</td><td>建材</td><td>电子玻璃+光伏</td></tr><tr><td>京东方A</td><td>2板</td><td>电子</td><td>面板龙头，康宁合作</td></tr><tr><td>和泰机电</td><td>2板</td><td>机械</td><td>机器人应用+输送设备</td></tr><tr><td>联创电子</td><td>2板</td><td>电子</td><td>无人驾驶+车载光学</td></tr><tr><td>锋龙股份</td><td>2板</td><td>机械</td><td>优必选入主+机器人</td></tr><tr><td>曙光股份</td><td>2板</td><td>汽车</td><td>商用载客车+摘帽</td></tr><tr><td>恒林股份</td><td>2板</td><td>轻工</td><td>投资GPU公司</td></tr><tr><td>首板105只</td><td>首板</td><td>多方向</td><td>元件/通信设备/消费电子/光学光电子为主</td></tr></tbody></table></div><div class="sh3" id="s1e">🎯 当日自选池表现</div><div class="sh3" style="font-size:14px">半导体产业链（主线→退潮→午后反转）：</div><div class="tw"><table><thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>早盘%</th><th>午盘%</th><th>收盘%</th><th>收盘换手</th><th>收盘主力</th><th>备注</th></tr></thead><tbody><tr><td>中芯国际</td><td>⭐持仓/趋势</td><td><span class="up">+1.88%</span></td><td><span class="up">+0.73%</span></td><td><span class="up">+0.09%</span></td><td><span class="up">+3.23%🔥</span></td><td>6.00%</td><td><span class="up">+11.43亿🔥</span></td><td>⭐持仓@135.27→131.33，浮亏缩至-2.91%✅重回止损线上方！午后放量拉升</td></tr><tr><td>北方华创</td><td>🔴主趋势股</td><td><span class="up">+0.46%</span></td><td><span class="down">-0.30%</span></td><td><span class="down">-2.68%🔴</span></td><td><span class="up">+0.91%</span></td><td>2.74%</td><td><span class="down">-3.79亿</span></td><td>午后翻红，趋势中军企稳</td></tr><tr><td>长电科技</td><td>🟡趋势候选</td><td><span class="up">+0.28%</span></td><td><span class="up">+0.54%</span></td><td><span class="up">+3.62%🔥</span></td><td><span class="up">+9.04%🔥🔥</span></td><td>16.04%</td><td><span class="up">+7.58亿🔥</span></td><td>午后封板！半导体最强中军</td></tr><tr><td>通富微电</td><td>🟡趋势候选</td><td><span class="up">+0.15%</span></td><td><span class="down">-2.30%</span></td><td><span class="up">+0.81%</span></td><td><span class="up">+2.72%</span></td><td>13.23%</td><td><span class="up">+2.01亿</span></td><td>午后修复，量比1.10</td></tr><tr><td>柏诚股份</td><td>📤已清仓</td><td><span class="up">+0.66%</span></td><td><span class="up">+4.26%🔥</span></td><td><span class="down">-2.84%</span></td><td><span class="down">-0.42%</span></td><td>8.34%</td><td><span class="down">-4614万</span></td><td>清仓@32.74后持续走弱✅</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">减速器/机器人🔥（趋势强支线）：</div><div class="tw"><table><thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>早盘%</th><th>午盘%</th><th>收盘%</th><th>收盘换手</th><th>收盘主力</th><th>备注</th></tr></thead><tbody><tr><td>福莱新材</td><td>🟡趋势候选</td><td><span class="up">+1.85%</span></td><td><span class="up">+0.44%</span></td><td><span class="up">+3.98%🔥</span></td><td><span class="up">+6.35%🔥</span></td><td>9.40%</td><td><span class="up">+1389万</span></td><td>全天持续走强，减速器最强标的</td></tr><tr><td>昊志机电</td><td>🔴主趋势股</td><td><span class="up">+0.03%</span></td><td><span class="down">-2.75%</span></td><td><span class="up">+0.16%</span></td><td><span class="up">+2.73%</span></td><td>18.91%</td><td><span class="down">-3360万</span></td><td>从-2.75%翻红，换手高</td></tr><tr><td>三花智控</td><td>🟡W2标的</td><td><span class="down">-0.47%</span></td><td><span class="down">-1.50%</span></td><td><span class="up">+0.32%</span></td><td><span class="up">+2.31%</span></td><td>6.31%</td><td><span class="up">+2.87亿🔥</span></td><td>午后资金流入明显</td></tr><tr><td>双环传动</td><td>🟡W2标的</td><td><span class="up">+1.21%</span></td><td><span class="down">-0.65%</span></td><td><span class="down">-0.11%</span></td><td><span class="down">-0.13%</span></td><td>5.78%</td><td><span class="down">-7507万</span></td><td>窄幅波动，近收盘平盘</td></tr><tr><td>机器人</td><td>🟡W2标的</td><td><span class="down">-1.10%</span></td><td><span class="down">-2.13%</span></td><td><span class="down">-1.46%</span></td><td><span class="down">-0.79%</span></td><td>3.29%</td><td><span class="down">-5158万</span></td><td>全天偏弱，60分MA10走平</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">面板/显示🆕（趋势候选）：</div><div class="tw"><table><thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>早盘%</th><th>午盘%</th><th>收盘%</th><th>收盘换手</th><th>收盘主力</th><th>备注</th></tr></thead><tbody><tr><td>彩虹股份</td><td>🟡趋势候选</td><td><span class="down">-5.08%</span></td><td><span class="down">-5.69%</span></td><td><span class="down">-1.66%</span></td><td><span class="down">-2.80%</span></td><td>7.48%</td><td><span class="down">-1.42亿</span></td><td>全天弱势，面板未确认持续性</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">华为汽车🟡（趋势候选）：</div><div class="tw"><table><thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>早盘%</th><th>午盘%</th><th>收盘%</th><th>收盘换手</th><th>收盘主力</th><th>备注</th></tr></thead><tbody><tr><td>中鼎股份</td><td>🟡W2标的</td><td><span class="up">+1.88%</span></td><td><span class="up">+0.94%</span></td><td><span class="up">+1.77%</span></td><td><span class="up">+6.84%🔥</span></td><td>7.17%</td><td><span class="up">+1.62亿🔥</span></td><td>午后加速拉升，华为汽车最强标的</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">连板情绪锚（不操作）：</div><div class="tw"><table><thead><tr><th>标的</th><th>角色</th><th>竞价%</th><th>早盘%</th><th>午盘%</th><th>收盘%</th><th>收盘换手</th><th>收盘主力</th><th>备注</th></tr></thead><tbody><tr><td>合百集团</td><td>🔴情绪标</td><td><span class="up">+5.05%🔥</span></td><td><span class="up">+2.90%</span></td><td><span class="up">+4.08%</span></td><td><span class="up">+9.99%🔥涨停</span></td><td>33.32%</td><td><span class="down">-2.70亿</span></td><td>从昨-2.31%→今涨停，反包成功🔥</td></tr><tr><td>诚邦股份</td><td>🔴情绪标</td><td><span class="down">-2.39%</span></td><td><span class="down">-5.65%🚨</span></td><td><span class="down">-5.87%🚨</span></td><td><span class="down">-1.28%</span></td><td>29.29%</td><td><span class="up">+179万</span></td><td>从-5.87%盘中回升，但总体弱势</td></tr><tr><td>威龙股份</td><td>🔴情绪标</td><td><span class="down">-9.99%🚨</span></td><td><span class="down">-9.99%🚨</span></td><td><span class="down">-7.64%🚨</span></td><td><span class="down">-9.99%🚨</span></td><td>25.51%</td><td><span class="up">+5.38亿</span></td><td>封死跌停，7板断板确认</td></tr></tbody></table></div><div class="sh3" id="s1f">💰 持仓与交易</div><div class="tw"><table><thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>半导体/洁净室</td><td>📤清仓</td><td>柏诚股份</td><td>1500股(已清)</td><td>-3000元(-5.76%)</td><td>早盘冲高+4.26%后缩量回落，拐头卖出@32.74</td></tr><tr><td>半导体/趋势</td><td>持有</td><td>中芯国际</td><td>500股(~35%)</td><td>-1970元(-2.91%)</td><td>午后翻红+3.23%🔥浮亏大幅修复，未触发止损</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>现价</th><th>浮盈/股</th><th>浮盈率</th><th>仓位</th><th>评价</th></tr></thead><tbody><tr><td>中芯国际</td><td>135.27</td><td>131.33</td><td>-3.94元</td><td>-2.91%✅</td><td>500股</td><td>午盘+0.09%→收盘+3.23%🔥午后放量拉升，重回止损线上方</td></tr></tbody></table></div><div class="sh3">🛡️ 账户风控</div><div class="tw"><table><thead><tr><th>指标</th><th>数值</th><th>阈值</th><th>状态</th></tr></thead><tbody><tr><td>当日盈亏</td><td>柏诚已实现-3000元 + 中芯浮动-1970元 ≈ -4970元(-1.5%估)</td><td>-3%熔断</td><td>✅ 未触发</td></tr><tr><td>周累计回撤</td><td>约-5%(估，含5/21亏损)</td><td>6%预警</td><td>⚠️ 注意</td></tr><tr><td>月累计回撤</td><td>安全</td><td>10%预警</td><td>✅ 安全</td></tr><tr><td>连亏天数</td><td>2天(5/21+5/22)</td><td>≥2天空仓</td><td>⚠️ 触发了但周五一贯空仓规则冲突</td></tr><tr><td>单日熔断</td><td>未触发（-4970元≈-1.5%以33万估）</td><td>-3%</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1g">📐 风格检测</div><div class="tw"><table><thead><tr><th>维度</th><th>分数</th><th>明细</th></tr></thead><tbody><tr><td>维度一：量能</td><td>10/25</td><td>2.90万亿(缩量-16%vs昨日) / 量比持平 / 量能波动率偏弱</td></tr><tr><td>维度二：连板生态</td><td>19/35</td><td>最高板3板(低) / 涨停收益3.2%✅ / 炸板率76.2%🚨 / 封板率23.8%</td></tr><tr><td>维度三：趋势赚钱效应</td><td>22/25</td><td>沪深300+1.30% / 趋势走强板块15🔥 / 大市值赚钱比例88%</td></tr><tr><td>维度四：情绪广度</td><td>10/15</td><td>情绪72%🟠强势 / 赚钱效应一般🟡</td></tr><tr><td>总分</td><td>61/100</td><td>连板44% / 趋势56% / 总仓位上限60%(情绪修复)</td></tr></tbody></table></div><div class="sh3">📤 卖出追踪</div><div class="tw"><table><thead><tr><th>标的</th><th>卖出日</th><th>卖出价</th><th>卖出理由</th><th>+1日收盘</th><th>信号校准</th></tr></thead><tbody><tr><td>柏诚股份</td><td>5/22</td><td>32.74</td><td>早盘冲高+4.26%后缩量回落→拐头清仓。缩量就该走</td><td>—(今日)</td><td>待+1日(5/25周一)收盘补</td></tr></tbody></table></div><div class="sh3" id="s1h">📈 趋势持仓复盘</div><div class="tw"><table><thead><tr><th>项目</th><th>评估结果</th></tr></thead><tbody><tr><td>趋势强度</td><td>🟢弱→🟡中修复（半导体板块+44.14亿🔥午后逆转，但2.90万亿缩量-16%）</td></tr><tr><td>板块指数位置</td><td>半导体站上5日线(从-6.05%→+2.92%，K线反转)</td></tr><tr><td>主力资金趋势</td><td>今日半导体从竞价+12.78亿→早盘-27.20亿🚨→收盘+44.14亿🔥，V型逆转</td></tr><tr><td>分歧 vs 退潮</td><td>⚠️早盘确认退潮(≥3维：板块-6.05%+主力-172亿+中军溃败) → 午后转向分歧（资金回流+中芯翻红+长电封板）</td></tr><tr><td>预警信号是否触发</td><td>触发❌实际已证伪——早盘中芯-5.95%破止损线，但午后+3.23%修复回到-2.91%</td></tr><tr><td>趋势规则信号校准</td><td>止损规则触发后中芯未卖→持有至收盘反而修复。趋势止损在盘中巨幅波动日可能被V反证伪，需区分恐慌冰点 vs 正常分歧</td></tr></tbody></table></div><div class="sh3" id="s1i">🪟 窗口操作记录</div><div class="tw"><table><thead><tr><th></th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead><tbody><tr><td>窗口1</td><td>❌连板W1关闭(冰点13.4%+涨停收益-0.97%)。趋势W1中芯竞价处理(止损已触发)。柏诚低开>2%→竞价卖；平开→看半导体</td><td>竞价情绪约44%修复+涨停收益0.76%仍<2%+中芯+1.88%高开。柏诚+0.66%小幅高开。北华趋势端走强。情绪修复但质量差(涨停收益0.76%❌)</td><td>📤清仓柏诚@32.74（冲高+4.26%缩量回落→拐头卖）。中芯竞价+1.88%高开→未止损持有→收盘+3.23%🔥正确</td><td>⚠️柏诚卖点OK（缩量回落该走）但买点有问题(冰点次日W1追涨)。中芯持有正确(竞价高开不触发止损条件→午后翻红验证)</td></tr><tr><td>窗口2</td><td>❌W2关闭（冰点档不适用W2连板尾吸） + 趋势W2需回踩确认</td><td>情绪69%→72%，涨停116只全面爆发。减速器福莱+6.35%🔥但回踩未到5日线</td><td>未操作</td><td>✅ W2不开正确——周五冰点后反弹日+回踩条件不满足</td></tr></tbody></table></div><div class="sh3">🎭 预期差与盘感</div><div class="si"><div class="para"><strong>盘前基准</strong>：中性偏弱（美股-0.5%/A50+0.67%/日经+0.28%，英伟达财报超预期利好AI）</div>
+<div class="para"><strong>实际竞价</strong>：上证+0.46%高开 → 略超预期，但竞价涨跌比失真</div>
+<div class="para"><strong>关键变量</strong>：</div>
+<div class="para">- 情绪13.4%→约44%冰点修复，涨停收益0.76%❌仍低于2%门槛</div>
+<div class="para">- 威龙竞价-9.99%跌停断板，连板生态骤降（7板→3板）</div>
+<div class="para">- 半导体竞价+12.78亿→早盘-27.20亿🚨惊天逆转→午后+44.14亿🔥V型反转</div>
+<div class="para">- 元件全天最强+165亿🔥，通信设备午后爆发+179亿🔥</div>
+<div class="para">- 中芯午盘+0.09%缩量（浮亏-5.87%🚨）→收盘+3.23%🔥（浮亏缩至-2.91%✅）</div>
+<div class="para"><strong>盘面定性</strong>：冰点后强势修复日，情绪从13.4%→72.2%（+58.8pp），涨停从36→116（+80只），涨停收益从-0.97%→+3.2%✅。但炸板率76%🚨创近期新高——修复"有广度没质量"。</div>
+<div class="para"><strong>弈沐盘感</strong>：[待弈沐补充]</div></div><div class="sh3" id="s1j">💡 一句话结论</div><div class="sbx"><div class="para"><strong>冰点后强势修复日（情绪13.4%→72.2%🔥），涨停116只全面爆发。柏诚清仓@32.74(-5.76%)——冲高缩量回落该走。中芯午后翻红+3.23%🔥浮亏缩至-2.91%✅重回止损线上方。元件+通信设备双主线确立。最高板3板未突破是隐患。</strong></div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §二 · 心得与教训
+</div>
+<div class="sb"><ol class="tight-list"><li><div class="para">1. <strong>[教训] 冰点→强势V反修复的决策边界</strong> — 今日情绪13.4%→72.2%(+58.8pp)暴力修复，属于"冰点后强修复"而非"脉冲式诱多"。lesson_06(脉冲式修复也是诱多)在今天的行情中被证伪——涨停116只+涨停收益3.2%✅+量能2.90万亿=真实修复而非无量空拉。关键区分指标：<strong>涨停收益是否回到>2%</strong>（早盘0.25%→午盘0.85%→收盘3.2%✅逐步确认）。lesson_06应补充：涨停收益>2%+涨停>50只=修复可确认，非脉冲诱多。</div></li><li><div class="para">2. <strong>[教训] 止损规则的V反边界——竞价高开≠止损必须执行</strong> — 中芯-5.95%触发止损，但竞价+1.88%高开。若按lesson_23(止损不找理由)竞价卖出，将错过午后+3.23%🔥修复(+4元/股=+2000元)。实操证明：<strong>竞价高开时止损可暂缓执行</strong>——高开说明市场在修复，止损逻辑可能被证伪。规则修正建议：止损触发+竞价高开>1%→观察至9:30(给市场1分钟确认方向)；止损触发+竞价低开>2%→立即执行。写入rules。</div></li><li><div class="para">3. <strong>[教训] 冰点次日W1追涨——仓位管控是关键</strong> — 柏诚冰点次日追涨(-3000元/-5.76%)，虽然竞价修复44%+涨停收益0.76%，但昨日29%冰点已定基调。lesson_38(冰点预判W1关闭)今天被交易验证有效。柏诚早盘冲高+4.26%→缩量回落→拐头清仓@32.74，卖点正确（缩量回落=买力衰竭）。教训：冰点修复日W1追涨仓位应≤预案×0.5（之前洋米建议的规则补充）。</div></li><li><div class="para">4. <strong>[认知] 涨停多但封不住=修复"有广度没深度"</strong> — 涨停116只但封板率仅24%🚨，炸板率76%🚨——涨停收益3.2%✅虽转正但炸板收益1.79%❌一直为负。说明今天修复的驱动力是"资金全面抄底推高"，而非"龙头封板带动跟风"。这种修复的特点是：指数涨得好、涨停数多、但追涨亏钱概率大。→ <strong>封板率<30%时不追W1后排，只做前排确认型</strong>。</div></li><li><div class="para">5. <strong>[认知] 主线切换速度加快——从减速器到元件仅1天</strong> — 昨日(5/21)减速器逆势+30.77亿是唯一主线，今日(5/22)元件+165亿🔥+通信设备+179亿🔥成为新主线，减速器资金被分流(今日仅三花+2.87亿)。主线的切换节奏比预期更快——从逆势到确认仅1天。启示：<strong>冰点后V反日的新爆板块(元件/通信设备)比冰点日的逆势板块(减速器)更有持续性</strong>，因为V反日的资金是增量(机构+游资集体回补)，冰点日的逆势资金是存量(少数博弈资金)。</div>
+<hr class="divider"></li></ol></div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §三 · 次日预案
+</div>
+<div class="sb"><div class="stats-grid"><div class="stat-card"><div class="lbl">风格</div><div class="val amber">61/100（维度一10+维度二19+维度三22+维度四10</div></div><div class="stat-card"><div class="lbl">资金分配</div><div class="val">连板 44% / 趋势 56%（查分配表）</div></div><div class="stat-card"><div class="lbl">仓位上限</div><div class="val amber">**30%**（弈沐已将仓位降至~30%</div></div></div><div class="sbx warn"><strong>总基调</strong>：强势修复延续日，元件/机器人双主线确认（红方修正）。涨停116只情绪充沛但炸板率76%🚨高。周一大概率分化（高潮次日），聚焦前排核心。<br><strong>为什么</strong>：情绪72%🟠+涨停收益3.2%✅+涨停116只=正常行情。但炸板率76%+封板率24%=修复质量差，涨停多但封住难。<br><strong>基准预期</strong>：上证震荡+0.5%~+1.5%（周五放量反弹后周一惯性上冲可能+分化回踩）</div><div class="sh3">🔮 明日连板判定</div><div class="tw"><table><thead><tr><th>板层</th><th>晋级率</th><th>阈值</th><th>结果</th></tr></thead><tbody><tr><td>一进二</td><td>25.0%</td><td>>15%(低迷)/>18%(主升)</td><td>✅可用</td></tr><tr><td>二进三(近3日均值)</td><td>28.1%</td><td>>25%</td><td>✅可用(但今日100%是异常值)</td></tr><tr><td>三进四+</td><td>0.0%</td><td>>35%</td><td>❌排除(连续3天零晋级)</td></tr><tr><td>大环境(二进三)</td><td>28.1%</td><td>>20%开放/<20%关闭</td><td>✅连板侧开放</td></tr><tr><td>情绪</td><td>72.2%</td><td>—</td><td>强势档→正常做打板/接力</td></tr></tbody></table></div><div class="sh3" id="s3a">🎯 连板自选池</div><div class="sh3" style="font-size:14px">元件/PCB 🔥🔥主线（涨停潮+165亿+7.85%，梯队2-首有结构）</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🔴情绪标</td><td>鹏鼎控股</td><td>002938</td><td>W1</td><td>竞价是否一字，量比>3</td><td>PCB龙头+热度极高，今日涨停首板</td><td>热度#47，成交额，PCB+光模块双概念</td></tr><tr><td>🔴情绪标</td><td>风华高科</td><td>000636</td><td>W1</td><td>竞价高开3-7%，量比>3</td><td>MLCC涨价龙头+今日早盘9:31封板</td><td>热度在TOP50</td></tr><tr><td>🔴情绪标</td><td>沪电股份</td><td>002463</td><td>W1</td><td>竞价强度</td><td>AI PCB龙头+今日涨停</td><td>热度#47附近</td></tr><tr><td>🟡W1标的</td><td>景旺电子</td><td>603228</td><td>W1</td><td>竞价量比>3+高开3-7%</td><td>AI PCB+光模块，今日涨停首板</td><td>封板早(9:38)</td></tr><tr><td>🟡W2标的</td><td>深南电路</td><td>002916</td><td>W2</td><td>回踩5日线+缩量</td><td>PCB中军，今日+10%涨停，等分歧回踩</td><td>—</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">通信设备 🔥主线（首板潮+179亿资金流入最大）</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🟡W1标的</td><td>海星股份</td><td>603115</td><td>W1</td><td>竞价量比>3+高开3-7%</td><td>光通信龙头，今日涨停首板+热度高</td><td>热度TOP50</td></tr><tr><td>🟡W2标的</td><td>亨通光电</td><td>600487</td><td>W2</td><td>回踩5日线+缩量</td><td>通信电缆中军，今日+4.51%放量非涨停</td><td>成交77亿/热度#15</td></tr><tr><td>🟡W2标的</td><td>中天科技</td><td>600522</td><td>W2</td><td>回踩分时均线</td><td>光纤光缆中军，今日+4.58%放量非涨停</td><td>热度#24</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">面板 🟡支线观察</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🔴情绪标</td><td>京东方A</td><td>000725</td><td>观察</td><td>2板能否晋级3板</td><td>面板龙头+热度#1+2板确认</td><td>成交额巨大/人气第一，不追只观察</td></tr><tr><td>🟡W2标的</td><td>彩虹股份</td><td>600707</td><td>W2</td><td>等回踩企稳</td><td>面板今日-2.80%弱势，若板块确认可低吸</td><td>—</td></tr></tbody></table></div><div class="sh3" style="font-size:14px">其他观察</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>窗口</th><th>看什么</th><th>选入理由</th></tr></thead><tbody><tr><td>🔴情绪标</td><td>四环生物</td><td>000518</td><td>观察</td><td>3板能否晋级4板</td><td>最高板之一(医药)，断板=情绪标</td></tr><tr><td>🔴情绪标</td><td>金利华电</td><td>300069</td><td>观察</td><td>3板能否晋级4板</td><td>最高板之一(电力/商业航天)</td></tr><tr><td>🔴情绪标</td><td>合百集团</td><td>000417</td><td>观察</td><td>反包2板能否延续</td><td>昨-2.31%→今涨停反包，存储芯片活口</td></tr><tr><td>🟡W2观察</td><td>达实智能</td><td>002421</td><td>观察</td><td>首板修复后次日走势</td><td>AI硬件活口，看是否连续涨停</td></tr></tbody></table></div><div class="sh3" id="s3b">📈 趋势自选池</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🔴主趋势股</td><td>深南电路</td><td>002916</td><td>缩量回踩5日线(约105)+板块未破20日线</td><td>PCB中军，今日涨停但量能正常</td><td>成交额大/均线多头</td></tr><tr><td>🟡趋势候选</td><td>东山精密</td><td>002384</td><td>等待回踩5日线+缩量</td><td>PCB+光模块，今日+6.56%放量非涨停</td><td>成交183亿🔥/热度#34</td></tr><tr><td>🟡趋势候选</td><td>沪电股份</td><td>002463</td><td>涨停后等分歧回踩</td><td>AI PCB龙头</td><td>今日涨停但需等分歧</td></tr></tbody></table></div><div class="sh3">🚫 不碰</div><div class="si"><div class="para">- 威龙股份（7板断板跌停+主力出货）</div>
+<div class="para">- 诚邦股份（4板断板确认）</div>
+<div class="para">- 存储芯片方向（板块效应弱，合百仅为反包）</div>
+<div class="para">- AI硬件方向（达实/川润今日首板修复未确认）</div>
+<div class="para">- 半导体方向（趋势V反未确认，中芯持仓不新买入）</div>
+<div class="para">- 高位接力(3进4+) — 连续3天零晋级</div></div><div class="sh3">⚠️ 风险</div><div class="tight-list"><li><div class="para">⚡<strong>高潮次日分歧</strong>：涨停116只+情绪72%→周一大概率分化，前排可能顶一字买不到，后排可能炸板大面</div></li><li><div class="para">⚡<strong>炸板率76%🚨</strong>：涨停多但封住难，W1追涨需要精选</div></li><li><div class="para">⚡<strong>最高板3板未突破</strong>：高度不足，1进2/2进3的晋级高度空间有限</div></li><li><div class="para">⚡<strong>元件/PCB涨停潮次日</strong>：今日板块暴涨7.85%+165亿，明天惯性溢价但抢筹后会分化</div></li><li><div class="para">⚡<strong>连亏2天⚠️</strong>：按规则连亏≥2天空仓，但中芯-2.91%为浮动未锁定，周一开门评估</div></li><li><div class="para">⚡<strong>中芯持仓风险</strong>：浮亏-2.91%但仍亏损，周一若低开可能重新触发止损</div></li></div><div class="sh3">📏 Rules 校验</div><div class="si"><div class="para">- 打法：连板+趋势并行（连板44%/趋势56%）</div>
+<div class="para">- 路径：持股(中芯观察) → W2低吸趋势回踩(元件/减速器) → W1打板(元件前排)</div>
+<div class="para">- 仓位上限：30%（弈沐已将仓位降至~30%）</div>
+<div class="para">- 周一W1：正常开放</div>
+<div class="para">- V反检测：不适用（情绪72%非冰点）</div></div></div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §四 · 红方对抗<span class="cnt">3轮辩论</span>
+</div>
+<div class="sb"><div class="sh3" id="s4a">🔴 Round 1：洋米红方质疑</div><div class="sh3">数据基础（红方数据协议 Q1-Q6）</div>
+<div class="para">- [x] Q1 热度 TOP50 ✅ 已跑（问财OpenAPI，2026-05-22数据）</div>
+<div class="para">- [x] Q2 板块扫描 ✅ 已跑（元件/通信设备/减速器/光学光电子，问财概念口径）</div>
+<div class="para">- [x] Q3 中军扫描 ✅ 已跑（涨幅3-10%/成交>10亿/换手5-20%/非涨停，149只）</div>
+<div class="para">- [x] Q4 排除验证 ✅ 已跑（威龙/诚邦/达实/川润/合百，问财口径）</div>
+<div class="para">- [x] Q5 持仓复核 ✅ 已跑（中芯国际+贵州茅台批量）</div>
+<div class="para">- [x] Q6 板块资金 ✅ 已跑（元件/通信设备/半导体/减速器）</div>
+<div class="para">- [x] Q7 趋势板块复核 ✅ 已跑（元件/通信设备/减速器板块指数）</div>
+<div class="para">- [x] Q8 趋势中军均线+资金 ✅ 已跑（深南/东山/亨通/中天/福莱/三花/中鼎）</div>
+<div class="para">- [x] 板块涨停数统一口径比对 ✅（元件/通信设备/半导体/机器人，问财口径）</div>
+<div class="para">- ⚠️ 所有主力数据来源：问财OpenAPI口径（与稳米初稿同花顺行业指数数据可能存在口径差异）</div>
+<div class="sh3">五维强制清单</div>
+<div class="para"><strong>1. 定性校准</strong></div>
+<div class="para">- 稳米定性：冰点后强势修复日（情绪13.4%→72.2%，涨停36→116，涨停收益-0.97%→+3.2%）</div>
+<div class="para">- 红方判断：□ 同意 ✅</div>
+<div class="para">- 依据：数据确认——情绪值/涨停数/涨停收益三指标均支持"强势修复"定性。量能2.90万亿（-16%）虽缩量但仍属高位。炸板率76%+封板率24%是修复质量不足的信号，稳米已标注。<strong>无异议。</strong></div>
+<div class="para"><strong>2. 操作漏判</strong></div>
+<div class="para">- 稳米自评：柏诚清仓@32.74正确✅，中芯持有正确✅，W2未开正确✅。不足之处：柏诚买点有问题（冰点次日W1追涨）。</div>
+<div class="para">- 红方发现：<strong>有一条操作未覆盖——达实智能(+10.10%涨停, 热度#5, 主力+3.83亿🔥)在稳米"不碰"清单中属于AI硬件方向，但今天涨停首板且是全场第5热标的。</strong> 同理川润股份(+10.02%涨停, 热度#35, 主力+2.70亿🔥)。两者均为昨日冰点后首板涨停修复，但稳米预案未设任何观察条件——即使不操作，也应设观察锚。<strong>如果周一AI硬件延续，这是预案盲区。</strong></div>
+<div class="para">- 建议：周一开盘前观察达实智能竞价，如果连板开，AI硬件方向可能走出修复延续。</div>
+<div class="para"><strong>3. 规则执行</strong></div>
+<div class="para">- 检查项：仓位 / 止损 / W1条件 / W2条件 / 周五规则 / 连亏2天空仓规则</div>
+<div class="para">- 发现：</div>
+<div class="para">- ① <strong>中芯止损触发后竞价高开→未执行</strong>：稳米己在§二教训2提出修正（竞价高开>1%→观察至9:30），修正逻辑合理。但需注意：<strong>中芯午盘127.33时浮亏-5.87%已超过-5%止损线但未触发卖出</strong>——如果观察至9:30后中芯持续走弱，实际的止损触发点应在下午而非竞价。修正规则应明确"观察窗口"的时间边界（9:30还是午盘？）。</div>
+<div class="para">- ② <strong>连亏2天⚠️触发空仓规则但未执行</strong>：稳米标注"连亏2天触发空仓规则"但结论写"周一开门评估"——未定论。中芯-2.91%为浮动亏损未锁定，但规则是"连亏≥2天"而非"已实现亏损≥2天"。<strong>这条需弈沐裁决：浮动亏损是否计入"连亏天数"？</strong></div>
+<div class="para">- ③ <strong>柏诚仓位26%超出规则上限</strong>：柏诚属连板W1追涨（冰点次日），但当时总仓位约61%（中芯35%+柏诚26%），已超总仓位上限20%（情绪<20%×0.5折扣=10%上限）——虽然柏诚是冰点前的仓位（买于5/21），但5/22仍是持仓状态。早盘清仓后仓位降至35%，仍超20%上限。</div>
+<div class="para"><strong>4. 反向情景</strong></div>
+<div class="para">- 稳米结论：周一强势修复延续，元件/通信设备主线持续。</div>
+<div class="para">- 如果错了，最可能是：</div>
+<div class="para">- <strong>情境A — 高潮次日大分化</strong>：涨停116只(封板率仅24%)→周一大量后排低开。元件15只涨停中，红板科技(14:47尾盘封)、华正新材(14:05)、方正科技(14:03)、法拉电子(14:24)均为尾盘勉强回封，周一竞价大概率没溢价。<strong>元件今日板块暴涨7.85%→周一正常预期是分化退潮而非加速。</strong></div>
+<div class="para">- <strong>情境B — 通信设备是"机构建仓慢涨"而非"游资爆炒"</strong>：板块+179亿资金流入最大，但问财口径仅1只涨停（意华股份14:50尾盘）。这与元件的15只涨停形成鲜明对比。通信设备涨停数极少说明资金在吸筹建仓而非打板爆炒——周一可能继续走趋势慢涨而非连板加速。<strong>稳米的W1打板通信设备预案可能等不到符合条件的标的。</strong></div>
+<div class="para">- <strong>情境C — 最高板3板连续4天未突破</strong>：最高板已经连续3天卡在3板，三进四连续3天0%晋级。如果周一仍不突破3板，连板高度天花板压低至3板，1进2和2进3的溢价空间也受限。<strong>元件/PCB的情绪标（鹏鼎/风华/沪电）都是首板/2板，如果最高板一直卡3板，2进3的空间极其有限。</strong></div>
+<div class="para"><strong>5. 盲区扫描</strong></div>
+<div class="para">- 稳米遗漏：</div>
+<div class="para">- <strong>鹏鼎控股涨停但主力-6.93亿巨量流出</strong>（问财口径）。涨停首日主力大幅出货，周一竞价可能低开。作为稳米最重要的元件情绪标（§三连板#1标的），这值得警惕——如果周一鹏鼎竞价无溢价（甚至低开），对整个元件板块的涨停潮延续性构成质疑。</div>
+<div class="para">- <strong>达实智能(+10.10%) + 川润股份(+10.02%)</strong>：稳米"不碰"AI硬件方向，但今日双双涨停且热度极高（达实#5，川润#35）。AI硬件从"冰点后首板修复"→"可能走出持续线"的判断边界需要重新评估。<strong>建议：周一竞价观察达实/川润的竞价强度，作为AI硬件方向的风向标，即使不操作也应设为情绪锚。</strong></div>
+<div class="para">- <strong>亨通光电MA5(73.20) < MA10(73.53)</strong>：短期均线已轻微死叉（MA5低于MA10）。虽然今天+4.51%放量，但技术面已现走弱信号。稳米将其列为通信设备W2中军候选，但均线结构并不支持。建议关注MA20(71.90)支撑力度。</div>
+<div class="para">- <strong>机器人概念涨停30只</strong>：稳米仅覆盖减速器方向（福莱/昊志/双环/三花），但今日机器人概念涨停30只——远超元件15只！虽然机器人板块今日主力资金仅+2.87亿（远小于元件+165亿），但涨停广度惊人。<strong>稳米在"趋势板块→操作映射"中仅把减速器排在🥉位，但机器人涨停广度可能预示着更强的板块效应。</strong></div>
+<div class="sh3">🔥 自选池对抗（核心）</div><div class="tw"><table><thead><tr><th>挑战类型</th><th>稳米原判</th><th>红方质疑</th><th>数据依据</th></tr></thead><tbody><tr><td>遗漏标的</td><td>元件自选池：鹏鼎/风华/沪电/景旺/深南/东山</td><td>兴森科技（002436，+6.40%，主力+3.42亿🔥，PCB+先进封装+CPO多重概念）应加入自选——连续4天涨幅为正，量比>2放量，成交66.6亿流动性充足，PE合理。当前稳米未覆盖。</td><td>Q2元件扫描显示兴森科技近5日3天收阳，今日+6.40%，主力+3.42亿（问财口径）</td></tr><tr><td>遗漏标的</td><td>面板自选池：京东方A、彩虹股份</td><td>深天马A（000050，+4.61%，近5日3天收阳，面板中军型标的）——连续走强且未被稳米覆盖。面板方向除京东方/彩虹外可选观察标的。</td><td>Q2光学光电子扫描显示深天马A近5日3天收阳，今日+4.61%，成交温和放量</td></tr><tr><td>排除有误</td><td>不碰：AI硬件方向（含达实智能、川润股份）</td><td>达实智能(+10.10%涨停)和川润股份(+10.02%涨停)今日双双涨停首板，热度极高（达实#5）。稳米排除理由是"AI硬件方向未确认"，但今日冰点修复日首板涨停=方向已被市场"确认"。即使不操作，也应移除"不碰"标签改为"观察"。</td><td>Q4排除验证：达实智能+10.10%涨停，主力+3.83亿🔥（问财口径），换手32.32%，热度#5；川润股份+10.02%涨停，主力+2.70亿，热度#35</td></tr><tr><td>忽略板块</td><td>稳米板块排序：A元件> B通信设备> C面板> D医药/电力</td><td>机器人概念涨停30只（问财口径），远多于元件15只。今日全场涨停118只中机器人占30只=25%。稳米仅覆盖减速器方向（机器人子集），忽略了机器人概念的涨停潮广度。建议升至🥈与通信设备同档或更高。</td><td>问财`机器人概念 涨停`查询：30只涨停（蔚蓝锂芯/水晶光电/鸣志电器/巨轮智能等），远超元件15只。机器人板块指数MA20向上，量能vol5>vol20</td></tr><tr><td>板块涨停数目核验</td><td>稳米：通信设备"首板潮">10只涨停</td><td>问财口径通信设备股涨停仅1只（意华股份，14:50尾盘封板）。稳米的">10只"可能将大量非通信设备概念但涨超10%的票计入（如元件/光学的叠加概念股），需统一口径。注意：通信设备板块今日涨得好（+3.09%）但涨停极少，说明是机构建仓型行情，这与元件板块的游资涨停潮性质不同。周一策略需区分对待。</td><td>问财`通信设备概念 涨停`：仅意华股份1只涨停</td></tr><tr><td>板块涨停数目核验</td><td>稳米：半导体"~6只涨停（首板）"</td><td>问财口径半导体概念涨停仅1只（慧智微688512，14:23封板）。差异原因可能是稳米将长电科技(+9.04%接近涨停)等非涨停但涨幅>9%的票计入"涨停估算"，但长电成交198亿未封板。建议：半导体方向的描述修正为"接近涨停6只"而非"涨停6只"，避免误导。</td><td>问财`半导体概念 涨停`：仅慧智微1只涨停</td></tr></tbody></table></div><div class="sh3" id="s4b">🔵 Round 2：蓝方回应（稳米）</div><div class="sh3">📊 采纳汇总</div>
+<div class="sh3">待修正清单（Round 2后更新§三+附录A）</div>
+<ol class="tight-list">
+<li>✅ 鹏鼎控股(主力-6.93亿)从W1情绪标降级为观察，沪电股份替代为首选</li>
+<li>✅ 通信设备从W1打板下移至W2低吸，海星移入观察</li>
+<li>✅ 达实/川润从不碰移除，改为AI硬件观察</li>
+<li>✅ 机器人从🥉上调至🥈</li>
+<li>✅ 兴森科技加入元件趋势W2候选</li>
+<li>✅ 通信设备涨停数修正为"1只"</li>
+<li>✅ 半导体涨停数修正为"1只+接近涨停"</li>
+<li>✅ 亨通光电W2改MA20支撑</li>
+</ol><div class="sh3">逐条回应</div><div class="tw"><table><thead><tr><th>红方质疑</th><th>蓝方回应</th><th>结果</th></tr></thead><tbody><tr><td>定性校准：无异议</td><td>✅采纳，定性一致。无补充。</td><td>✅ 采纳</td></tr><tr><td>操作漏判：达实/川润未设观察锚</td><td>✅采纳。达实智能(热度#5/主力+3.83亿🔥)和川润股份(热度#35/主力+2.70亿🔥)今日双双涨停首板，AI硬件方向从"冰点修复首板"→"可能走出持续线"的判断边界需要重新评估。§三不碰清单移除达实/川润，改为「AI硬件观察」标签。操作约束：仅观察不追涨（首日修复未确认连续涨停），周一竞价看是否连板开。</td><td>✅ 采纳</td></tr><tr><td>规则执行①：中芯止损观察窗口时间边界</td><td>✅采纳。明确止损观察窗口边界：竞价(9:25)→9:30为限。9:30后若中芯持续走弱(涨幅<0%)则必须执行止损，不等午盘。§二教训2修正为「竞价高开>1%→观察至9:30」。</td><td>✅ 采纳</td></tr><tr><td>规则执行②：连亏2天空仓规则</td><td>⛔待弈沐裁决。中芯-2.91%为浮动亏损(未锁定)，理论上周一开盘后可能消失。但规则字面是"连亏≥2天"而非"已实现亏损≥2天"。建议：浮动亏损折半计入连亏判定——中芯-2.91%折半=-1.46%+柏诚已实现-1.5%=-2.96%≈触发。建议定为"连亏2天⚠️，周一竞价评估：若中芯竞价修复翻红→连亏判定取消，恢复60%仓位；若中芯竞价续跌→执行空仓"。</td><td>⛔ 待弈沐裁决</td></tr><tr><td>规则执行③：柏诚仓位26%超出上限</td><td>✅接受。说明：柏诚买于5/21(冰点29%)，当日总仓位上限20%(冰点×0.5折扣)，实际柏诚26%+中芯35%=61%，超上限41pp。虽然5/22早盘清仓，但5/21当日确属违规。已在§二教训3中记录「冰点修复日W1仓位≤预案×0.5」规则建议。</td><td>✅ 采纳</td></tr><tr><td>反向情景A：高潮次日大分化</td><td>✅采纳。元件15只涨停中，红板科技(14:47尾盘封)、华正新材(14:05)、方正科技(14:03)、法拉电子(14:24)均为尾盘勉强回封，周一竞价大概率无溢价。已在风险#1/#4中标注。补充：周一分化日，W1前排如果顶一字买不到，不追后排跟风。</td><td>✅ 采纳</td></tr><tr><td>反向情景B：通信设备是机构建仓型非游资爆炒</td><td>✅采纳。关键发现——问财口径通信设备涨停仅1只(意华股份14:50尾盘)，与元件15只涨停形成鲜明对比。通信设备是机构慢涨型行情，W1打板通信设备≈等不到标的。修正：通信设备从W1打板(§三连板)下移至W2低吸(§三趋势)，海星股份从W1移入观察。</td><td>✅ 采纳</td></tr><tr><td>反向情景C：最高板3板连续不突破</td><td>✅采纳。已在风险#3标注。强调：1进2和2进3的空间压缩至3板天花板，周一若仍不突破，仓位释放给趋势侧。</td><td>✅ 采纳</td></tr><tr><td>盲区①：鹏鼎控股涨停但主力-6.93亿</td><td>✅采纳。重要信号！涨停首日主力巨量流出—>周一预期分歧甚至低开。鹏鼎从§三连板#1情绪标降级为「观察」，移除W1打板操作。沪电股份(主力+1.24亿)替代鹏鼎成为元件W1首选情绪标。</td><td>✅ 采纳</td></tr><tr><td>盲区②：达实/川润涨停</td><td>✅已在操作漏判中采纳。移除不碰标签，改为观察。</td><td>✅ 采纳</td></tr><tr><td>盲区③：亨通光电MA5<MA10轻微死叉</td><td>✅采纳。亨通光电MA5(73.20)<MA10(73.53)说明短期动能未修复。修正：亨通W2回踩条件加注MA20(71.90)支撑，不追高。中天科技(MA5>MA10>MA20)均线健康，作为通信设备W2首选候选。</td><td>✅ 采纳</td></tr><tr><td>盲区④：机器人概念涨停30只</td><td>✅采纳。机器人涨停30只(占全场25%)=今日涨停广度最大方向，远超元件15只。上调机器人板块评级：从🥉趋势候选→🥈与通信设备同档。§三趋势板块排序修正为「A元件 > B机器人(涨停30只🔥) > C通信设备(机构慢涨) > D减速器/华为汽车」。注意：机器人涨停30只但主力资金仅+2.87亿，说明多为游资打首板而非机构建仓，周一分歧概率大。操作约束：仅W2回踩低吸，不追W1。</td><td>✅ 采纳</td></tr><tr><td>🔥自选池①：兴森科技（元件遗漏）</td><td>✅采纳。兴森科技(+6.40%, 主力+3.42亿🔥, PCB+先进封装+CPO)连续4天收阳，成交66.6亿流动性充足。加入元件趋势候选W2观察池。</td><td>✅ 采纳</td></tr><tr><td>🔥自选池②：深天马A（面板遗漏）</td><td>⚠️部分采纳。深天马A(+4.61%, 近5日3天收阳)加入面板方向观察，但不作为操作标的——面板方向刚确认(京东方仅2板)，容量偏小。</td><td>⚠️ 部分采纳—观察不入操作</td></tr><tr><td>🔥自选池③：达实/川润排除有误</td><td>✅已在操作漏判中采纳。从不碰清单移除，改为「AI硬件观察」。</td><td>✅ 采纳</td></tr><tr><td>🔥自选池④：机器人忽略板块</td><td>✅采纳。上调机器人至🥈。注意：涨停30只但主力+2.87亿，游资打首板性质。</td><td>✅ 采纳</td></tr><tr><td>🔥板块涨停数核验①：通信设备仅1只涨停</td><td>✅采纳。修正：通信设备「>10只涨停」→「1只涨停(意华股份)+板块+179亿🔥机构建仓」。策略从W1打板→W2低吸。</td><td>✅ 采纳</td></tr><tr><td>🔥板块涨停数核验②：半导体仅1只涨停</td><td>✅采纳。修正：半导体「~6只涨停」→「1只涨停(慧智微)+长电+9.04%接近涨停+中芯+3.23%走势修复」。</td><td>✅ 采纳</td></tr></tbody></table></div><div class="sh3" id="s4c">🟢 Round 3：洋米终审</div><div class="si">
+审阅时间：2026-05-22 18:00 | 终审规则：仅确认/标记裁决，不引新论点<br>
+</div>
+<div class="para"><strong>终稿定论</strong>：</div>
+<div class="para">- <strong>定性校准</strong> ✅ 确认。冰点后强势修复日，无异议。</div>
+<div class="para">- <strong>操作漏判</strong> ✅ 确认。达实/川润从不碰→AI硬件观察，已采纳。</div>
+<div class="para">- <strong>规则执行</strong>：</div>
+<div class="para">- 中芯止损观察窗口修正(竞价9:25→9:30) ✅ 确认</div>
+<div class="para">- 柏诚仓位超额已记录教训 ✅ 确认</div>
+<div class="para">- <strong>连亏2天空仓规则</strong> → ⛔ <strong>待弈沐裁决</strong></div>
+<div class="para">- <strong>反向情景</strong> ✅ 三情景全部确认。核心改动：通信设备从W1打板→W2低吸。</div>
+<div class="para">- <strong>盲区扫描</strong> ✅ 全部确认。鹏鼎主力-6.93亿降级、亨通均线走弱、机器人30只涨停上调评级。</div>
+<div class="para">- <strong>自选池对抗</strong> ✅</div>
+<div class="para">- 兴森科技加入W2观察 ✅</div>
+<div class="para">- 深天马A观察不入操作 ✅（红方同意理由：面板容量偏小）</div>
+<div class="para">- 达实/川润排除修正 ✅</div>
+<div class="para">- 机器人上调至🥈 ✅</div>
+<div class="para">- 通信设备/半导体涨停数核验修正 ✅</div>
+<div class="para"><strong>仍存分歧（待弈沐哥裁决）</strong>：</div>
+<div class="para">- ~~<strong>连亏2天空仓规则</strong>：中芯-2.91%浮动亏损是否计入"连亏天数"？~~</div>
+<div class="para">- ✅ <strong>弈沐裁决（5/22夜）</strong>：选B——浮动亏损不计入连亏天数。当日仓位已控制在~30%。终稿按此执行。</div>
+<hr class="divider"><div class="verdict"><div class="vt">终审定论</div><div class="vb"><div class="para">：</div>
+<div class="para">- <strong>定性校准</strong> ✅ 确认。冰点后强势修复日，无异议。</div>
+<div class="para">- <strong>操作漏判</strong> ✅ 确认。达实/川润从不碰→AI硬件观察，已采纳。</div>
+<div class="para">- <strong>规则执行</strong>：</div>
+<div class="para">- 中芯止损观察窗口修正(竞价9:25→9:30) ✅ 确认</div>
+<div class="para">- 柏诚仓位超额已记录教训 ✅ 确认</div>
+<div class="para">- <strong>连亏2天空仓规则</strong> → ⛔ <strong>待弈沐裁决</strong></div>
+<div class="para">- <strong>反向情景</strong> ✅ 三情景全部确认。核心改动：通信设备从W1打板→W2低吸。</div>
+<div class="para">- <strong>盲区扫描</strong> ✅ 全部确认。鹏鼎主力-6.93亿降级、亨通均线走弱、机器人30只涨停上调评级。</div>
+<div class="para">- <strong>自选池对抗</strong> ✅</div>
+<div class="para">- 兴森科技加入W2观察 ✅</div>
+<div class="para">- 深天马A观察不入操作 ✅（红方同意理由：面板容量偏小）</div>
+<div class="para">- 达实/川润排除修正 ✅</div>
+<div class="para">- 机器人上调至🥈 ✅</div>
+<div class="para">- 通信设备/半导体涨停数核验修正 ✅</div>
+<div class="para"><strong>仍存分歧（待弈沐哥裁决）</strong>：</div>
+<div class="para">- ~~<strong>连亏2天空仓规则</strong>：中芯-2.91%浮动亏损是否计入"连亏天数"？~~</div>
+<div class="para">- ✅ <strong>弈沐裁决（5/22夜）</strong>：选B——浮动亏损不计入连亏天数。当日仓位已控制在~30%。终稿按此执行。</div></div></div></div>
+</div>
+<div class="section" id="sa">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 附录A · 盘前速查<span class="cnt">周一开盘只看这里</span>
+</div>
+<div class="sb"><div class="sh3">📋 持仓处理</div><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>操作策略</th></tr></thead><tbody><tr><td>中芯国际⚠️</td><td>135.27</td><td>500股(~35%)</td><td>-5%(128.5)</td><td>浮亏-2.91%已修复至止损线上方。竞价低开>3%→止损；平开→持有观察半导体板块方向；高开→持有</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>温度标（只盯）</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead><tbody><tr><td>元件/PCB🔥</td><td>沪电股份/风华高科</td><td>沪电/风华W1竞价确认</td><td>W1</td><td>情绪≥60%+涨停收益>2%+竞价高开3-7%+量比>3</td></tr><tr><td>元件/PCB🔥</td><td>景旺电子</td><td>景旺电子W1竞价确认</td><td>W1</td><td>同上</td></tr><tr><td>通信设备🔥</td><td>海星股份/亨通光电/中天科技</td><td>亨通/W2/中天W2回踩</td><td>W2</td><td>海星仅观察(机构慢涨型，W1打板等不到标的)</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作标的（回踩买）</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇元件/PCB🔥</td><td>深南电路/东山精密</td><td>深南电路W2回踩5日线</td><td>缩量+板块未破位</td></tr><tr><td>🥈机器人🔥</td><td>福莱新材/三花智控</td><td>福莱新材W2回踩5日线</td><td>缩量+板块未破位</td></tr><tr><td>🥉通信设备🟡</td><td>亨通光电/中天科技</td><td>亨通光电W2回踩MA20</td><td>缩量+板块强势延续</td></tr><tr><td>🥉华为汽车</td><td>中鼎股份</td><td>中鼎股份W2回踩5日线</td><td>缩量+板块资金为正</td></tr></tbody></table></div><div class="sh3">📋 操作指南</div><div class="si"><div class="para"><strong>总基调</strong>：强势修复延续日，元件/通信设备双主线确认。周一大概率分化，聚焦前排核心。</div>
+<div class="para"><strong>连板窗口1</strong>：🟡开放(元件/PCB前排打板)，仓位正常，最高板3板空间有限</div>
+<div class="para"><strong>连板窗口2</strong>：🟡开放(分歧回封尾盘低吸)</div>
+<div class="para"><strong>趋势观察窗口</strong>：10:00-14:00等回踩，14:00-14:50买入(深南/亨通/福莱)</div>
+<div class="para"><strong>仓位</strong>：总仓位≤30%（弈沐已降至~30%，仅中芯持有），单只≤15%</div>
+<div class="para"><strong>不碰</strong>：威龙(跌停)、诚邦(断板)、存储芯片(弱)、半导体(持仓不新买)</div>
+<div class="para"><strong>风险</strong>：①高潮次日分歧大面 ②炸板率76%🚨 ③最高板3板高度不足 ④连亏2天(已裁决：浮动不计入)</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="sd">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 数据附录<span class="cnt">机器解析用</span>
+</div>
+<div class="sb"><div class="sh3">持仓明细</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th><th>状态</th></tr></thead><tbody><tr><td>中芯国际</td><td>688981</td><td>趋势</td><td>500股</td><td>135.27</td><td>131.33</td><td><span class="down">-2.91%✅</span></td><td>-5%已触发</td><td>持有（收盘+3.23%🔥，从-5.87%大幅修复）</td></tr><tr><td>柏诚股份</td><td>601133</td><td>连板</td><td>1500股(已清)</td><td>34.74</td><td>32.74(清)</td><td><span class="down">-5.76%(-3000元)</span></td><td>—</td><td>📤已清仓@32.74，收盘32.99仍低于清仓价</td></tr></tbody></table></div><div class="sh3">连板自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>量比</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>沪电股份</td><td>002463</td><td>元件/PCB</td><td>W1</td><td>情绪标</td><td>W1打板</td><td><span class="up">+10.00%</span></td><td>114.07</td><td>—</td><td>—</td><td>—</td><td>元件W1首选(主力+1.24亿)</td></tr><tr><td>风华高科</td><td>000636</td><td>元件/PCB</td><td>W1</td><td>情绪标</td><td>W1打板</td><td><span class="up">+10.00%</span></td><td>37.62</td><td>—</td><td>—</td><td>—</td><td>MLCC龙头，9:31早盘封板</td></tr><tr><td>景旺电子</td><td>603228</td><td>元件/PCB</td><td>W1</td><td>标的</td><td>W1追涨</td><td><span class="up">+10.00%</span></td><td>82.50</td><td>—</td><td>—</td><td>—</td><td>AI PCB，9:38封板</td></tr><tr><td>四环生物</td><td>000518</td><td>医药</td><td>观察</td><td>情绪标</td><td>只盯不买</td><td><span class="up">+10.13%</span></td><td>4.13</td><td>—</td><td>—</td><td>—</td><td>3板最高板，断板=情绪标</td></tr><tr><td>金利华电</td><td>300069</td><td>电力</td><td>观察</td><td>情绪标</td><td>只盯不买</td><td><span class="up">+20.00%</span></td><td>52.87</td><td>—</td><td>—</td><td>—</td><td>3板最高板，收购中科西光</td></tr><tr><td>京东方A</td><td>000725</td><td>面板</td><td>观察</td><td>情绪标</td><td>只盯不买</td><td><span class="up">+10.02%</span></td><td>5.16</td><td>—</td><td>—</td><td>—</td><td>2板/热度#1，观察3板机遇</td></tr><tr><td>达实智能</td><td>002421</td><td>AI硬件</td><td>观察</td><td>情绪锚</td><td>只盯不买</td><td><span class="up">+10.10%</span></td><td>4.36</td><td>—</td><td>—</td><td>—</td><td>AI硬件观察锚，周一竞价看连板</td></tr></tbody></table></div><div class="sh3">趋势自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>MA20</th><th>量比</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>深南电路</td><td>002916</td><td>元件/PCB</td><td>W2</td><td>主趋势股</td><td>W2回踩5日线</td><td><span class="up">+10.00%</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>PCB中军，回踩5日线(约105)买入</td></tr><tr><td>东山精密</td><td>002384</td><td>元件/PCB</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+6.56%</span></td><td>220.55</td><td>—</td><td>—</td><td>1.25</td><td>6.08%</td><td>PCB+光模块，成交183亿</td></tr><tr><td>兴森科技</td><td>002436</td><td>元件/PCB</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+6.40%</span></td><td>35.42</td><td>—</td><td>—</td><td>2.10</td><td>12.45%</td><td>PCB+先进封装，主力+3.42亿🔥</td></tr><tr><td>中天科技</td><td>600522</td><td>通信设备</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+4.58%</span></td><td>43.82</td><td>—</td><td>—</td><td>—</td><td>—</td><td>均线健康(MA5>MA10>MA20)</td></tr><tr><td>亨通光电</td><td>600487</td><td>通信设备</td><td>W2</td><td>趋势候选</td><td>W2回踩MA20</td><td><span class="up">+4.51%</span></td><td>73.05</td><td>73.20</td><td>71.90</td><td>—</td><td>—</td><td>MA5<MA10轻微死叉，改MA20(71.90)支撑</td></tr><tr><td>福莱新材</td><td>605488</td><td>减速器/机器人</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+6.35%</span></td><td>40.88</td><td>37.94</td><td>35.25</td><td>1.47</td><td>9.40%</td><td>减速器持续走强</td></tr><tr><td>三花智控</td><td>002050</td><td>减速器/机器人</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+2.31%</span></td><td>54.05</td><td>52.54</td><td>49.30</td><td>1.09</td><td>6.31%</td><td>减速器中军+2.87亿🔥</td></tr><tr><td>中鼎股份</td><td>000887</td><td>华为汽车</td><td>W2</td><td>趋势候选</td><td>W2回踩5日线</td><td><span class="up">+6.84%🔥</span></td><td>20.47</td><td>19.09</td><td>18.28</td><td>1.79</td><td>7.17%</td><td>华为汽车最强+1.62亿🔥</td></tr></tbody></table></div><div class="sh3">板块状态</div><div class="tw"><table><thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>状态</th></tr></thead><tbody><tr><td>元件/PCB</td><td>🔥🔥主线</td><td>>15只</td><td>2-首</td><td>鹏鼎控股/风华高科/沪电股份</td><td>+165亿🔥/+7.85%，PCB/MLCC涨价周期</td></tr><tr><td>机器人</td><td>🔥主线</td><td>30只🔥</td><td>首</td><td>蔚蓝锂芯/水晶光电/鸣志电器等</td><td>涨停广度最大(占全场25%)，但主力仅+2.87亿游资性质</td></tr><tr><td>通信设备</td><td>🔥主线(机构慢涨)</td><td>1只(意华)</td><td>首</td><td>亨通光电/中天科技</td><td>+179亿🔥资金最大流入，涨停极少=机构建仓</td></tr><tr><td>光学光电子/面板</td><td>🟡支线</td><td>~8只</td><td>2-首</td><td>京东方A2板/深天马A</td><td>+84亿🔥但京东方仅2板，持续性待确认</td></tr><tr><td>半导体</td><td>🔄修复中</td><td>1只(慧智微)+接近涨停6只</td><td>首</td><td>长电+9.04%/中芯+3.23%</td><td>午后V反+44亿，趋势修复但未确认</td></tr><tr><td>减速器/机器人子集</td><td>🟡趋势维持</td><td>0</td><td>无梯队</td><td>福莱+6.35%🔥/三花+2.31%</td><td>资金分流至元件/机器人，维持观察</td></tr><tr><td>华为汽车</td><td>🟡趋势候选</td><td>0</td><td>无梯队</td><td>中鼎+6.84%🔥/三花+2.31%</td><td>中鼎午后加速+1.62亿，华为汽车信号强</td></tr><tr><td>AI硬件</td><td>🔄分歧观察</td><td>2(达实/川润涨停首板)</td><td>首</td><td>达实智能/川润股份</td><td>今日冰点修复首板，周一连板确认持续性</td></tr></tbody></table></div><div class="sh3">今日操作</div><div class="tw"><table><thead><tr><th>时间</th><th>动作</th><th>标的</th><th>价格</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>早盘</td><td>📤清仓</td><td>柏诚股份</td><td>32.74</td><td>-3000元(-5.76%)</td><td>冲高+4.26%后缩量回落→拐头清仓。缩量就该走</td></tr></tbody></table></div><div class="sh3">锚定股状态</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>窗口</th><th>状态</th><th>影响</th><th>灯</th></tr></thead><tbody><tr><td>中芯国际</td><td>688981</td><td>持有</td><td>止损已触发(-2.91%✅修复)，量比0.91缩量</td><td>收盘+3.23%🔥浮亏大幅修复，重回止损线上方</td><td>🟢</td></tr><tr><td>柏诚股份(已清)</td><td>601133</td><td>📤已清仓</td><td>清仓@32.74(-5.76%)，收盘32.99(-0.42%)</td><td>清仓后持续弱势✅</td><td>✅</td></tr><tr><td>诚邦股份</td><td>603316</td><td>收盘观察</td><td>-1.28%从-7.82%大幅回升</td><td>4板断板但尾盘拉升</td><td>🟠</td></tr><tr><td>威龙股份</td><td>603779</td><td>跌停</td><td>-9.99%🚨封死跌停</td><td>7板断板确认</td><td>🔴</td></tr></tbody></table></div></div>
+</div>
+
+</div>
+</div>
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>

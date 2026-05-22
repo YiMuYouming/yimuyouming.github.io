@@ -240,6 +240,8 @@ def cell_color(header, value):
     if not value or value in ('—', 'TBD', ''):
         return value
     s = str(value)
+    # Strip markdown bold markers
+    s = s.replace('**', '')
     # positive/negative percentages
     if header in ('涨幅', '涨跌幅', '竞价%', '早盘%', '午盘%', '收盘%', '浮盈%',
                    '上证(%)', '上证涨幅', '板块涨跌幅'):
@@ -321,17 +323,22 @@ def md_text_to_html(text):
             i += 1
             continue
 
+        # Skip markdown table rows (they're handled by extract_tables)
+        if re.match(r'^\|.*\|$', line):
+            i += 1
+            continue
+
         # Empty line
         if not line:
             if in_list:
-                out.append('</div>')
+                out.append('</ol>')
                 in_list = False
             i += 1
             continue
 
-        # Numbered list item
+        # Numbered list item (must start at beginning of line with exactly "N. ")
         m = re.match(r'^(\d+)\.\s+(.+)', line)
-        if m:
+        if m and not re.match(r'^\d+\.\s*\*\*\[', line):
             if not in_list:
                 out.append('<ol class="tight-list">')
                 in_list = True
@@ -461,16 +468,25 @@ def parse_s1(text):
         elif heading_has(h, '节点说明'):
             html += html_subheading("🔍 节点说明", "s1c")
             html += '<div class="node-grid">'
-            for node_name in ['竞价', '早盘', '午盘']:
-                node_text = extract_between(body, f'**{node_name}**', '**')
-                if not node_text:
-                    parts = body.split(f'**{node_name}**')
-                    if len(parts) > 1:
-                        node_text = parts[1][:400]
+            node_names = ['竞价', '早盘', '午盘']
+            for idx, node_name in enumerate(node_names):
+                # Extract between this node and the next node (or end)
+                parts = body.split(f'**{node_name}**')
+                if len(parts) < 2:
+                    continue
+                after = parts[1]
+                if idx + 1 < len(node_names):
+                    next_marker = f'**{node_names[idx+1]}**'
+                    next_pos = after.find(next_marker)
+                    if next_pos != -1:
+                        node_text = after[:next_pos]
+                    else:
+                        node_text = after[:800]
+                else:
+                    node_text = after[:800]
                 if node_text:
-                    node_text = node_text.strip().lstrip('\n- 说明：').lstrip('\n- 结论：')
+                    node_text = node_text.strip().lstrip('\n- 说明：').lstrip('\n- 结论：').lstrip('\n说明：').lstrip('\n结论：')
                     lines = node_text.strip().split('\n')
-                    head = next((l for l in lines if l.strip()), node_text[:80])
                     body_text = '<br>'.join(l.strip() for l in lines)
                     html += f'<div class="node-card"><div class="nhead">{node_name}</div><div class="nbody">{md_text_to_html(body_text)}</div></div>'
             html += '</div>'
@@ -487,8 +503,8 @@ def parse_s1(text):
 
         elif heading_has(h, '自选池表现'):
             html += html_subheading("🎯 当日自选池表现", "s1e")
-            # Find sector sub-headings in body text
-            sector_blocks = re.split(r'\*\*(.+?)\*\*.*?\n', body)
+            # Find sector sub-headings in body text (standalone **bold** lines, not inline in tables)
+            sector_blocks = re.split(r'^\*\*(.+?)\*\*\s*$', body, flags=re.MULTILINE)
             si = 1
             while si < len(sector_blocks):
                 sname = sector_blocks[si].strip()
@@ -561,7 +577,7 @@ def parse_s2(text):
 
 def parse_s3(text):
     """Parse §三 次日预案."""
-    html = html_section_header("s3", "§三 · 次日预案初稿", "")
+    html = html_section_header("s3", "§三 · 次日预案", "")
 
     # Extract key metadata lines
     style_line = re.search(r'\*\*风格分数\*\*[：:]\s*(.+)', text)
@@ -864,7 +880,7 @@ def convert_md_to_html(md_path):
         sections_html.append(parse_s2(s2_text))
 
     # §三
-    s3_text, rest = extract_section(content, '三、次日预案初稿')
+    s3_text, rest = extract_section(content, '三、次日预案')
     if s3_text:
         sections_html.append(parse_s3(s3_text))
 
