@@ -5,7 +5,7 @@ Usage: python3 tools/sync_pnl_data.py
 Bridge must be running on localhost:8088.
 """
 
-import json, re, sys, urllib.request
+import json, re, sys, urllib.request, sqlite3
 from datetime import datetime
 from pathlib import Path
 
@@ -138,23 +138,33 @@ def main():
 
     try:
         data["summary"] = fetch("http://localhost:8088/api/pnl/summary")
-        data["meta"] = {
-            "total_asset": 0, "total_deposit": 200000,
-        }
     except Exception as e:
         print(f"FAIL summary: {e}")
-        data["meta"] = {"total_asset": 0, "total_deposit": 200000}
+        data["summary"] = {}
+
+    # ── Meta: 从 pnl.db daily_summary 取最新收盘值（最稳，不受 gen/bridge 干扰）──
+    try:
+        db_path = str(PORTAL.parent / "live-dashboard" / "data" / "pnl.db")
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        cur.execute("SELECT nav, deposit FROM daily_summary ORDER BY date DESC LIMIT 1")
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            nav, deposit = row
+            deposit = float(deposit) if deposit else 200000
+            total_asset = round(nav * deposit)
+        else:
+            total_asset, deposit = 0, 200000
+    except Exception as e:
+        print(f"FAIL daily_summary: {e}")
+        total_asset, deposit = 0, 200000
+    data["meta"] = {"total_asset": total_asset, "total_deposit": deposit}
 
     # ── Market snapshot ──
     try:
         baseline = fetch("http://localhost:8088/api/baseline")
         live = fetch("http://localhost:8088/api/live/quotes")
-        # Update meta from baseline
-        pnl = baseline.get("pnl", {})
-        data["meta"] = {
-            "total_asset": pnl.get("总资产", 0),
-            "total_deposit": pnl.get("累计入金", 200000),
-        }
         market_html = build_market_html(baseline, live)
     except Exception as e:
         print(f"FAIL market: {e}")
