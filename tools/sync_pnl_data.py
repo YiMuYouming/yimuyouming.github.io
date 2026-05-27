@@ -22,11 +22,29 @@ def build_market_html(baseline, live):
     li = live.get("live_index", {})
     m = baseline.get("market", {})
     iw = live.get("iwencai", {})
+    sentiment = baseline.get("sentiment", {}) or {}
+    sentiment_close = (baseline.get("sentiment_nodes", {}) or {}).get("收盘", {}) or {}
     nb = live.get("northbound", {}) or {}
     br = live.get("breadth", {}) or {}
     yb = baseline.get("yesterday_baseline", {}) or {}
 
     h = '<div style="display:flex;flex-direction:column;gap:6px">\n'
+
+    def parse_float(v):
+        try:
+            m = re.search(r"[+-]?\d+(?:\.\d+)?", str(v).replace(",", ""))
+            return float(m.group(0)) if m else None
+        except Exception:
+            return None
+
+    def index_point_change(price, pct):
+        price_num = parse_float(price)
+        pct_num = parse_float(pct)
+        if price_num is None or pct_num is None or pct_num <= -100:
+            return ""
+        prev_close = price_num / (1 + pct_num / 100)
+        point = price_num - prev_close
+        return f"{point:+.2f}点"
 
     # Row 1: 三大指数
     h += '<div style="display:flex;gap:6px">\n'
@@ -34,10 +52,13 @@ def build_market_html(baseline, live):
         price = li.get(pk, "—")
         chg = str(li.get(ck, "—"))
         d_ = "up" if chg.startswith("+") else "down" if chg.startswith("-") else ""
-        pct = float(chg.replace("+", "").replace("%", "")) if chg not in ("—", "") else 0
+        pct = parse_float(chg) if chg not in ("—", "") else 0
+        pct = pct if pct is not None else 0
         arrow = "▲" if pct > 0 else "▼" if pct < 0 else "—"
         c = "#DC2626" if d_ == "up" else "#059669" if d_ == "down" else ""
-        h += f'<div class="kpi-card" style="flex:1;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">{name}</div><div class="kpi-value {d_}" style="font-size:20px;font-weight:700;color:{c}">{price}</div><div class="kpi-verdict {d_}" style="font-size:12px;font-weight:600;color:{c}">{arrow} {chg}</div></div>\n'
+        point = index_point_change(price, chg)
+        verdict = f"{arrow} {point} · {chg}" if point else f"{arrow} {chg}"
+        h += f'<div class="kpi-card" style="flex:1;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">{name}</div><div class="kpi-value {d_}" style="font-size:20px;font-weight:700;color:{c}">{price}</div><div class="kpi-verdict {d_}" style="font-size:12px;font-weight:600;color:{c}">{verdict}</div></div>\n'
     h += "</div>\n"
 
     # Row 2: 成交额/涨跌比/振幅/涨跌停
@@ -49,7 +70,15 @@ def build_market_html(baseline, live):
     upCnt, dnCnt = li.get("上涨家数"), li.get("下跌家数")
     udHtml = f'<span style="color:#DC2626">{upCnt}</span>/<span style="color:#059669">{dnCnt}</span>' if (upCnt is not None and dnCnt is not None) else (m.get("涨跌比") or "—")
     amp = li.get("上证指数振幅", "—")
-    zt, dt = iw.get("涨停家数"), iw.get("跌停家数")
+    def live_or_baseline_count(key):
+        v = iw.get(key)
+        bv = m.get(key)
+        if v in (None, "", "—") or (v == 0 and bv not in (None, "", "—", 0)):
+            return bv
+        return v
+
+    zt = live_or_baseline_count("涨停家数")
+    dt = live_or_baseline_count("跌停家数")
 
     h += '<div style="display:flex;gap:6px">\n'
     h += f'<div class="kpi-card" style="flex:1;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">成交额</div><div class="kpi-value" style="font-size:15px;font-weight:700">{amt}</div>'
@@ -66,12 +95,26 @@ def build_market_html(baseline, live):
     h += '<div style="display:flex;gap:6px">\n'
     if emotionVal is not None:
         h += f'<div class="kpi-card" style="flex:1;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">情绪值</div><div class="kpi-value" style="font-size:15px;font-weight:700">{emotionVal}%</div></div>\n'
-    for label, key in [("涨停收益", "昨日涨停收益"), ("连板收益", "连板收益"), ("炸板收益", "炸板收益")]:
-        v = iw.get(key)
+
+    def sentiment_value(*keys):
+        for src in (iw, sentiment, sentiment_close):
+            for key in keys:
+                v = src.get(key)
+                num = parse_float(v)
+                if num is not None:
+                    return num
+        return None
+
+    for label, keys in [
+        ("涨停收益", ("昨日涨停收益", "涨停收益")),
+        ("连板收益", ("连板收益",)),
+        ("炸板收益", ("炸板收益", "昨日炸板收益")),
+    ]:
+        v = sentiment_value(*keys)
         if v is not None:
-            c = "#DC2626" if float(v) > 0 else "#059669"
-            sign = "+" if float(v) > 0 else ""
-            h += f'<div class="kpi-card" style="flex:1;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">{label}</div><div class="kpi-value" style="font-size:15px;font-weight:700;color:{c}">{sign}{v}%</div></div>\n'
+            c = "#DC2626" if v > 0 else "#059669"
+            sign = "+" if v > 0 else ""
+            h += f'<div class="kpi-card" style="flex:1;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div class="kpi-label" style="font-size:10px;color:var(--text3);margin-bottom:2px">{label}</div><div class="kpi-value" style="font-size:15px;font-weight:700;color:{c}">{sign}{v:.2f}%</div></div>\n'
     h += "</div>\n"
 
     # Row 4: 北向
