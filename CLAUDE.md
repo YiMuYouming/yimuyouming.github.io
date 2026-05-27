@@ -2,9 +2,23 @@
 
 > 触发词：**"同步门户"**（全局 CLAUDE.md 已注册）
 
-## 同步流程（三步）
+## 同步流程（四步）
 
-### Step 1: 找差异
+> 先确认 live-dashboard bridge 在运行：`pgrep -fl bridge.py`
+> 若未运行，数据模块（市场快照/PnL曲线）跳过 Step 1，其余步骤照常。
+
+### Step 1: 刷新数据模块（市场快照 + PnL 曲线）
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/sync_pnl_data.py
+```
+
+从 bridge API（localhost:8088）拉取 PnL 收益曲线 + 市场快照数据，嵌入 `index.html`。
+
+**✔ 检查项**：确认输出显示同步的天数（如 "synced N PnL days + market snapshot → index.html"）。
+若 bridge 未运行，会显示 "bridge 未运行"，不影响其余步骤。
+
+### Step 2: 找差异
 
 ```bash
 # Vault 中复盘笔记目录（按日期命名）
@@ -16,28 +30,54 @@ ls ~/Documents/YM_Capital/portal/review-notes/ | grep "^[0-9].*\.html$"
 # 对比：Vault 有 md 但 portal 无对应 html → 待同步
 ```
 
-### Step 2: 转 HTML 并更新索引
+**✔ 检查项**：对比两列输出，确认待同步的笔记日期。若已有 HTML 但可能数据有误（如上次 5/20 误载 5/19 数据），需读 Vault md 验证内容一致性。
+
+### Step 3: 转 HTML 并更新索引
 
 对新笔记：
+
+**方式 A（推荐）**：用 `convert_review.py` 自动转换
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/convert_review.py <vault_md_path>
+```
+
+**方式 B**：手动转换
 1. 读 Vault `.md` 复盘笔记完整内容
-2. 用 `html-effectiveness` skill 模板转 HTML（暖白配色，卡片+表格+可折叠）
+2. 按 Portal CSS 模板转 HTML（暖白配色，卡片+表格+可折叠，带侧边栏导航）
 3. 保存到 `review-notes/YYYY-MM-DD.html`
 4. 更新 `index.html`（主页 5 篇列表）和 `review-notes/index.html`（全部列表）
 
-### Step 3: 抽 insights
+**✔ 检查项**：
+- 打开生成的 HTML 文件预览，核对顶部 chip 数据（情绪/涨跌停/持仓）与 Vault frontmatter 一致
+- 大盘全景表、涨停结构表是否完整渲染
+- 心得条数、红方对抗轮次是否完整
+
+### Step 4: 抽 insights
 
 读 §二 心得中 `[认知]` 条目标记的条目，匹配 insights 8 主题的触发标签：
 - 匹配成功 → 追加一句话摘要到 `insights/index.html` 对应卡片，计数 +1
 - 匹配不上 → 问弈沐哥是否新开主题卡片
 
-### Step 4: 提交
+**✔ 检查项**：确认 insights 卡片计数已递增，新条目内容能在 portal 打开看到。
+
+### Step 5: 提交（需用户确认）
 
 ```bash
 cd ~/Documents/YM_Capital/portal
+git diff --stat
+```
+
+**必须先列出变更摘要，问用户"可以提交推送吗？"，用户确认后再执行：**
+
+```bash
 git add -A
 git commit -m "sync: YYYY-MM-DD 复盘笔记 + insights 更新"
 git push
 ```
+
+**⚠️ 不确认不推送。不跳过用户确认步骤。**
+
+## 关联
 
 ## 关联
 
