@@ -37,7 +37,9 @@ html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 .topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
 .topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
-.topbar .meta{display:flex;gap:8px;flex-wrap:wrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 .chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
 .chip.red{border-color:var(--red);color:var(--red)}
 .chip.green{border-color:var(--green);color:var(--green)}
@@ -206,6 +208,7 @@ def html_topbar(fm):
     sh_chip = 'red' if sh_pct.startswith('+') else 'green'
 
     return f"""<div class="topbar">
+  <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
   <div class="title">{fm.get('date','')} {weekday} 复盘笔记</div>
   <div class="meta">
     <span class="chip {emo_chip}">情绪 {emo}</span>
@@ -925,6 +928,14 @@ def convert_md_to_html(md_path):
 </div>
 
 {JS_FOOTER}
+<script>
+(function(){{
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {{
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }}
+}})();
+</script>
 </body>
 </html>"""
 
@@ -970,10 +981,8 @@ def update_review_notes_index(date_str, fm):
     with open(idx_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Dedup: skip if entry already exists
-    if f'href="{date_str}.html"' in content:
-        print(f"⏭  已存在: {date_str}.html (跳过 index 更新)")
-        return
+    # 同一天重复同步时刷新归档卡片内容，但不重复增加计数。
+    existing_entry = f'href="{date_str}.html"' in content
 
     weekday = fm.get('weekday', '')
     day = date_str[-2:].lstrip('0')
@@ -990,74 +999,199 @@ def update_review_notes_index(date_str, fm):
     new_entry = f'''    <a href="{date_str}.html" class="day-card"><div class="dt">{day}<span class="wd"> {weekday}</span></div><div class="mm"><span>上证 <strong class="{sh_cls}">{sh_pct}</strong></span><span>涨停 {zt}</span><span>情绪 <strong class="{emo_cls}">{emo}</strong></span><span>{desc}</span><span class="tag {pos_tag}">持仓 {pos}</span></div><div class="ar">→</div></a>
 '''
 
-    # Find the 5月 section and insert at top
-    # Find the 5月 day-list div
-    pattern = r'(<div class="month-label[^>]*>.*?2026年5月.*?</div>\s*<div class="day-list">\s*)'
-    content = re.sub(pattern, r'\1' + new_entry, content, count=1)
+    if existing_entry:
+        card_pattern = rf'<a href="{re.escape(date_str)}\.html" class="day-card">.*?</a>'
+        content, replaced = re.subn(card_pattern, new_entry.rstrip(), content, count=1, flags=re.S)
+        if not replaced:
+            print(f"⚠️  已存在 {date_str}.html，但未找到归档日卡，跳过归档卡片刷新")
+    else:
+        # Find the 5月 section and insert at top
+        # Find the 5月 day-list div
+        pattern = r'(<div class="month-label[^>]*>.*?2026年5月.*?</div>\s*<div class="day-list">\s*)'
+        content = re.sub(pattern, r'\1' + new_entry, content, count=1)
 
-    # Update month count
-    content = re.sub(r'(2026年5月.*?<span class="cnt">)(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+        # Update month count
+        content = re.sub(r'(2026年5月.*?<span class="cnt">)(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
 
-    # Update hero stats: total count
-    content = re.sub(r'(全部记录 · )(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
-    content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
-    # Update date range
-    month = date_str[5:7].lstrip('0')
-    day = date_str[8:10].lstrip('0')
-    content = re.sub(r'(– )\d+/\d+', f'\\1{month}/{day}', content)
+        # Update hero stats: total count
+        content = re.sub(r'(全部记录 · )(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+        content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+        # Update date range
+        month_label = date_str[5:7].lstrip('0')
+        day_label = date_str[8:10].lstrip('0')
+        content = re.sub(r'(– )\d+/\d+', rf'\g<1>{month_label}/{day_label}', content)
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)
     print(f"✅ 已更新: {idx_path}")
 
 
+def extract_close_ratio(date_str):
+    """Extract close up/down ratio from the generated review table when available."""
+    html_path = REVIEW_NOTES / f"{date_str}.html"
+    if not html_path.exists():
+        return "--"
+    html = html_path.read_text(encoding="utf-8")
+    rows = re.findall(r"<tr><td>收盘</td>.*?</tr>", html, flags=re.S)
+    if not rows:
+        return "--"
+    cells = re.findall(r"<td.*?>(.*?)</td>", rows[-1], flags=re.S)
+    if len(cells) < 6:
+        return "--"
+    ratio = re.sub(r"<.*?>", "", cells[5]).strip()
+    m = re.match(r"^(\d+)\s*/\s*(\d+)$", ratio)
+    if m:
+        return f'<b class="upnum">{m.group(1)}</b>/<b class="dnnum">{m.group(2)}</b>'
+    return ratio or "--"
+
+
 def update_main_index(date_str, fm):
-    """Update portal/index.html with latest 5 entries."""
+    """Update portal/index.html with latest 6 review cards."""
     idx_path = PORTAL / "index.html"
     with open(idx_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Dedup
-    if f'review-notes/{date_str}.html' in content:
-        print(f"⏭  已存在: {date_str}.html (跳过 index 更新)")
-        return
+    # 同一天重复同步时，刷新首页卡片内容，但不重复增加归档计数。
+    existing_entry = f'review-notes/{date_str}.html' in content
 
     # Update hero date
     month = date_str[5:7].lstrip('0')
     day = date_str[8:10].lstrip('0')
     content = re.sub(r'更新于 \d+月\d+日', f'更新于 {month}月{day}日', content)
+    latest_label = f'{month}月{day}日'
+    latest_href = f'review-notes/{date_str}.html'
+    content = re.sub(
+        r'href="review-notes/\d{4}-\d{2}-\d{2}\.html">阅读最新复盘',
+        f'href="{latest_href}">阅读最新复盘',
+        content,
+    )
+    content = re.sub(
+        r'href="review-notes/\d{4}-\d{2}-\d{2}\.html"><strong>最新复盘</strong>',
+        f'href="{latest_href}"><strong>最新复盘</strong>',
+        content,
+    )
+    content = re.sub(r'(?:LATEST|最新) · \d+月\d+日', f'最新 · {latest_label}', content)
+    content = re.sub(
+        r'(<div class="trust-label">最新复盘</div><div class="trust-value">)\d+月\d+日(</div>)',
+        rf'\g<1>{latest_label}\2',
+        content,
+    )
+    content = re.sub(
+        r'(<span>最新复盘</span><strong>)\d{4}-\d{2}-\d{2}(</strong>)',
+        rf'\g<1>{date_str}\2',
+        content,
+    )
+    content = re.sub(
+        r'(<div class="period-line-text"><strong>\d{2}-\d{2}-\d{2}</strong><span>起点 <em>→</em> 最新复盘</span><strong>)\d{2}-\d{2}-\d{2}(</strong></div>)',
+        rf'\g<1>{date_str[2:]}\2',
+        content,
+    )
+    if not existing_entry:
+        content = re.sub(
+            r'(<div class="trust-label">日报归档</div><div class="trust-value">)(\d+)( 篇</div>)',
+            lambda m: f"{m.group(1)}{int(m.group(2)) + 1}{m.group(3)}",
+            content,
+            count=1,
+        )
+        content = re.sub(
+            r'(<div class="archive-item"><span>日报归档</span><strong>)(\d+)(</strong><em>篇</em></div>)',
+            lambda m: f"{m.group(1)}{int(m.group(2)) + 1}{m.group(3)}",
+            content,
+            count=1,
+        )
+        content = re.sub(
+            r'(<span class="chip">日报归档 )(\d+)( 篇</span>)',
+            lambda m: f"{m.group(1)}{int(m.group(2)) + 1}{m.group(3)}",
+            content,
+            count=1,
+        )
+        content = re.sub(
+            r'(<div class="review-stat"><span>日报归档</span><strong>)(\d+)(</strong><em>篇</em></div>)',
+            lambda m: f"{m.group(1)}{int(m.group(2)) + 1}{m.group(3)}",
+            content,
+            count=1,
+        )
+    content = re.sub(
+        r'(<div class="review-stat"><span>最新复盘</span><strong>)\d+月\d+日(</strong><em>日复盘</em></div>)',
+        rf'\g<1>{latest_label}\2',
+        content,
+        count=1,
+    )
+    start_match = re.search(r'<span>(?:记录起点|季度起点)</span><strong>(\d{4}-\d{2}-\d{2})</strong>', content)
+    if not start_match:
+        start_match = re.search(
+            r'<div class="period-line-text"><strong>(\d{2}-\d{2}-\d{2})</strong><span>起点 <em>→</em> 最新复盘</span><strong>\d{2}-\d{2}-\d{2}</strong></div>',
+            content,
+        )
+    if start_match:
+        start_date = start_match.group(1)
+        if re.match(r'^\d{2}-\d{2}-\d{2}$', start_date):
+            start_date = f'20{start_date}'
+        days_span = (datetime.strptime(date_str, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days
+        weeks, days_left = divmod(max(days_span, 0), 7)
+        span_text = f'{weeks} 周 {days_left} 天' if days_left else f'{weeks} 周'
+        content = re.sub(
+            r'(<div class="trust-label">记录跨度</div><div class="trust-value small">)[^<]+(</div>)',
+            rf'\g<1>{span_text}\2',
+            content,
+            count=1,
+        )
+        content = re.sub(
+            r'(<div class="period-span"><span>记录跨度</span><strong>)[^<]+(</strong></div>)',
+            rf'\g<1>{span_text}\2',
+            content,
+            count=1,
+        )
+        content = re.sub(
+            r'(<div class="period-span">记录跨度 )[^<]+(</div>)',
+            rf'\g<1>{span_text}\2',
+            content,
+            count=1,
+        )
 
     weekday = fm.get('weekday', '')
     sh_pct = fm.get('上证涨幅', '0%')
     zt = fm.get('涨停家数', '--')
+    dt = fm.get('跌停家数', '--')
     emo = fm.get('情绪值', '--')
-    pos = shorten_pos(fm.get('盘后持仓', '空仓'))
     desc = desc_from_fm(fm)
+    close_ratio = extract_close_ratio(date_str)
 
-    sh_color = 'var(--red)' if sh_pct.startswith('+') else 'var(--green)'
     emo_v = emo.rstrip('%')
-    emo_color = 'var(--red)' if emo_v and float(emo_v) < 25 else ('var(--amber)' if emo_v and float(emo_v) < 45 else 'var(--green)')
+    try:
+        emo_num = float(emo_v)
+    except ValueError:
+        emo_num = None
+    sh_metric_cls = 'metric-up' if sh_pct.startswith('+') else 'metric-down'
+    emo_metric_cls = 'metric-risk' if emo_num is not None and emo_num < 25 else ('metric-warn' if emo_num is not None and emo_num < 45 else 'metric-strong')
+    zt_metric_cls = 'metric-heat' if str(zt).isdigit() and int(zt) >= 80 else 'metric-warn'
 
-    desc_text = f'{desc} · ' if desc else ''
-    new_entry = f'''    <a href="review-notes/{date_str}.html" class="day-row">
-      <span class="day-date">{month}月{day}日 <small>{weekday}</small></span>
-      <span class="day-meta">上证 <strong style="color:{sh_color}">{sh_pct}</strong> &nbsp;涨停 {zt} &nbsp;情绪 <strong style="color:{emo_color}">{emo}</strong></span>
-      <span class="day-tag">{desc_text}持仓 {pos}</span>
-      <span class="day-arrow">→</span>
+    card_id = f"recent-review-{date_str[5:7]}{date_str[8:10]}"
+    title = desc or '交易复盘'
+    new_entry = f'''          <a id="{card_id}" href="review-notes/{date_str}.html?from={card_id}" class="recent-review-card">
+            <div class="recent-review-top"><span class="recent-date">{month}月{day}日</span><span class="review-kind">日复盘</span><span class="review-read">阅读 →</span></div>
+            <div class="recent-review-title">{title}</div>
+            <div class="review-metric-row"><span class="{sh_metric_cls}"><em>上证</em><strong>{sh_pct}</strong></span><span class="metric-structure metric-pair"><em>涨跌比</em><strong>{close_ratio}</strong></span><span class="{zt_metric_cls} metric-pair"><em>涨跌停</em><strong><b class="upnum">{zt}</b>/<b class="dnnum">{dt}</b></strong></span><span class="{emo_metric_cls}"><em>情绪值</em><strong>{emo}</strong></span></div>
     </a>
 '''
 
-    # Insert after <div class="day-list">
-    content = re.sub(r'(<div class="day-list">\s*)', r'\1' + new_entry, content, count=1)
+    if existing_entry:
+        card_pattern = rf'<a id="{re.escape(card_id)}" href="review-notes/{re.escape(date_str)}\.html\?from={re.escape(card_id)}" class="recent-review-card">.*?</a>'
+        content, replaced = re.subn(card_pattern, new_entry.rstrip(), content, count=1, flags=re.S)
+        if not replaced:
+            print(f"⚠️  已存在 {date_str}.html，但未找到首页近期复盘卡片，跳过卡片刷新")
+    else:
+        # Insert after the homepage recent-review grid.
+        content = re.sub(r'(<div class="recent-review-grid">\s*)', r'\1' + new_entry, content, count=1)
 
-    # Keep only 5 most recent entries
-    day_rows = list(re.finditer(r'<a href="review-notes/\d{4}-\d{2}-\d{2}\.html" class="day-row">', content))
-    if len(day_rows) > 5:
-        # Remove the last (oldest) entry
-        last = day_rows[-1]
-        # Find the closing </a> for this entry
-        close_pos = content.find('</a>', last.end())
-        content = content[:last.start()] + content[close_pos + 5:]
+        # Keep only 6 most recent entries
+        day_rows = list(re.finditer(r'<a id="recent-review-\d{4}" href="review-notes/\d{4}-\d{2}-\d{2}\.html\?from=recent-review-\d{4}" class="recent-review-card">', content))
+        if len(day_rows) > 6:
+            # Remove the last (oldest) entry
+            last = day_rows[-1]
+            # Find the closing </a> for this entry
+            close_pos = content.find('</a>', last.end())
+            content = content[:last.start()] + content[close_pos + 5:]
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)

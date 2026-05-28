@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弈沐资本 · AI 增强的人机协同交易框架</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&display=swap');
+:root{--bg:#F7F5F3;--paper:#FFFFFF;--soft:#F1EDE8;--line:#E5E2DE;--line2:#EEEAE5;--text:#2D2926;--muted:#6F6861;--faint:#9B9288;--accent:#D97706;--accent2:#B45309;--green:#0F766E;--shadow:0 24px 70px rgba(45,41,38,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:radial-gradient(circle at 20% 0,rgba(217,119,6,.11),transparent 32%),linear-gradient(180deg,#FBFAF8 0%,var(--bg) 45%,#F1EEE9 100%);color:var(--text);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Noto Serif SC',serif;line-height:1.2;letter-spacing:.02em}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 28px}.top{padding:24px 0 12px}.back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--text);border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.78);padding:8px 13px}.hero{padding:48px 0 36px}.eyebrow{font-size:11px;color:var(--accent);font-weight:900;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px}.hero h1{font-size:48px;max-width:820px;margin-bottom:16px}.lead{font-family:'Noto Serif SC',serif;font-size:22px;line-height:1.5;max-width:760px;margin-bottom:18px}.copy{font-size:15px;color:var(--muted);max-width:760px}.section{padding:34px 0}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}.section h2{font-size:28px}.section-desc{max-width:620px;color:var(--muted);font-size:14px}.grid{display:grid;gap:14px}.grid.three{grid-template-columns:repeat(3,1fr)}.grid.four{grid-template-columns:repeat(4,1fr)}.card{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 34px rgba(45,41,38,.04)}.card h3{font-size:19px;margin-bottom:8px}.card p{font-size:13px;color:var(--muted)}.num{font-size:11px;color:var(--accent);font-weight:900;letter-spacing:.14em;margin-bottom:14px}.system-map{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow)}.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch}.node{border:1px solid var(--line2);border-radius:16px;background:linear-gradient(135deg,#fff,var(--soft));padding:18px}.node.ai{box-shadow:inset 4px 0 0 rgba(217,119,6,.55)}.node.human{box-shadow:inset 4px 0 0 rgba(45,41,38,.28)}.node.audit{box-shadow:inset 4px 0 0 rgba(15,118,110,.38)}.node strong{display:block;font-size:16px;margin-bottom:5px}.node span{display:block;font-size:12px;color:var(--muted)}.arrow{display:grid;place-items:center;color:var(--accent);font-weight:900}.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}.list{display:grid;gap:10px;margin-top:12px}.item{border-top:1px solid var(--line2);padding-top:10px}.item strong{display:block;font-size:14px;margin-bottom:2px}.item span{font-size:13px;color:var(--muted)}.quote{border-left:4px solid rgba(217,119,6,.5);background:rgba(255,255,255,.7);border-radius:0 16px 16px 0;padding:18px 20px;color:var(--muted)}.cta{display:flex;flex-wrap:wrap;gap:10px}.btn{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--text);font-weight:800;font-size:13px;padding:10px 15px}.btn.primary{background:var(--text);border-color:var(--text);color:#fff}.footer{border-top:1px solid var(--line);padding:26px 28px;text-align:center;color:var(--faint);font-size:12px;margin-top:40px}
+@media(max-width:900px){.grid.three,.grid.four,.split{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}}
+@media(max-width:640px){.wrap{padding:0 20px}.hero h1{font-size:36px}.lead{font-size:19px}.section-head{display:block}.grid.three,.grid.four,.split{grid-template-columns:1fr}.node{padding:16px}}
+</style>
+</head>
+<body>
+  <div class="wrap top"><a class="back" href="../index.html#method">← 返回首页</a></div>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">AI-Augmented Trading System</div>
+        <h1>AI 增强的 A 股短线趋势交易体系</h1>
+        <p class="lead">AI 做研究和复盘，人做判断和取舍。</p>
+        <p class="copy">聚焦数日到数周的短线趋势机会，用收益曲线、交易记录和复盘证据持续校准策略。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div><div class="eyebrow">System Map</div><h2>三层协同结构</h2></div>
+        </div>
+        <div class="system-map">
+          <div class="flow">
+            <div class="node ai"><strong>AI 研究引擎</strong><span>信息收集、市场结构、资金合力。</span></div>
+            <div class="arrow">→</div>
+            <div class="node human"><strong>人工判断层</strong><span>盘感判断、风险取舍、仓位执行。</span></div>
+            <div class="arrow">→</div>
+            <div class="node audit"><strong>过程证据链</strong><span>收益曲线、复盘记录、规则更新。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <article class="card">
+          <div class="eyebrow">Research Assistance</div>
+          <h2>AI 承担研究辅助</h2>
+          <div class="list">
+            <div class="item"><strong>信息收集</strong><span>指数、情绪、板块、资金、公告和研报。</span></div>
+            <div class="item"><strong>结构化分析</strong><span>把事实、假设和风险拆开。</span></div>
+            <div class="item"><strong>复盘归因</strong><span>追问买卖理由和结果偏差。</span></div>
+            <div class="item"><strong>策略迭代</strong><span>有效经验沉淀为规则。</span></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Final Decision</div>
+          <h2>人负责最终决策</h2>
+          <div class="list">
+            <div class="item"><strong>盘感判断</strong><span>处理市场温度和盘口变化。</span></div>
+            <div class="item"><strong>风险取舍</strong><span>决定做不做、做多少、错了怎么退。</span></div>
+            <div class="item"><strong>执行决策</strong><span>把方案变成真实交易。</span></div>
+            <div class="item"><strong>最终责任</strong><span>收益和回撤都由人承担。</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div><div class="eyebrow">Positioning</div><h2>与传统路径的区别</h2></div>
+        </div>
+        <div class="grid three">
+          <article class="card"><div class="num">01</div><h3>不同于传统量化</h3><p>不靠固定因子黑箱，也不追求自动下单。</p></article>
+          <article class="card"><div class="num">02</div><h3>不同于纯经验短线</h3><p>保留盘感，但每次判断都要复盘。</p></article>
+          <article class="card"><div class="num">03</div><h3>不同于龙虎榜跟随</h3><p>龙虎榜和热点只是输入，不是答案。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div><div class="eyebrow">Core Methodology</div><h2>交易判断四件套</h2></div>
+        </div>
+        <div class="grid four">
+          <article class="card"><div class="num">01</div><h3>市场状态识别</h3><p>指数、情绪、涨跌停和赚钱效应一起看。</p></article>
+          <article class="card"><div class="num">02</div><h3>资金合力判断</h3><p>看中军、主线、增量和承接。</p></article>
+          <article class="card"><div class="num">03</div><h3>仓位与风险纪律</h3><p>仓位由市场状态和风险承受力决定。</p></article>
+          <article class="card"><div class="num">04</div><h3>复盘与红蓝对抗</h3><p>用对抗式复盘减少自我说服。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="quote">体系接受记录检验：曲线如何变化，回撤如何发生，错误是否被记录，规则是否更新。</div>
+        <div class="cta" style="margin-top:18px">
+          <a class="btn primary" href="../index.html#performance">查看收益记录</a>
+          <a class="btn" href="../review-notes/2026-05-28.html">阅读最新复盘</a>
+          <a class="btn" href="../insights/index.html">查看认知库</a>
+          <a class="btn" href="../tools/index.html">查看规则库</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">弈沐资本 · YiMu Capital · AI 增强、人类负责、真实记录、可审计复盘</footer>
+</body>
+</html>

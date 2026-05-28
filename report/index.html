@@ -42,7 +42,7 @@ h1{font-family:'Noto Serif SC',serif;font-size:30px;line-height:1.25;color:var(-
       <h1>投研资源</h1>
       <p class="desc">深度研究报告，涵盖知识科普、量化分析、市场研判与交易人物研究。</p>
     </div>
-    <a class="back" href="../index.html#research">返回首页</a>
+    <a id="back-home" class="back" href="../index.html#research">返回首页</a>
   </div>
 
   <div class="grid">
@@ -97,5 +97,13 @@ h1{font-family:'Noto Serif SC',serif;font-size:30px;line-height:1.25;color:var(-
     </a>
   </div>
 </main>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
 </body>
 </html>

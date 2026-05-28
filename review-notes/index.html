@@ -30,6 +30,7 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 
 /* Divider */
 .divider{display:flex;align-items:center;gap:10px;margin:32px 0 12px;font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.divider[id]{scroll-margin-top:78px}
 .divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* Weekly grid */
@@ -66,7 +67,7 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 <body>
 
 <div class="header">
-  <a href="../index.html">← 平台</a>
+  <a id="back-home" href="../index.html#reviews">← 平台</a>
   <span class="title">复盘笔记</span>
   <span class="sub">全部记录 · 37篇</span>
 </div>
@@ -85,7 +86,7 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 </div>
 
 <!-- ===== 日 ===== -->
-<div class="divider">📅 按日复盘</div>
+<div id="daily-reviews" class="divider">📅 按日复盘</div>
 
 <!-- 2026年5月 -->
 <div class="month-group">
@@ -154,7 +155,7 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 </div>
 
 <!-- ===== 周 ===== -->
-<div class="divider">📋 周度总结</div>
+<div id="weekly-reviews" class="divider">📋 周度总结</div>
 <div class="weekly-grid">
   <a href="weekly-2026-05-11_05-15.html" class="wk-card"><div class="wr">5/11 – 5/22</div><div class="wm">第20周 · 5天</div><div class="wt">情绪过山车 · 电力一日游 · 机器人冷启动</div></a>
   <a href="weekly-2026-05-06_05-08.html" class="wk-card"><div class="wr">5/6 – 5/22</div><div class="wm">第19周 · 3天</div><div class="wt">节后首周 · 三天三方向轮动</div></a>
@@ -167,7 +168,7 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 </div>
 
 <!-- ===== 月 ===== -->
-<div class="divider">📆 月度总结</div>
+<div id="monthly-reviews" class="divider">📆 月度总结</div>
 <a href="monthly-2026-03-23_04-30.html" class="monthly">
   <div class="mh">3/23 – 5/22 · W13–W18 · 首次系统审计 <span class="tag tag-r">进攻不足</span><span class="tag tag-g">防守出色</span></div>
   <div class="mv">29个交易日，6周覆盖。模拟仓-1.91%，实盘估算-3%~-5%。按规则做的交易全部盈利，违规操作贡献80%+亏损。核心发现：规则体系为连板生态设计，4月趋势行情下持续空仓——机会成本+20~40%，远超实际亏损。</div>
@@ -178,5 +179,13 @@ body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color
 
 <div class="footer">弈沐资本 · 交易复盘系统 · 31个交易日 · 3/23 至今</div>
 
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
 </body>
 </html>

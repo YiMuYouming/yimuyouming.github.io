@@ -26,7 +26,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .container{max-width:1100px;margin:0 auto;padding:0 32px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
 @media(max-width:720px){.container{grid-template-columns:1fr;padding:0 20px 60px}.hero h1{font-size:22px}.header{padding:12px 16px}}
 
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .15s;display:flex;flex-direction:column}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .15s;display:flex;flex-direction:column;scroll-margin-top:78px}
 .card:hover{border-color:var(--accent);box-shadow:0 2px 16px rgba(217,119,6,.08)}
 .card-header{padding:16px 18px 0;display:flex;align-items:flex-start;gap:10px}
 .card-icon{font-size:22px;flex-shrink:0;margin-top:1px}
@@ -60,7 +60,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <body>
 
 <div class="header">
-  <a href="../index.html">← 平台</a>
+  <a id="back-home" href="../index.html#research">← 平台</a>
   <div class="brand"><span>弈沐资本</span> · 交易认知</div>
   <span class="sub">8 个主题</span>
 </div>
@@ -76,7 +76,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <div class="container">
 
 <!-- 资金合力 -->
-<div class="card">
+<div class="card" id="capital-force">
   <div class="card-header"><div class="card-icon">💰</div><div><div class="card-title">资金合力</div><div class="card-subtitle">赚的不是情绪的钱，是合力的钱</div></div></div>
   <div class="card-core">中军资金是合力的质检员。没有中军的主线，止于连板情绪标的。</div>
   <div class="card-tags"><span class="tag">真假突破</span><span class="tag">主线vs支线</span><span class="tag">打法切换</span><span class="tag">合力判定</span></div>
@@ -93,7 +93,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
   </div>
   <div class="card-footer"><span class="count-badge">9 条认知 · 已验证</span></div>
 </div>
-<div class="card">
+<div class="card" id="sentiment-cycle">
   <div class="card-header"><div class="card-icon">🔥</div><div><div class="card-title">情绪与周期</div><div class="card-subtitle">情绪是温度计，不是方向盘</div></div></div>
   <div class="card-core">情绪一天波动超 30pp = 不可信。赚钱效应差时涨停多也是诱多。</div>
   <div class="card-tags"><span class="tag">诱多判定</span><span class="tag">量能异动</span><span class="tag">脉冲识别</span></div>
@@ -108,7 +108,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 选股与买点 -->
-<div class="card">
+<div class="card" id="selection-entry">
   <div class="card-header"><div class="card-icon">🎯</div><div><div class="card-title">选股与买点</div><div class="card-subtitle">买"明天有机会的票"，不是"今天强的票"</div></div></div>
   <div class="card-core">回踩买的是距支撑位近+缩量的票，不是今天弹得高的票。</div>
   <div class="card-tags"><span class="tag">低吸选标</span><span class="tag">龙头买点</span><span class="tag">盘口识别</span><span class="tag">冰点类型</span></div>
@@ -125,7 +125,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 窗口节奏与W2 -->
-<div class="card">
+<div class="card" id="window-rhythm">
   <div class="card-header"><div class="card-icon">⏱️</div><div><div class="card-title">窗口节奏与 W2</div><div class="card-subtitle">爆发日无W2，缩量回踩才是真正的W2机会</div></div></div>
   <div class="card-core">W2 低吸 = 强势缩量回踩到支撑位企稳，不是找还没涨的低位票。</div>
   <div class="card-tags"><span class="tag">W2时机</span><span class="tag">缩量回踩</span><span class="tag">爆发日规则</span></div>
@@ -138,7 +138,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 尾盘与回勾 -->
-<div class="card">
+<div class="card" id="late-session">
   <div class="card-header"><div class="card-icon">🌅</div><div><div class="card-title">尾盘与回勾</div><div class="card-subtitle">尾盘拉升是偷袭，不等回勾是纪律</div></div></div>
   <div class="card-core">板块尾盘拉升+次日低开+主力出 = 偷袭出货，不是合力。</div>
   <div class="card-tags"><span class="tag">尾盘异动</span><span class="tag">回勾判断</span><span class="tag">卖出纪律</span></div>
@@ -150,7 +150,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 对手研究 -->
-<div class="card">
+<div class="card" id="opponent-research">
   <div class="card-header"><div class="card-icon">♟️</div><div><div class="card-title">对手研究</div><div class="card-subtitle">知己知彼。养家心法+量化弱点</div></div></div>
   <div class="card-core">量化只能统计过去，不能理解现在。新概念萌芽期是散户的黄金窗口。</div>
   <div class="card-tags"><span class="tag">养家心法</span><span class="tag">量化识别</span><span class="tag">散户优势</span></div>
@@ -163,7 +163,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 对话与原则 -->
-<div class="card">
+<div class="card" id="dialogue-principles">
   <div class="card-header"><div class="card-icon">💬</div><div><div class="card-title">对话与原则</div><div class="card-subtitle">没有对抗的决策 = 自己骗自己</div></div></div>
   <div class="card-core">止损价到了不要找理由。纪律是昨晚冷静时定的，盘中大概率会骗自己。</div>
   <div class="card-tags"><span class="tag">交易心态</span><span class="tag">红蓝对抗</span><span class="tag">自我校正</span></div>
@@ -177,7 +177,7 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <!-- 操作评估 -->
-<div class="card">
+<div class="card" id="execution-review">
   <div class="card-header"><div class="card-icon">⚖️</div><div><div class="card-title">操作评估</div><div class="card-subtitle">操作对不对，看理由不是看结果</div></div></div>
   <div class="card-core">赚钱不能证明操作对，亏钱不能证明操作错。判断标准是理由基于板块信号还是情绪。</div>
   <div class="card-tags"><span class="tag">复盘归因</span><span class="tag">对错判定</span><span class="tag">情绪校准</span></div>
@@ -192,6 +192,14 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 
 <div class="footer">弈沐资本 · 交易认知 · 从实战中持续积累</div>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
 
 </body>
 </html>
