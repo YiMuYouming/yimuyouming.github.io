@@ -4,8 +4,8 @@
 
 ## 同步流程（四步）
 
-> 先确认 live-dashboard bridge 在运行：`pgrep -fl bridge.py`
-> 若未运行，数据模块（市场快照/PnL曲线）跳过 Step 1，其余步骤照常。
+> 数据模块默认以 Hermes 云端 bridge 为 SSOT，通过 SSH 读取 `agentuser@43.132.146.234:127.0.0.1:8088`。
+> 本地 `live-dashboard` / `bridge.py` 不需要启动；只有明确调试本地改动时才使用 `--source local`。
 
 ### Step 1: 刷新数据模块（市场快照 + PnL 曲线）
 
@@ -13,10 +13,18 @@
 python3 ~/Documents/YM_Capital/portal/tools/sync_pnl_data.py
 ```
 
-从 bridge API（localhost:8088）拉取 PnL 收益曲线 + 市场快照数据，嵌入 `index.html`。
+从云端 bridge API 拉取 PnL 收益曲线 + 市场快照数据，嵌入 `index.html`。
 
-**✔ 检查项**：确认输出显示同步的天数（如 "synced N PnL days + market snapshot → index.html"）。
-若 bridge 未运行，会显示 "bridge 未运行"，不影响其余步骤。
+**✔ 检查项**：确认输出显示同步来源与天数（如 "synced N PnL days + market snapshot from cloud:agentuser@43.132.146.234 → index.html"）。
+若 SSH 或云端 bridge 不可用，会输出 `FAIL ... cloud bridge fetch failed`，此时先修云端或网络，不要改用旧数据。
+
+本地调试模式：
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/sync_pnl_data.py --source local
+```
+
+仅在本机已启动 `python3 scripts/bridge.py 8088` 且明确要看本地开发数据时使用。
 
 ### Step 2: 找差异
 

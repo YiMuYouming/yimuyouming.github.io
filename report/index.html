@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投研资源 · 弈沐资本</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg4:#F5F2EE;--border:#E5E2DE;--border-light:#F0EEEC;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-hover)}
+.page{max-width:960px;margin:0 auto;padding:32px 32px 72px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border-light)}
+.back{font-size:13px;color:var(--text2)}
+.eyebrow{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.18em;margin-bottom:6px}
+h1{font-family:'Noto Serif SC',serif;font-size:30px;line-height:1.25;color:var(--text);font-weight:700}
+.desc{font-size:13px;color:var(--text3);margin-top:8px;max-width:620px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{display:block;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:16px;min-height:196px;color:var(--text);transition:all .15s}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(217,119,6,.08);text-decoration:none;color:var(--text)}
+.card.blue{border-left-color:var(--blue)}
+.card.purple{border-left-color:var(--purple)}
+.card.green{border-left-color:var(--green)}
+.card.accent{border-left-color:var(--accent)}
+.icon{font-size:22px;margin-bottom:6px}
+.title{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.tag{font-size:11px;font-weight:400;margin-left:6px;padding:1px 8px;border-radius:6px;background:var(--bg4);color:var(--text3)}
+.meta{font-size:12px;color:var(--text3);margin-bottom:6px}
+.summary{font-size:13px;color:var(--text2);line-height:1.5}
+.status{display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;background:rgba(5,150,105,.12);color:var(--green)}
+@media(max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{min-height:180px}}
+@media(max-width:640px){.page{padding:24px 20px 48px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.card{min-height:auto}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="top">
+    <div>
+      <div class="eyebrow">RESEARCH LIBRARY</div>
+      <h1>投研资源</h1>
+      <p class="desc">深度研究报告，涵盖知识科普、量化分析、市场研判与交易人物研究。</p>
+    </div>
+    <a class="back" href="../index.html#research">返回首页</a>
+  </div>
+
+  <div class="grid">
+    <a href="knowledge/龙虎榜深度研究报告.html" class="card blue">
+      <div class="icon">📖</div>
+      <div class="title">龙虎榜深度研究报告 <span class="tag">知识科普</span></div>
+      <div class="meta">上榜资格、席位分类、数据解读方法</div>
+      <div class="summary">龙虎榜全维度拆解：上榜条件、席位特征、极端数据警示，附扫雷清单。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="quant-research/量化交易对手研究报告.html" class="card purple">
+      <div class="icon">🔬</div>
+      <div class="title">量化交易对手研究报告 <span class="tag">量化研究</span></div>
+      <div class="meta">行为模式、机构图谱、交易盲区</div>
+      <div class="summary">量化机构画像、策略区别、对策博弈方法，以及龙虎榜看量化操作痕迹。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="market/五月主线-圆桌报告.html" class="card green">
+      <div class="icon">🗣️</div>
+      <div class="title">五月主线：圆桌报告 <span class="tag">市场研判</span></div>
+      <div class="meta">六角色观点交锋 · 计算机 × 军工</div>
+      <div class="summary">围绕计算机国产替代与国防军工两条主线，多空激辩含投票。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="market/五月-潜在个股分析报告.html" class="card green">
+      <div class="icon">📊</div>
+      <div class="title">五月潜在个股分析报告 <span class="tag">市场研判</span></div>
+      <div class="meta">20 只标的 · 四维评分</div>
+      <div class="summary">信创、半导体、军工、新消费四大板块的基本面、技术面、资金面、催化面排序。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="figure/陈小群游资深度研究报告.html" class="card accent">
+      <div class="icon">👤</div>
+      <div class="title">陈小群深度研究报告 <span class="tag">人物研究</span></div>
+      <div class="meta">7年2万倍 · 龙头战法全解构</div>
+      <div class="summary">新生代游资第一人的完整轨迹、情绪周期和龙头战法体系。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="figure/炒股养家研究报告.html" class="card accent">
+      <div class="icon">👤</div>
+      <div class="title">炒股养家研究报告 <span class="tag">人物研究</span></div>
+      <div class="meta">交易心法 · 操盘体系</div>
+      <div class="summary">情绪周期理论、高手思维、仓位管理，以及殿堂级交易哲学。</div>
+      <span class="status">已发布</span>
+    </a>
+    <a href="figure/作手新一研究报告.html" class="card accent">
+      <div class="icon">👤</div>
+      <div class="title">作手新一研究报告 <span class="tag">人物研究</span></div>
+      <div class="meta">交易心法 · 操盘体系</div>
+      <div class="summary">首板启动确认、情绪周期定位、核心资产信仰和实战体系拆解。</div>
+      <span class="status">已发布</span>
+    </a>
+  </div>
+</main>
+</body>
+</html>
