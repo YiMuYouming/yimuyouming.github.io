@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5月月度复盘（W19-W22 | 5/6-5/29）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F5F3;
+  --bg2:#FFFFFF;
+  --bg3:#FAFAF9;
+  --bg4:#F5F2EE;
+  --border:#E5E2DE;
+  --text:#2D2926;
+  --text2:#5C5652;
+  --text3:#8A8480;
+  --accent:#D97706;
+  --accent-hover:#B45309;
+  --red:#DC2626;
+  --green:#059669;
+  --blue:#2563EB;
+  --purple:#7C3AED;
+  --teal:#0D9488;
+}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.9);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+/* ── Layout ── */
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+
+/* ── Sections ── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+
+/* ── Typography ── */
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+/* emotion coloring */
+.em50{color:var(--green);font-weight:600}  /* >=50% 高情绪 */
+.em35{color:var(--accent);font-weight:600} /* 35-49% 中情绪 */
+.em20{color:var(--red);font-weight:600}   /* <35% 低/冰点情绪 */
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.badge-teal{background:rgba(13,148,136,.08);color:var(--teal)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sbx.teal{border-left-color:var(--teal)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+
+/* ── Summary cards ── */
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ── Emotion strip ── */
+.week-strip{display:grid;grid-template-columns:60px repeat(4,1fr);gap:1px;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);font-size:12px}
+.ws-label{background:var(--bg4);padding:10px 6px;font-size:11px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:2px}
+.ws-label .ws-date{font-size:10px;color:var(--text3)}
+.ws-cell{background:var(--bg2);padding:10px 10px;display:flex;flex-direction:column;gap:4px}
+.ws-em{font-size:12px;font-weight:700;padding:1px 7px;border-radius:4px;text-align:center;width:fit-content}
+.em-low{background:rgba(220,38,38,.1);color:var(--red)}
+.em-mid{background:rgba(217,119,6,.12);color:var(--accent)}
+.em-high{background:rgba(5,150,105,.12);color:var(--green)}
+.em-ice{background:rgba(220,38,38,.2);color:var(--red)}
+.em-hot{background:rgba(5,150,105,.2);color:var(--green)}
+
+/* ── Fund bar chart ── */
+.fund-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.fund-row .fname{min-width:90px;color:var(--text2)}
+.fund-row .fbar{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.fund-row .fbar-fill{height:100%;border-radius:4px}
+.fund-row .fval{min-width:52px;text-align:right;font-weight:600}
+
+/* ── Heat tags ── */
+.heat-tag{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.ht-red{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.ht-green{background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.2)}
+.ht-accent{background:rgba(217,119,6,.1);color:var(--accent);border:1px solid rgba(217,119,6,.2)}
+.ht-blue{background:rgba(37,99,235,.08);color:var(--blue);border:1px solid rgba(37,99,235,.2)}
+.ht-purple{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2)}
+.ht-teal{background:rgba(13,148,136,.08);color:var(--teal);border:1px solid rgba(13,148,136,.2)}
+.ht-dim{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── Lesson blocks ── */
+.lesson-block{padding:12px 14px;border-radius:8px;margin-bottom:10px;border-left:4px solid}
+.lesson-block.red{background:rgba(220,38,38,.05);border-color:var(--red)}
+.lesson-block.orange{background:rgba(217,119,6,.05);border-color:var(--accent)}
+.lesson-block.blue{background:rgba(37,99,235,.05);border-color:var(--blue)}
+.lesson-block.green{background:rgba(5,150,105,.05);border-color:var(--green)}
+.lesson-block.purple{background:rgba(124,58,237,.05);border-color:var(--purple)}
+.lesson-block.teal{background:rgba(13,148,136,.05);border-color:var(--teal)}
+.lesson-block .lb-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.lesson-block .lb-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ── Search ── */
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+
+/* ── Weekly row highlight ── */
+.week-worst{background:rgba(220,38,38,.06) !important}
+.week-best{background:rgba(5,150,105,.06) !important}
+</style>
+</head>
+<body>
+
+<!-- ══ Topbar ═══════════════════════════════════════════════════ -->
+<div class="topbar">
+  <a href="index.html#monthly-reviews" class="back">← 复盘笔记</a>
+  <div class="title">5月月度复盘（W19-W22 | 5/6-5/29）</div>
+  <div class="meta">
+    <span class="chip blue">5/6-5/29 · 18天</span>
+    <span class="chip red">盈亏 -1.02万元</span>
+    <span class="chip accent">W21 单周 -8,107元</span>
+    <span class="chip purple">胜率 ~20%</span>
+    <span class="chip red">lesson_38已固化</span>
+  </div>
+</div>
+
+<!-- ══ Layout ═══════════════════════════════════════════════════ -->
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s0">💡 Dashboard</a>
+  <a href="#s1">一、月度概览</a>
+  <a href="#s2">二、持仓管理</a>
+  <a href="#s3">三、盈亏归因</a>
+  <a href="#s4">四、周对比分析</a>
+  <a href="#s5">五、Rules校验</a>
+  <a href="#s6">六、认知进化</a>
+  <a href="#s7">七、下月战略</a>
+  <div class="sep"></div>
+  <a href="#appendix">附录 · 速查</a>
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+
+<!-- ===== §0 Dashboard ===== -->
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>💡 Dashboard（先看这里）</div>
+<div class="sb">
+
+<div class="summary-cards">
+<div class="summary-card"><div class="label">月盈亏</div><div class="value red">-1.02万元</div><div class="sub">-0.34% · 账户约33-35万</div></div>
+<div class="summary-card"><div class="label">交易天数</div><div class="value">18天</div><div class="sub">操作约26笔 · 空仓2-3天</div></div>
+<div class="summary-card"><div class="label">胜率（周均）</div><div class="value red">~20%</div><div class="sub">W19 0% / W20 67% / W21 20% / W22 14%</div></div>
+<div class="summary-card"><div class="label">预案命中率</div><div class="value accent">~50%</div><div class="sub">W19 100% / W20 100% / W21 20% / W22 ~60%</div></div>
+<div class="summary-card"><div class="label">最大单笔亏损</div><div class="value red">福莱 -5,265元</div><div class="sub">W21周三冰点违规买入</div></div>
+<div class="summary-card"><div class="label">最大单笔盈利</div><div class="value green">中芯 +7,147元</div><div class="sub">W22两次止盈</div></div>
+</div>
+
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>指标</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>系统运行</td><td>复盘执行率 ~100%（17/18天）</td><td>🟢</td></tr>
+<tr><td>盘中互动</td><td>~85% 天数有互动</td><td>🟢</td></tr>
+<tr><td>规则执行</td><td>避坑5次+；<strong class="up">违反规则7次+</strong></td><td class="up">🔴 冰点日买入×4、仓位失控×2</td></tr>
+<tr><td>交易绩效</td><td>已实现约 -1.02万元（-0.34%）</td><td class="up">🔴</td></tr>
+<tr><td>最大问题</td><td>W21冰点违规买福莱 -5,265元</td><td class="up">🔴 单周亏损超前三周盈利总和</td></tr>
+<tr><td>认知迭代</td><td>12条（6已固化 / 6待写入）</td><td>🟡 lesson_38已固化</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx red"><strong>核心问题：</strong>W21 周三（5/20）冰点日情绪 29% 违规买入福莱新材（-5,265元），仓位从 20% 上限暴增至 61%，超限 21pp。lesson_38 已固化，但冰点日纪律执行仍是全月最大漏洞。</div>
+
+<div class="sbx green"><strong>全月最佳操作：</strong>W20 周二情绪 25% 低迷时逆势买入北方华创，4天后+9.47%（+3,334元）——"别人恐惧时贪婪"的经典执行；W22 中芯国际两次止盈（+2,500+4,647=+7,147元），同板块换仓逻辑正确。</div>
+
+<div class="sbx warn"><strong>核心规律：</strong>遵守规则时赚钱或小亏（北华/中芯），违反规则时一定大亏。纪律问题是本月唯一主线，冰点日买入违规直接导致 W21 周亏损 -2.46%。</div>
+
+</div>
+</div>
+
+<!-- ===== §1 月度概览 ===== -->
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、月度概览</div>
+<div class="sb">
+
+<div class="sh3">每周盈亏走势</div>
+<div class="tw"><table>
+<thead><tr><th>周</th><th>日期</th><th>天数</th><th>盈亏</th><th>胜率</th><th>预案命中</th><th>最大亮点</th><th>最大问题</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>W19</strong></td>
+  <td>5/6(三)-5/8(五)</td>
+  <td>3天</td>
+  <td class="up">-1,305元</td>
+  <td class="up">0%</td>
+  <td class="down">100%</td>
+  <td>减仓→清仓果断</td>
+  <td class="up">天齐中军-1.21亿未重视</td>
+</tr>
+<tr class="week-best">
+  <td><strong>W20</strong></td>
+  <td>5/11(一)-5/15(五)</td>
+  <td>5天</td>
+  <td class="down">+459元</td>
+  <td class="down">67%</td>
+  <td class="down">100%</td>
+  <td class="down">北华逆情绪低吸+9.47%</td>
+  <td>立讯追涨-4.68%</td>
+</tr>
+<tr class="week-worst">
+  <td><strong>W21</strong></td>
+  <td>5/18(一)-5/22(五)</td>
+  <td>5天</td>
+  <td class="up">-8,107元</td>
+  <td class="up">20%</td>
+  <td class="up">20%</td>
+  <td>北华清仓+3,334元</td>
+  <td class="up">福莱违规-5,265元 + 仓位失控61%</td>
+</tr>
+<tr>
+  <td><strong>W22</strong></td>
+  <td>5/25(一)-5/29(五)</td>
+  <td>5天</td>
+  <td class="up">-1,287元</td>
+  <td class="up">14%</td>
+  <td class="up">~60%</td>
+  <td>中芯止盈+7,147元</td>
+  <td class="up">紫光止损-4,024元</td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="sh3">每周情绪走势（迷你图）</div>
+<div class="tw"><table>
+<thead><tr><th>周</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>均情绪</th><th>波动幅度</th><th>关键事件</th></tr></thead>
+<tbody>
+<tr><td>W19</td><td class="em50">70%</td><td class="em50">63%</td><td class="em50">65%</td><td>—</td><td>—</td><td><span class="badge badge-yellow">均65%</span></td><td>7pp</td><td>三天三方向轮动</td></tr>
+<tr><td>W20</td><td class="em50">56%</td><td class="em35">25%</td><td class="em50">58%</td><td class="em20">18%</td><td class="em35">32%</td><td><span class="badge badge-yellow">均37.8%</span></td><td class="up">40pp</td><td>四次30pp+波动；电力一日游</td></tr>
+<tr class="week-worst"><td>W21</td><td class="em35">43%</td><td class="em50">65%</td><td class="em35">29%</td><td class="em20">13%</td><td class="em50">72%</td><td><span class="badge badge-red">均44.4%</span></td><td class="up">59pp</td><td>周三冰点→周四崩盘→周五V反</td></tr>
+<tr><td>W22</td><td class="em35">40%</td><td class="em20">24%</td><td class="em20">17%</td><td class="em50">54%</td><td class="em35">28%</td><td><span class="badge badge-yellow">均32.7%</span></td><td>37pp</td><td>周四反弹→周五脉冲失败</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">月度核心数据</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>数据</th></tr></thead>
+<tbody>
+<tr><td>交易日</td><td>18天（5/6-5/8 + 5/11-5/15 + 5/18-5/22 + 5/25-5/29）</td></tr>
+<tr><td>交易天数</td><td>~16天（有操作或持仓）</td></tr>
+<tr><td>完全空仓天数</td><td>~2-3天（W20周一等收敛；W21部分观望）</td></tr>
+<tr><td>总操作笔数</td><td>约26笔（买+卖分计）</td></tr>
+<tr><td>月盈亏（已实现）</td><td><strong class="up">-10,240元</strong>（W19-1,305 + W20+459 + W21-8,107 + W22-1,287）</td></tr>
+<tr><td>最大单笔盈利</td><td class="down">+7,147元（中芯国际，W22两次止盈）</td></tr>
+<tr><td>最大单笔亏损</td><td class="up">-5,265元（福莱新材，W21周三冰点违规）</td></tr>
+<tr><td>最长持仓</td><td>5天（北华，W20周二→W21周一）；中芯约4天</td></tr>
+<tr><td>最短持仓</td><td>1天（赣锋、福莱、柏诚、紫光等多笔）</td></tr>
+<tr><td>平均仓位</td><td>~30-40%（有持仓时；W21失控日达61%）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">盈亏归因</div>
+<div class="lesson-block green">
+  <div class="lb-title">✅ 赚钱的操作（共同特征）</div>
+  <div class="lb-body">①逆情绪低吸：北华25%时买+9.47%（W20）；②止损果断：中芯/兴森/紫光破止损即出，纪律执行到位；③趋势规则执行：中芯两次止盈（+7,147元）体现同板块换仓逻辑正确；④遵守规则时基本不亏大钱。</div>
+</div>
+<div class="lesson-block red">
+  <div class="lb-title">❌ 亏钱的操作（共同特征）</div>
+  <div class="lb-body">①冰点日买入：福莱（-5,265元）/ 赣锋（-1,305元）/ 紫光（-4,024元）；②仓位失控：W21仓位61%超预案上限20%达21pp；③追情绪高潮：立讯58%时买-4.68%；④卖出犹豫：北华冲涨停回落未减仓，利润从+6.77%缩至+3.45%。</div>
+</div>
+
+<div class="sbx red"><strong>一句话总结：</strong>全月亏损约 -1.02万元。遵守规则时赚钱（北华+9.47%、中芯+7,147元），违反规则时大亏（福莱-5,265元、紫光-4,024元）。**W21 单周亏损 -8,107元 超过前三周（W19+W20+W22）盈利总和（约-2,133元）。纪律问题是本月唯一主线。**</div>
+
+</div>
+</div>
+
+<!-- ===== §2 持仓管理 ===== -->
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、持仓管理</div>
+<div class="sb">
+
+<div class="sh3">持仓结构分析</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>数据</th><th>评估</th></tr></thead>
+<tbody>
+<tr><td>平均持仓天数</td><td>1-2天（隔夜短线为主）</td><td>偏短线</td></tr>
+<tr><td>最长持仓</td><td>5天（北华）；中芯约4天</td><td>趋势股持有</td></tr>
+<tr><td>最短持仓</td><td>1天（多笔短线）</td><td>止损果断</td></tr>
+<tr><td>空仓天数</td><td>~2-3天（占比约13%）</td><td>中性偏积极</td></tr>
+<tr><td>平均仓位</td><td>~30-40%</td><td>中性</td></tr>
+<tr><td>仓位超限次数</td><td>2次（W21 61% / W22偏高）</td><td class="up">🔴问题</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">空仓拆解</div>
+<div class="lesson-block green">
+  <div class="lb-title">🟢 规则要求的空仓（~2天）</div>
+  <div class="lb-body">W20周一（情绪56%但量能风格未聚焦，无明确方向）；W21周三连板侧（冰点日）。</div>
+</div>
+<div class="lesson-block orange">
+  <div class="lb-title">🟡 选标窄导致的空仓（~0-1天）</div>
+  <div class="lb-body">整体空仓日少，市场机会识别能力相比4月有所提升。</div>
+</div>
+<div class="lesson-block teal">
+  <div class="lb-title">🟢 趋势持仓占比提升</div>
+  <div class="lb-body">全月最佳操作（北华/中芯/沪电）全部来自趋势股，证明逆情绪低吸中军是核心盈利模式。连板侧全月基本关闭。</div>
+</div>
+
+<div class="sbx warn"><strong>仓位管理是5月最大漏洞：</strong>W21周四仓位61%超预案上限20%达21pp。仓位失控放大亏损——福莱亏损-5,265元是直接结果。建议写入门控：预案超限自动触发次日减仓。</div>
+
+</div>
+</div>
+
+<!-- ===== §3 盈亏归因 ===== -->
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因 + 月度情绪相关性</div>
+<div class="sb">
+
+<div class="sh3">月度盈亏归因</div>
+<div class="tw"><table>
+<thead><tr><th>归因</th><th>标的</th><th>金额</th><th>原因</th></tr></thead>
+<tbody>
+<tr class="week-best"><td>✅ 趋势止盈</td><td>中芯国际（两次）</td><td class="down">+7,147元</td><td>放量调整减仓+同板块换仓紫光</td></tr>
+<tr class="week-best"><td>✅ 逆情绪低吸</td><td>北方华创</td><td class="down">+3,334元</td><td>情绪25%低迷时买入，+9.47%</td></tr>
+<tr class="week-best"><td>✅ 趋势止盈</td><td>沪电股份</td><td class="down">+2,550元</td><td>元件/PCB主线，T+1止盈</td></tr>
+<tr><td>⚠️ 方向正确但执行差</td><td>立讯精密</td><td class="up">-1,875元</td><td>追情绪高潮58%，方向模糊</td></tr>
+<tr><td>❌ 冰点日违规买入</td><td>福莱新材</td><td class="up">-5,265元</td><td>情绪29%冰点，A差+B差，违背lesson_38</td></tr>
+<tr><td>❌ 冰点止损</td><td>紫光国微</td><td class="up">-4,024元</td><td>冰点日开仓，周五破止损82.32执行</td></tr>
+<tr><td>❌ 仓位失控+止损</td><td>柏诚股份</td><td class="up">-3,000元</td><td>冰点次日追涨，仓位失控</td></tr>
+<tr><td>❌ 冰点日买入</td><td>赣锋锂业</td><td class="up">-1,305元</td><td>天齐中军-1.21亿未确认</td></tr>
+<tr><td>⚠️ 止损纪律正确</td><td>兴森科技</td><td class="up">-3,960元</td><td>破止损36.36执行，纪律正确✅；卖后涨+8.5%</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">情绪 vs 收益相关性</div>
+<div class="tw"><table>
+<thead><tr><th>情绪区间</th><th>天数</th><th>典型操作</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>&gt;70%（过热/高潮）</td><td>~2天</td><td>W21周五72%V反，追涨后排</td><td class="up">🟡 中芯清仓正确，柏诚追涨亏损</td></tr>
+<tr><td>60-80%（偏热）</td><td>~5天</td><td>W20周二58%/W21周二65%</td><td class="up">🟡 立讯追涨亏损-4.68%</td></tr>
+<tr><td>40-60%（中性）</td><td>~4天</td><td>北华逆情绪低吸；W22周一40%</td><td class="down">🟢 北华25%低迷时买+9.47%成功</td></tr>
+<tr><td>20-40%（低迷）</td><td>~5天</td><td>赣锋/福莱/紫光冰点日买入</td><td class="up">🔴 福莱/赣锋/紫光集中亏损</td></tr>
+<tr><td>&lt;20%（冰点）</td><td>~2天</td><td>基本遵守空仓规则</td><td class="down">🟢 止损执行到位（兴森/紫光）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx red"><strong>关键发现：</strong>情绪低时（<30%）违规冲动最强——"大盘低开都是机会"的惯性思维反复 override 规则。逆情绪低吸（北华25%买）是最优策略；顺情绪追涨（立讯58%买）是最大陷阱。冰点日买→冰点次日仓位失控→止损→连环亏损是 W21 的完整错误链条。</div>
+
+</div>
+</div>
+
+<!-- ===== §4 周对比分析 ===== -->
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、周对比分析：W19-W22 演进轨迹</div>
+<div class="sb">
+
+<div class="sh3">每周核心对比</div>
+<div class="tw"><table>
+<thead><tr><th>周</th><th>盈亏</th><th>胜率</th><th>预案命中</th><th>主线</th><th>梯队高度</th><th>最大亮点</th><th>最大问题</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>W19</strong><br>5/6-8</td>
+  <td class="up">-1,305元</td>
+  <td class="up">0%</td>
+  <td class="down">100%</td>
+  <td>三天三方向轮动<br><span class="heat-tag ht-red">锂电→半导体→光通信</span></td>
+  <td>4→5→4板</td>
+  <td>减仓→清仓果断<br>退潮信号24h出场</td>
+  <td class="up">天齐中军-1.21亿<br>未重视→赣锋亏损</td>
+</tr>
+<tr class="week-best">
+  <td><strong>W20</strong><br>5/11-15</td>
+  <td class="down">+459元</td>
+  <td class="down">67%</td>
+  <td class="down">100%</td>
+  <td>电力一日游→机器人冷启动<br><span class="heat-tag ht-green">趋势行情主导</span></td>
+  <td>5→6→7板炸→5→6板</td>
+  <td><strong>北华逆情绪低吸+9.47%</strong><br>（全月最佳）</td>
+  <td>立讯追涨-4.68%<br>北华冲涨停未减仓</td>
+</tr>
+<tr class="week-worst">
+  <td><strong>W21</strong><br>5/18-22</td>
+  <td class="up">-8,107元</td>
+  <td class="up">20%</td>
+  <td class="up">20%</td>
+  <td>存储→机器人→半导体→退潮<br><span class="heat-tag ht-red">→元件/PCB新主线</span></td>
+  <td>6→7→8→7→<strong class="up">3板骤降</strong></td>
+  <td>北华清仓+3,334元<br>雷赛止损正确</td>
+  <td class="up"><strong>福莱违规-5,265元</strong><br><strong>仓位失控61%超限</strong></td>
+</tr>
+<tr>
+  <td><strong>W22</strong><br>5/25-29</td>
+  <td class="up">-1,287元</td>
+  <td class="up">14%</td>
+  <td>~60%</td>
+  <td>元件/PCB→半导体→通信双雄<br><span class="heat-tag ht-accent">→防御全线回调</span></td>
+  <td>4→3→3→4→5板</td>
+  <td>中芯止盈+7,147元<br>（全月最大单笔）</td>
+  <td>紫光止损-4,024元<br>佰维浮亏</td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="sh3">月度趋势识别（4周视角）</div>
+<div class="lesson-block blue">
+  <div class="lb-title">📌 趋势1：连板高度持续受压</div>
+  <div class="lb-body">从 W19 的 5 板天花板，到 W21 周五骤降至 3 板，说明短线连板生态始终偏弱。趋势行情（全月最佳操作均来自趋势股）占主导地位。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">📌 趋势2：冰点反复出现</div>
+  <div class="lb-body">四周中出现 2 次冰点（&lt;20%，W21周四13.4%、W22周三17.1%）和 2 次接近冰点（&lt;30%）。冰点纪律执行是核心能力——遵守时空仓（有效），违反时大亏（教训深刻）。</div>
+</div>
+<div class="lesson-block orange">
+  <div class="lb-title">📌 趋势3：板块轮动加速</div>
+  <div class="lb-body">从 W19 "三天三方向"到 W22 "每天一方向"，轮动速度越来越快。趋势持仓难度增加，趋势止损纪律（破位即出）成为保护利润的关键。</div>
+</div>
+<div class="lesson-block purple">
+  <div class="lb-title">📌 趋势4：脉冲式反弹反复失败</div>
+  <div class="lb-body">W21周四（13%→72%）反弹→周五失败；W22周四（17%→54.5%）反弹→周五再次失败（跌停50≥涨停49首次出现）。冰点反弹质量比方向更重要。</div>
+</div>
+
+<div class="sh3">情绪过山车（月度总览）</div>
+<div class="tw"><table>
+<thead><tr><th>周</th><th>情绪范围</th><th>波动幅度</th><th>关键事件</th></tr></thead>
+<tbody>
+<tr><td>W19</td><td>70%→63%→65%</td><td>7pp</td><td>三天三方向轮动；晋级率&lt;30%持续</td></tr>
+<tr><td>W20</td><td>56%→25%→58%→18%→32%</td><td class="up">40pp</td><td>四次30pp+波动；电力一日游；机器人冷启动</td></tr>
+<tr><td>W21</td><td>43%→65%→29%→13%→72%</td><td class="up">59pp</td><td>周三冰点→周四崩盘（-220点）→周五V反</td></tr>
+<tr><td>W22</td><td>40.5%→24.3%→17.1%→54.5%→28.4%</td><td>37pp</td><td>周四反弹→周五脉冲失败，跌停≥涨停首次出现</td></tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+
+<!-- ===== §5 Rules 校验 ===== -->
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、Rules 校验</div>
+<div class="sb">
+
+<div class="sh3">本月触发的 rules（避坑的）</div>
+<div class="tw"><table>
+<thead><tr><th>规则编号</th><th>触发场景</th><th>效果</th></tr></thead>
+<tbody>
+<tr><td>§1.1 止损卖出</td><td>W21周五中芯（竞价高开暂缓，午后修复）；W22兴森/紫光止损</td><td class="down">止损纪律基本执行到位</td></tr>
+<tr><td>中军资金质检</td><td>W20北华中军+4.3亿确认→成功；W19天齐-1.21亿→赣锋亏损</td><td class="down">主线验证逻辑有效</td></tr>
+<tr><td>lesson_38 冰点不买</td><td>W21周三违规触发→已固化（feedback/lesson_38.md）</td><td class="down">教训驱动规则强化</td></tr>
+<tr><td>冰点识别</td><td>W21周四周四冰点识别；W22周四周四冰点识别</td><td class="down">冰点识别准确，空仓基本遵守</td></tr>
+<tr><td>趋势止盈信号</td><td>W22沪电/中芯止盈（+2,550/+7,147元）</td><td class="down">趋势持仓止盈逻辑正确</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">本月违反的 rules（按频次排序）</div>
+<div class="tw"><table>
+<thead><tr><th>规则编号</th><th>违反次数</th><th>典型场景</th><th>直接后果</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>lesson_38 冰点不买</strong></td>
+  <td class="up">3次+</td>
+  <td>W21周三福莱、W22周四周五紫光/佰维</td>
+  <td class="up">福莱-5,265元是全月最大亏损</td>
+</tr>
+<tr>
+  <td>冰点次日仓位限制</td>
+  <td class="up">2次</td>
+  <td>W21周四仓位61%（超20%上限21pp）；W22周四加仓</td>
+  <td class="up">仓位失控放大亏损</td>
+</tr>
+<tr>
+  <td>§T6.3 趋势涨停减仓</td>
+  <td>1次</td>
+  <td>W20周五北华冲涨停620回落至592未减仓</td>
+  <td>利润从+6.77%缩至+3.45%</td>
+</tr>
+<tr>
+  <td>止损V反边界（待写入）</td>
+  <td>1次</td>
+  <td>W21周四中芯止损触发但竞价高开未执行</td>
+  <td>无硬性时间边界</td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="sh3">规则效果总览</div>
+<div class="tw"><table>
+<thead><tr><th>规则</th><th>状态</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>lesson_38 冰点不买</td><td class="down">🟢 已固化</td><td>feedback/lesson_38.md，惯性思维仍偶发</td></tr>
+<tr><td>§1.1 卖出框架</td><td class="down">🟢 有效</td><td>止损执行基本到位</td></tr>
+<tr><td>中军资金质检</td><td class="down">🟢 有效</td><td>主线验证逻辑有效</td></tr>
+<tr><td>冰点反弹质量>方向</td><td class="down">🟢 已确认</td><td>insights/情绪与周期.md，两次脉冲失败验证</td></tr>
+<tr><td>冰点次日仓位折扣</td><td class="up">🟡 待写入</td><td>Core-仓位管理.md，W21仓位失控21pp</td></tr>
+<tr><td>§T6.2 止损V反边界</td><td class="up">🟡 待写入</td><td>Core-趋势.md §T6.2，竞价高开需时间边界</td></tr>
+<tr><td>冰点日W1条件</td><td class="up">🟡 待固化</td><td>追涨选标_W1.md，板块主力>0+量比>1.5</td></tr>
+<tr><td>主力/dde双字段规范</td><td class="up">🟡 待写入</td><td>learnings/，W22第二次出现口径错误</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx red"><strong>核心问题：冰点日纪律执行。</strong>lesson_38 已固化，但惯性思维仍偶发（W22周四周五）。建议：冰点日盘中设置自动提醒（"今日冰点，不开新仓"），用规则提醒替代意志力对抗。</div>
+
+</div>
+</div>
+
+<!-- ===== §6 认知进化 ===== -->
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>六、认知进化</div>
+<div class="sb">
+
+<div class="lesson-block green">
+  <div class="lb-title">1. 冰点不买（lesson_38已固化 → feedback/lesson_38.md）</div>
+  <div class="lb-body">W21周三冰点日情绪29%违规买入福莱（-5,265元），"大盘低开都是机会"惯性思维override所有规则。追涨选标_W1.md新增硬性条件④（热度≤300或成交>50亿）和强制等5分钟规则。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">2. 中军资金是主线的质检员（已固化 → insights/资金合力.md）</div>
+  <div class="lb-body">W19天齐-1.21亿→赣锋亏损（未执行）；W20北华中军+4.3亿+主力确认→成功。板块涨停再多，无中军资金确认=主线不成立。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">3. 逆情绪低吸 > 顺情绪追涨（已固化 → insights/选股与买点.md）</div>
+  <div class="lb-body">北华情绪25%时买+9.47%；立讯情绪58%时买-4.68%。"别人恐惧时贪婪，别人贪婪时恐惧"是全月最有效的策略。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">4. 爆发日无W2（已固化 → Core-W2.md）</div>
+  <div class="lb-body">爆发日观察→次日龙头确认→第三天回踩→W2低吸。W20周三电力17涨停爆发→周四冰点退潮→验证正确。爆发日追涨是 W1 专属，不是 W2 的菜。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">5. 冰点反弹质量 > 方向（已固化 → insights/情绪与周期.md）</div>
+  <div class="lb-body">W21周四13%→72%反弹→周五失败；W22周四17%→54.5%反弹→周五再次失败（跌停50≥涨停49首次出现）。修复质量（涨停收益/炸板率）比修复方向（情绪涨跌）重要。脉冲修复=诱多。</div>
+</div>
+<div class="lesson-block green">
+  <div class="lb-title">6. 跌停≥涨停=短线生态极度恶化（已固化 → insights/情绪与周期.md）</div>
+  <div class="lb-body">W22周五跌停50≥涨停49首次出现。一进二晋级率5.49%❌，涨停收益-0.75%❌。此信号出现后，连板侧应立即关闭。</div>
+</div>
+
+<div class="lesson-block orange">
+  <div class="lb-title">7. 冰点次日W1仓位≤预案×0.5（待写入 → Core-仓位管理.md）</div>
+  <div class="lb-body">W21周四仓位61%超预案上限20%达21pp。冰点次日即使竞价修复，仓位也应逐步累积而非一步到位。建议：前日收盘情绪&lt;30%的次日，所有W1仓位合计≤预案×0.5。</div>
+</div>
+<div class="lesson-block blue">
+  <div class="lb-title">8. 止损V反边界（待写入 → Core-趋势.md §T6.2）</div>
+  <div class="lb-body">中芯-5.95%触发止损，但周五竞价+1.88%高开，若竞价卖出将错过午后+3.23%修复。修正：止损触发+竞价高开>1%→观察至9:30；止损触发+竞价低开>2%→立即执行。</div>
+</div>
+<div class="lesson-block purple">
+  <div class="lb-title">9. 冰点日W1条件补充（待固化 → 追涨选标_W1.md）</div>
+  <div class="lb-body">W22周五佰维在冰点反弹失败日买W1。建议：冰点日（情绪&lt;35%）W1需板块主力净流入>0+个股量比>1.5。冰点日无W1是常态，有条件W1是例外。</div>
+</div>
+<div class="lesson-block teal">
+  <div class="lb-title">10. 主力/dde双字段必须同时取（待写入 → learnings/）</div>
+  <div class="lb-body">W22排除风华时用的"主力-5.62亿"实际是dde大单净额。主力资金流向（+2.37亿）为正。这是第二次出现同类口径错误。每次查主力数据必须同时取"主力净流入"和"dde大单净额"两个字段。</div>
+</div>
+<div class="lesson-block teal">
+  <div class="lb-title">11. 洗盘信号（外围新高+竞价低开=典型洗盘）</div>
+  <div class="lb-body">W22周三外围美股半导体新高+A股竞价低开=典型洗盘信号。早盘半导体+2.54%验证。lesson_06强化。</div>
+</div>
+
+<div class="sh3">蒸馏判断汇总</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>认知摘要</th><th>来源</th><th>类型</th><th>目标文件</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>冰点不买（lesson_38）</td><td>W21</td><td><span class="badge badge-red">教训</span></td><td>feedback/lesson_38.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>2</td><td>中军资金是主线质检员</td><td>W19</td><td><span class="badge badge-green">认知</span></td><td>insights/资金合力.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>3</td><td>逆情绪低吸 > 顺情绪追涨</td><td>W20</td><td><span class="badge badge-green">认知</span></td><td>insights/选股与买点.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>4</td><td>爆发日无W2</td><td>W20</td><td><span class="badge badge-green">教训</span></td><td>Core-W2.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>5</td><td>冰点反弹质量 > 方向</td><td>W21-W22</td><td><span class="badge badge-green">认知</span></td><td>insights/情绪与周期.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>6</td><td>跌停≥涨停=短线生态恶化</td><td>W22</td><td><span class="badge badge-green">认知</span></td><td>insights/情绪与周期.md</td><td><span class="badge badge-green">✅已固化</span></td></tr>
+<tr><td>7</td><td>冰点次日仓位≤预案×0.5</td><td>W21</td><td><span class="badge badge-yellow">规则</span></td><td>Core-仓位管理.md</td><td><span class="badge badge-yellow">→待写入</span></td></tr>
+<tr><td>8</td><td>止损V反边界（9:30边界）</td><td>W21</td><td><span class="badge badge-blue">规则补丁</span></td><td>Core-趋势.md §T6.2</td><td><span class="badge badge-yellow">→待写入</span></td></tr>
+<tr><td>9</td><td>冰点日W1条件（主力>0+量比>1.5）</td><td>W22</td><td><span class="badge badge-yellow">规则</span></td><td>追涨选标_W1.md</td><td><span class="badge badge-yellow">→待固化</span></td></tr>
+<tr><td>10</td><td>主力/dde双字段同时取</td><td>W22</td><td><span class="badge badge-red">教训</span></td><td>learnings/</td><td><span class="badge badge-yellow">→待写入</span></td></tr>
+<tr><td>11</td><td>洗盘信号（lesson_06强化）</td><td>W22</td><td><span class="badge badge-teal">认知</span></td><td>lesson_06</td><td><span class="badge badge-yellow">→强化</span></td></tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+
+<!-- ===== §7 下月战略 ===== -->
+<div class="section" id="s7">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>七、下月战略</div>
+<div class="sb">
+
+<div class="sh3">核心打法（6月）</div>
+<div class="lesson-block green">
+  <div class="lb-title">趋势持仓为主，连板空仓为主</div>
+  <div class="lb-body">全月最佳操作（北华+9.47%、中芯+7,147元、沪电+2,550元）全部来自趋势股，证明逆情绪低吸中军是核心盈利模式。继续等冰点（情绪&lt;35%）低吸，不在冰点日开新仓。连板侧保持关闭（4周验证：连板高度持续受压，短线生态偏弱）。</div>
+</div>
+
+<div class="sh3">风控底线（必须执行）</div>
+<div class="tw"><table>
+<thead><tr><th>底线</th><th>规则</th><th>来源</th></tr></thead>
+<tbody>
+<tr><td class="up">冰点日不开W1新仓</td><td>lesson_38 铁律执行</td><td>已固化</td></tr>
+<tr><td class="up">冰点次日仓位≤预案×0.5</td><td>前日情绪&lt;30%时触发</td><td>待写入门控</td></tr>
+<tr><td class="up">止损有硬性时间边界</td><td>竞价高开观察至9:30</td><td>待写入 §T6.2</td></tr>
+<tr><td class="up">仓位超限→次日自动减仓</td><td>预案超限触发</td><td>待建立门控</td></tr>
+<tr><td class="up">跌停≥涨停→连板侧关闭</td><td>短线生态极度恶化</td><td>已固化</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">待执行任务（6月）</div>
+<div class="tw"><table>
+<thead><tr><th>任务</th><th>目标文件</th><th>优先级</th></tr></thead>
+<tbody>
+<tr><td>冰点次日仓位折扣</td><td>Core-仓位管理.md</td><td>P0（高）</td></tr>
+<tr><td>止损V反边界（9:30时间边界）</td><td>Core-趋势.md §T6.2</td><td>P0（高）</td></tr>
+<tr><td>主力/dde双字段查询规范</td><td>learnings/</td><td>P1（中）</td></tr>
+<tr><td>冰点日W1补充条件</td><td>追涨选标_W1.md</td><td>P1（中）</td></tr>
+<tr><td>仓位超限门控机制</td><td>Core-仓位管理.md</td><td>P2（低）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">上月目标达成情况</div>
+<div class="tw"><table>
+<thead><tr><th>目标</th><th>达成</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>周胜率回到50%以上</td><td class="up">❌ 未达成</td><td>实际约20%，W21是最大拖累</td></tr>
+<tr><td>冰点日零违规操作</td><td class="up">⚠️ 部分达成</td><td>lesson_38已固化，但W22偶发</td></tr>
+<tr><td>仓位控制在预案上限以内</td><td class="up">⚠️ 部分达成</td><td>W21失控但W22改善</td></tr>
+<tr><td>止损规则严格执行</td><td>🟢 基本达成</td><td>V反边界待补，其余执行到位</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx red"><strong>6月核心目标：</strong>①周胜率回到40%以上；②冰点日（情绪&lt;35%）零违规（lesson_38铁律）；③仓位控制在预案上限以内（写入门控）；④止损V反边界建立（补充时间边界）。</div>
+
+<div class="sbx warn"><strong>重点变量：</strong>6月情绪是否出现趋势性行情；通信设备（亨通/长飞）和元件/PCB持续性；冰点反弹后周一是否确认（避免脉冲失败重复）；连板高度能否突破5板天花板（决定连板vs趋势风格孰强）。</div>
+
+</div>
+</div>
+
+<!-- ===== 附录 ===== -->
+<div class="section" id="appendix">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>📋 附录 · 月度速查</div>
+<div class="sb">
+
+<div class="sh3">月度账户表现</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>月盈亏（已实现）</td><td class="up">约 -10,240元（-0.34%）</td><td>W19-1,305 + W20+459 + W21-8,107 + W22-1,287</td></tr>
+<tr><td>含浮亏总盈亏</td><td class="up">约 -1.2万元</td><td>含佰维浮亏约-1,626元</td></tr>
+<tr><td>账户规模（估算）</td><td>~33-35万元</td><td>根据仓位推算</td></tr>
+<tr><td>最大单笔盈利</td><td class="down">中芯国际（+7,147元）</td><td>W22两次止盈</td></tr>
+<tr><td>最大单笔亏损</td><td class="up">福莱新材（-5,265元）</td><td>W21周三冰点违规买入</td></tr>
+<tr><td>最大单周亏损</td><td class="up">W21（-8,107元）</td><td>超前三周盈利总和</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">全月交易汇总（按盈亏排序）</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>周</th><th>买日/价</th><th>卖日/价</th><th>盈亏</th><th>评价</th></tr></thead>
+<tbody>
+<tr class="week-best"><td>中芯国际</td><td>趋势</td><td>W22</td><td>持有 @135.27</td><td>分两笔卖出 @147.77/@150.76</td><td class="down">+7,147元</td><td><span class="badge badge-green">✅最佳（两次止盈）</span></td></tr>
+<tr class="week-best"><td>北方华创</td><td>趋势</td><td>W20</td><td>持有 @572.26</td><td>周一 @605.60</td><td class="down">+3,334元</td><td><span class="badge badge-green">✅逆情绪低吸</span></td></tr>
+<tr class="week-best"><td>沪电股份</td><td>趋势W1</td><td>W22</td><td>周一 @122.5</td><td>周三 @131</td><td class="down">+2,550元</td><td><span class="badge badge-green">✅主线确认止盈</span></td></tr>
+<tr><td>领益智造</td><td>趋势W2</td><td>W20</td><td>周五 @16.82</td><td>持有</td><td class="down">+360元</td><td><span class="badge badge-yellow">⚠️ 双概念+W2回踩</span></td></tr>
+<tr><td>雷赛智能</td><td>W2低吸</td><td>W21</td><td>周二 @66.37</td><td>周三 @64.15</td><td class="up">-222元</td><td><span class="badge badge-green">✅止损正确</span></td></tr>
+<tr class="week-worst"><td>福莱新材</td><td><span class="badge badge-red">违规W1</span></td><td>W21</td><td>周三 @39.54</td><td>周四 @38.17</td><td class="up">-5,265元</td><td><span class="badge badge-red">❌❌❌冰点违规买入</span></td></tr>
+<tr><td>紫光国微</td><td>W2低吸</td><td>W22</td><td>周三 @87.00</td><td>周五 @81.62</td><td class="up">-4,024元</td><td><span class="badge badge-red">❌冰点止损纪律正确</span></td></tr>
+<tr><td>兴森科技</td><td>W2低吸</td><td>W22</td><td>周二 @38.28</td><td>周四 @35.64</td><td class="up">-3,960元</td><td><span class="badge badge-green">✅纪律正确（卖后涨+8.5%）</span></td></tr>
+<tr class="week-worst"><td>柏诚股份</td><td><span class="badge badge-red">追涨</span></td><td>W21</td><td>周四 @34.74</td><td>周五 @32.74</td><td class="up">-3,000元</td><td><span class="badge badge-red">❌冰点次日追涨+仓位失控</span></td></tr>
+<tr><td>立讯精密</td><td>趋势</td><td>W20</td><td>周三 @80.15</td><td>周四 @76.40</td><td class="up">-1,875元</td><td><span class="badge badge-red">❌追情绪高潮</span></td></tr>
+<tr><td>赣锋锂业</td><td>锂电</td><td>W19</td><td>周三 @91.24</td><td>分两笔 @88.47/@86.89</td><td class="up">-1,305元</td><td><span class="badge badge-red">❌中军未确认</span></td></tr>
+<tr><td>佰维存储</td><td>W1</td><td>W22</td><td>周五 @335.5</td><td>持有（浮亏）</td><td class="up">-1,626元</td><td><span class="badge badge-yellow">⚠️待评判</span></td></tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) { el.classList.toggle('collapsed'); const b = el.nextElementSibling; if (b) b.classList.toggle('hide'); }
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .lesson-block, .para, .tight-list li, .tw table tr, .sh');
+  if (!q.trim()) { items.forEach(el => el.style.opacity = '1'); return; }
+  const lq = q.toLowerCase();
+  items.forEach(el => { el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15'; });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const target = document.getElementById(this.getAttribute('href').slice(1));
+    if (!target) return;
+    document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    const sb = target.closest('.sb.hide'); if (sb) { sb.classList.remove('hide'); sb.previousElementSibling?.classList.remove('collapsed'); }
+  });
+});
+</script>
+</body>
+</html>

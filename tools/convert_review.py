@@ -191,20 +191,40 @@ def extract_section(text, heading):
     return text[start:].strip(), ""
 
 
+def pct_text(value):
+    """Render numeric frontmatter percentages consistently."""
+    s = str(value).strip()
+    if not s or s == '--' or '%' in s:
+        return s
+    try:
+        float(s)
+        return f'{s}%'
+    except ValueError:
+        return s
+
+
+def numeric_value(value):
+    """Extract the first numeric value from a frontmatter string."""
+    m = re.search(r'-?\d+(?:\.\d+)?', str(value))
+    return float(m.group(0)) if m else None
+
+
 # ── HTML generators ──
 
 def html_topbar(fm):
     """Generate the topbar with meta chips."""
     weekday = fm.get('weekday', '')
-    emo = fm.get('情绪值', '--')
+    emo_raw = fm.get('情绪值', '--')
+    emo = pct_text(emo_raw)
     sh_idx = fm.get('上证指数', '--')
-    sh_pct = fm.get('上证涨幅', '--')
+    sh_pct_raw = fm.get('上证涨幅', '--')
+    sh_pct = pct_text(sh_pct_raw)
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
     pos = fm.get('盘后持仓', '空仓')
 
-    emo_val = emo.rstrip('%')
-    emo_chip = 'red' if emo_val and float(emo_val) < 25 else ('amber' if emo_val and float(emo_val) < 45 else 'green')
+    emo_val = numeric_value(emo_raw)
+    emo_chip = 'red' if emo_val is not None and emo_val < 25 else ('amber' if emo_val is not None and emo_val < 45 else 'green')
     sh_chip = 'red' if sh_pct.startswith('+') else 'green'
 
     return f"""<div class="topbar">
@@ -953,7 +973,7 @@ def shorten_pos(pos_raw):
     if not pos_raw or pos_raw == '空仓':
         return '空仓'
     # Extract stock abbreviations
-    names = re.findall(r'([一-鿿]+)', pos_raw)
+    names = [n for n in re.findall(r'([一-鿿]+)', pos_raw) if n not in ('股', '空仓')]
     short = '+'.join(n[:2] for n in names[:2])
     return short if short else pos_raw[:10]
 
@@ -961,10 +981,9 @@ def shorten_pos(pos_raw):
 def desc_from_fm(fm):
     """Generate a short description from frontmatter."""
     赚钱 = fm.get('赚钱效应', '')
-    emo = fm.get('情绪值', '')
-    emo_v = emo.rstrip('%')
+    emo_v = numeric_value(fm.get('情绪值', ''))
     parts = []
-    if emo_v and float(emo_v) < 20:
+    if emo_v is not None and emo_v < 20:
         parts.append('冰点')
     if 赚钱 == '差':
         parts.append('赚钱效应差')
@@ -986,12 +1005,14 @@ def update_review_notes_index(date_str, fm):
 
     weekday = fm.get('weekday', '')
     day = date_str[-2:].lstrip('0')
-    sh_pct = fm.get('上证涨幅', '0%')
+    sh_pct_raw = fm.get('上证涨幅', '0%')
+    sh_pct = pct_text(sh_pct_raw)
     zt = fm.get('涨停家数', '--')
-    emo = fm.get('情绪值', '--')
+    emo_raw = fm.get('情绪值', '--')
+    emo = pct_text(emo_raw)
     pos = shorten_pos(fm.get('盘后持仓', '空仓'))
-    emo_v = emo.rstrip('%')
-    emo_cls = 'up' if emo_v and float(emo_v) < 25 else ('dn' if emo_v and float(emo_v) >= 50 else '')
+    emo_v = numeric_value(emo_raw)
+    emo_cls = 'up' if emo_v is not None and emo_v < 25 else ('dn' if emo_v is not None and emo_v >= 50 else '')
     sh_cls = 'up' if sh_pct.startswith('+') else 'dn'
     pos_tag = 'tag-a' if '空仓' not in pos else 'tag-g'
     desc = desc_from_fm(fm)
@@ -1019,7 +1040,12 @@ def update_review_notes_index(date_str, fm):
         # Update date range
         month_label = date_str[5:7].lstrip('0')
         day_label = date_str[8:10].lstrip('0')
-        content = re.sub(r'(– )\d+/\d+', rf'\g<1>{month_label}/{day_label}', content)
+        content = re.sub(
+            r'(<span><strong>\d+/\d+ – )\d+/\d+(</strong></span>)',
+            rf'\g<1>{month_label}/{day_label}\2',
+            content,
+            count=1,
+        )
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -1150,18 +1176,16 @@ def update_main_index(date_str, fm):
         )
 
     weekday = fm.get('weekday', '')
-    sh_pct = fm.get('上证涨幅', '0%')
+    sh_pct_raw = fm.get('上证涨幅', '0%')
+    sh_pct = pct_text(sh_pct_raw)
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
-    emo = fm.get('情绪值', '--')
+    emo_raw = fm.get('情绪值', '--')
+    emo = pct_text(emo_raw)
     desc = desc_from_fm(fm)
     close_ratio = extract_close_ratio(date_str)
 
-    emo_v = emo.rstrip('%')
-    try:
-        emo_num = float(emo_v)
-    except ValueError:
-        emo_num = None
+    emo_num = numeric_value(emo_raw)
     sh_metric_cls = 'metric-up' if sh_pct.startswith('+') else 'metric-down'
     emo_metric_cls = 'metric-risk' if emo_num is not None and emo_num < 25 else ('metric-warn' if emo_num is not None and emo_num < 45 else 'metric-strong')
     zt_metric_cls = 'metric-heat' if str(zt).isdigit() and int(zt) >= 80 else 'metric-warn'

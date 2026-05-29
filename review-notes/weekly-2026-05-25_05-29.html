@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W22 周复盘（5/25-5/29）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F5F3;
+  --bg2:#FFFFFF;
+  --bg3:#FAFAF9;
+  --bg4:#F5F2EE;
+  --border:#E5E2DE;
+  --text:#2D2926;
+  --text2:#5C5652;
+  --text3:#8A8480;
+  --accent:#D97706;
+  --accent-hover:#B45309;
+  --red:#DC2626;
+  --green:#059669;
+  --blue:#2563EB;
+  --purple:#7C3AED;
+  --teal:#0D9488;
+}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.9);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+/* ── Layout ── */
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+
+/* ── Sections ── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+
+/* ── Typography ── */
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.badge-teal{background:rgba(13,148,136,.08);color:var(--teal)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sbx.teal{border-left-color:var(--teal)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+
+/* ── Summary cards ── */
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ── Emotion strip ── */
+.day-strip{display:grid;grid-template-columns:100px repeat(5,1fr);gap:1px;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);font-size:12px}
+.ds-label{background:var(--bg4);padding:10px 8px;font-size:11px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:3px}
+.ds-label .ds-date{font-size:10px;color:var(--text3)}
+.ds-cell{background:var(--bg2);padding:10px 10px;display:flex;flex-direction:column;gap:4px}
+.ds-em{font-size:12px;font-weight:700;padding:1px 7px;border-radius:4px;text-align:center;width:fit-content}
+.em40{background:rgba(217,119,6,.12);color:var(--accent)}
+.em24{background:rgba(220,38,38,.1);color:var(--red)}
+.em17{background:rgba(220,38,38,.2);color:var(--red)}
+.em54{background:rgba(5,150,105,.12);color:var(--green)}
+.em28{background:rgba(220,38,38,.1);color:var(--red)}
+
+/* ── Fund bar chart ── */
+.fund-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.fund-row .fname{min-width:90px;color:var(--text2)}
+.fund-row .fbar{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.fund-row .fbar-fill{height:100%;border-radius:4px}
+.fund-row .fval{min-width:52px;text-align:right;font-weight:600}
+
+/* ── Board heat grid ── */
+.heat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.heat-tag{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.ht-red{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.ht-green{background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.2)}
+.ht-accent{background:rgba(217,119,6,.1);color:var(--accent);border:1px solid rgba(217,119,6,.2)}
+.ht-blue{background:rgba(37,99,235,.08);color:var(--blue);border:1px solid rgba(37,99,235,.2)}
+.ht-purple{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2)}
+.ht-teal{background:rgba(13,148,136,.08);color:var(--teal);border:1px solid rgba(13,148,136,.2)}
+.ht-dim{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── Lesson blocks ── */
+.lesson-block{padding:12px 14px;border-radius:8px;margin-bottom:10px;border-left:4px solid}
+.lesson-block.red{background:rgba(220,38,38,.05);border-color:var(--red)}
+.lesson-block.orange{background:rgba(217,119,6,.05);border-color:var(--accent)}
+.lesson-block.blue{background:rgba(37,99,235,.05);border-color:var(--blue)}
+.lesson-block.green{background:rgba(5,150,105,.05);border-color:var(--green)}
+.lesson-block.purple{background:rgba(124,58,237,.05);border-color:var(--purple)}
+.lesson-block.teal{background:rgba(13,148,136,.05);border-color:var(--teal)}
+.lesson-block .lb-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.lesson-block .lb-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ── Search ── */
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+
+/* ── Alert box ── */
+.alert-strip{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.alert-item{flex:1;min-width:140px;padding:12px 14px;border-radius:8px;border-left:4px solid}
+.alert-item.danger{background:rgba(220,38,38,.06);border-color:var(--red)}
+.alert-item.danger .ai-num{font-size:28px;font-weight:800;color:var(--red)}
+.alert-item.danger .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.success{background:rgba(5,150,105,.06);border-color:var(--green)}
+.alert-item.success .ai-num{font-size:28px;font-weight:800;color:var(--green)}
+.alert-item.success .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.neutral{background:rgba(217,119,6,.06);border-color:var(--accent)}
+.alert-item.neutral .ai-num{font-size:28px;font-weight:800;color:var(--accent)}
+.alert-item.neutral .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- ══ Topbar ═══════════════════════════════════════════════════ -->
+<div class="topbar">
+  <a href="../index.html#reviews" class="back">← 平台</a>
+  <div class="title">W22 周复盘（5/25-5/29）</div>
+  <div class="meta">
+    <span class="chip blue">5/25-5/29 · 5天</span>
+    <span class="chip red">盈亏 -1,287元（已实现）</span>
+    <span class="chip accent">买6/卖3</span>
+    <span class="chip purple">胜率14.3%</span>
+    <span class="chip red">预案命中率60%</span>
+  </div>
+</div>
+
+<!-- ══ Layout ═══════════════════════════════════════════════════ -->
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="label">目录</div>
+  <a href="#s0">💡 核心发现</a>
+  <div class="sep"></div>
+  <a href="#s1">§1 本周概览</a>
+  <a href="#s2">§2 节奏与打法</a>
+  <a href="#s3">§3 主线与板块</a>
+  <a href="#s4">§4 盈亏归因</a>
+  <a href="#s5">§5 认知迭代</a>
+  <a href="#s6">§6 下周基调</a>
+  <div class="sep"></div>
+  <a href="#appendix">附录 速查</a>
+</nav>
+
+<div class="content">
+
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+
+<!-- ===== §0 核心发现 ===== -->
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>💡 核心发现（先看这里）</div>
+<div class="sb">
+
+<div class="summary-cards">
+<div class="summary-card"><div class="label">周盈亏</div><div class="value red">-1,287元</div><div class="sub">-0.37% 已实现 · 含浮亏-2,913元</div></div>
+<div class="summary-card"><div class="label">胜率</div><div class="value red">14.3%</div><div class="sub">1盈 / 6亏（按标的计）</div></div>
+<div class="summary-card"><div class="label">盈亏比</div><div class="value accent">3.33</div><div class="sub">均盈5,073元 / 均亏1,524元</div></div>
+<div class="summary-card"><div class="label">预案命中率</div><div class="value accent">60%</div><div class="sub">3天正确，2天有偏差</div></div>
+<div class="summary-card"><div class="label">主线切换</div><div class="value accent">2次</div><div class="sub">元件/PCB→半导体→通信双雄</div></div>
+<div class="summary-card"><div class="label">最大盈利</div><div class="value green">+7,147元</div><div class="sub">中芯国际（两次止盈）</div></div>
+</div>
+
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td>盈亏</td><td>累计约 <strong>-1,287元</strong>（-0.37%，已实现），含佰维浮亏约-2,913元（-0.87%）。中芯两次止盈+7,147元是最大盈利来源；紫光止损-4,024元+兴森止损-3,960元是主要亏损。</td></tr>
+<tr><td>节奏</td><td>预案命中率约60%。周二/周三/周五判断正确，周一沪电买点略早，周四加仓紫光时机偏早。</td></tr>
+<tr><td>主线</td><td>周一元件/PCB → 周二半导体/先进封装 → 周三双主线确认 → 周四通信设备双雄爆发 → 周五无主线，全线防御。</td></tr>
+<tr><td>梯队</td><td>4板→3板→3板→4板→5板（后半周高度打开，但为防御板块）。</td></tr>
+<tr><td>赚钱效应</td><td>前半周分化，周四冰点反弹（情绪54.5%），周五反弹失败（情绪骤降至28.4%）。</td></tr>
+<tr><td>盈亏模式</td><td>赚钱=趋势止损及时（沪电/中芯止盈）；亏钱=冰点日开仓+脉冲修复追涨+仓位管理不精细。</td></tr>
+<tr><td>认知迭代</td><td>3条新认知（洗盘/弱势盘涨停不卖/脉冲修复核心）+ 1条待固化规则（冰点日W1条件）+ 1条数据规范。</td></tr>
+</tbody>
+</table></div>
+
+<div class="sbx red"><strong>核心教训：</strong>周五跌停50只=涨停49首次出现——自2026年复盘以来最差短线生态。脉冲式修复=诱多，冰点反弹日（周四情绪54.5%）不是买入信号。冰点日（情绪&lt;35%）开新仓是本周主要亏损来源之一。</div>
+
+<div class="sbx warn"><strong>下周目标：</strong>冰点日（情绪&lt;35%）不开W1新仓；纪律优先于盘感；仓位控制在预案上限以内；等情绪确认冰点底部再动手。</div>
+
+</div>
+</div>
+
+<!-- ===== §1 本周概览 ===== -->
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§1 本周概览</div>
+<div class="sb">
+
+<div class="sh3">每日情绪走势</div>
+<div class="day-strip">
+  <div class="ds-label">周一<div class="ds-date">5/25</div></div>
+  <div class="ds-cell"><span class="ds-em em40">40.5%</span><span class="heat-tag ht-accent">高潮分化</span><span class="heat-tag ht-purple">元件/半导体</span></div>
+  <div class="ds-cell"><span class="ds-em em24">24.3%</span><span class="heat-tag ht-red">冰点V反</span><span class="heat-tag ht-teal">持仓管理</span></div>
+  <div class="ds-cell"><span class="ds-em em17">17.1%</span><span class="heat-tag ht-red">冰点持续</span><span class="heat-tag ht-purple">洗盘验证</span></div>
+  <div class="ds-cell"><span class="ds-em em54">54.5%</span><span class="heat-tag ht-green">冰点反弹</span><span class="heat-tag ht-blue">半导体+通信</span></div>
+  <div class="ds-cell"><span class="ds-em em28">28.4%</span><span class="heat-tag ht-red">冰点失败</span><span class="heat-tag ht-red">跌停50只</span></div>
+</div>
+
+<div class="sh3">每日交易回顾</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪</th><th>模式</th><th>打法</th><th>操作</th><th>盈亏</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr>
+  <td>周一 5/25</td>
+  <td><span class="heat-tag ht-accent">40.5%</span></td>
+  <td>高潮分化</td>
+  <td>趋势主线持仓，W1选买</td>
+  <td>沪电W1买入@122.5</td>
+  <td class="up">+12元</td>
+  <td><span class="badge badge-yellow">⚠️ 待验证</span></td>
+  <td>半导体+247亿，沪电+6.09%</td>
+</tr>
+<tr>
+  <td>周二 5/26</td>
+  <td><span class="heat-tag ht-red">24.3%</span></td>
+  <td>冰点V反</td>
+  <td>冰点防守，持仓管理</td>
+  <td>中芯减半仓+2,500✅<br>兴森W2买入@38.28</td>
+  <td class="up">+2,500元</td>
+  <td><span class="badge badge-green">✅ 正确</span></td>
+  <td>沪电+8.83%涨停被砸，兴森W2</td>
+</tr>
+<tr>
+  <td>周三 5/27</td>
+  <td><span class="heat-tag ht-red">17.1%</span></td>
+  <td>冰点持续</td>
+  <td>冰点延续，趋势回踩</td>
+  <td>沪电止盈+2,550✅<br>中芯清仓+4,647✅<br>紫光W2买入@87</td>
+  <td class="up">+7,197元</td>
+  <td><span class="badge badge-green">✅ 正确</span></td>
+  <td>洗盘验证，半导体+元件双主线</td>
+</tr>
+<tr>
+  <td>周四 5/28</td>
+  <td><span class="heat-tag ht-green">54.5%</span></td>
+  <td>冰点反弹</td>
+  <td>冰点第4天，持仓管理</td>
+  <td>兴森止损-3,960🔴<br>紫光加仓200股</td>
+  <td class="down">-3,960元</td>
+  <td><span class="badge badge-red">🔴 止损正确但痛苦</span></td>
+  <td>半导体+111亿，通信设备+148亿</td>
+</tr>
+<tr>
+  <td>周五 5/29</td>
+  <td><span class="heat-tag ht-red">28.4%</span></td>
+  <td>冰点失败</td>
+  <td>冰点反弹失败，持仓止损</td>
+  <td>紫光止损-4,024🔴<br>佰维W1买入@335.5</td>
+  <td class="down">-4,024元</td>
+  <td><span class="badge badge-red">⚠️ 待评判</span></td>
+  <td>跌停50只=涨停49首次，脉冲修复失败</td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="sh3">大盘数据</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪</th><th>上证</th><th>涨跌%</th><th>涨停</th><th>跌停</th><th>量能</th><th>赚钱效应</th></tr></thead>
+<tbody>
+<tr><td>周一 5/25</td><td class="up">40.5%</td><td>4152.6</td><td class="up">+0.96%</td><td class="up">100</td><td class="down">15</td><td>3.21万亿</td><td>好</td></tr>
+<tr><td>周二 5/26</td><td class="down">24.3%</td><td>4145.4</td><td class="down">-0.17%</td><td class="down">46</td><td class="down">16</td><td>3.24万亿</td><td>一般</td></tr>
+<tr><td>周三 5/27</td><td class="down">17.1%</td><td>4093.7</td><td class="down">-1.25%</td><td class="down">47</td><td class="down">22</td><td>3.24万亿</td><td>差</td></tr>
+<tr><td>周四 5/28</td><td class="up">54.5%</td><td>4098.6</td><td class="up">+0.12%</td><td class="up">100</td><td class="up">8</td><td>2.97万亿</td><td>一般</td></tr>
+<tr><td>周五 5/29</td><td class="down">28.4%</td><td>4068.6</td><td class="down">-0.73%</td><td class="down">49</td><td class="down">50</td><td>3.32万亿</td><td>差</td></tr>
+</tbody>
+</table></div>
+
+<div class="alert-strip">
+  <div class="alert-item danger">
+    <div class="ai-num">-1,287元</div>
+    <div class="ai-label">已实现盈亏</div>
+  </div>
+  <div class="alert-item neutral">
+    <div class="ai-num">-2,913元</div>
+    <div class="ai-label">含浮亏总计</div>
+  </div>
+  <div class="alert-item success">
+    <div class="ai-num">+7,147元</div>
+    <div class="ai-label">中芯两次止盈</div>
+  </div>
+  <div class="alert-item danger">
+    <div class="ai-num">-8,024元</div>
+    <div class="ai-label">紫光+兴森止损</div>
+  </div>
+</div>
+
+<div class="sbx"><strong>本周操作：</strong>买6次（沪电/兴森×2/紫光×2/佰维） / 卖3次（中芯×2/沪电/兴森）</div>
+<div class="para">一句话总结：周一是高潮分化日（半导体+247亿爆量），周二冰点V反（沪电+8.83%涨停被砸），周三冰点第3天洗盘验证（中芯+沪电止盈），周四冰点第4天反弹（兴森止损），周五反弹失败跌停50只=涨停49首次出现（紫光止损）。中芯两次止盈是本周最大盈利来源，纪律执行整体较好，但脉冲修复=诱多是核心教训。</div>
+
+</div>
+</div>
+
+<!-- ===== §2 节奏与打法 ===== -->
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§2 节奏与打法回顾</div>
+<div class="sb">
+
+<div class="sh3">预案命中率</div>
+<div class="para">约60%（3天正确，2天有偏差）</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>预案对错</th><th>关键操作</th></tr></thead>
+<tbody>
+<tr><td>周一 5/25</td><td><span class="badge badge-yellow">⚠️ 基本正确，买点略早</span></td><td>元件/PCB方向判断正确，沪电W1买入合理，但买入后曾浮亏-2%</td></tr>
+<tr><td>周二 5/26</td><td><span class="badge badge-green">✅ 正确</span></td><td>冰点仓位20%防守，连板侧关闭，中芯减仓+兴森W2买入全部正确</td></tr>
+<tr><td>周三 5/27</td><td><span class="badge badge-green">✅ 正确</span></td><td>洗盘判断完全正确，沪电止盈+中芯清仓止盈+紫光W2买入全部正确</td></tr>
+<tr><td>周四 5/28</td><td><span class="badge badge-yellow">⚠️ 基本正确</span></td><td>冰点第4天判断正确，兴森止损纪律正确，但紫光加仓时机偏早</td></tr>
+<tr><td>周五 5/29</td><td><span class="badge badge-green">✅ 正确</span></td><td>紫光止损执行正确，连亏2天铁律空仓正确（佰维T+1周一出）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">方向错误日</div>
+<div class="sbx red"><strong>周四（5/28）：</strong>冰点第4天情绪54.5%看似反弹，但紫光加仓200股的时机在反弹质量不明时偏早。lesson_04(脉冲式沸点)已预警：高潮次日（周四情绪54.5%）追涨风险大。</div>
+<div class="sbx red"><strong>周五（5/29）：</strong>脉冲修复失败的核心教训。lesson_04/05/06三重验证：①周四涨停收益0.84%&lt;2%说明修复质量差 ②lesson_04脉冲式沸点来得快去得快 ③lesson_06脉冲式修复也是诱多。冰点反弹日（情绪从高位骤降）不是买入信号。</div>
+
+<div class="sh3">主线切换（2次）</div>
+<div class="tw"><table>
+<thead><tr><th>时间</th><th>主线</th><th>切换信号</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>元件/PCB + 半导体</td><td>周一涨停100只，沪电+6.09%W1，元件/PCB爆发</td></tr>
+<tr><td>周二</td><td>半导体/先进封装爆发</td><td>沪电+8.83%涨停被砸，中芯V反，半导体主力+247亿</td></tr>
+<tr><td>周三</td><td>半导体+元件双主线确认</td><td>长电涨停2板，紫光+7.53%洗盘验证，半导体+135亿</td></tr>
+<tr><td>周四</td><td>半导体+通信设备双主线</td><td>亨通+43.7亿/长飞+14.6亿通信双雄爆发，通信设备+148亿</td></tr>
+<tr><td>周五</td><td>无主线，全线防御</td><td>银行+74亿/电力+70亿，科技全线回调，跌停50只</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">梯队演变</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>最高板</th><th>梯队状态</th><th>关键变化</th></tr></thead>
+<tbody>
+<tr><td>周一 5/25</td><td><span class="badge badge-accent">4板</span>（四环生物）</td><td>4-3-2 有结构</td><td>元件/PCB+半导体爆发，涨停100只</td></tr>
+<tr><td>周二 5/26</td><td><span class="badge badge-accent">3板</span>（宝鼎科技）</td><td>3-2 多只</td><td>冰点分化，涨停46只，高度降低</td></tr>
+<tr><td>周三 5/27</td><td><span class="badge badge-accent">3板</span>（华塑控股等）</td><td>3×3-2×5-首39</td><td>华天3板新进，先进封装延续</td></tr>
+<tr><td>周四 5/28</td><td><span class="badge badge-green">4板</span>（华塑控股等）</td><td>4×3-3×1-2×5-首91</td><td>最高板升至4板，三进四100%</td></tr>
+<tr><td>周五 5/29</td><td><span class="badge badge-green">5板</span>（华电能源等）</td><td>5×2-3×2-2×6-首40</td><td>高度升至5板，但为电力/煤炭防御板块</td></tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+
+<!-- ===== §3 主线与板块 ===== -->
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§3 主线与板块</div>
+<div class="sb">
+
+<div class="sh3">本周活跃板块（持续2天+有涨停）</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>板块</th><th>持续天数</th><th>峰値</th><th>代表标的</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>半导体/先进封装 🔥</td><td>周一~周四</td><td class="up">周四主力+111亿</td><td>中芯/长电/紫光</td><td><span class="badge badge-accent">周四后退潮</span></td></tr>
+<tr><td>2</td><td>元件/PCB 🔥</td><td>周一~周三</td><td class="up">周一沪电+8.83%</td><td>沪电/鹏鼎/风华</td><td><span class="badge badge-yellow">周三后退潮</span></td></tr>
+<tr><td>3</td><td>通信设备 🔥🔥</td><td>周四爆发</td><td class="up">周五亨通+43.7亿</td><td>亨通光电/长飞光纤</td><td><span class="badge badge-blue">新方向，宽度极窄</span></td></tr>
+<tr><td>4</td><td>电力/煤炭 🛡️</td><td>周三~周五</td><td class="up">周五电力+70亿</td><td>华电能源5板</td><td><span class="badge badge-teal">防御主线持续</span></td></tr>
+<tr><td>5</td><td>被动元件 🔄</td><td>周三~周四</td><td class="up">周四风华涨停</td><td>风华高科/顺络电子</td><td><span class="badge badge-purple">爆发后回调</span></td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">周五板块资金流向（主力净流入）</div>
+<div class="fund-row">
+  <div class="fname">银行</div>
+  <div class="fbar"><div class="fbar-fill" style="width:100%;background:var(--green)"></div></div>
+  <div class="fval" style="color:var(--green)">+74亿</div>
+</div>
+<div class="fund-row">
+  <div class="fname">电力</div>
+  <div class="fbar"><div class="fbar-fill" style="width:94%;background:var(--green)"></div></div>
+  <div class="fval" style="color:var(--green)">+70亿</div>
+</div>
+<div class="fund-row">
+  <div class="fname">白酒</div>
+  <div class="fbar"><div class="fbar-fill" style="width:37%;background:var(--green)"></div></div>
+  <div class="fval" style="color:var(--green)">+28亿</div>
+</div>
+<div class="fund-row">
+  <div class="fname">通信设备</div>
+  <div class="fbar"><div class="fbar-fill" style="width:22%;background:var(--blue)"></div></div>
+  <div class="fval" style="color:var(--blue)">+17亿</div>
+</div>
+<div class="fund-row">
+  <div class="fname">半导体</div>
+  <div class="fbar"><div class="fbar-fill" style="width:15%;background:var(--red)"></div></div>
+  <div class="fval" style="color:var(--red)">-13亿</div>
+</div>
+<div class="fund-row">
+  <div class="fname">元件/PCB</div>
+  <div class="fbar"><div class="fbar-fill" style="width:53%;background:var(--red)"></div></div>
+  <div class="fval" style="color:var(--red)">-40亿</div>
+</div>
+<div class="sbx warn" style="margin-top:8px"><strong>注：</strong>周五全线防御，科技板块全面流出（半导体-13亿/元件-40亿），电力+70亿/银行+74亿/白酒+28亿接棒。跌停50只=涨停49是本周最差短线生态信号。</div>
+
+</div>
+</div>
+
+<!-- ===== §4 盈亏归因 ===== -->
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§4 盈亏归因</div>
+<div class="sb">
+
+<div class="sh3">本周全部交易</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日/价</th><th>卖日/价</th><th>盈亏</th><th>评价</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong class="down">沪电股份①</strong></td>
+  <td>W1追涨</td>
+  <td>周一 @122.5</td>
+  <td>周三 @131</td>
+  <td class="up">+2,550元</td>
+  <td><span class="badge badge-green">✅ 正确</span></td>
+</tr>
+<tr>
+  <td><strong class="down">中芯国际①</strong></td>
+  <td>趋势</td>
+  <td>周一前 @135.27</td>
+  <td>周二 @147.77</td>
+  <td class="up">+2,500元</td>
+  <td><span class="badge badge-green">✅ 正确</span></td>
+</tr>
+<tr>
+  <td><strong class="down">中芯国际②</strong></td>
+  <td>趋势</td>
+  <td>周一前 @135.27</td>
+  <td>周三 @150.76</td>
+  <td class="up">+4,647元</td>
+  <td><span class="badge badge-green">✅ 正确</span></td>
+</tr>
+<tr>
+  <td><strong class="down">沪电股份②</strong></td>
+  <td>W1追涨</td>
+  <td>周一 @122.5</td>
+  <td>周三 @131</td>
+  <td class="up">+12元</td>
+  <td><span class="badge badge-yellow">⚠️ 微利</span></td>
+</tr>
+<tr>
+  <td><strong class="down">兴森科技</strong></td>
+  <td><span class="badge badge-red">W2止损</span></td>
+  <td>周二 @38.28</td>
+  <td>周四 @35.64</td>
+  <td class="down">-3,960元</td>
+  <td><span class="badge badge-red">🔴 纪律正确但痛苦</span></td>
+</tr>
+<tr>
+  <td><strong class="down">紫光国微</strong></td>
+  <td><span class="badge badge-red">W2止损</span></td>
+  <td>周三 @87.00</td>
+  <td>周五 @81.62</td>
+  <td class="down">-4,024元</td>
+  <td><span class="badge badge-red">🔴 纪律正确</span></td>
+</tr>
+<tr>
+  <td><strong>佰维存储</strong></td>
+  <td>W1买入</td>
+  <td>周五 @335.5</td>
+  <td>持有（浮亏）</td>
+  <td class="down">≈-1,626元（浮）</td>
+  <td><span class="badge badge-yellow">⚠️ 待评判</span></td>
+</tr>
+</tbody>
+</table></div>
+
+<div class="sh3">本周最佳操作</div>
+<div class="lesson-block green">
+  <div class="lb-title">中芯国际两次止盈（+2,500 + 4,647 = +7,147元）</div>
+  <div class="lb-body">周二放量调整时减半仓（+2,500元），周三板块内换仓时清仓止盈（+4,647元）。体现了"趋势持仓在板块内切换强势标的"的正确逻辑，两次决策均有理有据，止损和止盈都执行到位。</div>
+</div>
+
+<div class="sh3">本周最差操作</div>
+<div class="lesson-block red">
+  <div class="lb-title">紫光国微止损（-4,024元）</div>
+  <div class="lb-body">虽然纪律执行正确（破止损82.32即出），但根源是周三在冰点日（情绪17%）开仓价位偏高（87元）。紫光+2.54%是当日唯一收红持仓，但随后脉冲修复失败连续回调最终止损。核心问题是"冰点日开仓"的风险。</div>
+</div>
+<div class="sbx red" style="margin-top:8px"><strong>连带亏损模式：</strong>冰点日（周三）开仓紫光→冰点反弹日（周四）加仓→反弹失败（周五）止损，连环亏损累积。lesson_04/05/06三重验证脉冲修复=诱多。</div>
+
+<div class="sh3">盈亏模式识别</div>
+<div class="lesson-block green">
+  <div class="lb-title">✅ 赚钱的共性</div>
+  <div class="lb-body">①趋势持仓止盈及时：沪电/中芯两次止盈全部正确；②遵守冰点空仓规则：周五连亏2天铁律空仓执行到位；③止损果断不拖泥带水：紫光/兴森破止损即出，纪律优先于预测；④连板侧基本全周关闭，无违规操作。</div>
+</div>
+<div class="lesson-block red">
+  <div class="lb-title">❌ 亏钱的共性</div>
+  <div class="lb-body">①冰点日（情绪&lt;35%）开新仓：紫光/佰维在冰点日买入，风险极高；②脉冲修复日追涨：周四情绪54.5%看似反弹，但修复质量差（涨停收益0.84%），lesson_04预警应等确认；③仓位管理精细度不够：周二/周三实际仓位偏高。</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== §5 认知迭代 ===== -->
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§5 认知迭代</div>
+<div class="sb">
+
+<div class="sh3">本周教训蒸馏</div>
+
+<div class="lesson-block orange" style="margin-bottom:10px">
+  <div class="lb-title">1. 洗盘信号验证（lesson_06 强化）</div>
+  <div class="lb-body">外围美股半导体新高+A股竞价低开=典型洗盘信号。周三早盘半导体+2.54%验证，创业板+2.35%配合。利好不涨反跌=洗盘，拿住等修复。</div>
+</div>
+
+<div class="lesson-block blue" style="margin-bottom:10px">
+  <div class="lb-title">2. 弱势盘涨停不卖（lesson 强化 → insights/窗口节奏与W2.md）</div>
+  <div class="lb-body">周二大盘冰点修复时（沪电涨停被砸），资金优先流向已验证强势票（沪电收盘仍收+8.83%）。弱势盘涨停不卖=正确逻辑。</div>
+</div>
+
+<div class="lesson-block red" style="margin-bottom:10px">
+  <div class="lb-title">3. 脉冲修复=诱多（lesson_04/05/06 三重验证 → insights/情绪与周期.md）</div>
+  <div class="lb-body">周四情绪从17%→54.5%的单日反弹，伴随涨停收益0.84%&lt;2%（质量差）+炸板率76%（生态差）。周五情绪骤降至28.4%（↘26.1pp）全面验证。核心认知：<strong>修复质量（涨停收益/炸板率）比修复方向（情绪涨跌）重要</strong>。</div>
+</div>
+
+<div class="lesson-block teal" style="margin-bottom:10px">
+  <div class="lb-title">4. 跌停50只≥涨停49首次=短线生态极度恶化信号（insights/情绪与周期.md）</div>
+  <div class="lb-body">周五跌停50只≥涨停49，首次出现自2026年以来。一进二晋级率5.49%❌，涨停收益-0.75%❌追涨停次日亏钱。短线生态彻底冷却。</div>
+</div>
+
+<div class="lesson-block purple" style="margin-bottom:10px">
+  <div class="lb-title">5. 冰点日（情绪&lt;35%）W1条件建议（待固化 → 追涨选标_W1.md）</div>
+  <div class="lb-body">周五佰维在冰点反弹失败日买W1（-2.42%浮亏）。红方建议：冰点日W1需板块主力净流入>0+个股量比>1.5。建议写入规则，标注🆕待验证。</div>
+</div>
+
+<div class="lesson-block teal">
+  <div class="lb-title">6. 主力/dde双字段必须同时查询（learnings/ 新增）</div>
+  <div class="lb-body">周五排除风华的理由是"主力-5.62亿"，实际是dde大单净额。主力资金流向（+2.37亿）为正。第二次出现同类口径错误（第一次在W21周）。要求每次查询同时取两个字段并交叉验证。</div>
+</div>
+
+<div class="sh3">蒸馏判断汇总</div>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>心得摘要</th><th>来源</th><th>类型</th><th>目标文件</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>洗盘信号验证（lesson_06强化）</td><td>周三</td><td><span class="badge badge-orange">认知强化</span></td><td>lesson_06（已有）</td><td><span class="badge badge-green">✅强化确认</span></td></tr>
+<tr><td>2</td><td>弱势盘涨停不卖</td><td>周二</td><td><span class="badge badge-blue">认知</span></td><td>insights/窗口节奏与W2.md</td><td><span class="badge badge-yellow">→追加</span></td></tr>
+<tr><td>3</td><td>脉冲修复=诱多（质量>方向）</td><td>周五</td><td><span class="badge badge-red">认知</span></td><td>insights/情绪与周期.md</td><td><span class="badge badge-yellow">→新增</span></td></tr>
+<tr><td>4</td><td>跌停≥涨停=短线生态极度恶化</td><td>周五</td><td><span class="badge badge-teal">认知</span></td><td>insights/情绪与周期.md</td><td><span class="badge badge-yellow">→追加</span></td></tr>
+<tr><td>5</td><td>冰点日W1条件（板块主力>0+量比>1.5）</td><td>周五</td><td><span class="badge badge-purple">规则建议</span></td><td>追涨选标_W1.md</td><td><span class="badge badge-yellow">→建议写入🆕</span></td></tr>
+<tr><td>6</td><td>主力/dde双字段必须同时查询</td><td>周五</td><td><span class="badge badge-teal">教训</span></td><td>learnings/</td><td><span class="badge badge-yellow">→新增</span></td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">是否需要改 rules？</div>
+<div class="sbx yellow"><strong>是。</strong> ①`追涨选标_W1.md`：冰点日（情绪&lt;35%）W1需板块主力净流入>0+个股量比>1.5；②learnings/增加主力/dde双字段查询规范。</div>
+
+</div>
+</div>
+
+<!-- ===== §6 下周基调 ===== -->
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>§6 下周基调</div>
+<div class="sb">
+
+<div class="sh3">方向判断</div>
+<div class="para">周五反弹失败后，情绪从54.5%骤降至28.4%，短线生态极度恶化（跌停50只=涨停49首次出现）。下周大概率震荡或继续冰点。</div>
+<div class="para">概率判断：<strong>通信双雄（亨通/长飞）> 半导体分歧 > 防御延续</strong></div>
+<div class="sbx warn"><strong>不确定因素：</strong>周五脉冲修复失败说明当前行情"来得快去得快"。通信设备双雄（亨通+43.7亿/长飞+14.6亿）需看持续性，若周一低开>3%则一日游确认。</div>
+
+<div class="sh3">情绪预期</div>
+<div class="para">本周收盘情绪28.4%低迷。下周预判：可能继续震荡偏弱，等情绪确认冰点底部（不再下探）再动手。</div>
+
+<div class="sh3">重点盯板块 / 标的</div>
+<div class="sbx">
+<strong>🔥 观察：通信双雄（亨通光电/长飞光纤）</strong>——周五爆发，需看持续性。周一若低开>3%则一日游确认。<br>
+<strong>观察：PCB元件修复方向（方正科技/生益科技）</strong>——周五逆势收红，关注持续性。<br>
+<strong>持仓：佰维存储</strong>——周一竞价清仓（连亏2天铁律空仓）。
+</div>
+
+<div class="sh3">需要调整的习惯 / 规则</div>
+<div class="tw"><table>
+<thead><tr><th>议题</th><th>状态</th><th>行动</th></tr></thead>
+<tbody>
+<tr><td>冰点日（情绪&lt;35%）不开W1新仓</td><td>待固化</td><td>→ 追涨选标_W1.md</td></tr>
+<tr><td>脉冲修复日不追涨（修复质量>方向）</td><td>新认知</td><td>→ insights/情绪与周期.md</td></tr>
+<tr><td>主力/dde双字段同时查询</td><td>新规范</td><td>→ learnings/</td></tr>
+<tr><td>跌停≥涨停=短线生态极度恶化</td><td>新认知</td><td>→ insights/情绪与周期.md</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周目标</div>
+<div class="sbx green"><strong>核心目标：</strong>①周胜率回到50%以上；②纪律优先于盘感；③等情绪确认冰点底部再动手；④仓位控制在预案上限以内。</div>
+
+<div class="sh3">下周关键风险</div>
+<div class="tw"><table>
+<thead><tr><th>风险</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td class="down">脉冲修复陷阱</td><td>周四情绪54.5%看似反弹，但修复质量差导致周五失败。下周警惕同样模式重演</td></tr>
+<tr><td class="down">通信双雄一日游</td><td>周五通信设备+148亿，但周一若低开>3%则一日游确认</td></tr>
+<tr><td class="down">短线生态持续恶化</td><td>跌停50只=涨停49首次出现，一进二晋级率5.49%极低</td></tr>
+<tr><td class="down">连亏2天铁律</td><td>佰维周一清仓，若再亏则连亏3天，铁律空仓延长</td></tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
+
+<!-- ===== 附录 ===== -->
+<div class="section" id="appendix">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>📋 附录 · W22 速查</div>
+<div class="sb">
+
+<div class="sh3">卖出追踪（周度汇总）</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>买日</th><th>买价</th><th>卖日</th><th>卖价</th><th>盈亏</th><th>校准</th></tr></thead>
+<tbody>
+<tr><td>中芯国际①</td><td>5/25前</td><td>135.27</td><td>5/26</td><td>147.77</td><td class="up">+2,500元</td><td><span class="badge badge-green">✅ 准确</span></td></tr>
+<tr><td>中芯国际②</td><td>5/25前</td><td>135.27</td><td>5/27</td><td>150.76</td><td class="up">+4,647元</td><td><span class="badge badge-green">✅ 准确</span></td></tr>
+<tr><td>沪电股份①</td><td>5/25</td><td>122.5</td><td>5/27</td><td>131</td><td class="up">+2,550元</td><td><span class="badge badge-green">✅ 准确</span></td></tr>
+<tr><td>沪电股份②</td><td>5/25</td><td>122.5</td><td>5/27</td><td>131</td><td class="up">+12元</td><td><span class="badge badge-green">✅ 微利</span></td></tr>
+<tr><td>兴森科技</td><td>5/26</td><td>38.28</td><td>5/28</td><td>35.64</td><td class="down">-3,960元</td><td><span class="badge badge-green">✅ 纪律正确</span></td></tr>
+<tr><td>紫光国微</td><td>5/27</td><td>87.00</td><td>5/29</td><td>81.62</td><td class="down">-4,024元</td><td><span class="badge badge-green">✅ 纪律正确</span></td></tr>
+<tr><td>佰维存储</td><td>5/29</td><td>335.5</td><td>持有</td><td>—</td><td class="down">浮亏-1,626元</td><td>待校准</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">周度账户表现</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>周累计盈亏（已实现）</td><td class="down">约 -1,287元（-0.37%）</td><td>不含佰维浮亏</td></tr>
+<tr><td>含浮亏总盈亏</td><td class="down">约 -2,913元（-0.87%）</td><td>含佰维浮亏</td></tr>
+<tr><td>账户规模（估算）</td><td>~35万元</td><td>根据仓位推算</td></tr>
+<tr><td>周胜率</td><td class="down">14.3%（1/7盈利）</td><td>按标的计</td></tr>
+<tr><td>最大单日盈利</td><td class="up">周三（+7,197元）</td><td>中芯止盈+沪电止盈</td></tr>
+<tr><td>最大单日亏损</td><td class="down">周五（-7,984元）</td><td>紫光止损+佰维浮亏</td></tr>
+<tr><td>最大单笔盈利</td><td class="up">中芯国际（+7,147元）</td><td>两次止盈</td></tr>
+<tr><td>最大单笔亏损</td><td class="down">紫光国微（-4,024元）</td><td>止损（纪律正确）</td></tr>
+</tbody>
+</table></div>
+
+<div class="sh3">下周重点验证信号（5/30 周一）</div>
+<ol class="tight-list">
+<li>佰维存储竞价清仓（连亏2天铁律空仓）</li>
+<li>情绪是否继续下探（周五收盘28.4%）</li>
+<li>通信双雄（亨通/长飞）持续性：若低开>3%则一日游确认</li>
+<li>半导体板块指数是否跌破20日线</li>
+<li>跌停家数是否回落至正常水平（&lt;20只）</li>
+<li>涨停家数是否重回100只以上</li>
+</ol>
+
+</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function toggleSection(el) { el.classList.toggle('collapsed'); const b = el.nextElementSibling; if (b) b.classList.toggle('hide'); }
+function toggleCollapse(el) { el.classList.toggle('collapsed'); const c = el.nextElementSibling; if (c) c.classList.toggle('show'); }
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .lesson-block, .para, .tight-list li, .tw table tr, .sh');
+  if (!q.trim()) { items.forEach(el => el.style.opacity = '1'); return; }
+  const lq = q.toLowerCase();
+  items.forEach(el => { el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15'; });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const target = document.getElementById(this.getAttribute('href').slice(1));
+    if (!target) return;
+    document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    const cc = target.closest('.cc'); if (cc && !cc.classList.contains('show')) { cc.classList.add('show'); cc.previousElementSibling?.classList.remove('collapsed'); }
+    const sb = target.closest('.sb.hide'); if (sb) { sb.classList.remove('hide'); sb.previousElementSibling?.classList.remove('collapsed'); }
+  });
+});
+</script>
+</body>
+</html>
