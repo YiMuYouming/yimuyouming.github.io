@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>佛山系研究报告：砸盘王的生存哲学</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .n{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.qt{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;line-height:1.6;font-style:italic}
+.qt .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.pd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+@media(max-width:600px){.pd{grid-template-columns:1fr 1fr}}
+.pd .it{border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.pd .it .nm{font-weight:600;display:block;font-size:14px}
+.pd .it .op{color:var(--g500);font-size:11px;display:block;margin-top:2px}
+.warn{background:rgba(176,74,63,.06);border:1px solid rgba(176,74,63,.15);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.7}
+.warn .wt{font-weight:600;color:var(--rust);margin-bottom:4px}
+.codeblock{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--g700);white-space:pre-wrap}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 游资对手研究</div>
+  <h1>佛山系（廖国沛）：砸盘王的生存哲学</h1>
+  <div class="sub">A股最凌厉的短线杀手。万手大单封板，次日无条件砸盘。经历7年亏损才完成蜕变。2017年被证监会罚没8150万。</div>
+  <div class="mr">
+    <span class="tag">人物研究</span>
+    <span class="tag">2026.05</span>
+    <span class="tag">佛山系</span>
+    <span class="tag">佛山无影脚</span>
+    <span class="tag">廖国沛</span>
+  </div>
+</div>
+
+<!-- Bio card -->
+<div class="bio">
+  <div class="it"><span class="l">本名</span><span class="v">廖国沛</span></div>
+  <div class="it"><span class="l">市场称呼</span><span class="v">佛山无影脚 / 砸盘王 / 李奥</span></div>
+  <div class="it"><span class="l">出生</span><span class="v">1975年11月 · 广东佛山禅城</span></div>
+  <div class="it"><span class="l">学历</span><span class="v">广东工业大学（1998年毕业）</span></div>
+  <div class="it"><span class="l">入市年份</span><span class="v">1998年</span></div>
+  <div class="it"><span class="l">起步资金</span><span class="v">18万元</span></div>
+  <div class="it"><span class="l">资金体量</span><span class="v">数亿~数十亿（市场传闻）</span></div>
+  <div class="it"><span class="l">2017处罚</span><span class="v">证监会罚没8149万元</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">光大证券佛山绿景路/季华六路</span></div>
+  <div class="it"><span class="l">协同席位</span><span class="v">湘财佛山祖庙路 / 长江佛山普澜二路等</span></div>
+</div>
+
+<!-- ===== 一、成长轨迹 ===== -->
+<h2><span class="num">01</span>成长轨迹：7年亏损换来的悟道</h2>
+
+<h3>阶段一：入市即遇挫（1998-2004年）</h3>
+<p>1998年毕业后，怀揣18万元进入股市。认购的新股开盘即跌破发行价，慌乱中斩仓。此后经历<strong>长达7年的持续亏损</strong>，一度准备退出市场。7年间系统研究山东帮、福建帮、温州帮等庄股军团的操作手法。</p>
+
+<h3>阶段二：牛市蜕变（2005-2007年）</h3>
+<p>2005年6月6日大盘见底，满仓60余万买入，两天后亏损9万。但正是这次满仓赶上了<strong>2005-2007年大牛市</strong>，2年时间完成原始积累。<strong>2006年结婚时账户资产已达500万</strong>。</p>
+
+<h3>阶段三：声名鹊起（2008-2016年）</h3>
+<p>2008年熊市后交易体系趋于成熟，以光大佛山双席位为核心。2012-2014年间，每月成交金额超过<strong>10亿元</strong>，稳居佛山龙虎榜榜首。2014年《广州日报》以化名「李奥」首次公开报道。</p>
+
+<h3>阶段四：身份曝光（2017年）</h3>
+
+<div class="warn">
+  <div class="wt">⚠️ 2017年12月1日证监会处罚</div>
+  <ul style="margin:0">
+    <li>操纵15只股票：中钢天源、安妮股份、美好集团、八一钢铁等</li>
+    <li>违法所得：约2716万元</li>
+    <li>合计罚没：<strong>8149万元</strong></li>
+    <li>违规手法：大额封涨停、虚假申报、盘中拉抬并封涨停</li>
+  </ul>
+</div>
+
+<!-- ===== 二、交易体系 ===== -->
+<h2><span class="num">02</span>交易体系深度解构</h2>
+
+<h3>「佛山无影脚」含义</h3>
+<p>「无影」：出手快，来无影去无踪，龙虎榜倏然出现，次日即消失。<br>「脚」：砸盘凶狠，次日开盘即砸，不留情面。</p>
+
+<div class="pd">
+  <div class="it" style="background:rgba(176,74,63,.08)"><span class="nm">超跌低位首板</span><span class="op">最核心战法</span></div>
+  <div class="it" style="background:rgba(106,140,175,.08)"><span class="nm">消息刺激首板</span><span class="op">90度角封板</span></div>
+  <div class="it" style="background:rgba(120,140,93,.08)"><span class="nm">撬跌停板</span><span class="op">地天板</span></div>
+</div>
+
+<h3>战法一：超跌低位首板（最核心）</h3>
+<div class="codeblock">选取长期下跌、跌幅巨大的个股
+在低位以万手大单直线拉升封板
+封板特点：万手联排，不撤单
+次日无条件出货，不参与接力</div>
+
+<h3>战法二：消息刺激首板</h3>
+<div class="codeblock">突发利好（公告、重组、政策）发布后
+快速判断消息级别
+以大单早盘急速拉升，90度角封板
+次日冲高即走</div>
+
+<h3>战法三：撬跌停板（地天板）</h3>
+<div class="codeblock">个股连续一字板跌停后
+以大资金撬开跌停板做反弹
+吸引跟风盘后次日出货
+江湖称「庄家救星」</div>
+
+<h3>操作周期：极短（T+1为主）</h3>
+<table>
+  <tr><th>特征</th><th>说明</th></tr>
+  <tr><td>次日必走</td><td>无论盈亏，第二天冲高即砸</td></tr>
+  <tr><td>不参与连板</td><td>只做首板，从不锁仓等连板</td></tr>
+  <tr><td>持仓不超过5天</td><td>极少数情况会持有2-5天</td></tr>
+  <tr><td>极少满仓过夜</td><td>仓位快速轮换</td></tr>
+</table>
+
+<!-- ===== 三、经典战役 ===== -->
+<h2><span class="num">03</span>经典战役复盘</h2>
+
+<table>
+  <tr><th>时间</th><th>标的</th><th>操作</th><th>结果</th></tr>
+  <tr><td>2017</td><td>中环环保</td><td>3785万午后直线封板（前日跌近9%）</td><td>经典超跌反弹首板</td></tr>
+  <tr><td>2017</td><td>渝三峡A</td><td>跨界收购公告后急速拉板</td><td>次日冲高出局</td></tr>
+  <tr><td>2017</td><td>兴源环境</td><td>动用3.5亿撬板+盛运环保联动</td><td><span class="tb tb-g">获利超7000万</span></td></tr>
+  <tr><td>2018</td><td>中兴通讯</td><td>美制裁期间约6亿资金撬板</td><td>市场热议</td></tr>
+  <tr><td>2025.9.20</td><td>中大力德/赛摩智能/龙头股份</td><td>豪掷2.58亿扫货机器人+品牌外贸概念</td><td>—</td></tr>
+  <tr><td>2026.5.25</td><td>达实智能</td><td>净卖出2.64亿</td><td>—</td></tr>
+</table>
+
+<!-- ===== 四、席位数据 ===== -->
+<h2><span class="num">04</span>龙虎榜数据</h2>
+
+<div class="sbx">
+  <div class="tt">席位年度成交（2017年参考数据）</div>
+  <table>
+    <tr><th>席位</th><th>成交额</th><th>上榜次数</th></tr>
+    <tr><td>光大佛山季华六路</td><td>~106亿</td><td>~268次</td></tr>
+    <tr><td>光大佛山绿景路</td><td>~66亿</td><td>~221次</td></tr>
+  </table>
+</div>
+
+<div class="sbx">
+  <div class="tt">风格特征</div>
+  <table>
+    <tr><th>特征</th><th>描述</th></tr>
+    <tr><td>封板方式</td><td>万手大单直线封板，不撤单</td></tr>
+    <tr><td>次日行为</td><td>高开后无条件砸盘出货</td></tr>
+    <tr><td>选股偏好</td><td>超跌低位、消息刺激、跌停撬板</td></tr>
+    <tr><td>协同风格</td><td>吃独食为主，极少联合其他游资</td></tr>
+  </table>
+</div>
+
+<!-- ===== 五、砸盘王警示 ===== -->
+<h2><span class="num">05</span>砸盘王信号识别：散户最该掌握的警示</h2>
+
+<h3>佛山系参与的识别特征</h3>
+<ul>
+  <li><strong>分时图</strong>：股价呈90度角直线拉升封板</li>
+  <li><strong>封单特征</strong>：万手大单联排，几乎不撤单</li>
+  <li><strong>次日特征</strong>：高开后快速下砸，不给追高者解套机会</li>
+</ul>
+
+<div class="warn">
+  <div class="wt">⚠️ 跟风佛山系的风险</div>
+  <ul style="margin:0">
+    <li><strong>次日砸盘</strong>：无条件砸盘，追高散户极易被套</li>
+    <li><strong>形态破坏</strong>：大资金砸盘导致个股技术形态走坏</li>
+    <li><strong>流动性风险</strong>：出货时承接盘不足，股价暴跌</li>
+  </ul>
+</div>
+
+<h3>正确应对方式</h3>
+<ul>
+  <li>看到佛山系封板 → <strong>次日高开是离场时机，不是买入时机</strong></li>
+  <li>不要追佛山系封板的个股</li>
+  <li>佛山系砸盘日往往是板块退潮信号</li>
+</ul>
+
+<!-- ===== 六、全游资对比 ===== -->
+<h2><span class="num">06</span>全游资横向对比</h2>
+
+<table>
+  <tr><th>维度</th><th>佛山系</th><th>欢乐海岸</th><th>章盟主</th><th>赵老哥</th><th>桑田路</th></tr>
+  <tr><td>核心人物</td><td>廖国沛</td><td>不明</td><td>章建平</td><td>赵强</td><td>不明</td></tr>
+  <tr><td>资金体量</td><td>数亿~数十亿</td><td>数十亿+</td><td>~150亿</td><td>~50亿</td><td>10亿+</td></tr>
+  <tr><td>操作周期</td><td><strong>T+1极短</strong></td><td>中短（3-15天）</td><td>波段（数周）</td><td>短线（2-5天）</td><td>灵活</td></tr>
+  <tr><td>核心战法</td><td>低位首板/撬板</td><td>高位接力锁仓</td><td>趋势波段</td><td>龙头打板</td><td>连板接力</td></tr>
+  <tr><td>次日行为</td><td>无条件砸盘</td><td>锁仓</td><td>趋势持有</td><td>龙头持有</td><td>看情绪可锁可砸</td></tr>
+  <tr><td>市场口碑</td><td>砸盘王</td><td>善庄</td><td>善庄</td><td>稳定</td><td>彪悍</td></tr>
+  <tr><td>2017处罚</td><td><strong>有（8149万）</strong></td><td>无</td><td>无</td><td>无</td><td>无</td></tr>
+</table>
+
+<!-- ===== 七、研究结论 ===== -->
+<h2><span class="num">07</span>研究结论</h2>
+
+<p>佛山系的不可复制性：</p>
+
+<div class="sbx">
+  <div class="tt">① 7年亏损的学费</div>
+  <p style="margin:0">没有人能绕过市场的毒打就学会敬畏。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">② 极致专注</div>
+  <p style="margin:0">7年只研究一个模式——低位首板。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">③ 超级纪律</div>
+  <p style="margin:0">次日无条件砸盘，不抱任何幻想。</p>
+</div>
+
+<div class="sbx" style="border-color:var(--clay)">
+  <div class="tt">对弈沐的实战意义</div>
+  <ul style="margin:0">
+    <li>看到佛山系封板 → 次日高开是离场时机</li>
+    <li>龙虎榜出现光大佛山双席位 → 判断是低位首板还是高位砸盘</li>
+    <li><strong>最核心的警示</strong>：佛山系的砸盘，往往是个股乃至板块短期见顶的信号</li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:var(--g500);font-size:12px;margin-top:40px">弈沐资本 · 游资对手研究系列 · 2026年5月</p>
+
+</div>
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

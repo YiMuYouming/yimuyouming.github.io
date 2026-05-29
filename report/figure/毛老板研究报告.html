@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>毛老板研究报告：从造妖大师到格局之王</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+blockquote{margin:12px 0;padding:12px 16px;background:var(--g150);border-left:3px solid var(--sky);border-radius:0 8px 8px 0;font-size:14px;line-height:1.7;color:var(--g700)}
+blockquote p:last-child{margin-bottom:0}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+
+/* Bio */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+
+/* Quote card */
+.qt-box{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;font-style:italic;line-height:1.6}
+.qt-box .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+
+/* Pillar card (expandable) */
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .num{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.pcb p:last-child{margin-bottom:0}
+
+/* Case study */
+.cs{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.cs .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.cs .hd .nm{font-weight:600;font-size:14px;color:var(--slate)}
+.cs .hd .tag2{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--g150);color:var(--g500)}
+.cs .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin:8px 0}
+.cs .kv .it{background:var(--g150);border-radius:6px;padding:5px 8px;font-size:12px}
+.cs .kv .it .l{font-size:10px;color:var(--g500);display:block}
+.cs .kv .it .v{font-weight:600}
+.cs p{font-size:12px;line-height:1.6;color:var(--g700)}
+.cs p:last-child{margin-bottom:0}
+
+/* Flow */
+.fb{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center}
+.fb .flow{font-family:var(--mono);font-size:13px;color:var(--slate);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .flow .step{padding:4px 12px;background:var(--g150);border-radius:6px}
+.fb .flow .arrow{color:var(--g500);font-size:16px}
+.fb .sub2{font-size:12px;color:var(--g500);margin-top:6px}
+
+/* Section box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.sbx p:last-child{margin-bottom:0}
+
+/* Pillar grid */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.pg{grid-template-columns:1fr}}
+.pg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.pg .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.pg .it .tt{font-weight:600;color:var(--slate)}
+.pg .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Standard grid */
+.std{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.std{grid-template-columns:1fr}}
+.std .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.std .it .n{font-weight:600;color:var(--sky);display:block;margin-bottom:4px;font-size:13px}
+
+/* Compare box */
+.cb{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.cb .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:8px}
+.cb .gr{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:550px){.cb .gr{grid-template-columns:1fr}}
+.cb .p{font-size:12px;background:var(--g150);border-radius:8px;padding:10px 12px}
+.cb .p .hd{font-weight:600;color:var(--slate);display:block;margin-bottom:3px}
+
+/* Risk grid */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.risk-grid{grid-template-columns:1fr}}
+.risk-grid .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.risk-grid .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px;color:var(--rust)}
+.risk-grid .it .tt{font-weight:600;color:var(--slate)}
+.risk-grid .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Quote highlight bar */
+.qthigh{background:rgba(120,140,93,.08);border:1.5px solid rgba(120,140,93,.3);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center;font-size:14px;font-style:italic;color:var(--slate);line-height:1.6}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>毛老板研究报告</h1>
+  <div class="sub">从造妖大师到格局之王——顶级游资中锁仓能力最强的趋势波段玩家</div>
+  <div class="mr">
+    <span>2026-05-29</span>
+    <span class="tag">#游资研究 #龙头战法 #格局之王</span>
+    <span>弈沐投研</span>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>人物画像</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">市场称呼</span><span class="v">毛老板 / 成都毛老板 / 格局之王</span></div>
+  <div class="it"><span class="l">本名</span><span class="v">毛金明（市场流传化名较多）</span></div>
+  <div class="it"><span class="l">籍贯</span><span class="v">四川成都</span></div>
+  <div class="it"><span class="l">资金体量</span><span class="v">数十亿~百亿级</span></div>
+  <div class="it"><span class="l">当前主力席位</span><span class="v">国泰君安证券北京光华路</span></div>
+  <div class="it"><span class="l">早期席位</span><span class="v">申万宏源证券深圳金田路</span></div>
+  <div class="it"><span class="l">协同席位</span><span class="v">广发上海东方路 / 万和成都通盈街</span></div>
+  <div class="it"><span class="l">市场定位</span><span class="v" style="color:var(--olive)">格局之王 · 造妖转型趋势典范</span></div>
+</div>
+
+<div class="cb">
+  <div class="tt">转型轨迹：从「造妖大师」到「格局之王」</div>
+  <div class="gr">
+    <div class="p"><span class="hd">早期（深圳金田路）</span>短线妖股高位接力 · 凶悍加仓 · 小盘妖股为主</div>
+    <div class="p"><span class="hd">现在（北京光华路）</span>强基本面趋势股 · 重仓锁仓 · 大盘容量龙头</div>
+  </div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>成长轨迹</h2>
+
+<div class="tl">
+  <div class="tli"><span class="yr">早期</span><div class="tt">造妖起家（深圳金田路）</div><div class="de">以深圳金田路席位为核心，主打短线妖股高位接力。金田路席位当时是顶级妖股的象征，毛老板是代表人物之一。</div></div>
+  <div class="tli"><span class="yr">~2020</span><div class="tt">主动转型</div><div class="de">资金体量增大后，小盘妖股容量不足，被迫转向大盘趋势股。转型原因：规模决定容量。</div></div>
+  <div class="tli"><span class="yr">2021</span><div class="tt" style="color:var(--olive)">赛力斯封神</div><div class="de">小康股份（今赛力斯）高位两连板后<em>重新大举买回</em>三日合计1.6亿，股价从50元推升至80元。此役保守估计盈利上亿。</div></div>
+  <div class="tli"><span class="yr">2023.3-4</span><div class="tt" style="color:var(--clay)">剑桥科技经典</div><div class="de">2.5亿建仓，全程锁仓纹丝不动，高位3.5亿卖出。不到半个月盈利超1亿，单票收益率约<em>40-50%</em>。</div></div>
+  <div class="tli"><span class="yr">2023至今</span><div class="tt">全面转型趋势</div><div class="de">从短线妖股全面转向强基本面趋势股。AI算力、机器人、核聚变、消费电子龙头为核心方向。</div></div>
+</div>
+
+<h3>经典战役：赛力斯（2021年）</h3>
+<div class="fb">
+  <div class="flow">
+    <span class="step">2021.4.21 大卖1亿+</span>
+    <span class="arrow">→</span>
+    <span class="step">2021.5.6 高位两连板后</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(120,140,93,.15)">重新大举买回1.6亿</span>
+    <span class="arrow">→</span>
+    <span class="step">股价50→80元</span>
+  </div>
+  <div class="sub2">高位敢于重新买回 · 跨周期持仓能力极强 · 保守估计盈利上亿</div>
+</div>
+
+<h3>经典战役：剑桥科技（2023年3-4月）</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">剑桥科技 · CPO光模块</span><span class="tag2">2023年3-4月</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">3.24 买入</span><span class="v">1.1亿（买一超1.1亿）</span></div>
+    <div class="it"><span class="l">3.25 3日合计</span><span class="v" style="color:var(--clay)">近2.5亿</span></div>
+    <div class="it"><span class="l">3.27-4.6</span><span class="v" style="color:var(--olive)">全程锁仓·纹丝不动</span></div>
+    <div class="it"><span class="l">4.6 高位卖出</span><span class="v">超3.5亿</span></div>
+    <div class="it"><span class="l">战果</span><span class="v" style="color:var(--olive)">不到半月盈利1亿+</span></div>
+    <div class="it"><span class="l">收益率</span><span class="v">约40-50%</span></div>
+  </div>
+  <p>高位涨停启动，三日合计近2.5亿建仓，随后全程锁仓纹丝不动，4月6日高位卖出超3.5亿。不到半个月盈利超过1亿。</p>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>交易体系深度解构</h2>
+
+<div class="qthigh">「不轻易出手，出手就是精品，出手就是龙头，这些龙头都是市场公认的龙头，而不是像我们买了个票就意淫会不会成为龙头。」</div>
+
+<div class="pc">
+  <div class="pch open" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">①</span><span class="tt">龙头战法（不变的核心）</span><span class="ar">▼</span></div>
+  <div class="pcb show">
+    <p>只做市场公认的绝对龙头。不参与杂毛题材，不追逐「可能成为龙头」的意淫型标的。首板操作通常以套利思维参与板块大爆发。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">②</span><span class="tt">趋势锁仓（区别于纯短线游资的关键）</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <p>确定性高的主升浪行情中敢于重仓锁仓，持仓周期可达数周乃至更长（如赛力斯跨年度持有）。跌停不割肉：短期调整甚至跌停也倾向于等待板块爆发。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">③</span><span class="tt">基本面深度结合</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <p>偏好有强逻辑支撑的行业龙头。选股时基本面是前置条件，而非事后找理由。代表作：赛力斯=新能源车转型，剑桥科技=CPO光模块。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">④</span><span class="tt">高位容量股二波形态</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <p>擅长操作高位仍有空间、能形成二波上涨的容量股。不是追高，而是在确认二波形态走出来后跟随介入。偏好成交额大、流动性好的大盘龙头。</p>
+  </div>
+</div>
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="num">⑤</span><span class="tt">板块共振择时</span><span class="ar">▼</span></div>
+  <div class="pcb">
+    <p>倾向于在指数上升期或题材共振期重仓介入。善于捕捉「情绪冰点+个股辨识度」形成的买点。</p>
+  </div>
+</div>
+
+<h3>操作手法总结</h3>
+<div class="std">
+  <div class="it"><span class="n">龙头战法</span>只做市场公认的绝对龙头</div>
+  <div class="it"><span class="n">趋势锁仓</span>主升浪期间重仓锁仓，不轻易出局</div>
+  <div class="it"><span class="n">二波跟随</span>等待二波形态走出来后再介入</div>
+  <div class="it"><span class="n">首板套利</span>板块大爆发时的首板操作</div>
+  <div class="it"><span class="n">补涨套利</span>龙头行情扩散后，参与补涨小弟</div>
+  <div class="it"><span class="n">妖股反抽</span>妖股调整后寻找反抽机会</div>
+</div>
+
+<h3>与其他顶级游资对比</h3>
+<div class="tw">
+<table>
+<thead><tr><th>维度</th><th>毛老板</th><th>章盟主</th><th>方新侠</th><th>欢乐海岸</th><th>佛山无影脚</th></tr></thead>
+<tbody>
+<tr><td>资金体量</td><td>数十亿~百亿</td><td>~150亿</td><td>百亿级</td><td>数十亿+</td><td>数亿~数十亿</td></tr>
+<tr><td>操作周期</td><td style="color:var(--olive);font-weight:600">波段+中线</td><td>波段（数周）</td><td>数周~数月</td><td>数天~数周</td><td style="color:var(--rust)">T+1极短</td></tr>
+<tr><td>基本面依赖</td><td style="color:var(--olive);font-weight:600">高</td><td>中高</td><td style="color:var(--olive)">高</td><td>低</td><td>低</td></tr>
+<tr><td>锁仓能力</td><td style="color:var(--olive);font-weight:600">★★★★★</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★☆☆</td><td>★☆☆☆☆</td></tr>
+<tr><td>善庄特质</td><td style="color:var(--olive)">有</td><td>有</td><td style="color:var(--olive)">有</td><td>有</td><td style="color:var(--rust)">无</td></tr>
+<tr><td>出手频率</td><td style="color:var(--sky);font-weight:600">低（精品策略）</td><td>中</td><td>中</td><td>低</td><td>高</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">第四章</span>近期市场行为（2024-2026）</h2>
+
+<h3>2025年重点战役（AI芯片+机器人为核心）</h3>
+<div class="tw">
+<table>
+<thead><tr><th>时间</th><th>标的</th><th>方向</th><th>金额</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>2025.1-2月</td><td><strong>寒武纪</strong></td><td>AI芯片龙头</td><td style="color:var(--clay);font-weight:600">净买入5.72亿</td><td>大举建仓</td></tr>
+<tr><td>2025.1-2月</td><td><strong>瑞芯微</strong></td><td>SoC芯片/AI</td><td style="color:var(--clay);font-weight:600">净买入4.26亿</td><td>上榜金额最大</td></tr>
+<tr><td>2025.1-2月</td><td>海南华铁</td><td>建筑设备/AI</td><td>持续买入</td><td>深度参与</td></tr>
+<tr><td>2025.1-2月</td><td>卧龙电驱</td><td>机器人电机</td><td>多次上榜</td><td>机器人概念</td></tr>
+<tr><td>2025</td><td><strong>合锻智能</strong></td><td>可控核聚变</td><td style="color:var(--clay)">重仓约1亿</td><td>跌停仍坚守·格局操作</td></tr>
+<tr><td>2025</td><td>王子新材</td><td>可控核聚变</td><td>建仓后持续格局</td><td>核聚变概念</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>2026年最新动向（截至2026年5月）</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">2026年5月最新上榜</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">2026.5.28</span><span class="v">风华高科 · 净买入1.65亿</span></div>
+    <div class="it"><span class="l">2026.5.28</span><span class="v" style="color:var(--rust)">江海股份 · 净卖出7198万</span></div>
+    <div class="it"><span class="l">2026.5.26</span><span class="v">蔚蓝锂芯 · 净买入1.13亿</span></div>
+    <div class="it"><span class="l">合计</span><span class="v" style="color:var(--olive)">净买入9274万</span></div>
+  </div>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>经典战役总表</h2>
+
+<div class="tw">
+<table>
+<thead><tr><th>时间</th><th>标的</th><th>操作</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>2021</td><td><strong>赛力斯</strong></td><td>高位重新买回1.6亿，跨周期锁仓</td><td style="color:var(--olive)">盈利上亿，股价至今近200元</td></tr>
+<tr><td>2023.3-4</td><td><strong>剑桥科技</strong></td><td>2.5亿建仓，锁仓至高位3.5亿卖出</td><td style="color:var(--olive)">不到半个月盈利1亿+</td></tr>
+<tr><td>2023</td><td>捷荣技术/华映科技</td><td>多席位协同操作</td><td>妖股行情</td></tr>
+<tr><td>2025</td><td><strong>寒武纪</strong></td><td>5.72亿大举建仓</td><td>AI芯片主线布局</td></tr>
+<tr><td>2025</td><td><strong>合锻智能</strong></td><td>约1亿重仓，跌停仍坚守</td><td>核聚变概念·格局操作</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第六章</span>龙虎榜数据与风格特征</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">主力席位</span><span class="v">国泰君安北京光华路</span></div>
+  <div class="it"><span class="l">协同席位</span><span class="v">广发上海东方路</span></div>
+  <div class="it"><span class="l">年度成交</span><span class="v">北京光华路年度超百亿</span></div>
+  <div class="it"><span class="l">出手频率</span><span class="v" style="color:var(--sky)">低（每月标的个位数）</span></div>
+</div>
+
+<h3>风格特征</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">锁仓能力最强之一</span>
+    <span class="tt">跌停也不割</span>
+    <div class="de">顶级游资中极为罕见——跌停仍坚持不割，等板块爆发</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">出手即精品</span>
+    <span class="tt">不轻易出手</span>
+    <div class="de">一旦出手必押注市场公认龙头，每月操作标的仅个位数</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">多席位协同</span>
+    <span class="tt">协同进出</span>
+    <div class="de">多席位同步进出，体现大资金协同作战能力</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">单票仓位极重</span>
+    <span class="tt">单票常达数亿</span>
+    <div class="de">重仓押注，确定性极高的行情才出手</div>
+  </div>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h2><span class="num">第七章</span>核心语录</h2>
+
+<div class="sbx">
+  <div class="qt-box">「技术是花三个月就能学完的东西，但决定你是否能在交易市场长久生存下去的，却是你的觉悟（对市场的深刻理解和对自我心态的掌控）。」</div>
+  <div class="qt-box" style="border-left-color:var(--clay)">「出手就是精品，弹无虚发，真男人。」</div>
+  <div class="qt-box" style="border-left-color:var(--olive)">「只做市场公认的龙头，不意淫会成为龙头的票。」</div>
+</div>
+
+<!-- ===== CH8 ===== -->
+<h2><span class="num">第八章</span>对散户的启示与风险</h2>
+
+<h3>可借鉴原则</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">只做龙头，不意淫</span>
+    <div class="de">只参与市场已经公认的龙头</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">格局思维</span>
+    <div class="de">在确定性的主升浪中敢于持仓</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">基本面前置</span>
+    <div class="de">选择有强逻辑支撑的标的</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">降低出手频率</span>
+    <div class="de">耐心等待，确定性高时才出手</div>
+  </div>
+</div>
+
+<h3>跟风风险</h3>
+<div class="risk-grid">
+  <div class="it">
+    <span class="rt">风险一</span>
+    <span class="tt">信息严重滞后</span>
+    <div class="de">龙虎榜T+1披露，高位跟进大概率接盘</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险二</span>
+    <span class="tt">体量不可复制</span>
+    <div class="de">单票数亿分批建仓，散户无法复制</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险三</span>
+    <span class="tt">止损纪律缺失</span>
+    <div class="de">「跌停不割」需极强信心和资金体量支撑</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险四</span>
+    <span class="tt">假冒风险</span>
+    <div class="de">网络存在大量假冒「毛老板」的荐股账号</div>
+  </div>
+</div>
+
+<!-- ===== CH9 ===== -->
+<h2><span class="num">第九章</span>研究结论</h2>
+
+<div class="sbx">
+  <div class="tt">毛老板的独特定位：格局之王 / 造妖转型趋势的典范 / 出手即精品</div>
+  <p style="font-size:13px;">
+    ① <strong>「从造妖到趋势」转型最彻底的游资</strong>：早期金田路短线妖股，后主动转向基本面趋势投资<br>
+    ② <strong>锁仓能力最强</strong>：即便跌停也坚持不割，等板块爆发——顶级游资中极为罕见<br>
+    ③ <strong>出手即精品</strong>：不轻易出手，一旦出手必押注市场公认龙头
+  </p>
+</div>
+
+<div class="sbx">
+  <div class="tt">对弈沐的实战价值</div>
+  <p style="font-size:13px;">
+    → 龙虎榜出现「国泰君安北京光华路」净买入 → 大概率是中长期格局型操作<br>
+    → 毛老板重仓某主线龙头 → 可作为中线趋势行情的参考信号<br>
+    → 毛老板跌停仍坚守 → 说明对该股产业逻辑有深刻理解<br>
+    → 毛老板「出手即精品」理念 → 可强化弈沐「无信号不动」的铁律
+  </p>
+</div>
+
+<hr>
+<footer>
+⚠️ 本报告基于九方智投、皆妙笔、私募排排网、东方财富等公开资料整理。毛老板真名等部分信息为市场流传，版本较多。报告不构成任何投资建议，仅作为游资对手行为研究之用。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-29</span>
+</footer>
+</div><!-- /page -->
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

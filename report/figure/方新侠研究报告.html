@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方新侠研究报告：基本面+情绪双驱动的百亿级趋势龙头玩家</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+blockquote{margin:12px 0;padding:12px 16px;background:var(--g150);border-left:3px solid var(--sky);border-radius:0 8px 8px 0;font-size:14px;line-height:1.7;color:var(--g700)}
+blockquote p:last-child{margin-bottom:0}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+
+/* Bio */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+
+/* Flow */
+.fb{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center}
+.fb .flow{font-family:var(--mono);font-size:13px;color:var(--slate);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .flow .step{padding:4px 12px;background:var(--g150);border-radius:6px}
+.fb .flow .arrow{color:var(--g500);font-size:16px}
+.fb .sub2{font-size:12px;color:var(--g500);margin-top:6px}
+
+/* Case study */
+.cs{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.cs .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.cs .hd .nm{font-weight:600;font-size:14px;color:var(--slate)}
+.cs .hd .tag2{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--g150);color:var(--g500)}
+.cs .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin:8px 0}
+.cs .kv .it{background:var(--g150);border-radius:6px;padding:5px 8px;font-size:12px}
+.cs .kv .it .l{font-size:10px;color:var(--g500);display:block}
+.cs .kv .it .v{font-weight:600}
+.cs p{font-size:12px;line-height:1.6;color:var(--g700)}
+.cs p:last-child{margin-bottom:0}
+
+/* Section box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.sbx p:last-child{margin-bottom:0}
+
+/* Pillar grid */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.pg{grid-template-columns:1fr}}
+.pg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.pg .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.pg .it .tt{font-weight:600;color:var(--slate)}
+.pg .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Pillar card (expandable) */
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .num{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.pcb p:last-child{margin-bottom:0}
+
+/* Compare box */
+.cb{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.cb .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:8px}
+.cb .gr{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:550px){.cb .gr{grid-template-columns:1fr}}
+.cb .p{font-size:12px;background:var(--g150);border-radius:8px;padding:10px 12px}
+.cb .p .hd{font-weight:600;color:var(--slate);display:block;margin-bottom:3px}
+
+/* Risk table */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.risk-grid{grid-template-columns:1fr}}
+.risk-grid .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.risk-grid .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px;color:var(--rust)}
+.risk-grid .it .tt{font-weight:600;color:var(--slate)}
+.risk-grid .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Phase diagram */
+.pd{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.pd{grid-template-columns:1fr}}
+.pd .it{border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.pd .it .nm{font-weight:600;display:block;font-size:14px}
+.pd .it .op{color:var(--g500);font-size:11px;display:block;margin-top:2px}
+
+/* Priority grid */
+.std{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.std{grid-template-columns:1fr}}
+.std .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.std .it .n{font-weight:600;color:var(--sky);display:block;margin-bottom:4px;font-size:13px}
+
+/* Quote box */
+.qt-box{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;font-style:italic;line-height:1.6}
+.qt-box .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>方新侠研究报告</h1>
+  <div class="sub">基本面+情绪双驱动的百亿级趋势龙头玩家——顶级游资中独树一帜的「善庄」代表</div>
+  <div class="mr">
+    <span>2026-05-29</span>
+    <span class="tag">#游资研究 #龙头战法 #基本面趋势</span>
+    <span>弈沐投研</span>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>人物画像</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">市场称呼</span><span class="v">方新侠</span></div>
+  <div class="it"><span class="l">本名</span><span class="v">方杰（据公开信息）</span></div>
+  <div class="it"><span class="l">出生年份</span><span class="v">1982年 · 陕西西安</span></div>
+  <div class="it"><span class="l">资金体量</span><span class="v">百亿级（市场推测），单票常出手数亿</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">中信证券西安朱雀大街</span></div>
+  <div class="it"><span class="l">协同席位</span><span class="v">中信西安雁展路 / 机构专用等</span></div>
+  <div class="it"><span class="l">核心标签</span><span class="v">基本面+情绪双驱动 · 大格局善庄</span></div>
+  <div class="it"><span class="l">市场口碑</span><span class="v" style="color:var(--olive)">「大格局善庄」——不轻易砸盘</span></div>
+</div>
+
+<div class="cb">
+  <div class="tt">与赵老哥/陈小群的本质区别</div>
+  <div class="gr">
+    <div class="p"><span class="hd">赵老哥 / 陈小群</span>纯情绪博弈 · 不关注基本面 · 短期快速兑现</div>
+    <div class="p"><span class="hd">方新侠</span>基本面+情绪双驱动 · 偏好200亿+大票 · 数周至数月持仓</div>
+  </div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>成长轨迹</h2>
+
+<div class="tl">
+  <div class="tli"><span class="yr">早年</span><div class="tt">积累期</div><div class="de">以中信西安朱雀大街席位为核心，积累多年市场经验，「大格局」特质早期即显现。</div></div>
+  <div class="tli"><span class="yr">2017-2020</span><div class="tt" style="color:var(--olive)">声名鹊起</div><div class="de"><em>省广集团</em>21个交易日14次龙虎榜，7进7出合计买入超3亿，保守盈利过亿，一战封神。</div></div>
+  <div class="tli"><span class="yr">2021</span><div class="tt">全面发展</div><div class="de">融钰集团（口腔医疗）高位锁仓；九安医疗（新冠检测妖股）高位接力。</div></div>
+  <div class="tli"><span class="yr">2022</span><div class="tt">持续跟进</div><div class="de">九安医疗等妖股高位参与。</div></div>
+  <div class="tli"><span class="yr">2023</span><div class="tt">AI+国产替代</div><div class="de">四川长虹趋势操作；西安旅游题材炒作。</div></div>
+  <div class="tli"><span class="yr">2024</span><div class="tt" style="color:var(--sky)">低空经济重仓</div><div class="de"><em>万丰奥威</em>低空经济/飞行汽车，深度锁仓，多路顶级游资协同参与。</div></div>
+  <div class="tli"><span class="yr">2025</span><div class="tt" style="color:var(--clay)">合成生物大捷</div><div class="de">鲁抗医药8日涨<em>71%</em>/16日涨<em>113%</em>；星湖科技16日涨<em>113%</em>。</div></div>
+</div>
+
+<h3>省广集团战法解析（封神之战）</h3>
+<div class="std">
+  <div class="it"><span class="n">分批建仓</span>7次进出，不一把梭，7进7出合计买入超3亿</div>
+  <div class="it"><span class="n">锁仓为主</span>趋势持有，不频繁进出</div>
+  <div class="it"><span class="n">题材正宗</span>字节跳动概念+网红经济，成交容量大</div>
+  <div class="it"><span class="n">分批兑现</span>不在跌停附近出货，温和有序</div>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>交易体系深度解构</h2>
+<p style="font-size:14px;color:var(--g500);margin-bottom:12px;">「不只做情绪，更要做有产业逻辑支撑的趋势龙头。」</p>
+
+<div class="fb">
+  <div class="flow"><span class="step">产业逻辑支撑</span><span class="arrow">→</span><span class="step">市场情绪认可</span><span class="arrow">→</span><span class="step">趋势形成重仓</span><span class="arrow">→</span><span class="step">趋势破坏离场</span></div>
+  <div class="sub2">基本面趋势共振 · 格局持仓 · 善庄特质</div>
+</div>
+
+<h3>三大核心支柱</h3>
+
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">支柱一</span>
+    <span class="tt">大票优先（容量思维）</span>
+    <div class="de">资金数亿→必须选成交额10亿+大盘股→单票承载大资金→避免小票流动性风险</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">支柱二</span>
+    <span class="tt">基本面趋势共振</span>
+    <div class="de">产业逻辑（业绩/政策/技术）→市场情绪认可→趋势加速→果断离场</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">支柱三</span>
+    <span class="tt">格局持仓（善庄特质）</span>
+    <div class="de">不轻易砸盘，给散户充分出逃时间；出货分批兑现，温和有序</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">主力战法</span>
+    <span class="tt">龙头二波 + 重仓锁仓</span>
+    <div class="de">主线确立后等待调整（通常10-20%）形成二波蓄势，再次放量启动时重仓介入</div>
+  </div>
+</div>
+
+<h3>二波介入操作模型</h3>
+<div class="fb">
+  <div class="flow">
+    <span class="step">主线确立·趋势形成</span>
+    <span class="arrow">→</span>
+    <span class="step">出现调整（10-20%）</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(120,140,93,.15)">二波蓄势形态</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(217,119,87,.15)">放量启动重仓介入</span>
+  </div>
+</div>
+
+<h3>离场信号</h3>
+<div class="pd">
+  <div class="it" style="background:rgba(176,74,63,.08);border:1.5px solid var(--rust)"><span class="nm" style="color:var(--rust)">信号一</span><span class="op">高位放量大阴线，次日不反包</span></div>
+  <div class="it" style="background:rgba(176,74,63,.08);border:1.5px solid var(--rust)"><span class="nm" style="color:var(--rust)">信号二</span><span class="op">跌破5日线</span></div>
+  <div class="it" style="background:rgba(176,74,63,.08);border:1.5px solid var(--rust)"><span class="nm" style="color:var(--rust)">信号三</span><span class="op">板块整体退潮</span></div>
+  <div class="it" style="background:rgba(176,74,63,.08);border:1.5px solid var(--rust)"><span class="nm" style="color:var(--rust)">善庄特质</span><span class="op">不在跌停附近出货</span></div>
+</div>
+
+<h3>与其他顶级游资对比</h3>
+<div class="tw">
+<table>
+<thead><tr><th>维度</th><th>方新侠</th><th>章盟主</th><th>赵老哥</th><th>陈小群</th></tr></thead>
+<tbody>
+<tr><td>基本面依赖</td><td style="color:var(--olive);font-weight:600">高</td><td>中高</td><td>低</td><td>低</td></tr>
+<tr><td>选股容量</td><td>200亿+大盘股</td><td>50亿+均可</td><td>视情况</td><td>视情况</td></tr>
+<tr><td>持仓周期</td><td>数周至数月</td><td>数周</td><td>2-5天</td><td>1-3天</td></tr>
+<tr><td>锁仓能力</td><td>★★★★☆</td><td>★★★★☆</td><td>★★☆☆☆</td><td>★★☆☆☆</td></tr>
+<tr><td>善庄特质</td><td style="color:var(--olive)">有</td><td>有</td><td>中</td><td>无</td></tr>
+<tr><td>机构协同</td><td style="color:var(--sky);font-weight:600">经常</td><td>偶尔</td><td>少</td><td>少</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">第四章</span>经典战役复盘</h2>
+
+<h3>省广集团（2020年）—— 封神之战</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">省广集团 · 字节跳动概念</span><span class="tag2">2020年4-5月</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">参与时间</span><span class="v">2020年4-5月</span></div>
+    <div class="it"><span class="l">参与次数</span><span class="v">21个交易日·14次龙虎榜</span></div>
+    <div class="it"><span class="l">总买入</span><span class="v" style="color:var(--clay)">超3亿元</span></div>
+    <div class="it"><span class="l">操作</span><span class="v">7进7出</span></div>
+    <div class="it"><span class="l">收益</span><span class="v" style="color:var(--olive)">保守估计盈利过亿</span></div>
+    <div class="it"><span class="l">题材</span><span class="v">字节跳动+网红经济</span></div>
+  </div>
+  <p>分批建仓，锁仓为主，分批兑现。不一把梭，7次进出合计超3亿。保守盈利过亿，一战封神奠定顶级游资地位。</p>
+</div>
+
+<h3>万丰奥威（2024年）—— 低空经济代表作</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">万丰奥威 · 低空经济/飞行汽车</span><span class="tag2">2024年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">参与方</span><span class="v">方新侠+欢乐海岸+毛老板</span></div>
+    <div class="it"><span class="l">方向</span><span class="v">低空经济/飞行汽车</span></div>
+    <div class="it"><span class="l">特点</span><span class="v" style="color:var(--olive)">多路顶级游资协同</span></div>
+  </div>
+  <p>题材正宗+大票+多路协同——方新侠核心风格的集中体现。深度锁仓，体现大格局特质。</p>
+</div>
+
+<h3>鲁抗医药（2025年）—— 合成生物主线</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">鲁抗医药 · 合成生物</span><span class="tag2">2025年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">8日涨幅</span><span class="v" style="color:var(--clay)">71%</span></div>
+    <div class="it"><span class="l">16日涨幅</span><span class="v" style="color:var(--clay)">113%</span></div>
+    <div class="it"><span class="l">方向</span><span class="v">合成生物（医药+AI融合）</span></div>
+  </div>
+  <p>高位参与，高确定性主线上的重仓格局操作。16个交易日翻倍，体现方新侠在确定性主线上的重仓魄力。</p>
+</div>
+
+<h3>星湖科技（2025年）—— 合成生物联动</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">星湖科技 · 合成生物</span><span class="tag2">2025年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">16日涨幅</span><span class="v" style="color:var(--clay)">113%</span></div>
+    <div class="it"><span class="l">方向</span><span class="v">合成生物</span></div>
+  </div>
+  <p>与鲁抗医药同期操作，板块联动，体现方新侠在主线内的组合布局能力。</p>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>龙虎榜数据与风格特征</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">核心席位</span><span class="v">中信证券西安朱雀大街</span></div>
+  <div class="it"><span class="l">协同席位</span><span class="v">中信证券西安雁展路</span></div>
+  <div class="it"><span class="l">单次出手</span><span class="v">常达数亿，席位成交规模顶级</span></div>
+  <div class="it"><span class="l">出手频率</span><span class="v">中等（精品策略）</span></div>
+</div>
+
+<h3>风格特征</h3>
+<div class="tw">
+<table>
+<thead><tr><th>特征</th><th>描述</th></tr></thead>
+<tbody>
+<tr><td>选股偏好</td><td>有基本面支撑的大盘趋势龙头</td></tr>
+<tr><td>成交容量</td><td>偏好10亿+大票，200亿+优先</td></tr>
+<tr><td>操作周期</td><td>数周至数月</td></tr>
+<tr><td>出局方式</td><td>分批兑现，温和有序，不砸跌停</td></tr>
+<tr><td>机构协同</td><td>经常与机构资金联动</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>近期活跃板块方向（2024-2026）</h3>
+<div class="std">
+  <div class="it"><span class="n">合成生物</span>鲁抗医药、星湖科技，重仓锁仓</div>
+  <div class="it"><span class="n">低空经济</span>万丰奥威、宗申动力，协同参与</div>
+  <div class="it"><span class="n">AI / DeepSeek</span>多只标的，趋势跟踪</div>
+  <div class="it"><span class="n">消费复苏</span>多只标的，题材炒作</div>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第六章</span>对散户的启示与风险</h2>
+
+<h3>可借鉴原则</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">基本面前置</span>
+    <div class="de">只做有产业逻辑支撑的标的</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">容量思维</span>
+    <div class="de">大资金只能在大票中进出</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">二波思维</span>
+    <div class="de">等待趋势调整后的二波启动点</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">格局持仓</span>
+    <div class="de">在确定性高的主升浪中敢于持仓</div>
+  </div>
+</div>
+
+<h3>跟风风险</h3>
+<div class="risk-grid">
+  <div class="it">
+    <span class="rt">风险一</span>
+    <span class="tt">信息严重滞后</span>
+    <div class="de">龙虎榜T+1披露，高位跟进大概率接盘</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险二</span>
+    <span class="tt">成本劣势</span>
+    <div class="de">方新侠介入早，散户跟时成本更高</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险三</span>
+    <span class="tt">趋势反转</span>
+    <div class="de">市场情绪转弱时，锁仓策略会变巨亏</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险四</span>
+    <span class="tt">席位误认</span>
+    <div class="de">中信西安朱雀大街可能被其他资金借用</div>
+  </div>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h2><span class="num">第七章</span>全游资生态定位</h2>
+
+<div class="tw">
+<table>
+<thead><tr><th>游资</th><th>资金体量</th><th>操作周期</th><th>基本面</th><th>善庄</th><th>散户友好</th></tr></thead>
+<tbody>
+<tr style="background:rgba(120,140,93,.06)"><td><strong>方新侠</strong></td><td>百亿级</td><td>数周~数月</td><td style="color:var(--olive)">高</td><td style="color:var(--olive)">有</td><td>较高</td></tr>
+<tr><td>章盟主</td><td>~150亿</td><td>数周</td><td>中高</td><td>有</td><td>较高</td></tr>
+<tr><td>欢乐海岸</td><td>数十亿+</td><td>数天~数周</td><td>低</td><td>有</td><td>中</td></tr>
+<tr><td>赵老哥</td><td>~50亿</td><td>2-5天</td><td>低</td><td>中</td><td>中</td></tr>
+<tr><td>陈小群</td><td>~65亿</td><td>1-3天</td><td>低</td><td style="color:var(--rust)">无</td><td>低</td></tr>
+<tr><td>桑田路</td><td>10亿+</td><td>灵活</td><td>低</td><td>有</td><td>中</td></tr>
+<tr><td>佛山无影脚</td><td>数亿~数十亿</td><td>T+1极短</td><td>低</td><td style="color:var(--rust)">无</td><td>低</td></tr>
+<tr><td>小鳄鱼</td><td>数十亿</td><td>1-3天</td><td>低</td><td>中</td><td>中</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH8 ===== -->
+<h2><span class="num">第八章</span>研究结论</h2>
+
+<div class="sbx">
+  <div class="tt">方新侠的独特定位：基本面+情绪双驱动的百亿级趋势龙头玩家</div>
+  <p style="font-size:13px;">
+    ① <strong>唯一性</strong>：顶级游资中极少数真正将基本面研究纳入选股体系<br>
+    ② <strong>容量优势</strong>：资金体量决定只能操作大盘股，形成与大资金的天然协同<br>
+    ③ <strong>善庄口碑</strong>：出货温和有序，是顶级游资中对散户最「友好」之一<br>
+    ④ <strong>趋势大师</strong>：擅长捕捉主线趋势的中后段加速行情
+  </p>
+</div>
+
+<div class="sbx">
+  <div class="tt">对弈沐的实战价值</div>
+  <p style="font-size:13px;">
+    → 方新侠参与的方向 → 可作为主线确认的重要信号<br>
+    → 方新侠偏好大盘容量龙头 → 与弈沐W1窗口流动性要求高度一致<br>
+    → 「二波锁仓」策略 → 可作为趋势股持仓的参考框架<br>
+    → 方新侠「基本面前置」理念 → 可补充到 trading-core 的选股标准中
+  </p>
+</div>
+
+<hr>
+<footer>
+⚠️ 本报告基于界面新闻、证券时报、私募排排网等公开资料整理。方新侠部分背景信息为市场流传，真实性未完全验证。报告不构成任何投资建议，仅作为游资对手行为研究之用。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-29</span>
+</footer>
+</div><!-- /page -->
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

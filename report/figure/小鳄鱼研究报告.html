@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小鳄鱼研究报告：90后全能型游资选手</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive)}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+.pc{background:#fff;border:1.5px solid var(--g300);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.pch{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--g150);border-bottom:1px solid var(--g300);cursor:pointer;user-select:none}
+.pch:hover{background:var(--oat)}
+.pch .n{font-family:var(--mono);font-size:10px;color:var(--sky);background:#fff;border:1px solid var(--g300);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pch .tt{font-weight:600;font-size:13px;color:var(--slate);flex:1}
+.pch .ar{font-size:10px;color:var(--g500);transition:transform .12s}
+.pch.open .ar{transform:rotate(180deg)}
+.pcb{padding:14px 16px;display:none;font-size:13px;line-height:1.7}
+.pcb.show{display:block}
+.qt{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;line-height:1.6;font-style:italic}
+.qt .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.pd{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+@media(max-width:600px){.pd{grid-template-columns:1fr 1fr}}
+.pd .it{border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.pd .it .nm{font-weight:600;display:block;font-size:14px}
+.pd .it .op{color:var(--g500);font-size:11px;display:block;margin-top:2px}
+.warn{background:rgba(176,74,63,.06);border:1px solid rgba(176,74,63,.15);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.7}
+.warn .wt{font-weight:600;color:var(--rust);margin-bottom:4px}
+.codeblock{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--g700);white-space:pre-wrap}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 游资对手研究</div>
+  <h1>小鳄鱼：90后全能型选手，新生代游资的进化范本</h1>
+  <div class="sub">2011年以数万元入市，2015年25岁资金突破1亿。手法全面——首板、二板、高位板、反包、低吸均参与，与陈小群、作手新一并称「新生代游资三巨头」。</div>
+  <div class="mr">
+    <span class="tag">人物研究</span>
+    <span class="tag">2026.05</span>
+    <span class="tag">小鳄鱼</span>
+    <span class="tag">龙头战法</span>
+    <span class="tag">新生代游资</span>
+  </div>
+</div>
+
+<!-- Bio card -->
+<div class="bio">
+  <div class="it"><span class="l">市场称呼</span><span class="v">小鳄鱼</span></div>
+  <div class="it"><span class="l">出生年份</span><span class="v">1990年</span></div>
+  <div class="it"><span class="l">籍贯</span><span class="v">江苏南京</span></div>
+  <div class="it"><span class="l">教育背景</span><span class="v">华东科技大学金融专业（科班出身）</span></div>
+  <div class="it"><span class="l">师承</span><span class="v">据传佛山帮廖国沛（未证实）</span></div>
+  <div class="it"><span class="l">入市年份</span><span class="v">2011年</span></div>
+  <div class="it"><span class="l">起步资金</span><span class="v">数万元</span></div>
+  <div class="it"><span class="l">亿级时间</span><span class="v">2015年6月（约4年）</span></div>
+  <div class="it"><span class="l">当前体量</span><span class="v">数十亿级（市场推测）</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">南京证券南京大钟亭 / 中金财富南京太平南路</span></div>
+</div>
+
+<!-- ===== 一、成长轨迹 ===== -->
+<h2><span class="num">01</span>成长轨迹：4年从散户到游资</h2>
+
+<div class="tl">
+  <div class="tli"><span class="yr">2011</span><span class="tt">惨痛起步</span><span class="de">大学四年级入市，半年亏损至几百元，父母反对，同学嘲笑，但坚持不退出，把每一笔亏损记录下来形成「悟道笔记」</span></div>
+  <div class="tli"><span class="yr">2012</span><span class="tt">觉醒</span><span class="de">凑到<em>14万</em>本金，立下铁律：只做主线，只打龙头，非龙不板，不板不做。<em>14万做到900万</em></span></div>
+  <div class="tli"><span class="yr">2013</span><span class="tt">加速</span><span class="de">创业板牛市，平均每三个月翻一番，14万做到<em>1800万</em>，翻了<em>128倍</em></span></div>
+  <div class="tli"><span class="yr">2014</span><span class="tt">扩张</span><span class="de">资金从2000万增长到<em>7000万</em>，形成系统交易理念</span></div>
+  <div class="tli"><span class="yr">2015.6</span><span class="tt">封神</span><span class="de">牛市助力，资产<em>突破1亿</em>。<em>25岁完成从散户到游资的蜕变</em></span></div>
+  <div class="tli"><span class="yr">2018</span><span class="tt">名动江湖</span><span class="de">持仓1.5亿被龙虎榜曝光，「小鳄鱼」名动江湖</span></div>
+  <div class="tli"><span class="yr">2024</span><span class="tt">一线地位</span><span class="de">单日豪掷<em>4.1亿</em>扫货，单次押注第一创业<em>2.73亿</em></span></div>
+</div>
+
+<!-- ===== 二、交易体系 ===== -->
+<h2><span class="num">02</span>交易体系深度解构</h2>
+
+<div class="pd">
+  <div class="it" style="background:rgba(106,140,175,.08)"><span class="nm">二板接力</span><span class="op">核心战法</span></div>
+  <div class="it" style="background:rgba(217,119,87,.08)"><span class="nm">强势股反包</span><span class="op">核心战法</span></div>
+  <div class="it" style="background:rgba(120,140,93,.08)"><span class="nm">全能型</span><span class="op">首板~高位板</span></div>
+</div>
+
+<h3>核心定位：全能型选手</h3>
+<p>与大多数游资有固定风格不同，小鳄鱼被公认为「全能型选手」：</p>
+<table>
+  <tr><th>手法类型</th><th>参与程度</th></tr>
+  <tr><td>首板（打板）</td><td>参与</td></tr>
+  <tr><td><strong>二板接力</strong></td><td><strong>核心战法</strong></td></tr>
+  <tr><td>高位接力</td><td>参与</td></tr>
+  <tr><td><strong>反包板</strong></td><td><strong>核心战法</strong></td></tr>
+  <tr><td>分时点火</td><td>参与</td></tr>
+  <tr><td>低吸</td><td>参与</td></tr>
+  <tr><td>波段操作</td><td>参与</td></tr>
+</table>
+
+<h3>核心战法一：二板接力</h3>
+<div class="qt">「二板标志着资金共识形成，是风险收益比最优的位置。」<span class="src">— 小鳄鱼</span></div>
+
+<div class="codeblock">2019年中国出版案例：
+首板放量突破年线（未入场，规避试盘风险）
+       ↓
+二板早盘高开5%后快速封板
+       ↓
+打板买入3477万元
+       ↓
+次日高开冲高，分批卖出3831万元
+       ↓
+单笔盈利354万，收益率约10%</div>
+
+<h3>核心战法二：强势股反包</h3>
+<div class="codeblock">2019年双塔食品案例：
+6月13日大跌7%，14日跌停，市场恐慌
+17日（周一）早盘低开-5%后快速翻红
+       ↓
+判断资金自救，分时震荡中建仓2481万元
+       ↓
+尾盘涨停
+       ↓
+次日高开8%瞬间出货
+       ↓
+隔夜盈利超12%</div>
+
+<h3>操作周期</h3>
+<div class="qt">「我的交易模式基本是隔日交易，持股1-2天，行情好的时候可能适当增长持股时间。」<span class="src">— 小鳄鱼</span></div>
+<table>
+  <tr><th>行情类型</th><th>操作策略</th><th>持股时间</th></tr>
+  <tr><td>行情好</td><td>满仓追龙头</td><td>1-3天</td></tr>
+  <tr><td>行情一般</td><td>跟随热点，波段操作</td><td>2-5天</td></tr>
+  <tr><td>行情差</td><td>低吸超跌或空仓</td><td>1天内</td></tr>
+  <tr><td>熊市</td><td><strong>坚决空仓</strong></td><td>空仓</td></tr>
+</table>
+
+<!-- ===== 三、经典战役 ===== -->
+<h2><span class="num">03</span>经典战役复盘</h2>
+
+<table>
+  <tr><th>时间</th><th>标的</th><th>操作</th><th>结果</th></tr>
+  <tr><td>2019.4</td><td><strong>中国出版</strong></td><td>二板接力3477万，次日卖出3831万</td><td><span class="tb tb-g">单日盈利354万</span></td></tr>
+  <tr><td>2019.6</td><td><strong>双塔食品</strong></td><td>跌停后反包2481万，次日高开8%出货</td><td><span class="tb tb-g">隔夜盈利12%+</span></td></tr>
+  <tr><td>2024.7</td><td>东方雨虹/首创证券/太平洋等</td><td>单日豪掷4.1亿扫货</td><td>—</td></tr>
+  <tr><td>2024.8</td><td><strong>第一创业</strong></td><td>东方证券源深路买入2.73亿</td><td>券商行情</td></tr>
+  <tr><td>2025.2</td><td>卫宁健康等</td><td>与章盟主、毛老板同台竞技</td><td>—</td></tr>
+</table>
+
+<!-- ===== 四、席位数据 ===== -->
+<h2><span class="num">04</span>龙虎榜数据</h2>
+
+<div class="sbx">
+  <div class="tt">席位成交规模（2014年以来）</div>
+  <table>
+    <tr><th>席位</th><th>累计成交额</th></tr>
+    <tr><td>中金财富南京太平南路</td><td><strong>192.36亿</strong></td></tr>
+    <tr><td>南京证券南京大钟亭</td><td><strong>129.85亿</strong></td></tr>
+    <tr><td><strong>合计</strong></td><td><strong>322.21亿</strong></td></tr>
+  </table>
+</div>
+
+<div class="sbx">
+  <div class="tt">席位表现参考（南京太平南路）</div>
+  <table>
+    <tr><th>指标</th><th>数据</th></tr>
+    <tr><td>上榜后1天平均涨幅</td><td><strong>+5.66%</strong></td></tr>
+    <tr><td>上榜后1天上涨概率</td><td><strong>70%</strong></td></tr>
+    <tr><td>上榜后2天平均涨幅</td><td><strong>+8.59%</strong></td></tr>
+    <tr><td>上榜后2天上涨概率</td><td><strong>75%</strong></td></tr>
+  </table>
+</div>
+
+<!-- ===== 五、核心语录 ===== -->
+<h2><span class="num">05</span>核心语录精选</h2>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">1</span><span class="tt">关于市场理解</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「炒股基本靠势，把握好了这个势，共振上涨，共振下跌，交易的大部分我觉得基本就能解决了。」</div>
+    <div class="qt">「在正确的道路上坚持下去就是胜利，在错误的道路上停下来就是胜利。」</div>
+  </div>
+</div>
+
+<div class="pc">
+  <div class="pch" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="n">2</span><span class="tt">关于操作纪律</span><span class="ar">▼</span>
+  </div>
+  <div class="pcb">
+    <div class="qt">「行情好时满仓追龙头，行情不好时低吸，熊市时空仓。」</div>
+    <div class="qt">「必须第一时间买进，不可追太高（除非市场情绪很好，龙头可追）。」</div>
+    <div class="qt">「打板只是形式，真正高手善于低吸。」</div>
+  </div>
+</div>
+
+<!-- ===== 六、新生代三巨头对比 ===== -->
+<h2><span class="num">06</span>新生代游资三巨头对比</h2>
+
+<table>
+  <tr><th>维度</th><th>小鳄鱼</th><th>陈小群</th><th>作手新一</th></tr>
+  <tr><td>出生年份</td><td>1990年</td><td>1994/1995年</td><td>1988年</td></tr>
+  <tr><td>入市年份</td><td>2011年</td><td>2018年</td><td>2012年</td></tr>
+  <tr><td>亿级时间</td><td>2015年（约4年）</td><td>2022年（约4年）</td><td>2019年（约7年）</td></tr>
+  <tr><td>当前体量</td><td>数十亿级</td><td>~65亿</td><td>~5亿+</td></tr>
+  <tr><td>核心席位</td><td>南京大钟亭/东方源深路</td><td>银河大连黄河路</td><td>国泰海通武汉紫阳</td></tr>
+  <tr><td>风格定位</td><td><strong>全能型</strong></td><td>情绪周期极致派</td><td>打提前量派</td></tr>
+  <tr><td>操作周期</td><td>隔日为主</td><td>短中结合</td><td>超短+波段</td></tr>
+  <tr><td>代表战法</td><td>二板接力+反包</td><td>情绪周期龙头</td><td>次新+题材爆破</td></tr>
+</table>
+
+<p><strong>三巨头共同点</strong>：都在年轻时（25岁前后）完成蜕变；都强调情绪周期；都专注主线热点和龙头股；都强调严格纪律和仓位管理。</p>
+
+<!-- ===== 七、对散户的启示 ===== -->
+<h2><span class="num">07</span>对散户的启示与风险</h2>
+
+<h3>可借鉴原则</h3>
+<ul>
+  <li><strong>只做主线</strong>：非龙不板，不板不做</li>
+  <li><strong>二板优先</strong>：二板是风险收益比最优的位置</li>
+  <li><strong>反包机会</strong>：主线龙头大跌后的反包是高胜率机会</li>
+  <li><strong>空仓纪律</strong>：行情差时空仓，比强行交易更重要</li>
+</ul>
+
+<div class="warn">
+  <div class="wt">⚠️ 跟风风险</div>
+  <ul style="margin:0">
+    <li><strong>数据滞后</strong>：龙虎榜T+1披露，次日买入时股价已涨</li>
+    <li><strong>快进快出</strong>：小鳄鱼以隔日交易为主，跟风可能来不及反应</li>
+    <li><strong>高位被套</strong>：即便是顶级游资也有高位被套记录</li>
+    <li><strong>体量差距</strong>：散户资金量级与游资相差万倍，操作逻辑不可复制</li>
+  </ul>
+</div>
+
+<!-- ===== 八、研究结论 ===== -->
+<h2><span class="num">08</span>研究结论</h2>
+
+<div class="sbx">
+  <div class="tt">① 手法最全面</div>
+  <p style="margin:0">不拘泥于单一手法，首板到高位板都参与。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">② 师承名门</div>
+  <p style="margin:0">据传师从佛山廖国沛，吸收了佛山系的凌厉风格。</p>
+</div>
+
+<div class="sbx">
+  <div class="tt">③ 成长路径最完整</div>
+  <p style="margin:0">从散户到游资的每个阶段都有记录，最具参考价值。</p>
+</div>
+
+<div class="sbx" style="border-color:var(--clay)">
+  <div class="tt">对弈沐的实战意义</div>
+  <ul style="margin:0">
+    <li>小鳄鱼的「二板接力」战法 → 可作为W1窗口2打板策略的参考</li>
+    <li>「反包」机会 → 可作为W2低吸的补充信号</li>
+    <li>「空仓纪律」 → 与弈沐 trading-core 的冰点空仓理念高度一致</li>
+    <li>上榜后1天胜率70% → 可作为龙虎榜验证的加分项</li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:var(--g500);font-size:12px;margin-top:40px">弈沐资本 · 游资对手研究系列 · 2026年5月</p>
+
+</div>
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

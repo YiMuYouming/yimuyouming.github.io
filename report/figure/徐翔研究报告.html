@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>徐翔研究报告：游资江湖的终极警示录</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+.tag-r{background:rgba(176,74,63,.1);color:var(--rust);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+blockquote{margin:12px 0;padding:12px 16px;background:var(--g150);border-left:3px solid var(--sky);border-radius:0 8px 8px 0;font-size:14px;line-height:1.7;color:var(--g700)}
+blockquote p:last-child{margin-bottom:0}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+
+/* Bio */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+.tli.warn::before{background:var(--rust)}
+.tli.warn .tt{color:var(--rust)}
+
+/* Warning / danger box */
+.warn-box{background:rgba(176,74,63,.06);border:1.5px solid rgba(176,74,63,.25);border-radius:10px;padding:14px 18px;margin:12px 0}
+.warn-box .tt{font-weight:600;font-size:14px;color:var(--rust);margin-bottom:4px}
+.warn-box p{font-size:13px;line-height:1.6}
+.warn-box p:last-child{margin-bottom:0}
+
+/* Section box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.sbx p:last-child{margin-bottom:0}
+
+/* Flow */
+.fb{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center}
+.fb .flow{font-family:var(--mono);font-size:13px;color:var(--slate);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .flow .step{padding:4px 12px;background:var(--g150);border-radius:6px}
+.fb .flow .arrow{color:var(--g500);font-size:16px}
+.fb .sub2{font-size:12px;color:var(--g500);margin-top:6px}
+
+/* Case study */
+.cs{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.cs .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.cs .hd .nm{font-weight:600;font-size:14px;color:var(--slate)}
+.cs .hd .tag2{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--g150);color:var(--g500)}
+.cs .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin:8px 0}
+.cs .kv .it{background:var(--g150);border-radius:6px;padding:5px 8px;font-size:12px}
+.cs .kv .it .l{font-size:10px;color:var(--g500);display:block}
+.cs .kv .it .v{font-weight:600}
+.cs p{font-size:12px;line-height:1.6;color:var(--g700)}
+.cs p:last-child{margin-bottom:0}
+
+/* Quote card */
+.qt-box{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;font-style:italic;line-height:1.6}
+.qt-box .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+
+/* Pillar grid */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.pg{grid-template-columns:1fr}}
+.pg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.pg .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.pg .it .tt{font-weight:600;color:var(--slate)}
+.pg .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Standard grid */
+.std{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.std{grid-template-columns:1fr}}
+.std .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.std .it .n{font-weight:600;color:var(--sky);display:block;margin-bottom:4px;font-size:13px}
+
+/* Compare box */
+.cb{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.cb .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:8px}
+.cb .gr{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:550px){.cb .gr{grid-template-columns:1fr}}
+.cb .p{font-size:12px;background:var(--g150);border-radius:8px;padding:10px 12px}
+.cb .p .hd{font-weight:600;color:var(--slate);display:block;margin-bottom:3px}
+
+/* Legal highlight */
+.legal-box{background:rgba(176,74,63,.07);border:1.5px solid rgba(176,74,63,.3);border-radius:10px;padding:14px 18px;margin:12px 0}
+.legal-box .tt{font-weight:600;font-size:14px;color:var(--rust);margin-bottom:6px}
+.legal-box .nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px}
+@media(max-width:600px){.legal-box .nums{grid-template-columns:1fr}}
+.legal-box .num-item{background:rgba(176,74,63,.1);border-radius:8px;padding:10px;text-align:center}
+.legal-box .num-item .v{font-size:20px;font-weight:700;color:var(--rust);display:block;font-family:var(--mono)}
+.legal-box .num-item .l{font-size:11px;color:var(--g500);display:block;margin-top:2px}
+
+/* Stat callout */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr 1fr}}
+.stat-row .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:12px;text-align:center}
+.stat-row .it .v{font-size:22px;font-weight:700;color:var(--rust);display:block;font-family:var(--mono)}
+.stat-row .it .l{font-size:11px;color:var(--g500);display:block;margin-top:3px}
+
+/* Warning highlight bar */
+.qthigh{background:rgba(176,74,63,.06);border:1.5px solid rgba(176,74,63,.25);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center;font-size:14px;font-style:italic;color:var(--rust);line-height:1.6}
+
+/* Rescue box */
+.rescue-box{background:rgba(120,140,93,.08);border:1.5px solid rgba(120,140,93,.25);border-radius:10px;padding:14px 18px;margin:12px 0}
+.rescue-box .tt{font-weight:600;font-size:14px;color:var(--olive);margin-bottom:6px}
+.rescue-box p{font-size:13px;line-height:1.6}
+
+/* Survival rules */
+.srule{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.srule .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--olive);min-width:20px;flex-shrink:0}
+.srule .c{font-size:13px;line-height:1.5}
+.srule .c strong{color:var(--slate)}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>徐翔研究报告</h1>
+  <div class="sub">游资江湖的终极警示录——从3万元到210亿，从辉煌到陨落</div>
+  <div class="mr">
+    <span>2026-05-29</span>
+    <span class="tag">#游资历史 #法律警示 #游资研究</span>
+    <span class="tag-r">⚠️ 操纵市场警示</span>
+    <span>弈沐投研</span>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>人物画像</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">本名</span><span class="v">徐翔</span></div>
+  <div class="it"><span class="l">出生</span><span class="v">1977年 · 浙江宁波</span></div>
+  <div class="it"><span class="l">入市年份</span><span class="v">1993年（约16岁）</span></div>
+  <div class="it"><span class="l">起步资金</span><span class="v">3万元（母亲应芬君支持）</span></div>
+  <div class="it"><span class="l">资金体量峰值</span><span class="v" style="color:var(--rust)">个人约210亿 · 管理100亿+</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">银河证券宁波解放南路</span></div>
+  <div class="it"><span class="l">社会职务</span><span class="v">上海泽熙投资董事长、总经理</span></div>
+  <div class="it"><span class="l">现状</span><span class="v" style="color:var(--clay)">2021年7月9日出狱 · 110亿罚金仍在执行</span></div>
+</div>
+
+<div class="stat-row">
+  <div class="it"><span class="v">3万</span><span class="l">起步资金</span></div>
+  <div class="it"><span class="v">210亿</span><span class="l">个人资产峰值</span></div>
+  <div class="it"><span class="v">5年6月</span><span class="l">刑期</span></div>
+  <div class="it"><span class="v">110亿</span><span class="l">罚金</span></div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>成长轨迹：3万到210亿的完整路径</h2>
+
+<div class="tl">
+  <div class="tli"><span class="yr">1993-1995</span><div class="tt">入市即遇挫</div><div class="de">约16岁辍学炒股，母亲给3万元。入市即亏损，后借10万元继续，两年后13万本金亏损至只剩3万。</div></div>
+  <div class="tli"><span class="yr">1995-2005</span><div class="tt" style="color:var(--sky)">宁波解放南路崛起</div><div class="de">在银河证券宁波解放南路开户，观察到涨停板制度漏洞，开始研究涨停板战法。2003年「宁波解放南路敢死队」首次见报，被称为「最聪明钱」。</div></div>
+  <div class="tli"><span class="yr">2005-2009</span><div class="tt">上海扩张</div><div class="de">2005年熊市离开宁波转战上海。2008年大熊市空仓+股指期货做空，资产翻倍。2009年12月成立上海泽熙投资。</div></div>
+  <div class="tli"><span class="yr">2010-2015</span><div class="tt" style="color:var(--olive)">泽熙时代</div><div class="de">2010年跑赢沪深300指数100个百分点；2011年大熊市旗下产品仍正收益；2014年管理资金突破100亿；2015年股灾前夕清仓，旗下平均收益率超200%。</div></div>
+  <div class="tli warn"><span class="yr">2015.11.1</span><div class="tt">杭州湾大桥被拘</div><div class="de">公安干警截停白色法拉利，从腕上百达翡丽到戴手铐，西装革履的私募大佬一夜之间成为阶下囚。</div></div>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>交易体系深度解构</h2>
+
+<h3>核心手法：「一字断魂刀」</h3>
+<div class="fb">
+  <div class="flow">
+    <span class="step" style="background:rgba(106,140,175,.15)">开盘后快速封涨停板</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(120,140,93,.15)">次日追涨资金接力</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(217,119,87,.15)">高位利用断魂刀出货</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(176,74,63,.15)">股价直线下跌</span>
+  </div>
+</div>
+
+<div class="std">
+  <div class="it"><span class="n">快</span>封板速度极快，几分钟内完成</div>
+  <div class="it"><span class="n">狠</span>出货时毫不犹豫，砸盘凶狠</div>
+  <div class="it"><span class="n">准</span>精准把握市场情绪拐点</div>
+</div>
+
+<h3>仓位管理特点</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">底部重仓</span>
+    <span class="tt">个股/板块大幅下跌后重仓抄底</span>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">高位锁仓</span>
+    <span class="tt">高位维持仓位等待最佳出货点</span>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">动态调整</span>
+    <span class="tt">根据市场情绪灵活加减仓</span>
+  </div>
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">一字断魂刀</span>
+    <span class="tt">高位出货时砸盘凶狠，股价直线下坠</span>
+  </div>
+</div>
+
+<h3>核心语录</h3>
+<div class="sbx">
+  <div class="qt-box">「股票操作是纯粹的交易，不要把感情因素带进来。」</div>
+  <div class="qt-box" style="border-left-color:var(--olive)">「市场永远是对的，要尊重市场。」</div>
+  <div class="qt-box" style="border-left-color:var(--sky)">「不要预测顶部，让市场来告诉你。」</div>
+  <div class="qt-box" style="border-left-color:var(--clay)">「当所有人都看好的时候，你要谨慎；当所有人都悲观的时候，你要乐观。」</div>
+  <div class="qt-box" style="border-left-color:var(--rust)">「只有持续的学习和进化，才能在这个市场生存。」</div>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">第四章</span>法律案件详情</h2>
+
+<h3>案件时间线</h3>
+<div class="tl">
+  <div class="tli warn"><span class="yr">2015.11.1</span><div class="tt">杭州湾跨海大桥被截停</div><div class="de">公安在杭州湾跨海大桥截停徐翔白色法拉利，从腕上百达翡丽到戴手铐。</div></div>
+  <div class="tli"><span class="yr">2016.12.5</span><div class="tt">开庭受审</div><div class="de">青岛市中级人民法院公开审理。</div></div>
+  <div class="tli warn"><span class="yr">2017.1.23</span><div class="tt">一审判决</div><div class="de">操纵证券市场罪，有期徒刑5年6个月。</div></div>
+  <div class="tli"><span class="yr">2017.5.31</span><div class="tt">二审维持原判</div><div class="de">山东省高级人民法院二审维持原判，判决生效。</div></div>
+</div>
+
+<h3>判决详情</h3>
+<div class="legal-box">
+  <div class="tt">⚠️ 徐翔案判决</div>
+  <div class="nums">
+    <div class="num-item"><span class="v">13只</span><span class="l">操纵股票数</span></div>
+    <div class="num-item"><span class="v">93亿</span><span class="l">非法获利</span></div>
+    <div class="num-item"><span class="v">5年6月</span><span class="l">有期徒刑</span></div>
+    <div class="num-item"><span class="v">110亿</span><span class="l">罚金合计</span></div>
+    <div class="num-item"><span class="v">93亿</span><span class="l">追缴违法所得</span></div>
+    <div class="num-item"><span class="v">17亿</span><span class="l">罚金</span></div>
+  </div>
+</div>
+
+<h3>被操纵的13只股票</h3>
+<div class="tw">
+<table>
+<thead><tr><th>股票名称</th><th>操纵时间</th><th>特点</th></tr></thead>
+<tbody>
+<tr><td><strong>美邦服饰</strong></td><td>2010-2015年</td><td>长期控盘，高峰期持仓超10亿</td></tr>
+<tr><td><strong>文峰股份</strong></td><td>2014-2015年</td><td>与文峰集团股权转让配合</td></tr>
+<tr><td><strong>华丽家族</strong></td><td>2013-2015年</td><td>大比例增持</td></tr>
+<tr><td><strong>大恒科技</strong></td><td>2014年</td><td>控股意图明显</td></tr>
+<tr><td><strong>东方金钰</strong></td><td>2013-2015年</td><td>翡翠第一股</td></tr>
+<tr><td><strong>先河环保</strong></td><td>2014年</td><td>环境监测概念</td></tr>
+<tr><td><strong>ST长油</strong></td><td>2011-2014年</td><td>退市前博弈</td></tr>
+<tr><td>其他6只</td><td>—</td><td>短期操纵</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="warn-box">
+  <div class="tt">⚠️「实际收益法」的制度意义</div>
+  <p>徐翔案确立了「<strong>实际收益法</strong>」作为操纵市场违法所得的计算标准：即使股价未变现，按「实际持股量×操控期末股价-成本」计算违法所得。这意味着：即使亏损，只要控盘行为成立，仍按「理论上可获得收益」认定。</p>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>出狱后状态（2021年至今）</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">服刑起始</span><span class="v">2017年1月23日</span></div>
+  <div class="it"><span class="l">减刑后出狱</span><span class="v" style="color:var(--olive)">2021年7月9日</span></div>
+  <div class="it"><span class="l">出狱地点</span><span class="v">上海某地（低调）</span></div>
+  <div class="it"><span class="l">110亿罚金</span><span class="v" style="color:var(--rust)">仍在执行中</span></div>
+</div>
+
+<h3>110亿罚金执行现状</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">持续执行</span>
+    <span class="tt">110亿罚金仍在执行</span>
+    <div class="de">法院持续冻结徐翔家族持有的相关上市公司股权</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">离婚财产分割</span>
+    <span class="tt">应莹多次申请分割</span>
+    <div class="de">应莹（徐翔妻子）多次申请分割家庭财产以缴纳罚金</div>
+  </div>
+</div>
+
+<h3>离婚案时间线</h3>
+<div class="tl">
+  <div class="tli"><span class="yr">2019年</span><div class="tt">应莹起诉离婚</div><div class="de">要求分割家庭财产。</div></div>
+  <div class="tli"><span class="yr">2020年</span><div class="tt">法院判决离婚</div><div class="de">财产分割另案处理。</div></div>
+  <div class="tli"><span class="yr">2021年至今</span><div class="tt">财产分割拉锯</div><div class="de">涉及大恒科技、文峰股份等股权，争议持续。</div></div>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第六章</span>历史地位与影响</h2>
+
+<h3>徐翔对A股的影响</h3>
+<div class="cb">
+  <div class="gr">
+    <div class="p" style="background:rgba(120,140,93,.08)"><span class="hd" style="color:var(--olive)">正面影响</span>推动涨停板战法体系化；展示个人能力到极致的可能；刺激游资行业竞争与进化</div>
+    <div class="p" style="background:rgba(176,74,63,.08)"><span class="hd" style="color:var(--rust)">负面影响</span>开创「操纵股价」错误范式；破坏市场三公原则；误导大量散户投机行为</div>
+  </div>
+</div>
+
+<h3>后徐翔时代的游资生态</h3>
+<div class="std">
+  <div class="it"><span class="n">宁波帮衰落</span>2015年后宁波帮整体衰落，敢死队模式受严格监管</div>
+  <div class="it"><span class="n">量化崛起</span>传统游资空间被压缩，量化交易占比大幅上升</div>
+  <div class="it"><span class="n">合规化趋势</span>游资向阳光私募、机构化方向转型</div>
+</div>
+
+<h3>「南北双雄」对比</h3>
+<div class="tw">
+<table>
+<thead><tr><th>维度</th><th>徐翔</th><th>章盟主</th></tr></thead>
+<tbody>
+<tr><td>资金规模</td><td style="color:var(--rust)">200亿+（管理100亿）</td><td>~150亿</td></tr>
+<tr><td>操作手法</td><td style="color:var(--rust)">操纵股价（违法）</td><td>趋势投资（合法）</td></tr>
+<tr><td>法律结果</td><td style="color:var(--rust)">入狱5年6个月</td><td>正常活跃</td></tr>
+<tr><td>人生结局</td><td style="color:var(--rust)">悲剧</td><td>善终</td></tr>
+<tr><td>市场贡献</td><td style="color:var(--rust)">负（破坏公平）</td><td style="color:var(--olive)">正（价值发现）</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h2><span class="num">第七章</span>对散户的终极警示</h2>
+
+<h3>合法的游资操作 vs 违法的市场操纵</h3>
+<div class="tw">
+<table>
+<thead><tr><th>合法游资操作</th><th>违法操纵行为</th></tr></thead>
+<tbody>
+<tr style="background:rgba(120,140,93,.06)"><td>顺势而为，利用市场情绪</td><td>利用资金优势单独或合谋操纵股价</td></tr>
+<tr style="background:rgba(120,140,93,.06)"><td>公开买卖，自担风险</td><td>虚假申报、约定交易、蛊惑交易</td></tr>
+<tr style="background:rgba(120,140,93,.06)"><td>信息透明，愿赌服输</td><td>提前埋伏、连环买卖、连续交易</td></tr>
+<tr style="background:rgba(120,140,93,.06)"><td style="color:var(--olive)">法律保护</td><td style="color:var(--rust)">违法受罚</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>识别市场操纵的信号</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">信号一</span>
+    <span class="tt">股价走势异常</span>
+    <div class="de">短期内大幅上涨但无基本面支撑</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">信号二</span>
+    <span class="tt">成交量异常</span>
+    <div class="de">量能放大但股价不跟随</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">信号三</span>
+    <span class="tt">机构席位集中</span>
+    <div class="de">多个疑似关联席位频繁上榜</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">信号四</span>
+    <span class="tt">消息配合</span>
+    <div class="de">重组、收购等消息配合股价炒作</div>
+  </div>
+</div>
+
+<h3>散户生存法则</h3>
+<div class="srule"><span class="n">①</span><span class="c"><strong>不追涨停</strong>：涨停板是游资的主战场，散户追涨停是最高风险行为</span></div>
+<div class="srule"><span class="n">②</span><span class="c"><strong>远离庄股</strong>：基本面差、股价走势诡异的个股可能是庄股</span></div>
+<div class="srule"><span class="n">③</span><span class="c"><strong>研究基本面</strong>：价值投资是散户对抗操纵的最有力武器</span></div>
+<div class="srule"><span class="n">④</span><span class="c"><strong>遵守纪律</strong>：严格止损，不重仓单一股票</span></div>
+<div class="srule"><span class="n">⑤</span><span class="c"><strong>敬畏法律</strong>：理解什么能做、什么不能做</span></div>
+
+<!-- ===== CH8 ===== -->
+<h2><span class="num">第八章</span>研究结论</h2>
+
+<div class="sbx">
+  <div class="tt">徐翔案例的三重意义</div>
+  <p style="font-size:13px;">
+    ① <strong>游资历史的里程碑</strong>：理解游资生态的起源和演变<br>
+    ② <strong>法律边界的教科书</strong>：明白合法与违法的界限在哪里<br>
+    ③ <strong>人生选择的警示</strong>：个人能力再强，违法必被追究
+  </p>
+</div>
+
+<div class="qthigh">徐翔的能力毋庸置疑——在合法范围内，他的市场理解力可能是顶级的。但他把能力用错了方向。选择合法、可持续的交易体系，比短期暴利更重要。</div>
+
+<div class="sbx">
+  <div class="tt">对弈沐的终极警示</div>
+  <p style="font-size:13px;">
+    → 研究徐翔，不是学习他的手法，而是理解「什么绝对不能做」<br>
+    → 「一字断魂刀」短期暴利，但最终付出110亿罚金+5年牢狱的代价<br>
+    → 合法的交易体系才是可持续的——章盟主「善庄」模式是更好的参照<br>
+    → 弈沐 trading-core 的所有规则设计，必须建立在合法合规的底线之上
+  </p>
+</div>
+
+<hr>
+<footer>
+⚠️ 本报告基于中新网、36氪、界面新闻、财新网、21经济网、环球人物等公开报道整理。徐翔案件为公开司法判决信息。本报告不构成任何投资建议，仅作为游资历史与法律风险教育之用。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-29</span>
+</footer>
+</div><!-- /page -->
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

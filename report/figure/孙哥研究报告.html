@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>孙哥研究报告：中信溧阳路的造势王者</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--sky:#6A8CAF;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:920px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+.tag-r{background:rgba(176,74,63,.1);color:var(--rust);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+blockquote{margin:12px 0;padding:12px 16px;background:var(--g150);border-left:3px solid var(--sky);border-radius:0 8px 8px 0;font-size:14px;line-height:1.7;color:var(--g700)}
+blockquote p:last-child{margin-bottom:0}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+
+/* Bio */
+.bio{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:20px 22px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.bio{grid-template-columns:1fr}}
+.bio .it{font-size:13px}
+.bio .it .l{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--g500);display:block}
+.bio .it .v{font-weight:600;color:var(--slate)}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px;margin-bottom:16px}
+.tl::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:1.5px;background:var(--g300)}
+.tli{position:relative;padding:8px 0 8px 16px;border-bottom:1px solid var(--g150)}
+.tli:last-child{border-bottom:0}
+.tli::before{content:'';position:absolute;left:-22px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--sky);border:2px solid var(--ivory)}
+.tli .yr{font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;display:block}
+.tli .tt{font-weight:600;font-size:14px;color:var(--slate)}
+.tli .de{font-size:12px;color:var(--g500);margin-top:2px;line-height:1.5}
+.tli .de em{color:var(--g700);font-style:normal;background:var(--g150);padding:1px 5px;border-radius:3px}
+.tli.warn .de em{color:var(--rust);background:rgba(176,74,63,.1)}
+
+/* Flow */
+.fb{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center}
+.fb .flow{font-family:var(--mono);font-size:13px;color:var(--slate);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .flow .step{padding:4px 12px;background:var(--g150);border-radius:6px}
+.fb .flow .arrow{color:var(--g500);font-size:16px}
+.fb .sub2{font-size:12px;color:var(--g500);margin-top:6px}
+
+/* Case study */
+.cs{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.cs .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.cs .hd .nm{font-weight:600;font-size:14px;color:var(--slate)}
+.cs .hd .tag2{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--g150);color:var(--g500)}
+.cs .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin:8px 0}
+.cs .kv .it{background:var(--g150);border-radius:6px;padding:5px 8px;font-size:12px}
+.cs .kv .it .l{font-size:10px;color:var(--g500);display:block}
+.cs .kv .it .v{font-weight:600}
+.cs p{font-size:12px;line-height:1.6;color:var(--g700)}
+.cs p:last-child{margin-bottom:0}
+
+/* Section box */
+.sbx{background:#fff;border:1.5px solid var(--g300);border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.sbx .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:4px}
+.sbx p:last-child{margin-bottom:0}
+
+/* Warning box */
+.warn-box{background:rgba(176,74,63,.06);border:1.5px solid rgba(176,74,63,.25);border-radius:10px;padding:14px 18px;margin:12px 0}
+.warn-box .tt{font-weight:600;font-size:14px;color:var(--rust);margin-bottom:4px}
+.warn-box p{font-size:13px;line-height:1.6}
+
+/* Pillar grid */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.pg{grid-template-columns:1fr}}
+.pg .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.pg .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px}
+.pg .it .tt{font-weight:600;color:var(--slate)}
+.pg .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Standard grid */
+.std{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:600px){.std{grid-template-columns:1fr}}
+.std .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.std .it .n{font-weight:600;color:var(--sky);display:block;margin-bottom:4px;font-size:13px}
+
+/* Quote card */
+.qt-box{background:var(--g150);border-radius:8px;padding:12px 16px;margin:8px 0;border-left:3px solid var(--sky);font-size:13px;font-style:italic;line-height:1.6}
+.qt-box .src{display:block;font-style:normal;font-size:11px;color:var(--g500);font-family:var(--mono);margin-top:4px}
+
+/* Compare box */
+.cb{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.cb .tt{font-weight:600;font-size:14px;color:var(--slate);margin-bottom:8px}
+.cb .gr{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:550px){.cb .gr{grid-template-columns:1fr}}
+.cb .p{font-size:12px;background:var(--g150);border-radius:8px;padding:10px 12px}
+.cb .p .hd{font-weight:600;color:var(--slate);display:block;margin-bottom:3px}
+
+/* Quote highlight bar */
+.qthigh{background:rgba(106,140,175,.08);border:1.5px solid rgba(106,140,175,.3);border-radius:10px;padding:14px 18px;margin:12px 0;text-align:center;font-size:14px;font-style:italic;color:var(--slate);line-height:1.6}
+
+/* Risk grid */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}@media(max-width:600px){.risk-grid{grid-template-columns:1fr}}
+.risk-grid .it{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 12px;font-size:12px}
+.risk-grid .it .rt{font-size:10px;font-weight:600;display:block;margin-bottom:2px;color:var(--rust)}
+.risk-grid .it .tt{font-weight:600;color:var(--slate)}
+.risk-grid .it .de{font-size:11px;color:var(--g500);margin-top:2px}
+
+/* Record item */
+.record{background:#fff;border:1.5px solid var(--g300);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+.record .yr{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--sky);min-width:60px;flex-shrink:0;margin-top:1px}
+.record .con{flex:1}
+.record .con .t{font-weight:600;font-size:13px;color:var(--slate)}
+.record .con .d{font-size:12px;color:var(--g500);margin-top:2px}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<a id="back-home" href="../../index.html#research-reports" style="position:fixed;top:14px;left:14px;z-index:999;display:inline-flex;align-items:center;border:1px solid #E5E2DE;border-radius:999px;background:rgba(255,255,255,.9);padding:7px 12px;color:#D97706;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(45,41,38,.08)">← 返回研究沉淀</a>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>孙哥研究报告</h1>
+  <div class="sub">中信溧阳路的造势王者——「点火器+砸盘王」的游资传奇</div>
+  <div class="mr">
+    <span>2026-05-29</span>
+    <span class="tag">#游资研究 #中信溧阳路 #三日战法</span>
+    <span class="tag-r">⚠️ 监管记录</span>
+    <span>弈沐投研</span>
+  </div>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">第一章</span>人物画像</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">本名</span><span class="v">孙煜（孙国栋为关联账户）</span></div>
+  <div class="it"><span class="l">市场称呼</span><span class="v">孙哥 / 游资一哥 / 金城武</span></div>
+  <div class="it"><span class="l">籍贯</span><span class="v">江苏/上海一带</span></div>
+  <div class="it"><span class="l">资金体量</span><span class="v">50亿~100亿（市场估算）</span></div>
+  <div class="it"><span class="l">核心席位</span><span class="v">中信证券上海溧阳路</span></div>
+  <div class="it"><span class="l">其他席位</span><span class="v">中信上海淮海中路 / 古北路 / 瑞金南路</span></div>
+  <div class="it"><span class="l">操作特点</span><span class="v" style="color:var(--clay)">点火器 + 砸盘王 · 三日操盘</span></div>
+  <div class="it"><span class="l">监管记录</span><span class="v" style="color:var(--rust)">2015证监会处罚 · 2018上交所限交易3月</span></div>
+</div>
+
+<div class="cb">
+  <div class="tt">与徐翔、赵老哥并称「游资江湖三剑客」</div>
+  <div class="gr">
+    <div class="p"><span class="hd">徐翔</span>宁波解放南路 · 敢死队总舵主 · 2015年入狱</div>
+    <div class="p"><span class="hd">孙哥</span>中信溧阳路 · 点火器+砸盘王 · 2018年限交易3月</div>
+    <div class="p"><span class="hd">赵老哥</span>银河绍兴 · 八年一万倍 · 稳定持续</div>
+  </div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">第二章</span>成长轨迹</h2>
+
+<div class="tl">
+  <div class="tli"><span class="yr">2013-2014</span><div class="tt">光大杭州庆春路起步</div><div class="de">早期积累阶段。</div></div>
+  <div class="tli"><span class="yr">2014下半年</span><div class="tt" style="color:var(--sky)">转战中信溧阳路</div><div class="de">「中国第一营业部」核心人物由此诞生。</div></div>
+  <div class="tli"><span class="yr">2015</span><div class="tt" style="color:var(--rust)">确立一哥 + 证监会处罚</div><div class="de">龙虎榜买入近<em>800亿</em>（全国第一）；9月被证监会处罚（操纵13支股票）。</div></div>
+  <div class="tli"><span class="yr">2018</span><div class="tt" style="color:var(--rust)">贵州燃气代价最重</div><div class="de warn"><em>高位接力后被上交所限制交易3个月</em>——最知名的监管处分之一。</div></div>
+  <div class="tli"><span class="yr">2020</span><div class="tt">魄力之战</div><div class="de">蚂蚁上市期间重仓君正集团，单次买入超<em>10亿</em>。</div></div>
+  <div class="tli"><span class="yr">2024-2026</span><div class="tt">持续活跃</div><div class="de">仍活跃于龙虎榜，向波段锁仓转型，AI科技大票为核心方向。</div></div>
+</div>
+
+<div class="warn-box">
+  <div class="tt">⚠️ 2015年证监会处罚详情</div>
+  <p>当事人孙国栋（关联账户孙煜），操纵13只股票，违法所得约1.47亿元，被没收违法所得并处罚。</p>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">第三章</span>交易体系深度解构</h2>
+
+<div class="qthigh">「点火造势，次日出局。」——孙哥三日操盘法核心</div>
+
+<h3>三日操盘法（核心战法）</h3>
+<div class="fb">
+  <div class="flow">
+    <span class="step" style="background:rgba(106,140,175,.15)">Day 1 资金优势封板</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(120,140,93,.15)">Day 2 看跟风盘</span>
+    <span class="arrow">→</span>
+    <span class="step" style="background:rgba(217,119,87,.15)">Day 3 拉板出货</span>
+  </div>
+  <div class="sub2">跟风多→加仓/锁仓　|　跟风少→洗盘　|　第三板往往都是出货板</div>
+</div>
+
+<div class="sbx">
+  <div class="tt">坊间总结</div>
+  <p>「第一板和第二板可追，第三板往往都是出货板。」——孙哥战法的市场共识</p>
+</div>
+
+<h3>五大打板秘诀</h3>
+<div class="std">
+  <div class="it"><span class="n">最强板</span>只打市场最强龙头（龙一）</div>
+  <div class="it"><span class="n">突破板</span>偏好突破临界点的行情</div>
+  <div class="it"><span class="n">顺势板</span>主线热点短期分歧末端、情绪转折信号出现时买入</div>
+  <div class="it"><span class="n">转势板</span>短线情绪濒临调整末端时逆势拉板，溢价超高</div>
+  <div class="it"><span class="n">共振板</span>形态+时间节点+题材三者共振</div>
+  <div class="it"><span class="n">砸盘王</span>次日冲高快速出货，不恋战</div>
+</div>
+
+<h3>操作周期演变</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--rust)">
+    <span class="rt" style="color:var(--rust)">2015-2020</span>
+    <span class="tt">超短（T+1为主）</span>
+    <div class="de">砸盘王、点火器风格为主，次日出货</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">2021年至今</span>
+    <span class="tt">短线+波段混合</span>
+    <div class="de">向波段锁仓转型，适应资金体量和监管环境</div>
+  </div>
+</div>
+
+<h3>与其他游资的关系</h3>
+<div class="cb">
+  <div class="gr">
+    <div class="p"><span class="hd">与赵老哥</span>经常协同作战，东方通信等经典战役同台竞技，堪称「黄金搭档」</div>
+    <div class="p"><span class="hd">与徐翔</span>竞争关系（同一席位曾并存），徐翔2015年入狱后被视为接棒「游资一哥」</div>
+  </div>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">第四章</span>经典战役复盘</h2>
+
+<h3>特力A（2015年）—— 逆势传奇</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">特力A · 股灾逆势</span><span class="tag2">2015年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">股价</span><span class="v" style="color:var(--clay)">9.88元 → 108元</span></div>
+    <div class="it"><span class="l">涨幅</span><span class="v" style="color:var(--clay)">翻逾10倍</span></div>
+    <div class="it"><span class="l">背景</span><span class="v">股灾中逆势参与</span></div>
+  </div>
+  <p>股灾背景下逆势参与特力A，成为逆势传奇的代表战役。</p>
+</div>
+
+<h3>东方通信（2019年）—— 黄金搭档</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">东方通信 · 5G概念</span><span class="tag2">2019年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">涨幅</span><span class="v" style="color:var(--clay)">翻10倍</span></div>
+    <div class="it"><span class="l">协同</span><span class="v">孙哥+赵老哥共同打造</span></div>
+  </div>
+  <p>与赵老哥同台竞技，5G概念翻10倍的经典战役，「黄金搭档」的代表作。</p>
+</div>
+
+<h3>君正集团（2020年）—— 魄力之战</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">君正集团 · 蚂蚁上市</span><span class="tag2">2020年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">单次买入</span><span class="v" style="color:var(--clay)">超10亿</span></div>
+    <div class="it"><span class="l">背景</span><span class="v">蚂蚁集团上市期间</span></div>
+  </div>
+  <p>体现孙哥在大题材上的重仓魄力，单次出手超10亿。</p>
+</div>
+
+<h3>贵州燃气（2018年）—— 代价最重</h3>
+<div class="cs">
+  <div class="hd"><span class="nm">贵州燃气 · 高位接力</span><span class="tag2" style="background:rgba(176,74,63,.1);color:var(--rust)">2018年</span></div>
+  <div class="kv">
+    <div class="it"><span class="l">结果</span><span class="v" style="color:var(--rust)">被上交所限制交易3个月</span></div>
+  </div>
+  <p>高位接力后被限制交易3个月——即便是顶级游资，跟风贵州燃气也付出了惨重代价。</p>
+</div>
+
+<h3>2026年上榜记录</h3>
+<div class="pg">
+  <div class="it">
+    <span class="rt" style="color:var(--sky)">2026.5</span>
+    <span class="tt">龙星科技</span>
+    <div class="de">净买额约1998万</div>
+  </div>
+  <div class="it">
+    <span class="rt" style="color:var(--sky)">2026.4</span>
+    <span class="tt">中材科技</span>
+    <div class="de">净买额约3.34亿</div>
+  </div>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">第五章</span>龙虎榜数据</h2>
+
+<div class="bio">
+  <div class="it"><span class="l">核心席位</span><span class="v">中信证券上海溧阳路</span></div>
+  <div class="it"><span class="l">年度买入额</span><span class="v" style="color:var(--clay)">近800亿（2015年，全国第一）</span></div>
+  <div class="it"><span class="l">市场地位</span><span class="v">「中国第一营业部」</span></div>
+  <div class="it"><span class="l">其他席位</span><span class="v">溧阳路/淮海路/古北路/瑞金南路</span></div>
+</div>
+
+<h3>中信溧阳路历史记录（2015年）</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--clay)">
+    <span class="rt" style="color:var(--clay)">年度买入额</span>
+    <span class="tt" style="font-size:18px">近800亿</span>
+    <div class="de">2015年龙虎榜数据，全国第一</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">市场地位</span>
+    <span class="tt">中国第一营业部</span>
+    <div class="de">中信溧阳路由此得名</div>
+  </div>
+</div>
+
+<!-- ===== CH6 ===== -->
+<h2><span class="num">第六章</span>核心语录</h2>
+
+<div class="sbx">
+  <div class="qt-box">「节奏永远是超短的核心，主线就是赚钱第一选择。」</div>
+  <div class="qt-box" style="border-left-color:var(--olive)">「控仓就是为了更好地把握节奏，防守则是最高级的进攻。」</div>
+  <div class="qt-box" style="border-left-color:var(--clay)">「热门题材一次分歧是机会，题材高潮后率先出货。」</div>
+  <div class="qt-box" style="border-left-color:var(--rust)">「如果做亏一小笔，降仓操作；如果大亏一笔，休息一天。」</div>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h2><span class="num">第七章</span>对散户的启示与风险</h2>
+
+<h3>可借鉴原则</h3>
+<div class="pg">
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">主线思维</span>
+    <div class="de">「主线就是赚钱第一选择」</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--olive)">
+    <span class="rt" style="color:var(--olive)">⭐⭐⭐</span>
+    <span class="tt">仓位纪律</span>
+    <div class="de">「做亏降仓，大亏休息」</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">题材节奏</span>
+    <div class="de">「热门题材分歧是机会，高潮后要出货」</div>
+  </div>
+  <div class="it" style="border-left:3px solid var(--sky)">
+    <span class="rt" style="color:var(--sky)">⭐⭐</span>
+    <span class="tt">节奏感</span>
+    <div class="de">「节奏永远是超短的核心」</div>
+  </div>
+</div>
+
+<h3>跟风风险</h3>
+<div class="risk-grid">
+  <div class="it">
+    <span class="rt">风险一</span>
+    <span class="tt">次日砸盘</span>
+    <div class="de">「砸盘王」标签，次日冲高后快速下砸</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险二</span>
+    <span class="tt">贵州燃气教训</span>
+    <div class="de">孙哥本人因跟风贵州燃气被限制交易3个月</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险三</span>
+    <span class="tt">席位迷惑</span>
+    <div class="de">中信溧阳路多路游资并存，难以区分</div>
+  </div>
+  <div class="it">
+    <span class="rt">风险四</span>
+    <span class="tt">跟风即被套</span>
+    <div class="de">第三板往往都是出货板，散户追高极大概率接盘</div>
+  </div>
+</div>
+
+<!-- ===== CH8 ===== -->
+<h2><span class="num">第八章</span>全游资生态定位</h2>
+
+<div class="tw">
+<table>
+<thead><tr><th>游资</th><th>席位</th><th>操作周期</th><th>核心标签</th><th>口碑</th></tr></thead>
+<tbody>
+<tr><td><strong>孙哥</strong></td><td>中信溧阳路/淮海路</td><td>超短→波段</td><td style="color:var(--clay)">点火器/砸盘王</td><td>高知名度</td></tr>
+<tr><td>徐翔</td><td>银河宁波解放南路</td><td>短中</td><td>敢死队总舵主</td><td style="color:var(--rust)">已入狱</td></tr>
+<tr><td>赵老哥</td><td>银河绍兴/华泰浙江</td><td>超短龙头</td><td>八年一万倍</td><td>稳定</td></tr>
+<tr><td>章盟主</td><td>国泰君安上海江苏路</td><td>波段趋势</td><td>百亿善庄</td><td>善庄</td></tr>
+<tr><td>佛山无影脚</td><td>光大佛山绿景路</td><td>T+1极短</td><td>砸盘王</td><td style="color:var(--rust)">砸盘</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH9 ===== -->
+<h2><span class="num">第九章</span>研究结论</h2>
+
+<div class="sbx">
+  <div class="tt">孙哥的独特定位：点火造势能力最强的游资传奇</div>
+  <p style="font-size:13px;">
+    ① <strong>点火造势能力最强</strong>：多次主导打造连板妖股，市场影响力极大<br>
+    ② <strong>与赵老哥的协同效应</strong>：黄金搭档，可作为市场情绪共振的验证信号<br>
+    ③ <strong>贵州燃气教训</strong>：即便是顶级游资，跟风也有巨大风险<br>
+    ④ <strong>向波段转型</strong>：适应资金体量和监管环境变化的进化代表
+  </p>
+</div>
+
+<div class="sbx">
+  <div class="tt">对弈沐的实战价值</div>
+  <p style="font-size:13px;">
+    → 孙哥+赵老哥同时出现在某标的 → 市场主线确认信号极强<br>
+    → 孙哥参与的大票趋势股 → 可参考其波段持仓逻辑<br>
+    → 「节奏感+主线」核心逻辑 → 与弈沐 trading-core 情绪周期框架高度一致<br>
+    → 孙哥砸盘王特质 → 跟风孙哥上榜标的需极度谨慎
+  </p>
+</div>
+
+<hr>
+<footer>
+⚠️ 本报告基于证监会处罚决定书、上交所公告、界面新闻、新浪财经等公开资料整理。孙哥部分背景信息存在争议（孙煜vs孙国栋）。报告不构成任何投资建议，仅作为游资对手行为研究之用。<br>
+<span style="font-family:var(--mono);font-size:11px;">弈沐资本 · 投研部 · 2026-05-29</span>
+</footer>
+</div><!-- /page -->
+<script>(function(){var from=new URLSearchParams(location.search).get('from');if(from&&/^[A-Za-z0-9_-]+$/.test(from)){document.getElementById('back-home').href='../../index.html#'+from;}})();</script>
+</body>
+</html>

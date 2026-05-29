@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六月板块TOP3及个股最终推荐方案</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--sky:#6A8CAF;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:1000px;margin:0 auto}
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:17px;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:16px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);white-space:nowrap}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150)}
+tr:hover td{background:rgba(106,140,175,.04)}
+.tb{font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tb-g{background:rgba(120,140,93,.12);color:var(--olive);}
+.tb-b{background:rgba(106,140,175,.12);color:var(--sky)}
+.tb-gy{background:var(--g150);color:var(--g700)}
+.tb-r{background:rgba(176,74,63,.12);color:var(--rust)}
+.tb-o{background:rgba(217,119,87,.12);color:var(--clay)}
+
+/* Meta info bar */
+.meta-bar{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-bottom:28px;padding:12px 16px;background:var(--g150);border-radius:10px;border:1.5px solid var(--g300)}
+.meta-bar span{font-family:var(--mono)}
+
+/* Sector rank cards */
+.sector-card{background:#fff;border:1.5px solid var(--g300);border-radius:14px;padding:20px 22px;margin-bottom:20px;position:relative;overflow:hidden}
+.sector-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.sector-card.gold{border-color:var(--clay)}
+.sector-card.gold::before{background:var(--clay)}
+.sector-card.silver{border-color:var(--g500)}
+.sector-card.silver::before{background:var(--g500)}
+.sector-card.bronze{border-color:var(--oat)}
+.sector-card.bronze::before{background:#C4956A}
+.sector-card .sector-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.sector-card .sector-hd .name{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--slate)}
+.sector-card .sector-hd .badges{display:flex;gap:6px;flex-wrap:wrap}
+.sector-card .score-chip{font-family:var(--mono);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.score-chip.high{background:rgba(120,140,93,.15);color:var(--olive)}
+.score-chip.mid{background:rgba(106,140,175,.15);color:var(--sky)}
+.score-chip.low{background:rgba(217,119,87,.15);color:var(--clay)}
+
+/* Score table mini */
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:600px){.score-row{grid-template-columns:repeat(2,1fr)}}
+.score-item{background:var(--g150);border-radius:8px;padding:8px 10px;text-align:center}
+.score-item .dim{font-size:10px;font-family:var(--mono);text-transform:uppercase;color:var(--g500);letter-spacing:.06em}
+.score-item .sc{font-size:20px;font-weight:700;color:var(--slate);font-family:var(--mono)}
+.score-item .sc span{font-size:11px;font-weight:400;color:var(--g500)}
+.score-item .sc.high{color:var(--olive)}
+.score-item .sc.low{color:var(--clay)}
+
+/* Decision box */
+.decision{background:rgba(120,140,93,.07);border:1.5px solid rgba(120,140,93,.25);border-radius:10px;padding:12px 16px;margin-bottom:10px;font-size:13px;line-height:1.6}
+.decision strong{color:var(--slate)}
+
+/* Stock table */
+.stock-table{width:100%;border-collapse:collapse;font-size:13px}
+.stock-table th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);background:var(--g150);padding:7px 10px;text-align:left}
+.stock-table td{padding:9px 10px;border-bottom:1px solid var(--g150);vertical-align:top}
+.stock-table tr:last-child td{border-bottom:0}
+.stock-table tr:hover td{background:rgba(106,140,175,.04)}
+
+/* Stock card row */
+.stock-card{background:#fff;border:1.5px solid var(--g300);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px}
+.stock-card .rank{font-size:28px;flex-shrink:0;line-height:1}
+.stock-card .con{flex:1}
+.stock-card .nm{font-weight:700;font-size:15px;color:var(--slate)}
+.stock-card .tag3{display:inline-block;margin-left:8px;font-size:10px;font-family:var(--mono);padding:1px 7px;border-radius:4px;vertical-align:middle}
+.tag3.core{background:rgba(120,140,93,.15);color:var(--olive)}
+.tag3.ela{background:rgba(106,140,175,.15);color:var(--sky)}
+.tag3.obs{background:var(--g150);color:var(--g500)}
+.stock-card .re{font-size:12px;color:var(--g700);margin-top:4px;line-height:1.5}
+.stock-card .sc{text-align:right;flex-shrink:0;font-size:12px;line-height:1.5}
+.stock-card .sc .stars{color:var(--clay);font-size:13px}
+.stock-card .sc .tag4{font-size:10px;font-family:var(--mono);padding:1px 7px;border-radius:4px;display:inline-block;margin-top:3px}
+
+/* Timeline */
+.tl-wrap{background:#fff;border:1.5px solid var(--g300);border-radius:14px;padding:20px 24px;margin:16px 0}
+.tl-title{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--slate);margin-bottom:16px;text-align:center}
+.tl-track{display:flex;align-items:flex-start;gap:0;position:relative;padding:0 0 16px 0}
+.tl-track::before{content:'';position:absolute;left:12px;right:12px;top:22px;height:2px;background:var(--g300)}
+.tl-node{flex:1;text-align:center;position:relative;z-index:1}
+.tl-dot{width:24px;height:24px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--ivory)}
+.tl-node.green .tl-dot{background:var(--olive);color:#fff}
+.tl-node.olive .tl-dot{background:rgba(120,140,93,.2);color:var(--olive);border-color:var(--olive)}
+.tl-node.clay .tl-dot{background:rgba(217,119,87,.15);color:var(--clay);border-color:var(--clay)}
+.tl-node.rust .tl-dot{background:rgba(176,74,63,.15);color:var(--rust);border-color:var(--rust)}
+.tl-node .tl-date{font-family:var(--mono);font-size:10px;color:var(--g500);display:block}
+.tl-node .tl-evt{font-size:11px;font-weight:600;color:var(--slate);display:block;margin-top:2px;line-height:1.3}
+.tl-node .tl-sub{font-size:10px;color:var(--g500);display:block;margin-top:1px}
+.tl-phases{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(max-width:700px){.tl-phases{grid-template-columns:1fr}}
+.tl-phase{padding:10px 12px;border-radius:8px;font-size:12px}
+.tl-phase .ph-hd{font-weight:700;color:var(--slate);margin-bottom:3px}
+.tl-phase.early{background:rgba(120,140,93,.08);border:1px solid rgba(120,140,93,.2)}
+.tl-phase.mid{background:rgba(106,140,175,.08);border:1px solid rgba(106,140,175,.2)}
+.tl-phase.late{background:rgba(217,119,87,.08);border:1px solid rgba(217,119,87,.2)}
+
+/* Risk table */
+.risk-card{background:#fff;border:1.5px solid var(--g300);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.risk-card table{width:100%;border-collapse:collapse}
+.risk-card th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);background:var(--g150);padding:8px 12px;text-align:left}
+.risk-card td{padding:8px 12px;border-bottom:1px solid var(--g150);font-size:12px;line-height:1.5}
+.risk-card tr:last-child td{border-bottom:0}
+.risk-card tr:hover td{background:rgba(106,140,175,.04)}
+.risk-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:4px;white-space:nowrap}
+.risk-badge.high{background:rgba(176,74,63,.1);color:var(--rust)}
+.risk-badge.mid{background:rgba(217,119,87,.1);color:var(--clay)}
+.risk-badge.low{background:rgba(106,140,175,.1);color:var(--sky)}
+
+/* Final overview diagram */
+.overview{background:var(--slate);border-radius:14px;padding:28px 24px;text-align:center;margin:16px 0}
+.overview .ov-hd{font-family:var(--serif);font-size:20px;color:var(--ivory);margin-bottom:6px}
+.overview .ov-sub{font-size:12px;color:var(--g300);margin-bottom:24px;font-family:var(--mono)}
+.overview .ov-sectors{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.ov-sec{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 18px;min-width:160px;text-align:center}
+.ov-sec .pri{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.ov-sec.p1 .pri{color:var(--clay)}
+.ov-sec.p2 .pri{color:var(--g300)}
+.ov-sec.p3 .pri{color:#C4956A}
+.ov-sec .nm{font-size:15px;font-weight:700;color:#fff;display:block}
+.ov-sec .sub2{font-size:11px;color:var(--g300);display:block;margin-top:2px}
+.ov-stocks{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.ov-stock{background:rgba(255,255,255,.08);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--ivory);font-family:var(--mono)}
+.ov-stock .lbl{font-size:9px;color:var(--g300);display:block}
+.ov-stock .nm2{font-weight:700;color:#fff;display:block}
+.ov-extra{font-size:11px;color:var(--g300);margin-top:16px;line-height:1.6}
+
+/* Disclaimer */
+.disc{background:rgba(176,74,63,.06);border:1.5px solid rgba(176,74,63,.2);border-radius:10px;padding:14px 18px;margin-top:16px;font-size:12px;color:var(--g700);line-height:1.6}
+.disc strong{color:var(--rust)}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部 · 六月策略</div>
+  <h1>六月板块 TOP 3 及个股最终推荐方案</h1>
+  <div class="sub">基于四维分析师评分 + 多头论证，由研究主管裁定的六月板块 TOP3 及 6 只精选个股配置方案</div>
+  <div class="mr">
+    <span class="tag">数据截止 2026-05-29 收盘</span>
+    <span class="tag">裁决方案</span>
+    <span>弈沐资本投研团队</span>
+  </div>
+</div>
+
+<div class="meta-bar">
+  <span>📅 协作流程：4位分析师评分 → 多头论证 → 研究主管裁决 → 最终方案</span>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h2><span class="num">一、</span>板块裁定：TOP 3 排序</h2>
+
+<!-- Gold: 商业航天/6G -->
+<div class="sector-card gold">
+  <div class="sector-hd">
+    <div>
+      <div class="name">🥇 商业航天 / 6G 大主线</div>
+      <div style="font-size:13px;color:var(--g500);margin-top:2px">四维加权 <strong style="color:var(--olive);font-size:18px">8.25</strong> 分 · 配置优先级：<strong style="color:var(--clay)">第 1 优先</strong></div>
+    </div>
+    <div class="badges">
+      <span class="score-chip high">催化 ★★★★★</span>
+      <span class="score-chip high">资金 ★★★★★</span>
+    </div>
+  </div>
+  <div class="score-row">
+    <div class="score-item"><div class="dim">技术面</div><div class="sc">7<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">资金面</div><div class="sc high">9<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">基本面</div><div class="sc">7<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">催化面</div><div class="sc high">10<span>/10</span></div></div>
+  </div>
+  <div style="font-size:12px;color:var(--g500);margin-bottom:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em">分析师核心判断</div>
+  <ul style="font-size:13px;line-height:1.6;margin-bottom:10px">
+    <li><strong>技术面 7/10：</strong>亨通光电强势涨停+中际旭创多头排列，再升大跌拖累一致性</li>
+    <li><strong>资金面 9/10：</strong><strong style="color:var(--olive)">+44.5亿资金总量冠绝全市场</strong>，亨通+25.66亿、中际+20.19亿双龙头</li>
+    <li><strong>基本面 7/10：</strong>中际旭创ROE 44%极其优质，但多数标的业绩兑现不足</li>
+    <li><strong>催化面 10/10：</strong><strong style="color:var(--olive)">6月下旬大会+SpaceX+Kuiper+蓝箭IPO，全球航天催化共振超级月</strong></li>
+  </ul>
+  <div class="decision">
+    <strong>裁决理由：</strong>资金总量+催化密度双料冠军。虽然有部分个股波动大（再升-9.99%），但核心标的亨通/中际的资金量和趋势强度足以支撑板块主线地位。<strong>6月最不能错过的方向。</strong><br>
+    <strong style="color:var(--clay)">节奏建议：</strong>6月上旬逢回调布局，6月下旬大会前后进入高潮期。
+  </div>
+</div>
+
+<!-- Silver: 火电/电力 -->
+<div class="sector-card silver">
+  <div class="sector-hd">
+    <div>
+      <div class="name">🥈 火电 / 电力（迎峰度夏）</div>
+      <div style="font-size:13px;color:var(--g500);margin-top:2px">四维加权 <strong style="color:var(--sky);font-size:18px">8.0</strong> 分 · 配置优先级：<strong style="color:var(--sky)">第 2 优先</strong></div>
+    </div>
+    <div class="badges">
+      <span class="score-chip mid">技术面最强</span>
+      <span class="score-chip mid">全线加速</span>
+    </div>
+  </div>
+  <div class="score-row">
+    <div class="score-item"><div class="dim">技术面</div><div class="sc high">9<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">资金面</div><div class="sc">8<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">基本面</div><div class="sc high">8<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">催化面</div><div class="sc">7<span>/10</span></div></div>
+  </div>
+  <div style="font-size:12px;color:var(--g500);margin-bottom:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em">分析师核心判断</div>
+  <ul style="font-size:13px;line-height:1.6;margin-bottom:10px">
+    <li><strong>技术面 9/10：</strong><strong style="color:var(--olive)">全线上升加速</strong>，板块一致性最强，大唐+7.88%放量突破</li>
+    <li><strong>资金面 8/10：</strong>全板块净流入，大唐热搜第1（389万），资金最均匀健康</li>
+    <li><strong>基本面 8/10：</strong>大唐净利+29%，低估值高股息，迎峰度夏旺季确定</li>
+    <li><strong>催化面 7/10：</strong>发改委保供会议催化，但偏常规季节性事件，预期差有限</li>
+  </ul>
+  <div class="decision" style="background:rgba(106,140,175,.07);border-color:rgba(106,140,175,.25)">
+    <strong>裁决理由：</strong><strong style="color:var(--sky)">技术面+资金面的确定性最高</strong>。全线上升加速、全板块净流入、没有"拖后腿"的个股，是目前盘面最健康的板块。但催化偏常规，爆发力不如航天主线。<br>
+    <strong style="color:var(--sky)">节奏建议：</strong>6月上旬迎峰度夏行情率先启动，优先布局。建议在商业航天高潮前完成电力仓位的配置调整。
+  </div>
+</div>
+
+<!-- Bronze: 消费电子 -->
+<div class="sector-card bronze">
+  <div class="sector-hd">
+    <div>
+      <div class="name">🥉 消费电子</div>
+      <div style="font-size:13px;color:var(--g500);margin-top:2px">四维加权 <strong style="color:#C4956A;font-size:18px">7.75</strong> 分 · 配置优先级：<strong style="color:#C4956A">第 3 优先</strong></div>
+    </div>
+    <div class="badges">
+      <span class="score-chip low">催化最早</span>
+      <span class="score-chip low">内部严重分化</span>
+    </div>
+  </div>
+  <div class="score-row">
+    <div class="score-item"><div class="dim">技术面</div><div class="sc high">8<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">资金面</div><div class="sc">7<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">基本面</div><div class="sc high">8<span>/10</span></div></div>
+    <div class="score-item"><div class="dim">催化面</div><div class="sc high">8<span>/10</span></div></div>
+  </div>
+  <div style="font-size:12px;color:var(--g500);margin-bottom:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em">分析师核心判断</div>
+  <ul style="font-size:13px;line-height:1.6;margin-bottom:10px">
+    <li><strong>技术面 8/10：</strong>蓝思科技强势多头+北京君正资金驱动，但兆易-73亿拖累</li>
+    <li><strong>资金面 7/10：</strong>排除兆易后核心标的+34亿，但兆易资金出逃压制情绪</li>
+    <li><strong>基本面 8/10：</strong>立讯精密优质（ROE 21%），CES展催化确定</li>
+    <li><strong>催化面 8/10：</strong>6月上旬CES Asia+AI硬件新品，催化时点最早</li>
+  </ul>
+  <div class="decision" style="background:rgba(217,119,87,.07);border-color:rgba(217,119,87,.25)">
+    <strong>裁决理由：</strong>催化时间最早（6/10 CES Asia），但内部严重分化——<strong style="color:var(--rust)">兆易创新-73.57亿是全市场最大资金流出</strong>。<strong>适合精选个股而非押注板块整体。</strong><br>
+    <strong style="color:var(--clay)">节奏建议：</strong>6月上旬随CES展催化做个股行情，中旬后逐步向航天/6G切换。
+  </div>
+</div>
+
+<!-- ===== CH2 ===== -->
+<h2><span class="num">二、</span>个股裁定：6只精选</h2>
+
+<h3>核心仓位（建议配置比例 40-50%）</h3>
+
+<div class="stock-card">
+  <div class="rank">🥇</div>
+  <div class="con">
+    <div class="nm">亨通光电 <span class="tag3 core">核心仓位</span></div>
+    <div class="re" style="margin-top:6px"><strong style="color:var(--olive)">全市场资金+热度双料王</strong>（+25.66亿/171万热度），6G+卫星+海洋通信三线核心，今日+9.42%封涨停确认主升浪。6月下旬大会最直接受益标的，板块旗舰。</div>
+  </div>
+  <div class="sc">
+    <div class="stars">⭐⭐⭐⭐⭐</div>
+    <span class="tag4" style="background:rgba(120,140,93,.15);color:var(--olive)">第1优先</span>
+  </div>
+</div>
+
+<div class="stock-card">
+  <div class="rank">🥇</div>
+  <div class="con">
+    <div class="nm">中际旭创 <span class="tag3 core">核心仓位</span></div>
+    <div class="re" style="margin-top:6px"><strong style="color:var(--olive)">基本面全调研最强</strong>（ROE 44%/净利+109%），强势多头排列（价格在所有均线上方），资金+20.19亿。三线催化（AI算力+卫星通信+6G），趋势最确定的机构重仓股。</div>
+  </div>
+  <div class="sc">
+    <div class="stars">⭐⭐⭐⭐⭐</div>
+    <span class="tag4" style="background:rgba(120,140,93,.15);color:var(--olive)">第1优先</span>
+  </div>
+</div>
+
+<div class="stock-card">
+  <div class="rank">🥈</div>
+  <div class="con">
+    <div class="nm">北京君正 <span class="tag3 core">核心仓位</span></div>
+    <div class="re" style="margin-top:6px"><strong style="color:var(--sky)">消费电子板块资金王</strong>（+17.85亿），CES Asia AI硬件端侧催化直接受益，国产芯片设计龙头。进攻弹性最大，适合作板块先锋配置。</div>
+  </div>
+  <div class="sc">
+    <div class="stars">⭐⭐⭐⭐⭐</div>
+    <span class="tag4" style="background:rgba(106,140,175,.15);color:var(--sky)">消费电子首选</span>
+  </div>
+</div>
+
+<h3>弹性仓位（建议配置比例 20-30%）</h3>
+
+<div class="stock-card">
+  <div class="rank">🥈</div>
+  <div class="con">
+    <div class="nm">大唐发电 <span class="tag3 ela">弹性仓位</span></div>
+    <div class="re" style="margin-top:6px"><strong style="color:var(--sky)">全市场热搜第1</strong>（389万热度），上升加速形态最强，迎峰度夏行情情绪龙头。今日+7.88%放量突破，技术面板块最强。</div>
+  </div>
+  <div class="sc">
+    <div class="stars">⭐⭐⭐⭐</div>
+    <span class="tag4" style="background:rgba(106,140,175,.15);color:var(--sky)">电力首选</span>
+  </div>
+</div>
+
+<div class="stock-card">
+  <div class="rank">🥈</div>
+  <div class="con">
+    <div class="nm">华电辽能 <span class="tag3 ela">弹性仓位</span></div>
+    <div class="re" style="margin-top:6px"><strong style="color:var(--sky)">火电板块资金最强</strong>（+3.65亿），弹性大于大唐，资金持续流入无分歧，迎峰度夏高弹性标的。</div>
+  </div>
+  <div class="sc">
+    <div class="stars">⭐⭐⭐⭐</div>
+    <span class="tag4" style="background:rgba(106,140,175,.15);color:var(--sky)">电力备选</span>
+  </div>
+</div>
+
+<h3>观察 / 备选（建议配置比例 10-20%）</h3>
+
+<div class="tw">
+<table class="stock-table">
+<thead><tr><th>个股</th><th>入选理由</th><th>观察节点</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>立讯精密（002475）</strong></td>
+  <td>三题材全覆盖标的，催化密度最高</td>
+  <td><span style="color:var(--sky)">扩散三角形方向确认后介入</span></td>
+</tr>
+<tr>
+  <td><strong>蓝思科技（300433）</strong></td>
+  <td>消费电子技术面最强（多头排列）</td>
+  <td><span style="color:var(--clay)">RSI 76偏强，等回调至MA5附近</span></td>
+</tr>
+<tr>
+  <td><strong>申能股份（600642）</strong></td>
+  <td>低估值防御型，电力底仓配置</td>
+  <td><span style="color:var(--g500)">稳健持有型，短期爆发力有限</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH3 ===== -->
+<h2><span class="num">三、</span>6月时间节奏与操作框架</h2>
+
+<div class="tl-wrap">
+  <div class="tl-title">📅 六月操作时间轴</div>
+  <div class="tl-track">
+    <div class="tl-node green">
+      <div class="tl-dot">🟢</div>
+      <div class="tl-date">6/1</div>
+      <div class="tl-evt">消费电子 CES</div>
+      <div class="tl-sub">AI展会开幕</div>
+    </div>
+    <div class="tl-node olive">
+      <div class="tl-dot">🟡</div>
+      <div class="tl-date">6/10</div>
+      <div class="tl-evt">迎峰度夏</div>
+      <div class="tl-sub">电力行情启动</div>
+    </div>
+    <div class="tl-node clay">
+      <div class="tl-dot">🔴</div>
+      <div class="tl-date">6/20</div>
+      <div class="tl-evt">6G/航天大会</div>
+      <div class="tl-sub">催化高潮</div>
+    </div>
+    <div class="tl-node rust">
+      <div class="tl-dot">🔴</div>
+      <div class="tl-date">6/30</div>
+      <div class="tl-evt">月度收官</div>
+      <div class="tl-sub">止盈观察</div>
+    </div>
+  </div>
+  <div class="tl-phases">
+    <div class="tl-phase early">
+      <div class="ph-hd">🔥 6月上旬</div>
+      <strong>优先配置消费电子+电力</strong><br>
+      北京君正/CES催化最先启动，大唐发电/华电辽能迎峰度夏行情先行
+    </div>
+    <div class="tl-phase mid">
+      <div class="ph-hd">🔧 6月中旬</div>
+      <strong>消费电子逐步止盈</strong><br>
+      逢回调加仓航天/6G核心标的（亨通光电+中际旭创）
+    </div>
+    <div class="tl-phase late">
+      <div class="ph-hd">🚀 6月下旬</div>
+      <strong>航天/6G大会高潮</strong><br>
+      持有核心仓位；电力仓位观察止盈信号
+    </div>
+  </div>
+</div>
+
+<!-- ===== CH4 ===== -->
+<h2><span class="num">四、</span>关键风险提示</h2>
+
+<div class="risk-card">
+<table>
+<thead><tr><th>风险</th><th>影响</th><th>应对</th></tr></thead>
+<tbody>
+<tr>
+  <td>兆易创新-73亿资金出逃扩散</td>
+  <td><span class="risk-badge high">高</span> 消费电子整体情绪承压</td>
+  <td style="color:var(--olive)">消费电子配置聚焦北京君正+立讯，回避兆易</td>
+</tr>
+<tr>
+  <td>亨通光电/大唐发电短线过热</td>
+  <td><span class="risk-badge mid">中</span> 追高后回调风险</td>
+  <td style="color:var(--olive)">逢回调建仓，不追涨停次日开盘</td>
+</tr>
+<tr>
+  <td>6G/航天大会预期落空</td>
+  <td><span class="risk-badge high">高</span> 板块情绪退潮</td>
+  <td style="color:var(--clay)">6/20前若催化不及预期，减仓至半仓</td>
+</tr>
+<tr>
+  <td>AI应用超卖修复不及预期</td>
+  <td><span class="risk-badge mid">中</span> 市场情绪继续下行</td>
+  <td style="color:var(--olive)">暂不左侧抄底，等待右侧信号</td>
+</tr>
+<tr>
+  <td>电力板块"买预期卖事实"</td>
+  <td><span class="risk-badge mid">中</span> 迎峰度夏落地后兑现</td>
+  <td style="color:var(--clay)">6月中旬前逐步减仓电力仓位</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== CH5 ===== -->
+<h2><span class="num">五、</span>最终推荐一览</h2>
+
+<div class="overview">
+  <div class="ov-hd">六月 TOP 3 板块及个股配置全景</div>
+  <div class="ov-sub">2026-05-29 收盘 · 弈沐资本投研裁决</div>
+
+  <div class="ov-sectors">
+    <div class="ov-sec p1">
+      <span class="pri">🥇 配置第1优先</span>
+      <span class="nm">商业航天/6G</span>
+      <span class="sub2">四维加权 8.25分</span>
+    </div>
+    <div class="ov-sec p2">
+      <span class="pri">🥈 配置第2优先</span>
+      <span class="nm">火电/电力</span>
+      <span class="sub2">四维加权 8.0分</span>
+    </div>
+    <div class="ov-sec p3">
+      <span class="pri">🥉 配置第3优先</span>
+      <span class="nm">消费电子</span>
+      <span class="sub2">四维加权 7.75分</span>
+    </div>
+  </div>
+
+  <div class="ov-stocks">
+    <div class="ov-stock"><span class="lbl">核心</span><span class="nm2">亨通光电</span></div>
+    <div class="ov-stock"><span class="lbl">核心</span><span class="nm2">中际旭创</span></div>
+    <div class="ov-stock"><span class="lbl">核心</span><span class="nm2">北京君正</span></div>
+    <div class="ov-stock"><span class="lbl">弹性</span><span class="nm2">大唐发电</span></div>
+    <div class="ov-stock"><span class="lbl">弹性</span><span class="nm2">华电辽能</span></div>
+  </div>
+
+  <div class="ov-extra">
+    <strong style="color:var(--clay)">⚡ 备选：</strong>立讯精密（扩散三角形突破后确认）<br>
+    <strong style="color:var(--sky)">🛡️ 备选：</strong>申能股份（稳健防御配置）<br>
+    <strong style="color:var(--g300)">📐 备选：</strong>蓝思科技（回调至MA5介入）
+  </div>
+</div>
+
+<div class="disc">
+  <strong>⚠️ 重要声明：</strong>以上内容由弈沐资本投研团队基于公开市场信息整理生成，经过多角色辩论与裁决流程。所有分析仅供参考，不构成任何投资建议或个股推荐。投资有风险，决策需谨慎。<strong>买入前请自行结合自身交易系统（W1/W2验证、情绪周期判断、仓位管理规则）做最终决策。</strong>
+</div>
+
+<hr>
+<footer>
+弈沐资本 · 投研部 · 2026-05-29<br>
+<span style="font-family:var(--mono);font-size:11px">june-top3 团队协作 · 研究主管裁决</span>
+</footer>
+</div><!-- /page -->
+</body>
+</html>

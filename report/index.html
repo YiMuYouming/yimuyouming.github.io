@@ -7,95 +7,103 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg4:#F5F2EE;--border:#E5E2DE;--border-light:#F0EEEC;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
+:root{--bg:#F7F5F3;--card:#FFFFFF;--paper:#FBFAF8;--soft:#F5F2EE;--line:#E5E2DE;--line2:#F0EEEC;--text:#2D2926;--muted:#5C5652;--faint:#8A8480;--accent:#D97706;--accent2:#B45309;--green:#059669;--blue:#2563EB;--purple:#7C3AED}
 body{font:15px/1.6 system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-a:hover{color:var(--accent-hover)}
-.page{max-width:960px;margin:0 auto;padding:32px 32px 72px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border-light)}
-.back{font-size:13px;color:var(--text2)}
-.eyebrow{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.18em;margin-bottom:6px}
-h1{font-family:'Noto Serif SC',serif;font-size:30px;line-height:1.25;color:var(--text);font-weight:700}
-.desc{font-size:13px;color:var(--text3);margin-top:8px;max-width:620px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.card{display:block;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:16px;min-height:196px;color:var(--text);transition:all .15s}
-.card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(217,119,6,.08);text-decoration:none;color:var(--text)}
-.card.blue{border-left-color:var(--blue)}
-.card.purple{border-left-color:var(--purple)}
-.card.green{border-left-color:var(--green)}
-.card.accent{border-left-color:var(--accent)}
-.icon{font-size:22px;margin-bottom:6px}
-.title{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text)}
-.tag{font-size:11px;font-weight:400;margin-left:6px;padding:1px 8px;border-radius:6px;background:var(--bg4);color:var(--text3)}
-.meta{font-size:12px;color:var(--text3);margin-bottom:6px}
-.summary{font-size:13px;color:var(--text2);line-height:1.5}
-.status{display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;margin-top:8px;background:rgba(5,150,105,.12);color:var(--green)}
-@media(max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{min-height:180px}}
-@media(max-width:640px){.page{padding:24px 20px 48px}.top{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.card{min-height:auto}h1{font-size:26px}}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
+.page{max-width:1040px;margin:0 auto;padding:32px 32px 72px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line2)}
+.back{font-size:13px;color:var(--muted)}
+.eyebrow{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.18em;margin-bottom:6px;text-transform:uppercase}
+h1,h2{font-family:'Noto Serif SC',serif;color:var(--text)}h1{font-size:32px;line-height:1.22}h2{font-size:23px;line-height:1.25}
+.desc{font-size:13px;color:var(--faint);margin-top:8px;max-width:620px}
+.summary-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.summary-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.summary-item strong{display:block;font-size:22px;line-height:1.1}.summary-item span{display:block;margin-top:4px;font-size:12px;color:var(--faint)}
+.folder-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0 28px}
+.folder-card{position:relative;display:block;min-height:154px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#fff,var(--paper));padding:16px;color:var(--text);box-shadow:0 10px 26px rgba(45,41,38,.04);overflow:hidden;transition:all .15s}
+.folder-card:hover{border-color:rgba(217,119,6,.42);box-shadow:0 18px 38px rgba(45,41,38,.08);color:var(--text);transform:translateY(-1px)}
+.folder-card::before{content:"";position:absolute;left:16px;top:17px;width:42px;height:29px;border-radius:8px 8px 6px 6px;background:rgba(217,119,6,.16);box-shadow:inset 0 0 0 1px rgba(217,119,6,.18)}
+.folder-card::after{content:"";position:absolute;left:20px;top:12px;width:22px;height:10px;border-radius:6px 6px 0 0;background:rgba(217,119,6,.24)}
+.folder-count{float:right;font-size:11px;font-weight:900;color:var(--accent);background:rgba(217,119,6,.1);border-radius:999px;padding:2px 8px}
+.folder-card strong{display:block;clear:both;margin-top:40px;font-size:16px}.folder-card span:last-child{display:block;margin-top:7px;font-size:12px;color:var(--muted);line-height:1.55}
+.library-section{scroll-margin-top:24px;margin-top:24px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:10px}
+.section-head p{font-size:12px;color:var(--faint)}
+.file-list{display:grid;gap:8px}
+.file-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.82);padding:13px 15px;color:var(--text);box-shadow:0 8px 20px rgba(45,41,38,.03)}
+.file-row:hover{border-color:rgba(217,119,6,.42);box-shadow:0 14px 30px rgba(45,41,38,.06);color:var(--text)}
+.file-title{display:block;font-weight:800;font-size:15px;line-height:1.35}.file-meta{display:block;margin-top:4px;font-size:12px;color:var(--faint);line-height:1.5}
+.file-tag{justify-self:end;white-space:nowrap;border-radius:999px;background:var(--soft);color:var(--muted);font-size:11px;font-weight:800;padding:3px 9px}.file-tag.new{background:rgba(5,150,105,.12);color:var(--green)}.file-tag.tool{background:rgba(37,99,235,.1);color:var(--blue)}.file-tag.figure{background:rgba(217,119,6,.1);color:var(--accent)}.file-tag.risk{background:rgba(124,58,237,.1);color:var(--purple)}
+@media(max-width:900px){.summary-strip,.folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.page{padding:24px 20px 48px}.top,.section-head{display:block}.back{display:inline-block;margin-top:10px}.summary-strip,.folder-grid{grid-template-columns:1fr}.file-row{grid-template-columns:1fr}.file-tag{justify-self:start}h1{font-size:27px}}
 </style>
 </head>
 <body>
 <main class="page">
   <div class="top">
     <div>
-      <div class="eyebrow">RESEARCH LIBRARY</div>
+      <div class="eyebrow">Research Library</div>
       <h1>投研资源</h1>
-      <p class="desc">深度研究报告，涵盖知识科普、量化分析、市场研判与交易人物研究。</p>
+      <p class="desc">这里是文档库首页。先按主题文件夹进入，再阅读单篇报告，避免精选文档和归档文件混在同一层。</p>
     </div>
-    <a id="back-home" class="back" href="../index.html#research">返回首页</a>
+    <a id="back-home" class="back" href="../index.html#research-reports">返回首页</a>
   </div>
 
-  <div class="grid">
-    <a href="knowledge/龙虎榜深度研究报告.html" class="card blue">
-      <div class="icon">📖</div>
-      <div class="title">龙虎榜深度研究报告 <span class="tag">知识科普</span></div>
-      <div class="meta">上榜资格、席位分类、数据解读方法</div>
-      <div class="summary">龙虎榜全维度拆解：上榜条件、席位特征、极端数据警示，附扫雷清单。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="quant-research/量化交易对手研究报告.html" class="card purple">
-      <div class="icon">🔬</div>
-      <div class="title">量化交易对手研究报告 <span class="tag">量化研究</span></div>
-      <div class="meta">行为模式、机构图谱、交易盲区</div>
-      <div class="summary">量化机构画像、策略区别、对策博弈方法，以及龙虎榜看量化操作痕迹。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="market/五月主线-圆桌报告.html" class="card green">
-      <div class="icon">🗣️</div>
-      <div class="title">五月主线：圆桌报告 <span class="tag">市场研判</span></div>
-      <div class="meta">六角色观点交锋 · 计算机 × 军工</div>
-      <div class="summary">围绕计算机国产替代与国防军工两条主线，多空激辩含投票。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="market/五月-潜在个股分析报告.html" class="card green">
-      <div class="icon">📊</div>
-      <div class="title">五月潜在个股分析报告 <span class="tag">市场研判</span></div>
-      <div class="meta">20 只标的 · 四维评分</div>
-      <div class="summary">信创、半导体、军工、新消费四大板块的基本面、技术面、资金面、催化面排序。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="figure/陈小群游资深度研究报告.html" class="card accent">
-      <div class="icon">👤</div>
-      <div class="title">陈小群深度研究报告 <span class="tag">人物研究</span></div>
-      <div class="meta">7年2万倍 · 龙头战法全解构</div>
-      <div class="summary">新生代游资第一人的完整轨迹、情绪周期和龙头战法体系。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="figure/炒股养家研究报告.html" class="card accent">
-      <div class="icon">👤</div>
-      <div class="title">炒股养家研究报告 <span class="tag">人物研究</span></div>
-      <div class="meta">交易心法 · 操盘体系</div>
-      <div class="summary">情绪周期理论、高手思维、仓位管理，以及殿堂级交易哲学。</div>
-      <span class="status">已发布</span>
-    </a>
-    <a href="figure/作手新一研究报告.html" class="card accent">
-      <div class="icon">👤</div>
-      <div class="title">作手新一研究报告 <span class="tag">人物研究</span></div>
-      <div class="meta">交易心法 · 操盘体系</div>
-      <div class="summary">首板启动确认、情绪周期定位、核心资产信仰和实战体系拆解。</div>
-      <span class="status">已发布</span>
-    </a>
+  <div class="summary-strip" aria-label="投研资源统计">
+    <div class="summary-item"><strong>18</strong><span>已发布报告</span></div>
+    <div class="summary-item"><strong>4</strong><span>主题文件夹</span></div>
+    <div class="summary-item"><strong>12</strong><span>游资人物研究</span></div>
+    <div class="summary-item"><strong>2</strong><span>6 月市场报告</span></div>
   </div>
+
+  <div class="folder-grid" aria-label="文档库文件夹">
+    <a class="folder-card" href="#market"><span class="folder-count">2 篇</span><strong>6月市场报告</strong><span>六月主线排序、个股调研、评分矩阵和仓位节奏。</span></a>
+    <a class="folder-card" href="#figure"><span class="folder-count">12 篇</span><strong>游资人物库</strong><span>龙头、连板、趋势、造势、风险样本的完整人物研究。</span></a>
+    <a class="folder-card" href="#tools"><span class="folder-count">2 篇</span><strong>知识与对手研究</strong><span>龙虎榜工具、量化对手画像和盘口识别方法。</span></a>
+    <a class="folder-card" href="#may-market"><span class="folder-count">2 篇</span><strong>五月市场沉淀</strong><span>五月主线圆桌与潜在个股分析，作为六月前置材料。</span></a>
+  </div>
+
+  <section class="library-section" id="market">
+    <div class="section-head"><div><div class="eyebrow">Folder 01</div><h2>6月市场报告</h2></div><p>新发布 · 月度配置框架</p></div>
+    <div class="file-list">
+      <a class="file-row" href="market/六月板块TOP3及个股最终推荐-20260529.html"><span><span class="file-title">六月板块 TOP3 及个股最终推荐</span><span class="file-meta">TOP3 板块、6 只精选、核心/弹性/观察仓位和关键风险提示。</span></span><span class="file-tag new">新发布</span></a>
+      <a class="file-row" href="market/六月板块及个股调研-完整版-20260529.html"><span><span class="file-title">六月板块及个股调研：完整版</span><span class="file-meta">六大主线、资金形态评分矩阵、热搜榜对照和六月关键节点。</span></span><span class="file-tag new">新发布</span></a>
+    </div>
+  </section>
+
+  <section class="library-section" id="figure">
+    <div class="section-head"><div><div class="eyebrow">Folder 02</div><h2>游资人物库</h2></div><p>12 篇 · 交易风格与风险边界</p></div>
+    <div class="file-list">
+      <a class="file-row" href="figure/陈小群游资深度研究报告.html"><span><span class="file-title">陈小群深度研究报告</span><span class="file-meta">7年2万倍、龙头战法、情绪周期、主线思维和交易轨迹。</span></span><span class="file-tag figure">精选</span></a>
+      <a class="file-row" href="figure/赵老哥研究报告.html"><span><span class="file-title">赵老哥研究报告</span><span class="file-meta">8年一万倍、主线思维、仓位推进和龙头接力框架。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/炒股养家研究报告.html"><span><span class="file-title">炒股养家研究报告</span><span class="file-meta">情绪周期、高手思维、仓位管理和交易哲学。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/作手新一研究报告.html"><span><span class="file-title">作手新一研究报告</span><span class="file-meta">首板启动确认、情绪周期定位、核心资产信仰和实战体系。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/小鳄鱼研究报告.html"><span><span class="file-title">小鳄鱼研究报告</span><span class="file-meta">二板接力、强势股反包、全能型交易结构和经典战役。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/方新侠研究报告.html"><span><span class="file-title">方新侠研究报告</span><span class="file-meta">基本面 + 情绪双驱动、趋势龙头、二波介入模型和离场信号。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/毛老板研究报告.html"><span><span class="file-title">毛老板研究报告</span><span class="file-meta">赛力斯、剑桥科技等经典战役，拆解造妖、锁仓与格局打法。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/欢乐海岸研究报告.html"><span><span class="file-title">欢乐海岸研究报告</span><span class="file-meta">锁仓、连板战法、造妖生态和高位资金合力。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/宁波桑田路研究报告.html"><span><span class="file-title">宁波桑田路研究报告</span><span class="file-meta">宁波敢死队传承、高辨识度、打板接力和灵活持仓。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/孙哥研究报告.html"><span><span class="file-title">孙哥研究报告</span><span class="file-meta">中信溧阳路、三日操盘法、五大打板秘诀和操作周期演变。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/佛山系研究报告.html"><span><span class="file-title">佛山系研究报告</span><span class="file-meta">佛山无影脚、超跌低位首板、消息刺激首板和撬跌停战法。</span></span><span class="file-tag figure">人物</span></a>
+      <a class="file-row" href="figure/徐翔研究报告.html"><span><span class="file-title">徐翔研究报告</span><span class="file-meta">交易能力、法律边界、案件时间线和风险教训。</span></span><span class="file-tag risk">风险样本</span></a>
+    </div>
+  </section>
+
+  <section class="library-section" id="tools">
+    <div class="section-head"><div><div class="eyebrow">Folder 03</div><h2>知识与对手研究</h2></div><p>2 篇 · 工具方法</p></div>
+    <div class="file-list">
+      <a class="file-row" href="knowledge/龙虎榜深度研究报告.html"><span><span class="file-title">龙虎榜深度研究报告</span><span class="file-meta">上榜条件、席位分类、极端数据警示和扫雷清单。</span></span><span class="file-tag tool">知识工具</span></a>
+      <a class="file-row" href="quant-research/量化交易对手研究报告.html"><span><span class="file-title">量化交易对手研究报告</span><span class="file-meta">量化行为、机构图谱、交易盲区和龙虎榜量化痕迹。</span></span><span class="file-tag tool">对手研究</span></a>
+    </div>
+  </section>
+
+  <section class="library-section" id="may-market">
+    <div class="section-head"><div><div class="eyebrow">Folder 04</div><h2>五月市场沉淀</h2></div><p>2 篇 · 六月前置材料</p></div>
+    <div class="file-list">
+      <a class="file-row" href="market/五月主线-圆桌报告.html"><span><span class="file-title">五月主线：圆桌报告</span><span class="file-meta">计算机国产替代与国防军工两条主线，多角色多空交锋。</span></span><span class="file-tag">市场研判</span></a>
+      <a class="file-row" href="market/五月-潜在个股分析报告.html"><span><span class="file-title">五月潜在个股分析报告</span><span class="file-meta">20 只标的，按基本面、技术面、资金面、催化面排序。</span></span><span class="file-tag">市场研判</span></a>
+    </div>
+  </section>
 </main>
 <script>
 (function(){

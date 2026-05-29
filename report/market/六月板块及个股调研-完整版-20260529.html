@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六月板块及个股调研 — 完整版</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--sky:#6A8CAF;--rust:#B04A3F;--g150:#F0EEE6;--g300:#D1CFC5;--g500:#87867F;--g700:#3D3D3A;--serif:Georgia,'Noto Serif SC',ui-serif,serif;--sans:system-ui,-apple-system,'Noto Sans SC',sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--ivory);color:var(--g700);font-family:var(--sans);font-size:15px;line-height:1.65;padding:0 24px 80px;-webkit-font-smoothing:antialiased}
+.page{max-width:1100px;margin:0 auto}
+
+/* Sticky nav */
+.fixed-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,249,245,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1.5px solid var(--g300);padding:8px 24px;overflow-x:auto}
+.fixed-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;gap:4px;align-items:center;white-space:nowrap}
+.nav-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--g500);margin-right:8px;flex-shrink:0}
+.nav-btn{font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--g300);background:#fff;color:var(--g700);cursor:pointer;transition:all .12s;text-decoration:none;flex-shrink:0}
+.nav-btn:hover{background:var(--oat);border-color:var(--clay);color:var(--slate)}
+.nav-btn.active{background:var(--slate);color:var(--ivory);border-color:var(--slate)}
+.nav-btn.star{color:var(--clay);border-color:rgba(217,119,87,.3)}
+.nav-btn.star.active{background:var(--clay);border-color:var(--clay);color:#fff}
+
+.hdr{margin:48px 0 36px;text-align:center}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:10px}
+h1{font-family:var(--serif);font-weight:500;font-size:34px;color:var(--slate);letter-spacing:-.01em;margin-bottom:10px}
+.sub{font-size:14px;color:var(--g500);max-width:620px;margin:0 auto}
+.mr{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--g500);margin-top:12px}
+.tag{background:var(--oat);color:var(--slate);padding:2px 10px;border-radius:999px;font-family:var(--mono);font-size:10px;text-transform:uppercase}
+
+h2{font-family:var(--serif);font-weight:500;font-size:22px;color:var(--slate);margin:44px 0 16px;padding-bottom:8px;border-bottom:1.5px solid var(--g300);letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--g500);font-weight:400;margin-right:6px}
+h3{font-size:16px;font-weight:600;margin:20px 0 10px;color:var(--slate)}
+h4{font-size:14px;font-weight:600;margin:14px 0 6px;color:var(--g700)}
+p{margin-bottom:8px;font-size:14px;line-height:1.7}
+ul{margin:4px 0 8px 18px;font-size:13px;line-height:1.6}li{margin-bottom:3px}
+.tw{overflow-x:auto;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--g300);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);font-weight:500;background:var(--g150);white-space:nowrap}
+tr:hover td{background:rgba(106,140,175,.04)}
+td:last-child, th:last-child{min-width:200px}
+
+/* Sector section */
+.sector-section{background:#fff;border:1.5px solid var(--g300);border-radius:14px;padding:20px 22px;margin-bottom:24px;position:relative;overflow:hidden}
+.sector-section::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.sector-section.s1::before{background:var(--olive)}
+.sector-section.s2::before{background:var(--sky)}
+.sector-section.s3::before{background:var(--clay)}
+.sector-section.s4::before{background:var(--rust)}
+.sector-section.s5::before{background:#9B7FD4}
+.sector-section.s6::before{background:#4AADCE}
+.sector-section.s7::before{background:var(--olive)}
+.sector-section.s8::before{background:#4AADCE}
+.sector-section.s9::before{background:#9B7FD4}
+.sector-section.s10::before{background:#C4956A}
+.sector-section.s11::before{background:var(--sky)}
+
+.sector-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.sector-name{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--slate)}
+.sector-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.star-badge{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:999px;background:rgba(217,119,87,.12);color:var(--clay)}
+.star-badge.v5{background:rgba(120,140,93,.12);color:var(--olive)}
+.star-badge.v4{background:rgba(106,140,175,.12);color:var(--sky)}
+.watch-tag{font-size:11px;color:var(--g500);font-style:italic}
+
+/* Stock table */
+.stock-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.stock-table th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);background:var(--g150);padding:7px 10px;text-align:left;white-space:nowrap}
+.stock-table td{padding:8px 10px;border-bottom:1px solid var(--g150);line-height:1.5}
+.stock-table tr:last-child td{border-bottom:0}
+.stock-table tr:hover td{background:rgba(106,140,175,.04)}
+
+/* Badge inline */
+.badge{padding:1px 6px;border-radius:4px;font-size:10px;font-family:var(--mono);white-space:nowrap}
+.badge.ok{background:rgba(120,140,93,.12);color:var(--olive)}
+.badge.warn{background:rgba(217,119,87,.12);color:var(--clay)}
+.badge.danger{background:rgba(176,74,63,.12);color:var(--rust)}
+.badge.info{background:rgba(106,140,175,.12);color:var(--sky)}
+.badge.neutral{background:var(--g150);color:var(--g700)}
+.badge.hot{background:rgba(217,119,87,.12);color:var(--clay)}
+.fund-pos{color:var(--olive);font-weight:600;font-family:var(--mono)}
+.fund-neg{color:var(--rust);font-weight:600;font-family:var(--mono)}
+
+/* Summary box */
+.sum-box{background:var(--g150);border-radius:10px;padding:12px 16px;margin-top:12px;font-size:13px;line-height:1.7}
+.sum-box .sum-hd{font-weight:700;color:var(--slate);margin-bottom:4px}
+
+/* Appendix sections */
+.app-section{background:#fff;border:1.5px solid var(--g300);border-radius:14px;padding:20px 22px;margin-bottom:20px}
+.app-hd{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--slate);margin-bottom:14px}
+
+/* Matrix grid */
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-top:10px}
+@media(max-width:700px){.matrix-grid{grid-template-columns:1fr 1fr}}
+.matrix-cell{background:var(--g150);border-radius:8px;padding:10px 12px;text-align:center;font-size:12px;line-height:1.4}
+.matrix-cell .sec{font-weight:700;color:var(--slate);font-size:13px;display:block;margin-bottom:3px}
+.matrix-cell .stars{color:var(--clay);display:block}
+.matrix-cell .fund{font-size:11px;color:var(--g500);display:block;margin-top:2px}
+.matrix-cell.top{background:rgba(120,140,93,.12);border:1.5px solid rgba(120,140,93,.3)}
+.matrix-cell.top .sec{color:var(--olive)}
+
+/* Timeline events */
+.event-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.event-item{display:flex;align-items:flex-start;gap:10px}
+.ev-date{flex-shrink:0;min-width:90px;font-family:var(--mono);font-size:11px;color:var(--sky);font-weight:600;padding-top:1px}
+.ev-con{flex:1;background:var(--g150);border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.5}
+.ev-con strong{color:var(--slate)}
+.ev-con span{color:var(--g500)}
+
+/* Hot search */
+.hot-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.hot-table th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g500);background:var(--g150);padding:7px 10px;text-align:left}
+.hot-table td{padding:7px 10px;border-bottom:1px solid var(--g150)}
+.hot-table tr:hover td{background:rgba(106,140,175,.04)}
+.rank-num{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--slate);min-width:30px}
+.rank-num.r1{color:var(--clay)}
+.rank-num.r6{color:var(--rust)}
+.up{color:var(--rust);font-weight:700}
+.down{color:var(--olive);font-weight:700}
+.flat{color:var(--g500)}
+
+/* Quick look */
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px}
+.quick-item{background:var(--g150);border-radius:8px;padding:10px 12px;font-size:12px}
+.quick-item .nm{font-weight:700;color:var(--slate);display:block}
+.quick-item .heat{color:var(--clay);font-family:var(--mono);display:block;margin-top:2px}
+.quick-item .fund{font-family:var(--mono);display:block;margin-top:2px}
+.quick-item .tech{color:var(--g500);display:block;margin-top:2px;font-size:11px}
+
+/* Disclaimer */
+.disc{background:rgba(176,74,63,.06);border:1.5px solid rgba(176,74,63,.2);border-radius:10px;padding:14px 18px;margin-top:16px;font-size:12px;color:var(--g700);line-height:1.6}
+.disc strong{color:var(--rust)}
+
+.section-tip{font-size:13px;color:var(--g500);margin-bottom:12px}
+footer{text-align:center;font-size:12px;color:var(--g500);padding:24px 0;border-top:1.5px solid var(--g300);margin-top:40px}
+hr{border:0;border-top:1.5px solid var(--g300);margin:28px 0}
+</style>
+</head>
+<body>
+
+<!-- Sticky sector nav -->
+<nav class="fixed-nav">
+  <div class="nav-inner">
+    <span class="nav-label">板块</span>
+    <a class="nav-btn star" href="#s-equip">设备更新</a>
+    <a class="nav-btn" href="#s-power">电网设备</a>
+    <a class="nav-btn star" href="#s-space">商业航天</a>
+    <a class="nav-btn" href="#s-ai">AI应用</a>
+    <a class="nav-btn" href="#s-travel">旅游出行</a>
+    <a class="nav-btn star" href="#s-ce">消费电子</a>
+    <a class="nav-btn star" href="#s-6g">6G/卫星</a>
+    <a class="nav-btn star" href="#s-thermal">火电/电力</a>
+    <a class="nav-btn" href="#s-robot">工业母机</a>
+    <a class="nav-btn" href="#s-fusion">核聚变</a>
+    <a class="nav-btn" href="#appendix">附录</a>
+  </div>
+</nav>
+
+<div class="page">
+
+<div class="hdr">
+  <div class="eye">弈沐资本 · 投研部</div>
+  <h1>六月板块及个股调研</h1>
+  <div class="sub">2026-05-29 个股热度 · 近5日主力资金净流入 · 技术形态全面分析</div>
+  <div class="mr">
+    <span class="tag">数据来源 NeoData + WeStock</span>
+    <span class="tag">数据截止 2026-05-29 收盘</span>
+    <span>投研调研</span>
+  </div>
+</div>
+
+<!-- ===== S1: 设备更新 ===== -->
+<div class="sector-section s1" id="s-equip">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">🏭 设备更新 / 以旧换新</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：政策持续落地，容易出现订单、招标、交付节奏</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>美的集团</strong></td>
+      <td><span class="badge hot">高</span></td>
+      <td><span class="fund-pos">+8.16亿</span></td>
+      <td><span class="badge ok">多头排列</span></td>
+      <td>最强资金面，5日累积+8.16亿净流入，今日+2.41%；价格在所有主要均线上方，MACD偏多，KDJ中性；机构目标价95.33元(+20.8%)</td>
+    </tr>
+    <tr>
+      <td><strong>海尔智家</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge ok">+2.60亿</span></td>
+      <td><span class="badge info">反弹至压力位</span></td>
+      <td>今日+3.83%放量突破MA5/MA10，接近MA20(20.98)阻力，5日累积+2.15%；家电以旧换新最直接映射，机构目标价28.52元(+41.8%)</td>
+    </tr>
+    <tr>
+      <td><strong>格力电器</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge ok">+2.47亿</span></td>
+      <td><span class="badge info">底部反弹</span></td>
+      <td>今日+3.41%，站上MA5/10/30/60，但MA20(39.57)和MA250(40.28)构成双重压力需放量突破</td>
+    </tr>
+    <tr>
+      <td><strong>徐工机械</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge warn">-2.70亿</span></td>
+      <td><span class="badge info">短期反弹至MA20阻力</span></td>
+      <td>✅今日放量+5.75%（量比2.33），上穿MA5/10但面临MA20(9.92)压制；基本面强：Q1营收+9.26%，国际化+矿机双轮驱动，机构目标价12.23元(+32.7%)</td>
+    </tr>
+    <tr>
+      <td><strong>三一重工</strong></td>
+      <td><span class="badge neutral">中低</span></td>
+      <td><span class="badge danger">-8.02亿</span></td>
+      <td><span class="badge danger">空头排列</span></td>
+      <td>⚠️价格在MA5/10/20/60/120/250下方全线承压，5日跌5.38%，KDJ超卖，MACD零轴下方持续走弱，不宜左侧接飞刀</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+  <div class="sum-box">
+    <div class="sum-hd">📊 板块小结</div>
+    <ul style="margin:0;padding-left:18px">
+      <li><strong>资金面分化明显</strong>：美的集团最强（+8.16亿），海尔/格力温和流入，三一/徐工流出</li>
+      <li><strong>技术面</strong>：美的＞海尔＞格力＞徐工＞三一</li>
+      <li><strong>6月关键催化</strong>：以旧换新政策细则落地节奏、房地产链修复预期、设备更新订单招标</li>
+      <li><strong>关注优先级</strong>：美的集团(趋势核心) → 海尔智家(位置适中+家电映射) → 格力电器(超跌反弹观察)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== S2: 电网设备 ===== -->
+<div class="sector-section s2" id="s-power">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">⚡ 电网设备 / 新型电力系统</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：迎峰度夏前，电网投资、配网、特高压、智能运维更容易被资金提前交易</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>杭电股份</strong></td>
+      <td><span class="badge hot">86.06万</span></td>
+      <td><span class="fund-pos">+3.05亿</span></td>
+      <td>—</td>
+      <td>⭐6月电网线里资金表现最突出</td>
+    </tr>
+    <tr>
+      <td><strong>许继电气</strong></td>
+      <td><span class="badge neutral">5.94万</span></td>
+      <td><span class="badge neutral">38.97万</span></td>
+      <td><span class="badge info">对称三角形</span></td>
+      <td>特高压/二次设备，待方向确认</td>
+    </tr>
+    <tr>
+      <td><strong>平高电气</strong></td>
+      <td><span class="badge neutral">2.34万</span></td>
+      <td><span class="badge ok">+2811.66万</span></td>
+      <td>—</td>
+      <td>一次设备方向，适合看补涨</td>
+    </tr>
+    <tr>
+      <td><strong>中国西电</strong></td>
+      <td><span class="badge hot">30.5万</span></td>
+      <td><span class="badge warn">-1.17亿</span></td>
+      <td><span class="badge neutral">横盘</span></td>
+      <td>输变电主线，等量能放大</td>
+    </tr>
+    <tr>
+      <td><strong>国电南瑞</strong></td>
+      <td><span class="badge hot">12.16万</span></td>
+      <td><span class="badge danger">-13.14亿</span></td>
+      <td>—</td>
+      <td>电网自动化龙头，资金连续流出需等企稳</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+  <div class="sum-box">
+    <div class="sum-hd">🏅 关注重点</div>
+    <strong>杭电股份、华电辽能、大唐发电、粤电力A、申能股份</strong>
+  </div>
+</div>
+
+<!-- ===== S3: 商业航天 ===== -->
+<div class="sector-section s3" id="s-space">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">🚀 商业航天 / 卫星互联网</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：6月会议、产业信息密集，容易形成主题行情，弹性最大</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>亨通光电</strong></td>
+      <td><span class="badge hot">171.29万 ⭐</span></td>
+      <td><span class="fund-pos">+25.66亿</span></td>
+      <td>—</td>
+      <td>⭐热度、资金双最强，主线核心</td>
+    </tr>
+    <tr>
+      <td><strong>中际旭创</strong></td>
+      <td><span class="badge hot">热搜</span></td>
+      <td><span class="fund-pos">+20.19亿</span></td>
+      <td><span class="badge ok">强势多头趋势</span></td>
+      <td>✅价格在所有均线上方（MA5:1133, MA20:1013, MA60:779），5日累积+6.2%，MACD持续金叉；资金5日前4日大幅流入，今日小幅流出但趋势未破</td>
+    </tr>
+    <tr>
+      <td><strong>兴森科技</strong></td>
+      <td><span class="badge hot">68.04万</span></td>
+      <td><span class="fund-pos">+6.57亿</span></td>
+      <td>—</td>
+      <td>半导体/高端制造共振，看催化</td>
+    </tr>
+    <tr>
+      <td><strong>再升科技</strong></td>
+      <td><span class="badge hot">94.72万</span></td>
+      <td><span class="fund-pos">+6.11亿</span></td>
+      <td>—</td>
+      <td>材料方向，看分支补涨</td>
+    </tr>
+    <tr>
+      <td><strong>立讯精密</strong></td>
+      <td><span class="badge hot">50.08万</span></td>
+      <td><span class="fund-pos">+4.94亿</span></td>
+      <td><span class="badge info">扩散三角形</span></td>
+      <td>多题材叠加，轮动核心</td>
+    </tr>
+    <tr>
+      <td><strong>永鼎股份</strong></td>
+      <td><span class="badge hot">70.16万</span></td>
+      <td><span class="badge ok">+1.22亿</span></td>
+      <td><span class="badge info">扩散三角形</span></td>
+      <td>6G+航天映射，看事件催化</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+  <div class="sum-box">
+    <div class="sum-hd">🏅 关注重点</div>
+    <strong>北京君正、立讯精密、亨通光电、永鼎股份、再升科技</strong>
+  </div>
+</div>
+
+<!-- ===== S4: AI应用 ===== -->
+<div class="sector-section s4" id="s-ai">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">🤖 AI应用 / 端侧AI</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：6月上旬是AI展会、新品发布、端侧AI议题密集期，容易出现"应用端独立行情"</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>科大讯飞</strong></td>
+      <td><span class="badge hot">中高</span></td>
+      <td><span class="fund-pos">+3.99亿</span></td>
+      <td><span class="badge warn">短期偏弱整理</span></td>
+      <td>⚠️价格跌破MA5/10/20，MACD接近零轴但柱体为正；5/27曾大涨但随后两天连续回落(-2.3%/-2.5%)，短线资金获利了结</td>
+    </tr>
+    <tr>
+      <td><strong>金山办公</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge danger">-3.30亿</span></td>
+      <td><span class="badge danger">超跌</span></td>
+      <td>⚠️价格持续低于MA5/10/20/30/60，KDJ_K:20.7接近超卖，RSI_6:32.6；5月整月呈下降通道，需等放量止跌信号</td>
+    </tr>
+    <tr>
+      <td><strong>中科创达</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge danger">-6.52亿</span></td>
+      <td><span class="badge danger">急跌超卖</span></td>
+      <td>🔴连续两日暴跌合计-10%（5/28: -4.9% → 5/29: -9.6%），RSI_6:28极度超卖，KDJ_J:14.9；主力大幅出逃，不宜左侧抄底</td>
+    </tr>
+    <tr>
+      <td><strong>海康威视</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge danger">-13.47亿</span></td>
+      <td><span class="badge danger">深度超卖</span></td>
+      <td>🔴7连跌，RSI_6:19.5极度超卖区，KDJ_K:16.6，成交量持续放大显示恐慌盘出清中；等待底部放量企稳信号</td>
+    </tr>
+    <tr>
+      <td><strong>拓尔思</strong></td>
+      <td><span class="badge neutral">低</span></td>
+      <td><span class="badge danger">-1.66亿</span></td>
+      <td><span class="badge danger">深度超卖</span></td>
+      <td>🔴连续阴跌，RSI_6:18.1, KDJ_J:-4.4（负值），价格在各均线下方持续承压；小市值标的弹性大需等右侧</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+  <div class="sum-box">
+    <div class="sum-hd">📊 板块小结</div>
+    <ul style="margin:0;padding-left:18px">
+      <li>⚠️ <strong>AI应用板块整体承压</strong>，5股全周主力净流出为主，尤其海康、中科创达、金山办公资金出逃明显</li>
+      <li>科大讯飞虽5日总流入+3.99亿（主要是5/27单日+7.28亿），但后两日连续流出回吐，资金不稳定</li>
+      <li>💡 <strong>6月上旬等待催化</strong>：6月AI展会密集期，若出现新品/政策催化，超跌标的有望迎来情绪修复</li>
+      <li><strong>关注优先级</strong>：等待右侧信号 → 科大讯飞(情绪核心) > 金山办公(超跌反弹潜力) > 海康威视(恐慌出清观察)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== S5: 旅游出行 ===== -->
+<div class="sector-section s5" id="s-travel">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">✈️ 旅游出行 / 酒店航空</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：端午临近+暑期预订提前，出行链容易走季节性行情</span>
+        <span class="star-badge v4">板块优先级 ★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>南方航空</strong></td>
+      <td><span class="badge neutral">4.23万</span></td>
+      <td><span class="badge ok">+1.22亿</span></td>
+      <td>—</td>
+      <td>航空弹性大，看板块共振</td>
+    </tr>
+    <tr>
+      <td><strong>锦江酒店</strong></td>
+      <td><span class="badge neutral">2.35万</span></td>
+      <td><span class="badge ok">+1518.54万</span></td>
+      <td><span class="badge neutral">横盘</span></td>
+      <td>酒店趋势股，看突破机会</td>
+    </tr>
+    <tr>
+      <td><strong>中国国航</strong></td>
+      <td><span class="badge neutral">3.79万</span></td>
+      <td><span class="badge ok">+1360.17万</span></td>
+      <td>—</td>
+      <td>航空龙头，看出行催化</td>
+    </tr>
+    <tr>
+      <td><strong>宋城演艺</strong></td>
+      <td><span class="badge neutral">2.46万</span></td>
+      <td><span class="badge warn">-4089.28万</span></td>
+      <td>—</td>
+      <td>景区演艺，看情绪轮动</td>
+    </tr>
+    <tr>
+      <td><strong>首旅酒店</strong></td>
+      <td><span class="badge neutral">1.19万</span></td>
+      <td><span class="badge warn">-3354.71万</span></td>
+      <td><span class="badge warn">下降通道</span></td>
+      <td>⚠️酒店链，等止跌信号</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== S6: 消费电子 ===== -->
+<div class="sector-section s6" id="s-ce">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">📱 消费电子</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：6月上旬消费电子新品、AI硬件、端侧AI节点密集，容易成为资金载体</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>北京君正</strong></td>
+      <td><span class="badge hot">18.19万</span></td>
+      <td><span class="fund-pos">+17.85亿</span></td>
+      <td>—</td>
+      <td>芯片方向资金最强，看AI硬件催化</td>
+    </tr>
+    <tr>
+      <td><strong>歌尔股份</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="fund-pos">+6.44亿</span></td>
+      <td><span class="badge info">中期多头，短期回调</span></td>
+      <td>今日-5.52%回调但中期趋势完好（价格在MA10/20/30/60上方），5/27曾大涨后遭遇获利了结，MACD柱仍为正；适合等回调到位再入场</td>
+    </tr>
+    <tr>
+      <td><strong>蓝思科技</strong></td>
+      <td><span class="badge hot">中高</span></td>
+      <td><span class="fund-pos">+4.73亿</span></td>
+      <td><span class="badge ok">强势多头趋势</span></td>
+      <td>✅价格在所有均线上方（最新40.50元，MA5:39.8，MA20:34.1），MACD持续金叉，RSI_6:76.4偏强但未过热；今日+0.67%企稳，量比1.35</td>
+    </tr>
+    <tr>
+      <td><strong>立讯精密</strong></td>
+      <td><span class="badge hot">50.08万</span></td>
+      <td><span class="fund-pos">+4.94亿</span></td>
+      <td><span class="badge info">扩散三角形</span></td>
+      <td>消费电子+航天/AI多线叠加</td>
+    </tr>
+    <tr>
+      <td><strong>兆易创新</strong></td>
+      <td><span class="badge hot">⭐高(热搜)</span></td>
+      <td><span class="badge danger">-73.57亿</span></td>
+      <td><span class="badge warn">急涨后大幅回踩</span></td>
+      <td>🔴曾从320冲到526后快速回落到467，持仓筹码松动；但中期趋势仍然多头（价格远超MA20:405/MA60:320），MACD金叉仍有效；等待止跌企稳信号</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+  <div class="sum-box">
+    <div class="sum-hd">📊 板块小结</div>
+    <ul style="margin:0;padding-left:18px">
+      <li><strong>资金聚焦明显</strong>：北京君正(+17.85亿)、立讯精密(+4.94亿) 是板块核心</li>
+      <li>⭐ <strong>蓝思科技</strong>技术面最强，强势多头排列无悬念</li>
+      <li>⚠️ <strong>兆易创新</strong>5日流出-73.57亿（全调研板块之最），短期回调压力巨大但中长期逻辑未破</li>
+      <li><strong>6月催化</strong>：6月上旬消费电子新品周期 + AI硬件端侧催化</li>
+      <li><strong>关注优先级</strong>：立讯精密(多题材核心) → 北京君正(资金最强) → 蓝思科技(技术面最强) → 歌尔股份(回调低吸观察)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== S7: 6G/卫星 ===== -->
+<div class="sector-section s7" id="s-6g">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">📡 6G / 卫星通信</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：6月下旬大会催化强，容易形成"预期交易+资金抱团"</span>
+        <span class="star-badge v5">板块优先级 ★★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>亨通光电</strong></td>
+      <td><span class="badge hot">171.29万 ⭐</span></td>
+      <td><span class="fund-pos">+25.66亿</span></td>
+      <td>—</td>
+      <td>6G+卫星+海洋通信，主线核心</td>
+    </tr>
+    <tr>
+      <td><strong>中际旭创</strong></td>
+      <td><span class="badge hot">⭐热搜</span></td>
+      <td><span class="fund-pos">+20.19亿</span></td>
+      <td><span class="badge ok">强势多头趋势</span></td>
+      <td>✅价格在所有均线上方，5日累积+6.2%，MACD持续金叉；资金5日前4日大幅流入（05/28单日+17.86亿），今日小幅流出但趋势未破</td>
+    </tr>
+    <tr>
+      <td><strong>立讯精密</strong></td>
+      <td><span class="badge hot">50.08万</span></td>
+      <td><span class="fund-pos">+4.94亿</span></td>
+      <td><span class="badge info">扩散三角形</span></td>
+      <td>硬件端+通信属性，适合轮动</td>
+    </tr>
+    <tr>
+      <td><strong>永鼎股份</strong></td>
+      <td><span class="badge hot">70.16万</span></td>
+      <td><span class="badge ok">+1.22亿</span></td>
+      <td><span class="badge info">扩散三角形</span></td>
+      <td>通信+航天双线映射</td>
+    </tr>
+    <tr>
+      <td><strong>烽火通信</strong></td>
+      <td><span class="badge neutral">中</span></td>
+      <td><span class="badge danger">-15.56亿</span></td>
+      <td><span class="badge warn">短期回调横盘</span></td>
+      <td>⚠️连续5日主力净流出，价格跌破MA5/10/20，MACD死叉；但仍在MA60(51.99)附近获得支撑，等止跌确认</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== S8: 火电 ===== -->
+<div class="sector-section s8" id="s-thermal">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">🔥 火电 / 电力（迎峰度夏）</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：迎峰度夏前，电力供需、容量电价、机组出力预期容易被交易</span>
+        <span class="star-badge v4">板块优先级 ★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>大唐发电</strong></td>
+      <td><span class="badge hot">389.42万 ⭐</span></td>
+      <td><span class="fund-pos">+2.25亿</span></td>
+      <td><span class="badge ok">上升加速</span></td>
+      <td>⭐热度最高，看板块龙头</td>
+    </tr>
+    <tr>
+      <td><strong>华电辽能</strong></td>
+      <td><span class="badge hot">154.08万</span></td>
+      <td><span class="fund-pos">+3.65亿</span></td>
+      <td>—</td>
+      <td>⭐火电方向资金表现突出</td>
+    </tr>
+    <tr>
+      <td><strong>申能股份</strong></td>
+      <td><span class="badge neutral">4.31万</span></td>
+      <td><span class="badge ok">+8175.32万</span></td>
+      <td><span class="badge ok">上升加速</span></td>
+      <td>电力运营，看机制催化</td>
+    </tr>
+    <tr>
+      <td><strong>粤电力A</strong></td>
+      <td><span class="badge hot">54.68万</span></td>
+      <td><span class="badge ok">+1379.5万</span></td>
+      <td><span class="badge ok">上升加速</span></td>
+      <td>区域电力，看补涨</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== S9: 工业母机 ===== -->
+<div class="sector-section s9" id="s-robot">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">⚙️ 工业母机 / 机器人</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：设备更新向工业领域延伸，若出现订单/排产改善，容易走趋势行情</span>
+        <span class="star-badge v4">板块优先级 ★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>汇川技术</strong></td>
+      <td><span class="badge neutral">7.03万</span></td>
+      <td><span class="badge danger">-7.55亿</span></td>
+      <td>—</td>
+      <td>工控龙头，看大票趋势修复</td>
+    </tr>
+    <tr>
+      <td><strong>绿的谐波</strong></td>
+      <td><span class="badge neutral">7.67万</span></td>
+      <td><span class="badge danger">-10.63亿</span></td>
+      <td><span class="badge warn">V顶</span></td>
+      <td>减速器核心，等资金回流</td>
+    </tr>
+    <tr>
+      <td><strong>埃斯顿</strong></td>
+      <td><span class="badge neutral">10.81万</span></td>
+      <td><span class="badge warn">-1.57亿</span></td>
+      <td>—</td>
+      <td>机器人本体，看修复机会</td>
+    </tr>
+    <tr>
+      <td><strong>华东重机</strong></td>
+      <td><span class="badge neutral">2.1万</span></td>
+      <td><span class="badge warn">-1.52亿</span></td>
+      <td>—</td>
+      <td>高端制造分支，看轮动</td>
+    </tr>
+    <tr>
+      <td><strong>秦川机床</strong></td>
+      <td><span class="badge neutral">1.64万</span></td>
+      <td><span class="badge warn">-1963.47万</span></td>
+      <td><span class="badge warn">圆弧顶</span></td>
+      <td>母机方向，等确认</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== S10: 核聚变 ===== -->
+<div class="sector-section s10" id="s-fusion">
+  <div class="sector-hd">
+    <div>
+      <div class="sector-name">⚛️ 可控核聚变</div>
+      <div class="sector-meta">
+        <span class="watch-tag">6月看点：高弹性主题，若产业进展/会议催化，容易被资金反复做波段</span>
+        <span class="star-badge v4">板块优先级 ★★★★</span>
+      </div>
+    </div>
+  </div>
+  <div class="tw">
+    <table class="stock-table">
+    <thead><tr><th>个股</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th><th>关注点</th></tr></thead>
+    <tbody>
+    <tr>
+      <td><strong>安泰科技</strong></td>
+      <td><span class="badge hot">22.89万</span></td>
+      <td><span class="fund-pos">+2.78亿</span></td>
+      <td><span class="badge warn">V顶</span></td>
+      <td>新材料方向，等形态修复</td>
+    </tr>
+    <tr>
+      <td><strong>西部超导</strong></td>
+      <td><span class="badge neutral">5.3万</span></td>
+      <td><span class="badge ok">+1.03亿</span></td>
+      <td>—</td>
+      <td>超导材料映射强，看催化</td>
+    </tr>
+    <tr>
+      <td><strong>联创光电</strong></td>
+      <td><span class="badge neutral">4.05万</span></td>
+      <td><span class="badge warn">-8607.3万</span></td>
+      <td>—</td>
+      <td>激光/显示分支，看情绪轮动</td>
+    </tr>
+    <tr>
+      <td><strong>宝胜股份</strong></td>
+      <td><span class="badge neutral">1.2万</span></td>
+      <td><span class="badge warn">-3610.92万</span></td>
+      <td><span class="badge warn">头肩顶</span></td>
+      <td>线缆/特种材料，看补涨</td>
+    </tr>
+    <tr>
+      <td><strong>东华测试</strong></td>
+      <td><span class="badge neutral">6424.5</span></td>
+      <td><span class="badge warn">-2405.1万</span></td>
+      <td>—</td>
+      <td>测试测量，看小票弹性</td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== APPENDIX ===== -->
+<div id="appendix">
+
+<h2><span class="num">附录一</span>六大主线个股速览</h2>
+
+<div class="tw">
+<table class="stock-table">
+<thead><tr><th>板块</th><th>核心标的</th><th>热度</th><th>近5日主力资金</th><th>技术形态</th></tr></thead>
+<tbody>
+<tr>
+  <td>商业航天/6G</td>
+  <td><strong>亨通光电</strong></td>
+  <td><span class="badge hot">171.29万</span></td>
+  <td><span class="fund-pos">+25.66亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>6G</td>
+  <td><strong>中际旭创</strong></td>
+  <td><span class="badge hot">热搜</span></td>
+  <td><span class="fund-pos">+20.19亿</span></td>
+  <td><span class="badge ok">强势多头</span></td>
+</tr>
+<tr>
+  <td>消费电子</td>
+  <td><strong>北京君正</strong></td>
+  <td><span class="badge hot">18.19万</span></td>
+  <td><span class="fund-pos">+17.85亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>设备更新</td>
+  <td><strong>美的集团</strong></td>
+  <td><span class="badge hot">高</span></td>
+  <td><span class="fund-pos">+8.16亿</span></td>
+  <td><span class="badge ok">多头排列</span></td>
+</tr>
+<tr>
+  <td>AI应用</td>
+  <td><strong>科大讯飞</strong></td>
+  <td><span class="badge hot">中高</span></td>
+  <td><span class="fund-pos">+3.99亿</span></td>
+  <td><span class="badge warn">偏弱整理</span></td>
+</tr>
+<tr>
+  <td>消费电子</td>
+  <td><strong>立讯精密</strong></td>
+  <td><span class="badge hot">50.08万</span></td>
+  <td><span class="fund-pos">+4.94亿</span></td>
+  <td><span class="badge info">扩散三角形</span></td>
+</tr>
+<tr>
+  <td>火电/电力</td>
+  <td><strong>大唐发电</strong></td>
+  <td><span class="badge hot">389.42万</span></td>
+  <td><span class="fund-pos">+2.25亿</span></td>
+  <td><span class="badge ok">上升加速</span></td>
+</tr>
+<tr>
+  <td>商业航天</td>
+  <td><strong>兴森科技</strong></td>
+  <td><span class="badge hot">68.04万</span></td>
+  <td><span class="fund-pos">+6.57亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>商业航天</td>
+  <td><strong>再升科技</strong></td>
+  <td><span class="badge hot">94.72万</span></td>
+  <td><span class="fund-pos">+6.11亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>电网设备</td>
+  <td><strong>杭电股份</strong></td>
+  <td><span class="badge hot">86.06万</span></td>
+  <td><span class="fund-pos">+3.05亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>火电/电力</td>
+  <td><strong>华电辽能</strong></td>
+  <td><span class="badge hot">154.08万</span></td>
+  <td><span class="fund-pos">+3.65亿</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>可控核聚变</td>
+  <td><strong>安泰科技</strong></td>
+  <td><span class="badge hot">22.89万</span></td>
+  <td><span class="fund-pos">+2.78亿</span></td>
+  <td><span class="badge warn">V顶</span></td>
+</tr>
+<tr>
+  <td>商业航天</td>
+  <td><strong>永鼎股份</strong></td>
+  <td><span class="badge hot">70.16万</span></td>
+  <td><span class="badge ok">+1.22亿</span></td>
+  <td><span class="badge info">扩散三角形</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2><span class="num">附录二</span>六月主线资金与形态评分矩阵</h2>
+
+<div class="matrix-grid">
+  <div class="matrix-cell top"><span class="sec">商业航天/6G</span><span class="stars">★★★★★</span><span class="fund">资金★★★★★ 技术★★★★</span></div>
+  <div class="matrix-cell top"><span class="sec">消费电子</span><span class="stars">★★★★★</span><span class="fund">资金★★★★ 技术★★★★</span></div>
+  <div class="matrix-cell top"><span class="sec">火电/电力</span><span class="stars">★★★★</span><span class="fund">资金★★★★ 技术★★★★★</span></div>
+  <div class="matrix-cell"><span class="sec">电网设备</span><span class="stars">★★★★</span><span class="fund">资金★★★ 技术★★★</span></div>
+  <div class="matrix-cell"><span class="sec">旅游出行</span><span class="stars">★★★</span><span class="fund">资金★★ 技术★★</span></div>
+  <div class="matrix-cell"><span class="sec">AI应用</span><span class="stars">★★</span><span class="fund">资金★(疲弱) 技术★(超卖)</span></div>
+  <div class="matrix-cell"><span class="sec">设备更新</span><span class="stars">★★★</span><span class="fund">资金★★(分化) 技术★★</span></div>
+  <div class="matrix-cell"><span class="sec">可控核聚变</span><span class="stars">★★★</span><span class="fund">资金★★ 技术★★</span></div>
+  <div class="matrix-cell"><span class="sec">工业母机</span><span class="stars">★★</span><span class="fund">资金★(流出) 技术★★</span></div>
+</div>
+
+<h2><span class="num">附录三</span>个股热度 — 热搜榜对照</h2>
+
+<div class="tw">
+<table class="hot-table">
+<thead><tr><th>热搜排名</th><th>个股</th><th>涨跌幅</th><th>所属板块</th></tr></thead>
+<tbody>
+<tr>
+  <td><span class="rank-num r1">1</span></td>
+  <td><strong>大唐发电</strong></td>
+  <td><span class="up">+7.88%</span></td>
+  <td>火电/电力</td>
+</tr>
+<tr>
+  <td><span class="rank-num">6</span></td>
+  <td>京东方A</td>
+  <td><span class="down">-10.04%</span></td>
+  <td>—</td>
+</tr>
+<tr>
+  <td><span class="rank-num">7</span></td>
+  <td>再升科技</td>
+  <td><span class="down">-9.99%</span></td>
+  <td>商业航天</td>
+</tr>
+<tr>
+  <td><span class="rank-num">9</span></td>
+  <td><strong>华电辽能</strong></td>
+  <td><span class="up">+4.00%</span></td>
+  <td>火电/电力</td>
+</tr>
+<tr>
+  <td><span class="rank-num">10</span></td>
+  <td><strong>中际旭创</strong></td>
+  <td><span class="down">-3.07%</span></td>
+  <td>6G/消费电子</td>
+</tr>
+<tr>
+  <td><span class="rank-num">12</span></td>
+  <td><strong>亨通光电</strong></td>
+  <td><span class="up">+9.42%</span></td>
+  <td>商业航天/6G</td>
+</tr>
+<tr>
+  <td><span class="rank-num">20</span></td>
+  <td>兆易创新</td>
+  <td><span class="down">-3.31%</span></td>
+  <td>消费电子</td>
+</tr>
+<tr>
+  <td><span class="rank-num">38</span></td>
+  <td><strong>立讯精密</strong></td>
+  <td><span class="up">+0.67%</span></td>
+  <td>消费电子/商业航天/6G</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2><span class="num">附录四</span>6月关键时间节点</h2>
+
+<div class="event-list">
+  <div class="event-item">
+    <div class="ev-date">6月上旬</div>
+    <div class="ev-con"><strong>消费电子新品发布、AI展会</strong><br><span>影响板块：消费电子、AI应用、端侧AI</span></div>
+  </div>
+  <div class="event-item">
+    <div class="ev-date">6月上旬-中旬</div>
+    <div class="ev-con"><strong>迎峰度夏前电网投资加速期</strong><br><span>影响板块：电网设备、火电/电力</span></div>
+  </div>
+  <div class="event-item">
+    <div class="ev-date">端午前后</div>
+    <div class="ev-con"><strong>出行预订高峰期</strong><br><span>影响板块：旅游出行/酒店航空</span></div>
+  </div>
+  <div class="event-item">
+    <div class="ev-date">6月下旬</div>
+    <div class="ev-con"><strong>6G/卫星通信大会</strong><br><span>影响板块：6G/卫星通信、商业航天</span></div>
+  </div>
+  <div class="event-item">
+    <div class="ev-date">6月全月</div>
+    <div class="ev-con"><strong>设备更新政策持续落地</strong><br><span>影响板块：设备更新、工业母机/机器人</span></div>
+  </div>
+  <div class="event-item">
+    <div class="ev-date">6月全月</div>
+    <div class="ev-con"><strong>AI端侧催化密集期</strong><br><span>影响板块：AI应用、消费电子</span></div>
+  </div>
+</div>
+
+</div><!-- /appendix -->
+
+<div class="disc">
+  <strong>⚠️ 免责声明：</strong>以上内容由 AI 基于公开市场信息整理生成，仅供参考，不构成任何投资建议或个股推荐。投资有风险，决策需谨慎。
+</div>
+
+<hr>
+<footer>
+弈沐资本 · 投研部 · 2026-05-29<br>
+<span style="font-family:var(--mono);font-size:11px">NeoData 金融数据服务 + WeStock 腾讯自选股数据</span>
+</footer>
+</div><!-- /page -->
+</body>
+</html>
