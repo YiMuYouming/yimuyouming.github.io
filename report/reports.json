@@ -1,0 +1,182 @@
+[
+  {
+    "folder": "market",
+    "filename": "六月板块TOP3及个股最终推荐-20260529.html",
+    "title": "六月板块 TOP3 及个股最终推荐",
+    "description": "TOP3 板块、6 只精选、核心/弹性/观察仓位和关键风险提示。",
+    "tag": "new",
+    "tagLabel": "新发布",
+    "folderId": "market",
+    "folderTitle": "6月市场报告"
+  },
+  {
+    "folder": "market",
+    "filename": "六月板块及个股调研-完整版-20260529.html",
+    "title": "六月板块及个股调研：完整版",
+    "description": "六大主线、资金形态评分矩阵、热搜榜对照和六月关键节点。",
+    "tag": "new",
+    "tagLabel": "新发布",
+    "folderId": "market",
+    "folderTitle": "6月市场报告"
+  },
+  {
+    "folder": "figure",
+    "filename": "陈小群游资深度研究报告.html",
+    "title": "陈小群深度研究报告",
+    "description": "7年2万倍、龙头战法、情绪周期、主线思维和交易轨迹。",
+    "tag": "figure",
+    "tagLabel": "精选",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "赵老哥研究报告.html",
+    "title": "赵老哥研究报告",
+    "description": "8年一万倍、主线思维、仓位推进和龙头接力框架。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "炒股养家研究报告.html",
+    "title": "炒股养家研究报告",
+    "description": "情绪周期、高手思维、仓位管理和交易哲学。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "作手新一研究报告.html",
+    "title": "作手新一研究报告",
+    "description": "首板启动确认、情绪周期定位、核心资产信仰和实战体系。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "小鳄鱼研究报告.html",
+    "title": "小鳄鱼研究报告",
+    "description": "二板接力、强势股反包、全能型交易结构和经典战役。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "方新侠研究报告.html",
+    "title": "方新侠研究报告",
+    "description": "基本面 + 情绪双驱动、趋势龙头、二波介入模型和离场信号。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "毛老板研究报告.html",
+    "title": "毛老板研究报告",
+    "description": "赛力斯、剑桥科技等经典战役，拆解造妖、锁仓与格局打法。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "欢乐海岸研究报告.html",
+    "title": "欢乐海岸研究报告",
+    "description": "锁仓、连板战法、造妖生态和高位资金合力。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "宁波桑田路研究报告.html",
+    "title": "宁波桑田路研究报告",
+    "description": "宁波敢死队传承、高辨识度、打板接力和灵活持仓。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "孙哥研究报告.html",
+    "title": "孙哥研究报告",
+    "description": "中信溧阳路、三日操盘法、五大打板秘诀和操作周期演变。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "佛山系研究报告.html",
+    "title": "佛山系研究报告",
+    "description": "佛山无影脚、超跌低位首板、消息刺激首板和撬跌停战法。",
+    "tag": "figure",
+    "tagLabel": "人物",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "figure",
+    "filename": "徐翔研究报告.html",
+    "title": "徐翔研究报告",
+    "description": "交易能力、法律边界、案件时间线和风险教训。",
+    "tag": "risk",
+    "tagLabel": "风险样本",
+    "folderId": "figure",
+    "folderTitle": "游资人物库"
+  },
+  {
+    "folder": "knowledge",
+    "filename": "龙虎榜深度研究报告.html",
+    "title": "龙虎榜深度研究报告",
+    "description": "上榜条件、席位分类、极端数据警示和扫雷清单。",
+    "tag": "tool",
+    "tagLabel": "知识工具",
+    "folderId": "tools",
+    "folderTitle": "知识与对手研究"
+  },
+  {
+    "folder": "quant-research",
+    "filename": "量化交易对手研究报告.html",
+    "title": "量化交易对手研究报告",
+    "description": "量化行为、机构图谱、交易盲区和龙虎榜量化痕迹。",
+    "tag": "tool",
+    "tagLabel": "对手研究",
+    "folderId": "tools",
+    "folderTitle": "知识与对手研究"
+  },
+  {
+    "folder": "market",
+    "filename": "五月主线-圆桌报告.html",
+    "title": "五月主线：圆桌报告",
+    "description": "计算机国产替代与国防军工两条主线，多角色多空交锋。",
+    "tag": "",
+    "tagLabel": "市场研判",
+    "folderId": "may-market",
+    "folderTitle": "五月市场沉淀"
+  },
+  {
+    "folder": "market",
+    "filename": "五月-潜在个股分析报告.html",
+    "title": "五月潜在个股分析报告",
+    "description": "20 只标的，按基本面、技术面、资金面、催化面排序。",
+    "tag": "",
+    "tagLabel": "市场研判",
+    "folderId": "may-market",
+    "folderTitle": "五月市场沉淀"
+  }
+]
