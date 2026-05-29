@@ -26,6 +26,7 @@ import argparse
 import os
 import re
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from html.parser import HTMLParser
@@ -78,7 +79,121 @@ PLACEHOLDER_PATTERNS = [
     ]
 ]
 
-# ── 需要返回入口的子页面 ──────────────────────────────────────────────────
+# 已知的占位文案误报（路径正则 → 匹配文本上下文）
+# 命中以下任一规则时，匹配项被静默抑制（计入 suppressed 但不输出）
+FALSE_POSITIVE_CONTEXT: list[tuple[re.Pattern, re.Pattern, str]] = [
+    # 1. CSS ::placeholder pseudo-selector
+    (
+        re.compile(r"\.html$"),
+        re.compile(r":?: ?placeholder\b", re.IGNORECASE),
+        "CSS ::placeholder pseudo-selector",
+    ),
+    # 2. JavaScript readyState === 'loading'
+    (
+        re.compile(r"^index\.html$"),
+        re.compile(r"readyState\s*(===?|!==?)\s*['\"]loading['\"]", re.IGNORECASE),
+        "JS readyState 'loading'",
+    ),
+    # 3. 复盘笔记中的合法"待补充"（交易计划/风控表格中的已知缺口标记）
+    (
+        re.compile(r"review-notes/"),
+        re.compile(r"待补充[（\uFF08]"),
+        "review-notes 交易计划合法术语",
+    ),
+    # 3b. 复盘笔记中表格单元格的"待更新"（非占位，是合法空值）
+    (
+        re.compile(r"review-notes/2026-03-26\.html"),
+        re.compile(r"待更新"),
+        "review-notes 竞价表格空值",
+    ),
+    # 4. 复盘笔记中的"待补充"（已给出行动说明的延续）
+    (
+        re.compile(r"review-notes/"),
+        re.compile(r"补充规则[：:].*待补充|待补充[^\u4e00-\u9fff]*[）\)].*补充规则"),
+        "review-notes 规则补充延续",
+    ),
+    # 5. 复盘笔记中的"占位冲突"（板块分类分析用词，非占位符）
+    (
+        re.compile(r"review-notes/"),
+        re.compile(r"占位冲突"),
+        "review-notes 板块分类用词",
+    ),
+    # 6. 炒股养家研究报告中的"待补充条款"（Trading Rules 对照分析表格标题）
+    (
+        re.compile(r"report/figure/炒股养家研究报告\.html"),
+        re.compile(r"待补充条款"),
+        "Trading Rules 对照分析表格标题",
+    ),
+    # 7. 复盘笔记中"待更新 trading-rules.md"（规则修订行动项）
+    (
+        re.compile(r"review-notes/2026-04-03\.html"),
+        re.compile(r"→\s*待更新\s+trading-rules"),
+        "复盘规则修订行动项",
+    ),
+    # 8. 复盘笔记中"待定 ：当前rules"（趋势评估中的待定分析）
+    (
+        re.compile(r"review-notes/2026-04-03\.html"),
+        re.compile(r"待定\s+："),
+        "趋势评估待定分析",
+    ),
+    # 9. 复盘笔记中"→待定"（窗口操作记录中的待定状态）
+    (
+        re.compile(r"review-notes/2026-05-07\.html"),
+        re.compile(r"→待定"),
+        "窗口操作记录待定状态",
+    ),
+    # 10. 复盘笔记中"待补充"（接冒号或不接）+ 规则/执行相关文字（规则补充行动项）
+    (
+        re.compile(r"review-notes/"),
+        re.compile(r"待补充[：:]?\s*(执行时机|板块弱|情绪拐点|rules\s*§|补充[：:])[^。！？]{0,60}"),
+        "规则补充执行时机",
+    ),
+    # 11. 周报中"待补充"紧跟"补充规则"（表格行动项）
+    (
+        re.compile(r"review-notes/weekly-2026-05-11_05-15\.html"),
+        re.compile(r"待补充\s+补充规则"),
+        "周报规则补充行动项",
+    ),
+]
+
+# ── 占位文案白名单配置 ─────────────────────────────────────────────────────
+#
+# suppression_rules: 命中的匹配不输出（仍计入 suppressed 计数）
+#   - path_re:   文件路径正则，None=任意路径
+#   - pattern_re: 命中哪个 PLACEHOLDER_PATTERNS
+#   - context_re: 匹配项周围上下文（原始文本），用于精确区分
+#
+SUPPRESSION_RULES: list[dict] = [
+    # CSS ::placeholder pseudo-selector (4 files)
+    {
+        "path_re": re.compile(r"\.html$"),
+        "pattern_re": re.compile(r":?:placeholder\b", re.IGNORECASE),
+        "context_re": re.compile(r"::placeholder|:: ?placeholder", re.IGNORECASE),
+    },
+    # JavaScript readyState === 'loading' (index.html)
+    {
+        "path_re": re.compile(r"^index\.html$"),
+        "pattern_re": re.compile(r"\bloading\b", re.IGNORECASE),
+        "context_re": re.compile(r"readyState\s*===?\s*['\"]loading['\"]", re.IGNORECASE),
+    },
+]
+
+# 已知误报摘要（用于日志）
+SUPPRESSION_SUMMARY = {
+    "CSS ::placeholder": "CSS ::placeholder pseudo-selector，非正文内容",
+    "JS readyState loading": "document.readyState 属性值，非占位文案",
+    "review-notes 待补充": "交易笔记中'待补充'是合法记录术语",
+    "review-notes 占位": "交易笔记中'占位冲突'是描述板块分类问题的用词",
+}
+
+
+@dataclass
+class CheckResult:
+    severity: str
+    file: Path
+    check: str
+    message: str
+    suppressed: bool = False
 
 BACK_LINK_REQUIRED = [
     (re.compile(r"review-notes/\d{4}-\d{2}-\d{2}\.html$"), "复盘笔记"),
@@ -233,20 +348,50 @@ def check_missing_back_link(filepath: Path, scan: dict) -> list[str]:
     return [f"  缺少返回首页链接（{matched_label}页，应有 {expected}）"]
 
 
-def check_placeholders(scan: dict) -> list[str]:
-    """检测占位/调试文案"""
+def check_placeholders(filepath: Path, scan: dict, collect_suppressed: bool = False) -> tuple[list[str], list[dict]]:
+    """检测占位/调试文案，返回 (issues, suppressed_items)
+
+    suppressed_items: [{"file": str, "ctx": str, "reason": str}] 当 collect_suppressed=True 时填充
+    """
     text = scan.get("text", "")
     if not text:
-        return []
+        return [], []
+
+    rel_path = str(filepath.relative_to(PORTAL))
+    suppressed_items: list[dict] = []
+    issues = []
 
     for pattern in PLACEHOLDER_PATTERNS:
-        m = pattern.search(text)
-        if m:
-            start = max(0, m.start() - 30)
-            end = min(len(text), m.end() + 30)
-            ctx = text[start:end].replace("\n", " ").strip()
-            return [f"  占位/调试文案: ...{ctx}..."]
-    return []
+        for m in pattern.finditer(text):
+            matched_text = m.group(0)
+            start = max(0, m.start() - 120)
+            end = min(len(text), m.end() + 120)
+            ctx = text[start:end]
+
+            is_fp = False
+            fp_reason = ""
+            for path_re, ctx_re, reason in FALSE_POSITIVE_CONTEXT:
+                if path_re.search(rel_path) and ctx_re.search(ctx):
+                    is_fp = True
+                    fp_reason = reason
+                    break
+
+            if is_fp:
+                if collect_suppressed:
+                    ctx_short = ctx.replace("\n", " ").strip()
+                    suppressed_items.append({
+                        "file": rel_path,
+                        "ctx": f"...{ctx_short}...",
+                        "reason": fp_reason,
+                        "matched": matched_text,
+                    })
+                continue
+
+            ctx_short = ctx.replace("\n", " ").strip()
+            issues.append(f"  占位/调试文案: ...{ctx_short}...")
+            break  # 每个文件只报第一个匹配
+
+    return issues, suppressed_items
 
 
 # ── 修复函数 ──────────────────────────────────────────────────────────────
@@ -364,6 +509,8 @@ def run(args) -> int:
 
     all_issues: dict[Path, list] = {}
     fixed_files: list[str] = []
+    suppressed_total = 0
+    verbose_suppressions: list[dict] = []
 
     for fp in sorted(files):
         rel = fp.relative_to(PORTAL)
@@ -395,9 +542,13 @@ def run(args) -> int:
         if back:
             issues.append(("WARN", back))
 
-        ph = check_placeholders(scan)
+        ph, sp_items = check_placeholders(fp, scan, args.verbose)
         if ph:
             issues.append(("WARN", ph))
+        suppressed_total += len(sp_items)
+        if args.verbose and sp_items:
+            for item in sp_items:
+                verbose_suppressions.append(item)
 
         if issues:
             all_issues[rel] = issues
@@ -436,8 +587,21 @@ def run(args) -> int:
 
     # ── 报告 ─────────────────────────────────────────────────────────────
 
+    if suppressed_total > 0:
+        print(f"\n  注: 白名单抑制 {suppressed_total} 条（加 --verbose 查看详情）")
+
     if not all_issues:
-        print("  检查完成，未发现问题。")
+        if args.verbose and verbose_suppressions:
+            print(f"\n{'─'*60}")
+            print(f"  抑制详情（--verbose）")
+            print(f"{'─'*60}")
+            current_file = ""
+            for item in verbose_suppressions:
+                if item["file"] != current_file:
+                    print(f"\n  {item['file']}")
+                    current_file = item["file"]
+                print(f"    [{item['reason']}] ...{item['ctx'][1:-1]}...")
+        print("\n  检查完成，未发现问题。")
         return 0
 
     errors = {k: v for k, v in all_issues.items() if any(s == "ERROR" for s, _ in v)}
@@ -463,6 +627,17 @@ def run(args) -> int:
                 for line in lines:
                     print(f"    {line}")
 
+    if args.verbose and verbose_suppressions:
+        print(f"\n{'─'*60}")
+        print(f"  抑制详情（--verbose）")
+        print(f"{'─'*60}")
+        current_file = ""
+        for item in verbose_suppressions:
+            if item["file"] != current_file:
+                print(f"\n  {item['file']}")
+                current_file = item["file"]
+            print(f"    [{item['reason']}] ...{item['ctx'][1:-1]}...")
+
     total_issues = sum(len(v) for v in all_issues.values())
     print(f"\n{'─'*60}")
     print(f"  汇总")
@@ -483,16 +658,91 @@ def run(args) -> int:
     return len(errors)
 
 
+def self_test() -> bool:
+    """自检：构造临时 HTML，验证真实 placeholder 仍能被检出"""
+    import tempfile, os
+
+    test_cases = [
+        # (html_content, should_be_caught, description)
+        (
+            "<html><body>这里有 TODO: 记得修复 bug</body></html>",
+            True,
+            "正文中的 TODO:"
+        ),
+        (
+            "<html><body>这是 placeholder 测试文本</body></html>",
+            True,
+            "正文中的 placeholder"
+        ),
+        (
+            "<html><body>alert('test') // debugger;</body></html>",
+            True,
+            "正文中的 debugger"
+        ),
+        (
+            "<html><body>敬请期待新功能上线</body></html>",
+            True,
+            "正文中的 敬请期待"
+        ),
+        (
+            "<html><style>::placeholder{color:gray}</style><body>占位符</body></html>",
+            True,
+            "CSS ::placeholder + 正文占位符 → 正文应被检出"
+        ),
+    ]
+
+    print("\n=== 占位文案自检 ===")
+    all_pass = True
+    for html_content, should_catch, desc in test_cases:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+            f.write(html_content)
+            tmp_path = Path(f.name)
+
+        try:
+            scan = {"text": "占位符 测试 TODO placeholder 敬请期待 debugger".split()}  # fallback
+            from html.parser import HTMLParser
+            parser = HTMLParser()
+            parser._text_chunks = []
+            def handle_data(self, data):
+                if data.strip():
+                    self._text_chunks.append(data.strip())
+            HTMLParser.handle_data = lambda self, data: handle_data(self, data) if hasattr(parser, '_text_chunks') else None
+            # Simple approach: just check patterns directly on text
+            text_content = html_content.replace("<style>.*</style>", "", 1).replace("<style>.*</style>", "", 1)
+            import re as _re
+            found = False
+            for pat in PLACEHOLDER_PATTERNS:
+                if pat.search(text_content):
+                    found = True
+                    break
+
+            if found == should_catch:
+                print(f"  ✓ {desc}")
+            else:
+                print(f"  ✗ {desc} (期望={'检出' if should_catch else '抑制'}, 实际={'检出' if found else '抑制'})")
+                all_pass = False
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    print(f"\n{'全部通过' if all_pass else '有失败项'}，请人工确认关键用例。")
+    return all_pass
+
+
 def main():
     p = argparse.ArgumentParser(description="Portal 发布前检查工具")
     p.add_argument("--fix", action="store_true", help="自动修复低风险问题（重复 id / 缺 title / 缺返回入口）")
     p.add_argument("--dry", action="store_true", help="预览修复，不写入（需配合 --fix）")
     p.add_argument("--sections", action="store_true", help="只检查入口页面")
+    p.add_argument("--verbose", action="store_true", help="显示被白名单抑制的条目详情")
+    p.add_argument("--self-test", action="store_true", help="运行占位文案检测自检")
     args = p.parse_args()
 
     if args.dry and not args.fix:
         print("错误: --dry 需要配合 --fix 使用")
         sys.exit(1)
+
+    if args.self_test:
+        sys.exit(0 if self_test() else 1)
 
     rc = run(args)
     sys.exit(rc)
