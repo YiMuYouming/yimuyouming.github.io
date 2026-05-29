@@ -216,6 +216,7 @@ class HTMLLinkParser(HTMLParser):
         self.has_body = False
         self._in_style = False
         self._text_chunks = []
+        self._raw_chunks = []  # style/script content for whitelist matching
 
     def handle_starttag(self, tag, attrs):
         if tag == "style":
@@ -234,7 +235,9 @@ class HTMLLinkParser(HTMLParser):
             self._in_style = False
 
     def handle_data(self, data):
-        if not self._in_style:
+        if self._in_style:
+            self._raw_chunks.append(data)
+        else:
             chunk = data.strip()
             if chunk:
                 self._text_chunks.append(chunk)
@@ -265,6 +268,7 @@ def parse_html(filepath: Path) -> dict:
         "ids": parser.ids,
         "title": title or parser.title,
         "has_body": parser.has_body,
+        "raw_text": " ".join(parser._raw_chunks),
     }
 
 
@@ -351,22 +355,44 @@ def check_missing_back_link(filepath: Path, scan: dict) -> list[str]:
 def check_placeholders(filepath: Path, scan: dict, collect_suppressed: bool = False) -> tuple[list[str], list[dict]]:
     """检测占位/调试文案，返回 (issues, suppressed_items)
 
+    在 parse_html 提取的可见文本上搜索（不含 HTML 标签/属性值），
+    在可见文本和 CSS/script 原始内容上搜索，由 FALSE_POSITIVE_CONTEXT 规则过滤误报。
     suppressed_items: [{"file": str, "ctx": str, "reason": str}] 当 collect_suppressed=True 时填充
     """
     text = scan.get("text", "")
-    if not text:
+    raw_text = scan.get("raw_text", "")
+    if not text and not raw_text:
         return [], []
 
-    rel_path = str(filepath.relative_to(PORTAL))
+    try:
+        rel_path = str(filepath.relative_to(PORTAL))
+    except ValueError:
+        rel_path = filepath.name  # 外部临时文件用文件名
+    html_text = filepath.read_text(encoding="utf-8")
     suppressed_items: list[dict] = []
     issues = []
 
-    for pattern in PLACEHOLDER_PATTERNS:
-        for m in pattern.finditer(text):
+    # 合并可见文本和 CSS/script 内容，统一检测
+    combined_text = f"{text} {raw_text}"
+    matched_patterns: set[int] = set()  # 避免同一 match 重复报告
+
+    for pi, pattern in enumerate(PLACEHOLDER_PATTERNS):
+        for m in pattern.finditer(combined_text):
+            if pi in matched_patterns:
+                continue
             matched_text = m.group(0)
+
+            # 在原始 HTML 中取上下文（用于 FALSE_POSITIVE_CONTEXT 匹配）
             start = max(0, m.start() - 120)
-            end = min(len(text), m.end() + 120)
-            ctx = text[start:end]
+            end = min(len(combined_text), m.end() + 120)
+            ctx_in_combined = combined_text[start:end]
+            pos = html_text.find(ctx_in_combined[:min(50, len(ctx_in_combined))])
+            if pos >= 0:
+                raw_start = max(0, pos - 120)
+                raw_end = min(len(html_text), pos + len(ctx_in_combined) + 120)
+                ctx = html_text[raw_start:raw_end]
+            else:
+                ctx = ctx_in_combined
 
             is_fp = False
             fp_reason = ""
@@ -385,11 +411,13 @@ def check_placeholders(filepath: Path, scan: dict, collect_suppressed: bool = Fa
                         "reason": fp_reason,
                         "matched": matched_text,
                     })
-                continue
+                matched_patterns.add(pi)
+                break  # 匹配上了但被抑制，跳到下一个 pattern
 
             ctx_short = ctx.replace("\n", " ").strip()
             issues.append(f"  占位/调试文案: ...{ctx_short}...")
-            break  # 每个文件只报第一个匹配
+            matched_patterns.add(pi)
+            break  # 每个文件每个 pattern 只报第一个匹配
 
     return issues, suppressed_items
 
@@ -659,72 +687,93 @@ def run(args) -> int:
 
 
 def self_test() -> bool:
-    """自检：构造临时 HTML，验证真实 placeholder 仍能被检出"""
-    import tempfile, os
+    """端到端自检：走 parse_html + check_placeholders 实际检测路径
 
+    验证：
+    - 真实占位文案（TODO / placeholder / debugger / console.log）被检出
+    - 白名单内容（CSS ::placeholder / JS readyState === 'loading'）被抑制
+    """
+    import tempfile
+
+    # 每个用例: (html_content, filepath_name, should_catch, should_suppress, description)
     test_cases = [
-        # (html_content, should_be_caught, description)
+        # 1. 真实 TODO:
         (
-            "<html><body>这里有 TODO: 记得修复 bug</body></html>",
-            True,
+            "<html><head><title>Test</title></head><body>TODO: 记得修复这个 bug</body></html>",
+            "test_todo.html",
+            True, False,
             "正文中的 TODO:"
         ),
+        # 2. 真实 placeholder
         (
-            "<html><body>这是 placeholder 测试文本</body></html>",
-            True,
+            "<html><head><title>Test</title></head><body>请填写 placeholder 字段</body></html>",
+            "test_placeholder.html",
+            True, False,
             "正文中的 placeholder"
         ),
+        # 3. 真实 debugger;
         (
-            "<html><body>alert('test') // debugger;</body></html>",
-            True,
-            "正文中的 debugger"
+            "<html><head><title>Test</title></head><body>debugger; 请调试</body></html>",
+            "test_debugger.html",
+            True, False,
+            "正文中的 debugger;"
         ),
+        # 4. 真实 console.log
         (
-            "<html><body>敬请期待新功能上线</body></html>",
-            True,
-            "正文中的 敬请期待"
+            "<html><head><title>Test</title></head><body>console.log('debug') 这里有调试代码</body></html>",
+            "test_consolelog.html",
+            True, False,
+            "正文中的 console.log"
         ),
+        # 5. CSS ::placeholder（应被白名单抑制）
         (
-            "<html><style>::placeholder{color:gray}</style><body>占位符</body></html>",
-            True,
-            "CSS ::placeholder + 正文占位符 → 正文应被检出"
+            "<html><head><title>Test</title><style>input::placeholder{color:gray}</style></head>"
+            "<body>正常内容</body></html>",
+            "test_css_placeholder.html",
+            False, True,
+            "CSS ::placeholder → 应被抑制"
+        ),
+        # 6. JS readyState === 'loading'（应被白名单抑制）
+        (
+            "<html><head><title>Test</title></head><body><script>"
+            "if (document.readyState === 'loading') { init(); }"
+            "</script></body></html>",
+            "index.html",   # 必须精确匹配白名单路径规则
+            False, True,
+            "JS readyState === 'loading' → 应被抑制"
         ),
     ]
 
-    print("\n=== 占位文案自检 ===")
+    import tempfile
+
+    print("\n=== portal_check 自检（端到端） ===")
     all_pass = True
-    for html_content, should_catch, desc in test_cases:
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
-            f.write(html_content)
-            tmp_path = Path(f.name)
 
-        try:
-            scan = {"text": "占位符 测试 TODO placeholder 敬请期待 debugger".split()}  # fallback
-            from html.parser import HTMLParser
-            parser = HTMLParser()
-            parser._text_chunks = []
-            def handle_data(self, data):
-                if data.strip():
-                    self._text_chunks.append(data.strip())
-            HTMLParser.handle_data = lambda self, data: handle_data(self, data) if hasattr(parser, '_text_chunks') else None
-            # Simple approach: just check patterns directly on text
-            text_content = html_content.replace("<style>.*</style>", "", 1).replace("<style>.*</style>", "", 1)
-            import re as _re
-            found = False
-            for pat in PLACEHOLDER_PATTERNS:
-                if pat.search(text_content):
-                    found = True
-                    break
+    for html_content, fname, expect_catch, expect_suppress, desc in test_cases:
+        # 所有测试文件写入 temp dir（避免覆盖 PORTAL 下真实文件）
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td) / fname
+            tmp.write_text(html_content, encoding="utf-8")
+            scan = parse_html(tmp)
+            issues, suppressed = check_placeholders(tmp, scan, collect_suppressed=True)
 
-            if found == should_catch:
+            caught = len(issues) > 0
+            was_suppressed = len(suppressed) > 0
+
+            ok = (caught == expect_catch) and (was_suppressed == expect_suppress)
+            if ok:
                 print(f"  ✓ {desc}")
             else:
-                print(f"  ✗ {desc} (期望={'检出' if should_catch else '抑制'}, 实际={'检出' if found else '抑制'})")
+                print(f"  ✗ {desc}")
+                print(f"    期望: caught={expect_catch}, suppressed={expect_suppress}")
+                print(f"    实际: caught={caught}, suppressed={was_suppressed}")
+                if issues:
+                    print(f"    issues: {issues}")
+                if suppressed:
+                    print(f"    suppressed: {len(suppressed)} items")
                 all_pass = False
-        finally:
-            tmp_path.unlink(missing_ok=True)
 
-    print(f"\n{'全部通过' if all_pass else '有失败项'}，请人工确认关键用例。")
+    print(f"\n{'✓ 全部通过' if all_pass else '✗ 有失败项'}.")
     return all_pass
 
 
