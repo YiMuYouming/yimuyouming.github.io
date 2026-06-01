@@ -1002,6 +1002,9 @@ def update_review_notes_index(date_str, fm):
 
     # 同一天重复同步时刷新归档卡片内容，但不重复增加计数。
     existing_entry = f'href="{date_str}.html"' in content
+    year_label = date_str[:4]
+    month_label = date_str[5:7].lstrip('0')
+    month_title = f'{year_label}年{month_label}月'
 
     weekday = fm.get('weekday', '')
     day = date_str[-2:].lstrip('0')
@@ -1022,30 +1025,47 @@ def update_review_notes_index(date_str, fm):
 
     if existing_entry:
         card_pattern = rf'<a href="{re.escape(date_str)}\.html" class="day-card">.*?</a>'
-        content, replaced = re.subn(card_pattern, new_entry.rstrip(), content, count=1, flags=re.S)
+        content, replaced = re.subn(rf'\s*{card_pattern}\s*', '\n', content, count=1, flags=re.S)
         if not replaced:
             print(f"⚠️  已存在 {date_str}.html，但未找到归档日卡，跳过归档卡片刷新")
-    else:
-        # Find the 5月 section and insert at top
-        # Find the 5月 day-list div
-        pattern = r'(<div class="month-label[^>]*>.*?2026年5月.*?</div>\s*<div class="day-list">\s*)'
-        content = re.sub(pattern, r'\1' + new_entry, content, count=1)
 
-        # Update month count
-        content = re.sub(r'(2026年5月.*?<span class="cnt">)(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
+    if month_title not in content:
+        month_block = f'''<!-- {month_title} -->
+<div class="month-group">
+  <div class="month-label" onclick="var s=this.nextElementSibling;this.classList.toggle('collapsed');s.style.display=this.classList.contains('collapsed')?'none':''"><span class="tog">▼</span>{month_title} <span class="cnt">0篇 · 进行中</span></div>
+  <div class="day-list">
+  </div>
+</div>
 
-        # Update hero stats: total count
-        content = re.sub(r'(全部记录 · )(\d+)(篇)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
-        content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', lambda m: f"{m.group(1)}{int(m.group(2))+1}{m.group(3)}", content, count=1)
-        # Update date range
-        month_label = date_str[5:7].lstrip('0')
-        day_label = date_str[8:10].lstrip('0')
-        content = re.sub(
-            r'(<span><strong>\d+/\d+ – )\d+/\d+(</strong></span>)',
-            rf'\g<1>{month_label}/{day_label}\2',
-            content,
-            count=1,
-        )
+'''
+        content = re.sub(r'(<!-- \d{4}年\d+月 -->)', month_block + r'\1', content, count=1)
+
+    month_pattern = rf'(<!-- {re.escape(month_title)} -->\s*<div class="month-group">.*?<div class="day-list">\s*)'
+    content, inserted = re.subn(month_pattern, r'\1' + new_entry, content, count=1, flags=re.S)
+    if not inserted:
+        print(f"⚠️  未找到 {month_title} 归档分组，跳过归档卡片插入")
+
+    # Recalculate record and month counts from current day cards.
+    total_days = len(re.findall(r'<a href="\d{4}-\d{2}-\d{2}\.html" class="day-card"', content))
+    content = re.sub(r'(全部记录 · )(\d+)(篇)', rf'\g<1>{total_days}\3', content, count=1)
+    content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', rf'\g<1>{total_days}\3', content, count=1)
+
+    day_label = date_str[8:10].lstrip('0')
+    content = re.sub(
+        r'(<span><strong>\d+/\d+ – )\d+/\d+(</strong></span>)',
+        rf'\g<1>{month_label}/{day_label}\2',
+        content,
+        count=1,
+    )
+
+    def refresh_month_count(match):
+        block = match.group(0)
+        card_count = len(re.findall(r'<a href="\d{4}-\d{2}-\d{2}\.html" class="day-card"', block))
+        title_match = re.search(r'(\d{4}年\d+月)', block)
+        suffix = ' · 进行中' if title_match and title_match.group(1) == month_title else ''
+        return re.sub(r'<span class="cnt">.*?</span>', f'<span class="cnt">{card_count}篇{suffix}</span>', block, count=1)
+
+    content = re.sub(r'<!-- \d{4}年\d+月 -->\s*<div class="month-group">.*?</div>\s*</div>', refresh_month_count, content, flags=re.S)
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)

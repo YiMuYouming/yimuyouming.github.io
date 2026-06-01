@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-06-01 周一 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+[id]{scroll-margin-top:70px}
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+.debate-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
+.debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
+  <div class="title">2026-06-01 周一 复盘笔记</div>
+  <div class="meta">
+    <span class="chip green">情绪 68.5%</span>
+    <span class="chip green">上证 4057.74 -0.27%</span>
+    <span class="chip blue">120涨停 / 21跌停</span>
+    <span class="chip purple">持仓 华电能源7000@9.486,光迅科技900@218.023</span>
+    <span class="chip green">终稿 (红蓝对抗完成)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">节点说明</a>
+  <a href="#s1d" class="s2">涨停结构</a>
+  <a href="#s1e" class="s2">自选池表现</a>
+  <a href="#s1f" class="s2">持仓与交易</a>
+  <a href="#s1g" class="s2">风格检测</a>
+  <a href="#s1h" class="s2">趋势持仓复盘</a>
+  <a href="#s1i" class="s2">窗口操作</a>
+  <a href="#s1j" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+  <a href="#sd">数据附录</a>
+</div>
+
+<div class="content">
+
+<div class="section" id="s0">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 第〇部分 · 昨日预案<span class="cnt">昨日终审定稿</span>
+</div>
+<div class="sb"><div class="si">
+来源：5/29 复盘笔记 §三 + 附录A（红蓝对抗终审定稿）<br>
+🚨 <strong>铁律触发：连亏≥2天 → 周一空仓</strong><br>
+风格：52分 | 连板40% / 趋势60%（连板硬卡释放→趋势≈90%+）<br>
+总仓位上限：<strong>0%（空仓）</strong> — 连亏≥2天铁律。推翻后→40%（情绪28.4%低迷）<br>
+总基调：冰点反弹确认失败+跌停≥涨停首次出现+连亏2天→空仓等情绪确认冰点底部。<br>
+周五规则：佰维T+1卖不出→周一竞价清仓（弈沐已裁决）<br>
+</div>
+<div class="sh2">持仓处理</div>
+<div class="sh2">连板板块→操作映射</div>
+<div class="si">
+❌ 空仓日不做连板操作。推翻后→天地在线2进3竞价确认（高开+3%以上+量比>3+板块联动）。<br>
+</div>
+<div class="sh2">趋势板块→操作映射</div>
+<div class="si">
+⚠️ 空仓日不操作。仅观察通信设备持续性+PCB修复方向。<br>
+</div>
+<div class="sh2">操作指南</div>
+<div class="para"><strong>总基调</strong>：冰点反弹确认失败+连亏2天铁律强制空仓。等情绪确认冰点底部+连亏清零后再动。</div>
+<div class="para"><strong>仓位</strong>：0%（铁律）。推翻后→40%（低迷档），趋势侧占90%+</div>
+<div class="para"><strong>不碰</strong>：1进2/3进4+连板/防御板块(银行电力白酒)/半导体制造(中芯/士兰微/三安)/风华(分歧)</div>
+<div class="para"><strong>风险</strong>：🚨连亏≥2天铁律 | ⚠️跌停50≥涨停49首次 | ⚠️通信双雄需确认持续性 | ⚠️上证20日线向下 | ⚠️佰维竞价清仓</div>
+<hr class="divider"><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>T+1可卖</th><th>操作策略</th></tr></thead><tbody><tr><td>佰维存储</td><td>335.5</td><td>200股(~7%)</td><td>是（周五买入）</td><td>🔴周一竞价清仓（连亏2天铁律空仓）</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作标的（推翻后才买）</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇 通信双雄🔄观察</td><td>亨通/长飞/中天/通鼎</td><td>🆕亨通光电W2回踩MA5</td><td>板块Q2仅5只宽度极窄→降级观察</td></tr><tr><td>🥈 PCB元件🔄观察</td><td>方正/生益/深南</td><td>🆕方正科技W2回踩MA5</td><td>PCB板块Q2=0无宽度，龙头逆势修复观察</td></tr></tbody></table></div></div>
+</div>
+<div class="section" id="s1">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §一 · 当日复盘
+</div>
+<div class="sb"><div class="sh3" id="s1a">📊 表1：大盘全景</div><div class="tw"><table><thead><tr><th>节点</th><th>情绪</th><th>上证(%)</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>总竞价涨幅</th><th>关键异动</th></tr></thead><tbody><tr><td>竞价</td><td>—🔵</td><td><span class="down">-0.03%(4067.16)</span></td><td>5/7</td><td>291.26亿</td><td>1815/2733</td><td>-0.03%</td><td>竞价弱势，价格横盘</td></tr><tr><td>早盘</td><td>77.4%🟠强势</td><td><span class="up">+0.45%(4087.02)</span></td><td>64/9</td><td>1.11万亿</td><td>4010/1171</td><td>—</td><td>冰点→强势反弹，科技全线爆发</td></tr><tr><td>午盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>尾盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>收盘</td><td>68.5%🟠强势</td><td><span class="down">-0.27%(4057.74)</span></td><td>120/21</td><td>2.88万亿</td><td>3569/1641</td><td>—</td><td>冲高回落，上证翻绿，涨停120只🔥</td></tr></tbody></table></div><div class="sh3" id="s1b">📈 表2：情绪高标</div><div class="tw"><table><thead><tr><th>指标</th><th>竞价</th><th>早盘</th><th>午盘</th><th>尾盘</th><th>收盘</th><th>门槛</th></tr></thead><tbody><tr><td>竞价强势家数</td><td>13只</td><td>13只</td><td>—</td><td>—</td><td>120(收)</td><td>>10(降温)/>30(高位)</td></tr><tr><td>涨停收益</td><td>—</td><td>2.72%</td><td>—</td><td>—</td><td>2.44%</td><td>>2%(低迷)/>3%(正常)</td></tr><tr><td>连板收益</td><td>—</td><td>3.27%</td><td>—</td><td>—</td><td>2.50%</td><td>—</td></tr><tr><td>炸板收益</td><td>—</td><td>0.97%</td><td>—</td><td>—</td><td>-0.36%</td><td>—</td></tr><tr><td>封板率</td><td>—</td><td>25.0%🚨</td><td>—</td><td>—</td><td>14.63%🚨🚨</td><td>—</td></tr><tr><td>炸板率</td><td>—</td><td>75.0%🚨🚨</td><td>—</td><td>—</td><td>85.37%🚨🚨🚨</td><td><30%(W1追涨)/<40%(W2冰点)</td></tr><tr><td>整体晋级率</td><td>—</td><td>12.24%</td><td>—</td><td>—</td><td>22.45%</td><td>辅助参考（非硬卡）</td></tr><tr><td>一进二晋级率</td><td>—</td><td>10.0%❌</td><td>—</td><td>—</td><td>20.0%✅</td><td>>15%(低迷)/>18%(主升)</td></tr><tr><td>二进三晋级率</td><td>—</td><td>20.0%</td><td>—</td><td>—</td><td>20.0%</td><td>>20%(环境)/>25%(2进3策略)</td></tr><tr><td>三进四晋级率</td><td>—</td><td>25.0%</td><td>—</td><td>—</td><td>50.0%✅</td><td>>35%(3进4+策略)</td></tr><tr><td>赚钱效应</td><td>—</td><td>一般</td><td>—</td><td>—</td><td>一般</td><td>好(>3%+>40%)/差(<2%+<20%)</td></tr><tr><td>梯队</td><td>4(1)-2(1)-首3</td><td>4(1)-3(1)-2(4)-首58</td><td>—</td><td>—</td><td>4(2)-3(1)-2(8)-首109</td><td>—</td></tr><tr><td>最高板/次高板</td><td>4/2</td><td>4/3</td><td>—</td><td>—</td><td>4/3</td><td>—</td></tr><tr><td>竞价验证结论</td><td>A差+B差</td><td>—</td><td>—</td><td>—</td><td>—</td><td>A好+B好/A好+B差/A差+B好/A差+B差</td></tr></tbody></table></div><div class="sh3" id="s1c">🔍 节点说明</div><div class="node-grid"><div class="node-card"><div class="nhead">竞价</div><div class="nbody"><div class="para">上证-0.03%(4067.16)平开，量能291.26亿偏低，涨跌比1815/2733偏弱。涨停5/跌停7，竞价强势家数13只(降温)。连板梯队：粤电力A4板(公用事业)、春秋电子2板(电子)、首板3只(胜利精密/节能铁汉/英力股份)。自选池：佰维+1.11%(量比3.70抢筹)、亨通-2.44%(量比9.84分歧)、方正-1.34%、生益平开、长飞-0.70%、中天-0.45%。连亏2天铁律空仓，佰维竞价清仓。<br>- 结论：早盘偏弱，涨停仅5只vs跌停7只，情绪在冰点边缘。连板梯队断档(无3板)，最高板仅粤电力A4板(公用事业非主线)。通信双雄竞价回调(亨通-2.44%/长飞-0.70%)，PCB龙头平开。佰维竞价+1.11%抢筹但按铁律清仓。 [待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">早盘</div><div class="nbody"><div class="para">情绪<strong>77.4%🟠强势</strong>（从周五28.4%冰点大幅修复🔥），上证<strong>+0.45%</strong>(4087.02)，创业板+0.92%领涨。涨停<strong>64/跌停9</strong>，涨跌比4010/1171(77%上涨)，量能1.11万亿已万亿级🔥。炸板率<strong>75%🚨🚨</strong>极高(封板率仅25%)，涨停收益2.72%(一般)。一进二10%❌(<15%排除)，二进三20%(=环境线但<25%策略线)，三进四25%(<35%排除)。梯队：合锻智能4板(机械设备)-华锋股份3板(汽车)-2板×4(春秋电子/江苏国信/泓淋电力/中央商场)-首板58。趋势走强板块11(周五0→11🔥)。板块最强：软件开发+28.62亿🔥、电网设备+25.12亿🔥、IT服务+23.39亿🔥、电池+23.65亿🔥。自选池：亨通<strong>+4.19%🔥</strong>(通信修复)、佰维<strong>-0.52%</strong>(已清仓)、方正<strong>-3.72%🔴</strong>(PCB回调)、长飞-1.97%、生益-0.26%、中天-1.40%。<br>- 结论：冰点反弹确认成功🔥——周五28.4%冰点→早盘77.4%强势。涨停64只，上涨77%，主力全线净流入。但炸板率75%🚨警告涨停质量差，连板仍在修复中(一进二10%)。通信双雄分化：亨通+4.19%强势修复🔥。 [待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">午盘</div><div class="nbody"><div class="para">（待数据）<br><br><strong>尾盘</strong>：<br>（待数据）<br><br><strong>收盘</strong><br>- 说明：情绪<strong>68.5%🟠强势</strong>（早盘77.4%→收盘68.5%，冲高回落-8.9pp），上证<strong>-0.27%</strong>(4057.74)翻绿，深证-1.51%，创业板-2.15%领跌。涨停<strong>120/跌停21</strong>🔥，涨跌比3569/1641(68.5%上涨)，量能2.88万亿。炸板率<strong>85.37%🚨🚨🚨</strong>极差（封板率仅14.63%），涨停收益2.44%(一般)。晋级率：一进二20.0%✅(>15%回暖)、二进三20.0%(=环境线)、三进四50.0%✅(>35%高位接力可做)。梯队：<strong>4板×2</strong>(粤电力A/合锻智能)<strong>-3板×1</strong>(天地在线)<strong>-2板×8-首板109</strong>。趋势走强板块27(早盘11→收盘27🔥🔥)。板块最强：软件开发+49.96亿🔥🔥、文化传媒+46.29亿🔥🔥、银行+47.27亿🔥🔥、煤炭+28.69亿🔥、电力+11.51亿。自选池：华电能源(持仓)-6.22%🔴(高开低走)、光迅科技(持仓)+0.17%(横盘)、亨通-2.02%(冲高回落)、长飞-7.75%🔴、方正-7.45%🔴、生益-3.55%🔴、中天-6.64%🔴、佰维(已清)-6.83%🔴。<br>- 结论：<strong>冰点反弹日但冲高回落严重</strong>🔥。早盘情绪77.4%→收盘68.5%(↘8.9pp)，上证从+0.45%翻绿至-0.27%。涨停120只🔥但炸板率85.37%🚨🚨🚨为近期最高，说明涨停质量极差——60%+的涨停股盘中炸板。好消息：一进二晋级率从早盘10%→收盘20%(>15%回温)、三进四50%✅、趋势板块从11→27🔥。整体定性：情绪修复确认但盘中冲高回落，短线仍脆弱。新账户持仓：华电能源-6.22%🔴(高开低走需警惕)、光迅科技+0.17%(横盘守住了)。 [待弈沐补充盘感]</div></div></div></div><div class="sh3" id="s1d">🏗️ 涨停结构</div><div class="tw"><table><thead><tr><th>板块</th><th>涨停数</th><th>连板梯队</th><th>核心</th><th>板块涨跌幅</th><th>主力净流入</th><th>5日线</th><th>备注</th></tr></thead><tbody><tr><td>电力</td><td>~15</td><td>粤电力A4板,华能国际2板,晋控电力2板,江苏国信2板,深南电A2板,泓淋电力2板</td><td>粤电力A4板</td><td><span class="up">+1.32%</span></td><td>+11.51亿</td><td>站上</td><td>连续走强龙头</td></tr><tr><td>软件开发</td><td>~5</td><td>首板</td><td>用友网络</td><td><span class="up">+3.56%</span></td><td>+49.96亿🔥🔥</td><td>站上</td><td>最强资金流入</td></tr><tr><td>文化传媒</td><td>~8</td><td>天地在线3板</td><td>天地在线3板</td><td><span class="up">+3.77%</span></td><td>+46.29亿🔥🔥</td><td>站上</td><td>传媒新方向</td></tr><tr><td>煤炭</td><td>~6</td><td>首板</td><td>兖矿能源</td><td><span class="up">+6.22%🔥</span></td><td>+28.69亿🔥</td><td>站上</td><td>最强涨幅板块</td></tr><tr><td>消费电子</td><td>~5</td><td>春秋电子2板</td><td>春秋电子2板</td><td><span class="up">+1.54%</span></td><td>-39.76亿🔴</td><td>站上</td><td>资金流出分歧</td></tr><tr><td>银行</td><td>—</td><td>—</td><td>—</td><td><span class="up">+1.66%</span></td><td>+47.27亿🔥🔥</td><td>站上</td><td>大资金避险</td></tr></tbody></table></div><div class="sh3">🔗 连板股</div><div class="tw"><table><thead><tr><th>股票</th><th>连板</th><th>方向</th><th>备注</th></tr></thead><tbody><tr><td>粤电力A</td><td>4板</td><td>公用事业</td><td>电力龙头，连续走强</td></tr><tr><td>合锻智能</td><td>4板</td><td>机械设备</td><td>机械设备新龙头</td></tr><tr><td>天地在线</td><td>3板</td><td>传媒</td><td>传媒方向核心</td></tr><tr><td>深南电A</td><td>2板</td><td>公用事业</td><td>电力跟风</td></tr><tr><td>华能国际</td><td>2板</td><td>公用事业</td><td>电力中军</td></tr><tr><td>晋控电力</td><td>2板</td><td>公用事业</td><td>电力补涨</td></tr><tr><td>江苏国信</td><td>2板</td><td>公用事业</td><td>电力跟风</td></tr><tr><td>泓淋电力</td><td>2板</td><td>电力设备</td><td>电力配套</td></tr><tr><td>金螳螂</td><td>2板</td><td>建筑装饰</td><td>独立方向</td></tr><tr><td>中央商场</td><td>2板</td><td>商贸零售</td><td>独立方向</td></tr><tr><td>春秋电子</td><td>2板</td><td>电子</td><td>消费电子</td></tr></tbody></table></div><div class="sh3" id="s1e">🎯 当日自选池表现</div><div class="sh3" id="s1f">💰 持仓与交易</div><div class="tw"><table><thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>半导体/存储</td><td>📤清仓（原账户）</td><td>佰维存储</td><td>200→0股</td><td>-1,824元(-2.72%)</td><td>连亏≥2天铁律空仓，10:20卖出@326.38</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>标的</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈/股</th><th>浮盈率</th><th>市值</th><th>T+1可卖</th><th>评价</th></tr></thead><tbody><tr><td>华电能源</td><td>新账户持仓</td><td>7000股</td><td>9.486</td><td>9.50</td><td>+0.014</td><td>+0.15%</td><td>66,500</td><td>是</td><td>电力龙头，5板后首日</td></tr><tr><td>光迅科技</td><td>新账户持仓</td><td>900股</td><td>218.023</td><td>204.30</td><td>-13.723</td><td>-6.29%🔴</td><td>183,870</td><td>是</td><td>通信设备，浮亏较大</td></tr></tbody></table></div><div class="sh3">🛡️ 账户风控</div><div class="tw"><table><thead><tr><th>指标</th><th>数值</th><th>阈值</th><th>状态</th></tr></thead><tbody><tr><td>当日盈亏（原账户）</td><td>-1,824元(佰维清仓)</td><td>-3%熔断</td><td>⚠️</td></tr><tr><td>周累计回撤</td><td>—</td><td>6%预警</td><td>⚠️</td></tr><tr><td>月累计回撤</td><td>—</td><td>10%预警</td><td>⚠️</td></tr><tr><td>连亏天数（原账户）</td><td>2天（周四-6.90%/周五-5.80%/周一-2.72%）</td><td>≥2天空仓</td><td>✅账户已关闭，新账户清零</td></tr><tr><td>单日熔断（原账户）</td><td>未触发</td><td>-3%</td><td>✅空仓无熔断</td></tr></tbody></table></div><div class="sh3" id="s1g">📐 风格检测</div><div class="tw"><table><thead><tr><th>维度</th><th>分数</th><th>明细</th></tr></thead><tbody><tr><td>维度一：量能</td><td>10/25</td><td>量比持平4分 + 成交额评级(数据缺) + 方向2分</td></tr><tr><td>维度二：连板生态</td><td>16/35</td><td>最高板4(4)+涨停收益2.44%(4)+炸板-0.36%(4)+连板风险5.0(1)+晋级22.45%(3)</td></tr><tr><td>维度三：趋势赚钱效应</td><td>13/25</td><td>沪深300-0.98%(0)+趋势板块27🔥(8)+大市值53%(4)+新高低比0.1(1)</td></tr><tr><td>维度四：情绪广度</td><td>10/15</td><td>情绪68%强势(4)+涨跌评分(3)+赚钱效应一般(3)</td></tr><tr><td>总分</td><td>49/100</td><td>连板50% / 趋势50% / 总仓位上限60%（新账户无连亏）</td></tr></tbody></table></div><div class="sh3">📤 卖出追踪</div><div class="tw"><table><thead><tr><th>标的</th><th>卖出日</th><th>卖出价</th><th>卖出理由</th><th>+1日收盘</th><th>+2日收盘</th><th>信号校准</th></tr></thead><tbody><tr><td>佰维存储</td><td>6/1</td><td>326.38</td><td>连亏≥2天铁律空仓（竞价清仓延至10:20）</td><td>—</td><td>—</td><td>待明日校准</td></tr><tr><td>紫光国微</td><td>5/29</td><td>81.62</td><td>连亏2天止损，紫光-8.11%</td><td>—</td><td>—</td><td>已清仓原账户</td></tr></tbody></table></div><div class="sh3" id="s1h">📈 趋势持仓复盘</div><div class="tw"><table><thead><tr><th>项目</th><th>评估结果</th><th>备注</th></tr></thead><tbody><tr><td>趋势强度</td><td>—</td><td>已清仓</td></tr><tr><td>板块指数位置</td><td>—</td><td>—</td></tr><tr><td>主力资金趋势</td><td>—</td><td>—</td></tr><tr><td>分歧 vs 退潮</td><td>—</td><td>—</td></tr><tr><td>预警信号是否触发</td><td>—</td><td>—</td></tr><tr><td>趋势规则信号校准</td><td>—</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1i">🪟 窗口操作记录</div><div class="tw"><table><thead><tr><th>窗口</th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead><tbody><tr><td>W1</td><td>佰维竞价清仓</td><td>竞价+1.11%抢筹，10:20卖@326.38</td><td>📤佰维清仓@326.38</td><td>✅纪律正确，收盘佰维-6.83%🔴</td></tr><tr><td>W2</td><td>空仓（闭）</td><td>尾盘切换新账户（华电能源/光迅科技）</td><td>🆕账户切换</td><td>⏳新账户待评估</td></tr></tbody></table></div><div class="sh3">🎭 预期差与盘感</div><div class="si"><div class="para"><strong>盘前基准</strong>：周五冰点28.4%+跌停50≥涨停49+连亏2天→空仓。冰点反弹预期但质量待确认。</div>
+<div class="para"><strong>实际竞价</strong>：上证平开-0.03%，竞价弱势。强势家数13只(降温)，涨停5/跌停7。佰维+1.11%抢筹(量比3.70)，通信竞价回调(亨通-2.44%/长飞-0.70%)。</div>
+<div class="para"><strong>盘面定性</strong>：冰点反弹确认但冲高回落🔥。早盘77.4%强势修复→收盘68.5%(↘8.9pp)，涨停120但炸板率85%🚨质量极差。趋势板块从0→27🔥量大但个股分化严重(深证-1.51%/创板-2.15%权重回落)。</div>
+<div class="para"><strong>弈沐盘感</strong>：</div>
+<div class="para">（待弈沐补充）</div></div><div class="sh3" id="s1j">💡 一句话结论</div><div class="sbx"><div class="para"><strong>冰点反弹日确认成功🔥（28.4%→68.5%），但冲高回落（77.4%→68.5%）+炸板率85.37%🚨涨停质量极差。一进二回温20%✅+三进四50%✅积极信号，趋势板块0→27🔥量大方向多。但深证-1.51%/创板-2.15%权重回落，通信/PCB冲高回落全线大跌。新账户华电能源涨停→-6.22%⚠️经典lesson_07高标分歧，光迅-6.29%近止损线。</strong></div></div></div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §二 · 心得与教训
+</div>
+<div class="sb"><ol class="tight-list"><li><div class="para">1. <strong>[教训] 脉冲式修复验证</strong> — 情绪从28.4%冰点→早盘77.4%(+49pp逼近50pp阈值)，果然按lesson_04"来得快去得快"脉冲回落至68.5%。冰点反弹首日仍需确认次日持续性，不因开盘暴涨就追。</div></li><li><div class="para">2. <strong>[教训] 涨停120≠赚钱效应好</strong> — 涨停120只但109只首板+炸板85.37%🚨，lesson_03"首板多≠板块效应"+lesson_05"赚钱效应是检验情绪的唯一标准"(2.44%<3%)双重验证。涨停数量可骗人，赚钱效应才是真。</div></li><li><div class="para">3. <strong>[教训] 高标独秀≠板块延续</strong> — 电力15只涨停龙头强势，但华电能源5板后从涨停翻绿-6.22%⚠️，lesson_07预警跟风>50%下跌=冲顶出货。持仓需警惕电力板块明日分歧。</div></li><li><div class="para">4. <strong>[认知] 通信设备冲高回落定性</strong> — 亨通早盘+4.19%🔥→收盘-2.02%，长飞-7.75%/方正-7.45%全线大跌。趋势板块27个但广度宽≠每板块都行，需C阶段确认合力真伪。</div></li><li><div class="para">5. <strong>[议题] 新账户首日风控基线</strong> — 光迅科技浮亏-6.29%近-7%止损线，华电能源从涨停翻绿。明日需重点关注：①光迅是否触发止损 ②华电能源竞价量价 ③电力板块是否退潮。新账户首日适应期，仓位35%偏重，需控制冲动。</div>
+<hr class="divider"></li></ol></div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §三 · 次日预案
+</div>
+<div class="sb"><div class="stats-grid"><div class="stat-card"><div class="lbl">风格</div><div class="val amber">49/100 | 连板50% / 趋势50%</div></div><div class="stat-card"><div class="lbl">资金分配</div><div class="val">连板30%(426,633×30%=128,000) | 趋</div></div><div class="stat-card"><div class="lbl">仓位上限</div><div class="val amber">60%（新账户无连亏）</div></div></div><div class="sbx warn"><strong>总基调</strong>：冰点反弹确认🔥但质量存疑，连板/趋势各半混合行情<br><strong>为什么</strong>：情绪68.5%强势但炸板率85.37%🚨涨停质量差；一进二回温20%✅趋势板块27🔥方向多<br><strong>基准预期</strong>：情绪68.5%属强势但冲高回落，明日大概率延续分化——连板分歧(炸板率高)+趋势修复(板块多但需筛选)</div><div class="sh3">🔮 明日连板判定</div><div class="tw"><table><thead><tr><th>板层</th><th>晋级率</th><th>阈值</th><th>结果</th></tr></thead><tbody><tr><td>一进二</td><td>20.0%</td><td>>15%(低迷)/>18%(主升)</td><td>✅可用（低迷档）</td></tr><tr><td>二进三(近3日均值)</td><td>26.7%</td><td>>25%</td><td>✅可用（近3日均值达标但今日仅20%⚠️审慎）</td></tr><tr><td>三进四+</td><td>50.0%</td><td>>35%</td><td>✅可用</td></tr><tr><td>大环境(二进三)</td><td>26.7%</td><td>>20%开放/<20%关闭</td><td>✅开放</td></tr></tbody></table></div></div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §四 · 红方对抗<span class="cnt">3轮辩论</span>
+</div>
+<div class="sb"><div class="sh3" id="s4a">🔴 Round 1：洋米红方质疑</div><div class="sh3">数据基础</div>
+<div class="para">- Q1 热度 TOP50：已跑（50只，全A股）</div>
+<div class="para">- Q2 板块扫描：已跑（电力48只、文化传媒35只）</div>
+<div class="para">- Q3 中军扫描：已跑（49只）</div>
+<div class="para">- Q4 排除验证：已跑（华能国际/春秋电子/用友网络/欧菲光）</div>
+<div class="para">- Q5 持仓复核：已跑（华电能源/光迅科技）</div>
+<div class="para">- Q6 板块资金：已跑（电力/文化传媒）</div>
+<div class="para">- Q8 趋势复核：已跑（蓝色光标/风华高科/京东方A/华电国际）</div>
+<div class="para">⚠️ <strong>数据口径差异警告</strong>：稳米初稿电力涨停"~15只" vs 问财"电力概念 涨停"=<strong>7只</strong>，差异114%。以下所有涨停数/主力数据统一用问财口径，不混用。</div>
+<hr class="divider">
+<div class="sh3">五维强制清单</div>
+<div class="para"><strong>1. 定性校准</strong>：</div>
+<div class="para">稳米定性"冰点反弹确认成功、情绪68.5%强势"，但三个关键数据不支持"成功"结论：</div>
+<div class="para">- 炸板率85.37%为近期最高（稳米自己也写了"近期最高"），封板率仅14.63%——意味着超六成涨停股盘中炸板</div>
+<div class="para">- 首板109/120=90.8%，全市场无梯队纵深</div>
+<div class="para">- 冲高回落幅度：早盘77.4%→收盘68.5%（↘8.9pp），上证从+0.45%翻绿至-0.27%</div>
+<div class="para">建议定性调整为：<strong>冰点反弹结构修复但质量不达标</strong>。情绪68.5%只能算"回暖"，不算"成功"。涨停120只是"虚胖"，真实赚钱效应（涨停收益2.44%<3%）不支持加仓。</div>
+<div class="para">数据依据：Q1热度TOP50、稳米初稿表1数据。</div>
+<div class="para"><strong>2. 操作漏判</strong>：</div>
+<div class="para">- <strong>佰维清仓时机偏差</strong>：预案明确"周一竞价清仓"，实际10:20卖出@326.38。竞价佰维+1.11%抢筹(量比3.70)，按竞价价约337.0清仓比实际326.38高约3.2%。如果执行竞价清仓，损失可减少约1,000元。延迟到10:20的决策逻辑未说明。（数据：稳米初稿§一操盘 + Q5佰维已清）</div>
+<div class="para">- <strong>尾盘切换买入的时机风险</strong>：冰点反弹日收盘冲高回落+炸板率85%背景下，尾盘买入华电能源(涨停翻绿-6.22%)+光迅科技(横盘)，35%仓位建在不确定窗口。次日如果反弹失败再跌，华电能源-6.22%可能继续下探，光迅科技-6.29%近止损线会立即触发。</div>
+<div class="para"><strong>3. 规则执行</strong>：</div>
+<div class="para">- 佰维竞价清仓规则：预案写了"竞价清仓"，实际10:20执行，<strong>属于执行延迟而非违规</strong>，但延迟约50分钟且牺牲了约3%价格。建议以后竞价操作有"不迟于9:35"的硬时限。</div>
+<div class="para">- 2进3硬卡排除(20%<25%)规则上正确，但排除对象中<strong>华能国际(600011)</strong> 涨停+10.03%/成交66亿/主力+3.00亿/换手6.48%，量价配合强。硬卡排除合理但错过了这个机会。需记录校准：2进3硬卡在冰点反弹日是否应设更宽松的阈值？（数据：Q4华能国际）</div>
+<div class="para">- 华电能源5板后首日涨停→-6.22%：稳米标注"lesson_07高标分歧"，但列入持仓说明未触发lesson_07的规避逻辑。是否需要加一条规则：5板后首日不建仓？</div>
+<div class="para"><strong>4. 反向情景</strong>：</div>
+<div class="para">如果稳米的"冰点反弹成功"定论错了，最可能的反向情景是：</div>
+<div class="para">- <strong>假反弹真出货</strong>：深证-1.51%/创板-2.15%，权重股在大举减仓。早盘77.4%→68.5%的冲高回落是主力借情绪反弹出货的经典形态。Q5华电能源主力净流出-1.84亿、Q1通信/PCB全线大跌(-7%+)印证出货面。</div>
+<div class="para">- <strong>次日大概率低开低走</strong>：如果这个假反弹情景成立，明日竞价华电能源大概率低开，光迅科技触-7%止损线概率显著升高。</div>
+<div class="para">- 验证方法：明日开盘30分钟内，如果上证低开>0.5%+华电低开>2%，假反弹确认。</div>
+<div class="para"><strong>5. 盲区扫描</strong>：</div>
+<div class="para">- <strong>面板/显示方向被忽略</strong>：京东方A(000725) +4.89%/成交183亿/主力+14.01亿/热度TOP50#10/Q3中军扫描。站上MA20(5.36>4.66)，PE仅29倍不贵。面板有独立涨价逻辑(面板周期上行)，不是单纯的防御板块。稳米自选池无一涉及面板。（数据：Q8京东方A）</div>
+<div class="para">- <strong>银行47亿主力净流入</strong>：稳米列为"防御不碰"，但47亿不是小数目。如果银行连续流入，可能是大资金风格切换信号而不是纯防御。连续2日超过30亿流入需要重新评估。（数据：稳米初稿表3）</div>
+<div class="para">- <strong>煤/银行/电力同时主力流入</strong>：三个传统板块同时流入(煤+28.69亿/银行+47.27亿/电力+11.51亿)，合计87亿+。可能是"分红季"逻辑驱动而非纯避险。稳米直接把煤炭和银行列为不碰，但背后的资金逻辑值得关注。</div>
+<hr class="divider">
+<div class="sh3">自选池对抗</div>
+<hr class="divider"><div class="tw"><table><thead><tr><th>挑战类型</th><th>稳米原判</th><th>红方质疑</th><th>数据依据</th></tr></thead><tbody><tr><td>遗漏标的</td><td>电力连板只有粤电力A(4进5)+粤传媒(1进2备选)</td><td>🆕 华电国际(600027) 应列为电力W2趋势候选。+6.47%/成交30亿/换手5.71%/PE仅9.61/主力+1.49亿。均线多头排列(MA5>MA10>MA20)，量比2.92明确放量。电力中军中涨幅合理、流动性好，W2回踩MA5低吸逻辑成立。</td><td>Q2电力扫描+Q3中军扫描+Q8均线复核</td></tr><tr><td>遗漏标的</td><td>文化传媒趋势只有蓝色光标W2</td><td>🆕 中文在线(300364) +4.77%/成交19亿/换手11.02%、天龙集团(300063) +5.31%、姚记科技(002605) +4.20%也在板块扫描中。文化传媒板块Q2有35只标的，稳米只选了蓝色光标一个趋势票。建议至少加中文在线作为W2候选。</td><td>Q2文化传媒扫描</td></tr><tr><td>排除有误</td><td>华能国际(600011)因2进3硬卡(20%<25%策略线)被排除</td><td>建议重新评估排除逻辑：华能国际涨停+10.03%/成交66亿/主力+3.00亿/换手6.48%。2进3硬卡排除在规则上没错，但市场给了明确的正反馈。在冰点反弹日+电力板块7只涨停的背景下，2进3的成功率可能被硬卡低估。建议校准：冰点反弹日2进3硬卡阈值从25%降至20%（环境线即可）。但注意：华能已涨停，次日4进5风险更大，不在建议买入范围内，只用于规则校准。</td><td>Q4排除验证(华能国际主力+3.00亿) + 电力涨停7只(问财口径)</td></tr><tr><td>忽略板块</td><td>面板方向未讨论</td><td>🆕 面板/MLCC方向应进趋势观察：京东方A(000725) +4.89%/成交183亿/主力+14.01亿/热度TOP50#10/PE仅29。风华高科已在趋势池(W2回踩)但稳米自选池缺少面板操作标的。建议加京东方A为趋势观察标的（只盯），触发条件：缩量回踩MA5+面板板块持续。</td><td>Q3中军扫描+Q8京东方A均线(站上MA20)</td></tr></tbody></table></div><div class="sh3" id="s4b">🔵 Round 2：蓝方回应（稳米）</div><div class="para"><strong>蓝方核心异议</strong>：</div>
+<div class="para">- × 华能国际排除：<strong>规则层面不改变</strong>。2进3硬卡<25%排除是本体系SSOT，冰点反弹日放宽阈值=在胜率低时加大风险。洋米自己也说"不买入，只用于规则校准"。</div>
+<div class="para">- × 银行操作建议：<strong>不采纳</strong>。弈沐裁决：防御不碰，电力就是防御。</div>
+<div class="para">- 🔄 <strong>lesson_07华电能源判定驳回</strong>：电力梯队完整，跟风集体上涨，非高标独秀。lesson_07当前数据不支持触发。</div>
+<div class="para"><strong>⚠️ 电力自选池修正（弈沐指出原池偏少）</strong>：</div>
+<div class="para">原池仅粤电力A一个连板标的。电力梯队为4板×2+2板×8，是今日最强梯队。修正：</div>
+<div class="para">- 🆕 深南电A(000037, 2板) → W1备选观察</div>
+<div class="para">- 🆕 华能国际(600011, 2板涨停) → 已涨停入池跟踪明日竞价状态</div>
+<div class="para">- 电力作为强支线，连板自选池应覆盖龙头+梯队</div><div class="sh3">逐条回应</div><div class="tw"><table><thead><tr><th>红方质疑</th><th>蓝方回应</th><th>结果</th></tr></thead><tbody><tr><td>定性调整：冰点反弹结构修复但质量不达标</td><td>采纳。一句话结论已写"冲高回落+质量差"，但把"成功"改为"结构修复确认"更精确。已调整前言措辞</td><td>✅ 采纳</td></tr><tr><td>佰维清仓时机偏差（竞价清仓→10:20执行）</td><td>采纳规则改进，但不属于漏判。10:20执行是弈沐盘中决策（连亏2天铁律触发已空仓，佰维竞价+1.11%抢筹后继续观察至10:20），属执行纪律偏差。同意增加硬时限规则</td><td>✅ 采纳规则改进</td></tr><tr><td>尾盘切换买入时机风险</td><td>采纳风险提示。新账户切换+买入华电/光迅是弈沐新账户建仓决策，非稳米预案建议。35.21%仓位确实偏高，已在风险中标注</td><td>✅ 采纳</td></tr><tr><td>2进3硬卡排除华能国际</td><td>部分采纳。规则上正确(20%<25%)无需改阈值，但记录校准建议。洋米自己也说"不在建议买入范围内"</td><td>🔄 记录校准，本预案不动</td></tr><tr><td>华电能源5板后首日建仓</td><td>❌ 裁决驳回 — 弈沐判定lesson_07不适用。电力梯队完整（4板→2板×5→首板），跟风集体上涨，华电跳水是个股分歧非板块退潮。电力是强支线，lesson_07"高标独秀"要求跟风>50%下跌才触发。</td><td>❌ 驳回，不追加规则</td></tr><tr><td>假反弹真出货反向情景</td><td>采纳。已有风险项"冲高回落"，补充假反弹验证条件。纳入预案风险部分</td><td>✅ 采纳</td></tr><tr><td>京东方A面板方向被忽略</td><td>采纳。已在C3阶段提案加入趋势观察池(只盯不买)，确认纳入附录A</td><td>✅ 已在池</td></tr><tr><td>银行47亿+分红季逻辑</td><td>部分采纳。银行仍不参与交易(防御板块)，但连续2日>30亿净流入可作为风格切换信号跟踪</td><td>🔄 辅助参考</td></tr><tr><td>华电国际W2趋势候选</td><td>采纳。+6.47%/成交30亿/均线多头，电力中军W2回踩逻辑合理，加入趋势观察</td><td>✅ 采纳</td></tr><tr><td>中文在线W2候选</td><td>采纳。文化传媒板块有35只标的，加中文在线+4.77%/19亿作为W2趋势候选</td><td>✅ 采纳</td></tr><tr><td>面板/MLCC方向观察</td><td>已采纳。京东方A(只盯)+风华高科(W2回踩)已在趋势池</td><td>✅ 已处理</td></tr></tbody></table></div><div class="sh3" id="s4c">🟢 Round 3：洋米终审</div><div class="para"><strong>终稿定论</strong>：</div>
+<div class="para">- 定性：<strong>冰点结构修复确认但质量不达标</strong>。情绪68.5%回暖，涨停120只虚胖，炸板率85.37%质量差，赚钱效应2.44%不支持加仓</div>
+<div class="para">- 风格：49分/100分，连板50%趋势50%（<strong>双方一致</strong>）</div>
+<div class="para">- 硬卡：大环境开放 | 1进2✅ | 2进3❌(华能国际建议校准但本预案不动) | 3进4+✅</div>
+<div class="para">- 总仓位上限：60%。当前35.21%偏高，新开仓保持审慎</div>
+<div class="para"><strong>自选池蓝方最终版</strong>：</div>
+<div class="para"><strong>仍存分歧（待弈沐裁决）</strong>：</div>
+<ol class="tight-list">
+<li>~~冰点反弹日2进3硬卡阈值~~ → <strong>25%保持，不降</strong> ✅</li>
+<li>~~银行47亿是否参与~~ → <strong>防御不碰，电力就是防御</strong> ✅</li>
+<li>~~5板后首日不建仓规则~~ → <strong>lesson_07不适用，不追加</strong> ✅</li>
+</ol>
+<hr class="divider"><div class="verdict"><div class="vt">终审定论</div><div class="vb"><div class="para">：</div>
+<div class="para">- 定性：<strong>冰点结构修复确认但质量不达标</strong>。情绪68.5%回暖，涨停120只虚胖，炸板率85.37%质量差，赚钱效应2.44%不支持加仓</div>
+<div class="para">- 风格：49分/100分，连板50%趋势50%（<strong>双方一致</strong>）</div>
+<div class="para">- 硬卡：大环境开放 | 1进2✅ | 2进3❌(华能国际建议校准但本预案不动) | 3进4+✅</div>
+<div class="para">- 总仓位上限：60%。当前35.21%偏高，新开仓保持审慎</div>
+<div class="para"><strong>自选池蓝方最终版</strong>：</div>
+<div class="para">|</div></div></div><div class="tw"><table><thead><tr><th>方向</th><th>标的</th><th>窗口</th><th>采纳状态</th></tr></thead><tbody><tr><td>🥇连板</td><td>粤电力A(4进5)</td><td>W1追涨</td><td>✅ 双方一致</td></tr><tr><td>🥇连板</td><td>🆕深南电A(2板, W1备选)</td><td>W1备选</td><td>✅ 弈沐指出补充</td></tr><tr><td>🥇连板</td><td>🆕华能国际(2板, 竞价跟踪)</td><td>竞价</td><td>✅ 弈沐指出补充</td></tr><tr><td>🥇连板</td><td>天地在线(3进4)</td><td>W1追涨</td><td>✅ 双方一致</td></tr><tr><td>🥇连板</td><td>粤传媒(1进2)</td><td>W1备选</td><td>✅ 双方一致</td></tr><tr><td>🥈趋势</td><td>蓝色光标(W2回踩)</td><td>W2</td><td>✅ 双方一致</td></tr><tr><td>🆕趋势</td><td>华电国际(W2回踩)</td><td>W2</td><td>✅ 红方新增，蓝方采纳</td></tr><tr><td>🆕趋势</td><td>中文在线(W2候选)</td><td>W2</td><td>✅ 红方新增，蓝方采纳</td></tr><tr><td>👁️观察</td><td>京东方A(只盯)</td><td>观察</td><td>✅ 蓝方已有，红方确认</td></tr><tr><td>👁️观察</td><td>风华高科(W2回踩)</td><td>W2</td><td>✅ 双方一致</td></tr><tr><td>🔴持仓</td><td>华电能源(竞价管理)</td><td>竞价</td><td>⚠️ 双方法力流出预警</td></tr><tr><td>☣️持仓</td><td>光迅科技(止损)</td><td>竞价</td><td>☣️ 双方一致严格止损</td></tr></tbody></table></div></div>
+</div>
+<div class="section" id="sa">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 附录A · 盘前速查<span class="cnt">周一开盘只看这里</span>
+</div>
+<div class="sb"><div class="sh3">📋 持仓处理</div><div class="tw"><table><thead><tr><th>标的</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈率</th><th>市值</th><th>T+1可卖</th><th>操作策略</th></tr></thead><tbody><tr><td>华电能源</td><td>新账户持仓</td><td>7000股</td><td>9.486</td><td>9.50</td><td>+0.15%</td><td>66,500</td><td>是</td><td>竞价量价，低开>3%减半，高开持有</td></tr><tr><td>光迅科技</td><td>新账户持仓</td><td>900股</td><td>218.023</td><td>204.30</td><td>-6.29%🔴</td><td>183,870</td><td>是</td><td>☣️近止损线，竞价跌→止损@202.76</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>操作标的</th><th>窗口</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇电力</td><td>粤电力A(4进5)</td><td>W1追涨</td><td>竞价量比>3+高开3%+板块联动</td></tr><tr><td>🥇电力</td><td>深南电A(2板)</td><td>W1备选</td><td>竞价确认+电力联动（弈沐补充）</td></tr><tr><td>🥇电力</td><td>华能国际(2板)</td><td>👁️竞价</td><td>已涨停，仅观察竞价状态不入池（弈沐补充）</td></tr><tr><td>🥇电力</td><td>粤传媒(1进2)</td><td>W1备选</td><td>竞价确认+电力跟风</td></tr><tr><td>🥈文化传媒</td><td>天地在线(3进4)</td><td>W1追涨</td><td>竞价量比>3+高开3%+传媒跟涨</td></tr></tbody></table></div><div class="sh3">📈 趋势板块→操作映射</div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的</th><th>操作标的</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇文化传媒中军</td><td>蓝色光标/易点天下</td><td>蓝色光标W2回踩</td><td>缩量回踩5日线+板块跟风还在</td></tr><tr><td>🥈MLCC独立</td><td>风华高科</td><td>W2回踩</td><td>回踩5日线考虑，+3.81%/141亿强</td></tr><tr><td>🆕电力中军</td><td>华电国际(600027)</td><td>W2回踩</td><td>成交30亿/PE 9.6/均线多头，回踩MA5低吸（红方新增）</td></tr><tr><td>🆕文化传媒</td><td>中文在线(300364)</td><td>W2候选</td><td>成交19亿/换手11%，板块跟风确认后低吸（红方新增）</td></tr><tr><td>👁️面板观察</td><td>京东方A(000725)</td><td>只盯不买</td><td>成交183亿/站上MA20，确认面板持续性（红方新增）</td></tr></tbody></table></div><div class="sh3">📋 操作指南</div><div class="si"><div class="para"><strong>总基调</strong>：冰点反弹确认但涨停质量差，连板/趋势并行。新账户首日持仓管理优先。</div>
+<div class="para"><strong>仓位</strong>：当前35.21%，总上限60%。新开连板≤20%，趋势新开≤10%</div>
+<div class="para"><strong>不碰</strong>：软件开发/消费电子/煤炭/通信设备(分歧退潮)/银行(防御)/2进3连板(硬卡排除)</div>
+<div class="para"><strong>风险</strong>：光迅-6.29%近止损线 | 华电涨停→-6.22%高标分歧 | 炸板率85%追涨谨慎</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="sd">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 数据附录<span class="cnt">机器解析用</span>
+</div>
+<div class="sb"><div class="sh3">持仓明细</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th><th>T+1可卖</th><th>状态</th></tr></thead><tbody><tr><td>佰维存储</td><td>688525</td><td>趋势股(原账户)</td><td>0股</td><td>335.5</td><td>326.38(卖)</td><td><span class="down">-2.72%⚠️</span></td><td>—</td><td>—</td><td>✅已清仓6/1</td></tr><tr><td>华电能源</td><td>600726</td><td>新账户持仓</td><td>7000股</td><td>9.486</td><td>9.50</td><td><span class="up">+0.15%</span></td><td>8.82(-7%)</td><td>是</td><td>🟢电力龙头</td></tr><tr><td>光迅科技</td><td>002281</td><td>新账户持仓</td><td>900股</td><td>218.023</td><td>204.30</td><td><span class="down">-6.29%🔴</span></td><td>202.76(-7%)</td><td>是</td><td>🔴通信设备，接近止损</td></tr></tbody></table></div><div class="sh3">连板自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>粤电力A</td><td>000539</td><td>电力</td><td>W1</td><td>龙头</td><td>W1追涨(4进5)</td><td><span class="up">+10%涨停</span></td><td>—</td><td>—</td><td>—</td><td>电力连板最高，3进4+可用✅</td></tr><tr><td>🆕深南电A</td><td>000037</td><td>电力</td><td>W1</td><td>跟风</td><td>W1备选</td><td><span class="up">+10%涨停</span></td><td>12.65</td><td>—</td><td><span style="color:var(--red);font-weight:600">30.47%</span></td><td>电力2板梯队补充</td></tr><tr><td>🆕华能国际</td><td>600011</td><td>电力</td><td>W1</td><td>跟风</td><td>竞价跟踪</td><td><span class="up">+10%涨停</span></td><td>9.76</td><td>—</td><td>6.48%</td><td>电力2板涨停，明日竞价观察</td></tr><tr><td>天地在线</td><td>002995</td><td>文化传媒</td><td>W1</td><td>龙头</td><td>W1追涨(3进4)</td><td><span class="up">+9.99%涨停</span></td><td>25.11</td><td>—</td><td><span style="color:var(--red);font-weight:600">26.41%</span></td><td>传媒核心3板，3进4+可用✅</td></tr><tr><td>粤传媒</td><td>002181</td><td>文化传媒</td><td>W1</td><td>跟风</td><td>W1备选(1进2)</td><td><span class="up">+9.99%涨停</span></td><td>18.16</td><td>—</td><td>13.13%</td><td>传媒首板，1进2可用✅</td></tr></tbody></table></div><div class="sh3">趋势自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>MA20</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>佰维存储</td><td>688525</td><td>半导体</td><td>—</td><td>(已清仓原账户)</td><td>已清仓@326.38</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅6/1清仓 -1,824元</td></tr><tr><td>🆕华电能源</td><td>600726</td><td>电力</td><td>—</td><td>新账户持仓</td><td>持有</td><td><span class="up">+10.04%→-6.22%</span></td><td>9.50</td><td>—</td><td>—</td><td>—</td><td>高开低走⚠️分歧</td></tr><tr><td>🆕光迅科技</td><td>002281</td><td>通信设备</td><td>—</td><td>新账户持仓</td><td>持有</td><td><span class="up">+0.17%</span></td><td>204.30</td><td>—</td><td>—</td><td>6.67%</td><td>浮亏-6.29%近止损线☣️</td></tr><tr><td>🆕蓝色光标</td><td>300058</td><td>文化传媒</td><td>W2</td><td>趋势候选</td><td>W2回踩观察</td><td><span class="up">+7.54%</span></td><td>17.96</td><td>—</td><td>—</td><td>17.31%</td><td>成交106亿🔥/主力+9.2亿</td></tr><tr><td>🆕风华高科</td><td>000636</td><td>元件/MLCC</td><td>W2</td><td>趋势候选</td><td>W2回踩观察</td><td><span class="up">+3.81%</span></td><td>55.05</td><td>—</td><td>—</td><td><span style="color:var(--red);font-weight:600">22.33%</span></td><td>成交141亿/主力+12.8亿/独立强势</td></tr><tr><td>亨通光电</td><td>600487</td><td>通信设备</td><td>—</td><td>分歧观察</td><td>—</td><td><span class="up">+4.19%→-2.02%</span></td><td>80.35</td><td>73.21</td><td>73.28</td><td>—</td><td>冲高回落⚠️分歧</td></tr><tr><td>长飞光纤</td><td>601869</td><td>通信设备</td><td>—</td><td>分歧观察</td><td>—</td><td><span class="down">-7.75%🔴</span></td><td>394.89</td><td>379.71</td><td>387.18</td><td>—</td><td>通信大跌退潮</td></tr><tr><td>方正科技</td><td>600601</td><td>PCB元件</td><td>—</td><td>退潮观察</td><td>—</td><td><span class="down">-7.45%🔴</span></td><td>12.93</td><td>13.16</td><td>12.78</td><td>—</td><td>PCB全线退潮</td></tr><tr><td>生益科技</td><td>600183</td><td>PCB元件</td><td>—</td><td>退潮观察</td><td>—</td><td><span class="down">-3.55%🔴</span></td><td>140.26</td><td>135.24</td><td>103.36</td><td>—</td><td>PCB退潮</td></tr></tbody></table></div><div class="sh3">板块状态</div><div class="tw"><table><thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>板块涨跌幅</th><th>主力净流入</th><th>5日线位置</th><th>状态</th></tr></thead><tbody><tr><td>电力</td><td>防守主线</td><td>~15</td><td>粤电力A4板/华能国际2板</td><td>粤电力A4板</td><td><span class="up">+1.32%</span></td><td>+11.51亿</td><td>站上✅</td><td>连续走强，华电能源-6.22%高开低走⚠️</td></tr><tr><td>软件开发</td><td>脉冲</td><td>~5</td><td>全首板</td><td>用友网络</td><td><span class="up">+3.56%</span></td><td>+49.96亿🔥🔥</td><td>站上✅</td><td>最强资金流入但全首板无梯队，脉冲排除</td></tr><tr><td>文化传媒</td><td>强支线候选</td><td>~8</td><td>天地在线3板+首板</td><td>天地在线3板</td><td><span class="up">+3.77%</span></td><td>+46.29亿🔥🔥</td><td>站上✅</td><td>梯队初具+资金爆量，进选股池</td></tr><tr><td>煤炭</td><td>脉冲</td><td>~6</td><td>全首板</td><td>兖矿能源</td><td><span class="up">+6.22%🔥</span></td><td>+28.69亿🔥</td><td>站上✅</td><td>全首板无梯队，脉冲排除</td></tr><tr><td>通信设备</td><td>分歧调整</td><td>—</td><td>—</td><td>亨通光电</td><td>—</td><td>—</td><td>—</td><td>亨通+4.19%→-2.02%冲高回落⚠️</td></tr><tr><td>PCB元件</td><td>退潮</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>方正-7.45%/生益-3.55%全线退潮🔴</td></tr></tbody></table></div></div>
+</div>
+
+</div>
+</div>
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+</script>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
+</body>
+</html>
