@@ -191,14 +191,16 @@ def extract_section(text, heading):
     return text[start:].strip(), ""
 
 
-def pct_text(value):
+def pct_text(value, signed=False):
     """Render numeric frontmatter percentages consistently."""
     s = str(value).strip()
-    if not s or s == '--' or '%' in s:
+    if not s or s == '--':
         return s
     try:
-        float(s)
-        return f'{s}%'
+        n = float(s.rstrip('%'))
+        sign = '+' if signed and n > 0 and not s.startswith('+') else ''
+        suffix = '' if s.endswith('%') else '%'
+        return f'{sign}{s}{suffix}'
     except ValueError:
         return s
 
@@ -218,7 +220,7 @@ def html_topbar(fm):
     emo = pct_text(emo_raw)
     sh_idx = fm.get('上证指数', '--')
     sh_pct_raw = fm.get('上证涨幅', '--')
-    sh_pct = pct_text(sh_pct_raw)
+    sh_pct = pct_text(sh_pct_raw, signed=True)
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
     pos = fm.get('盘后持仓', '空仓')
@@ -401,23 +403,47 @@ def md_text_to_html(text):
     return '\n'.join(out)
 
 
+def md_text_with_tables_to_html(text):
+    """Convert markdown text while preserving table position."""
+    chunks = []
+    text_lines = []
+    table_lines = []
+
+    def flush_text():
+        nonlocal text_lines
+        rendered = md_text_to_html('\n'.join(text_lines).strip())
+        if rendered:
+            chunks.append(rendered)
+        text_lines = []
+
+    def flush_table():
+        nonlocal table_lines
+        headers, rows = parse_md_table('\n'.join(table_lines))
+        if headers and rows:
+            chunks.append(html_table(headers, rows, cell_color))
+        table_lines = []
+
+    for line in text.split('\n'):
+        if re.match(r'^\|.*\|$', line.strip()):
+            flush_text()
+            table_lines.append(line)
+        else:
+            if table_lines:
+                flush_table()
+            text_lines.append(line)
+
+    if table_lines:
+        flush_table()
+    flush_text()
+    return '\n'.join(chunks)
+
+
 # ── Section parsers ──
 
 def parse_s0(text):
     """Parse §〇 昨日预案."""
     html = html_section_header("s0", "第〇部分 · 昨日预案", "昨日终审定稿")
-
-    # Render all text content with markdown formatting
-    # First, render the blockquote metadata
-    html += md_text_to_html(text)
-
-    # Then render all tables
-    tables = extract_tables(text)
-    for t in tables:
-        hdr, rows = parse_md_table(t)
-        if hdr and rows:
-            html += html_table(hdr, rows, cell_color)
-
+    html += md_text_with_tables_to_html(text)
     html += html_section_footer()
     return html
 
@@ -1009,7 +1035,7 @@ def update_review_notes_index(date_str, fm):
     weekday = fm.get('weekday', '')
     day = date_str[-2:].lstrip('0')
     sh_pct_raw = fm.get('上证涨幅', '0%')
-    sh_pct = pct_text(sh_pct_raw)
+    sh_pct = pct_text(sh_pct_raw, signed=True)
     zt = fm.get('涨停家数', '--')
     emo_raw = fm.get('情绪值', '--')
     emo = pct_text(emo_raw)
@@ -1197,7 +1223,7 @@ def update_main_index(date_str, fm):
 
     weekday = fm.get('weekday', '')
     sh_pct_raw = fm.get('上证涨幅', '0%')
-    sh_pct = pct_text(sh_pct_raw)
+    sh_pct = pct_text(sh_pct_raw, signed=True)
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
     emo_raw = fm.get('情绪值', '--')
