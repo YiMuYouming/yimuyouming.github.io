@@ -6,7 +6,7 @@ Default source is cloud Hermes via SSH, so local bridge is not required.
 Use --source local only when intentionally syncing from a local bridge.
 """
 
-import argparse, json, os, re, shlex, subprocess, sys, urllib.request
+import argparse, json, math, os, re, shlex, subprocess, sys, urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -155,6 +155,86 @@ def replace_marker_block(html, start_marker, end_marker, replacement):
     return new_html
 
 
+def as_number(value):
+    if value is None or isinstance(value, bool):
+        return None
+    try:
+        n = float(value)
+    except (TypeError, ValueError):
+        return None
+    return n if math.isfinite(n) else None
+
+
+def extract_existing_pnl_data(html):
+    m = re.search(r"var PNL_DATA = (\{.*?\});\s*</script>", html, flags=re.DOTALL)
+    if not m:
+        return {}
+    try:
+        return json.loads(m.group(1))
+    except json.JSONDecodeError:
+        return {}
+
+
+def extract_git_pnl_data():
+    r = subprocess.run(
+        ["git", "show", "HEAD:index.html"],
+        cwd=PORTAL,
+        capture_output=True,
+        text=True,
+        timeout=8,
+    )
+    if r.returncode != 0:
+        return {}
+    return extract_existing_pnl_data(r.stdout)
+
+
+def latest_nav(data, summary):
+    nav = as_number((summary or {}).get("last_nav"))
+    if nav is not None:
+        return nav
+
+    navs = ((data or {}).get("all_sh") or {}).get("nav") or []
+    for value in reversed(navs):
+        nav = as_number(value)
+        if nav is not None:
+            return nav
+    return None
+
+
+def existing_meta_values(existing_data_list, key):
+    values = []
+    for existing_data in existing_data_list:
+        meta = (existing_data or {}).get("meta") or {}
+        value = as_number(meta.get(key))
+        if value is not None:
+            values.append(value)
+    return values
+
+
+def resolve_meta(data, existing_data_list):
+    summary = (data or {}).get("summary") or {}
+    if isinstance(existing_data_list, dict):
+        existing_data_list = [existing_data_list]
+
+    deposit = as_number(summary.get("total_deposit"))
+    if deposit is None:
+        deposit_candidates = existing_meta_values(existing_data_list, "total_deposit")
+        deposit = next((v for v in deposit_candidates if v > 200000), None)
+        if deposit is None:
+            deposit = deposit_candidates[0] if deposit_candidates else 200000
+
+    total_asset = as_number(summary.get("total_asset"))
+    if total_asset is None:
+        nav = latest_nav(data, summary)
+        if nav is not None and deposit is not None:
+            total_asset = round(deposit * nav, 2)
+        else:
+            asset_candidates = existing_meta_values(existing_data_list, "total_asset")
+            total_asset = asset_candidates[0] if asset_candidates else 0
+
+    return {"total_asset": total_asset, "total_deposit": deposit}
+
+
 def main(argv=None):
     args = parse_args(argv)
     api = BridgeAPI(source=args.source, remote=args.remote, base_url=args.base_url)
@@ -176,12 +256,6 @@ def main(argv=None):
         print(f"FAIL summary: {e}")
         data["summary"] = {}
 
-    # ── Meta: 云端 production summary 是账户 SSOT；不再读本地 pnl.db ──
-    summary = data.get("summary") or {}
-    total_asset = summary.get("total_asset") or 0
-    deposit = summary.get("total_deposit") or 200000
-    data["meta"] = {"total_asset": total_asset, "total_deposit": deposit}
-
     # ── Market snapshot ──
     try:
         baseline = api.fetch("/api/baseline")
@@ -195,6 +269,9 @@ def main(argv=None):
     target = PORTAL / "index.html"
     with open(target) as f:
         html = f.read()
+
+    # ── Meta: 云端 production summary 优先；估值缺失时用旧入金本金 × 最新净值估算，避免空值覆盖首页资产。 ──
+    data["meta"] = resolve_meta(data, [extract_existing_pnl_data(html), extract_git_pnl_data()])
 
     # PNL_DATA
     js_blob = f"<script>\nvar PNL_DATA = {json.dumps(data, ensure_ascii=False)};\n</script>"
