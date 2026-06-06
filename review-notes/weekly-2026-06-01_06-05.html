@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W23 周复盘（2026-06-01 至 2026-06-05）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F5F3;
+  --bg2:#FFFFFF;
+  --bg3:#FAFAF9;
+  --bg4:#F5F2EE;
+  --border:#E5E2DE;
+  --text:#2D2926;
+  --text2:#5C5652;
+  --text3:#8A8480;
+  --accent:#D97706;
+  --accent-hover:#B45309;
+  --red:#DC2626;
+  --green:#059669;
+  --blue:#2563EB;
+  --purple:#7C3AED;
+  --teal:#0D9488;
+}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.9);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+/* ── Layout ── */
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+@media(max-width:640px){.topbar{align-items:flex-start}.topbar .title{white-space:normal;flex-basis:100%;line-height:1.35}.topbar .meta{margin-left:0;width:100%}}
+
+/* ── Sections ── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+
+/* ── Typography ── */
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.badge-teal{background:rgba(13,148,136,.08);color:var(--teal)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sbx.teal{border-left-color:var(--teal)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+
+/* ── Summary cards ── */
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ── Emotion strip ── */
+.day-strip{display:grid;grid-template-columns:100px repeat(5,1fr);gap:1px;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);font-size:12px}
+.ds-label{background:var(--bg4);padding:10px 8px;font-size:11px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:3px}
+.ds-label .ds-date{font-size:10px;color:var(--text3)}
+.ds-cell{background:var(--bg2);padding:10px 10px;display:flex;flex-direction:column;gap:4px}
+.ds-em{font-size:12px;font-weight:700;padding:1px 7px;border-radius:4px;text-align:center;width:fit-content}
+.em40{background:rgba(217,119,6,.12);color:var(--accent)}
+.em24{background:rgba(220,38,38,.1);color:var(--red)}
+.em17{background:rgba(220,38,38,.2);color:var(--red)}
+.em54{background:rgba(5,150,105,.12);color:var(--green)}
+.em28{background:rgba(220,38,38,.1);color:var(--red)}
+
+/* ── Fund bar chart ── */
+.fund-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.fund-row .fname{min-width:90px;color:var(--text2)}
+.fund-row .fbar{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.fund-row .fbar-fill{height:100%;border-radius:4px}
+.fund-row .fval{min-width:52px;text-align:right;font-weight:600}
+
+/* ── Board heat grid ── */
+.heat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.heat-tag{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.ht-red{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.ht-green{background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.2)}
+.ht-accent{background:rgba(217,119,6,.1);color:var(--accent);border:1px solid rgba(217,119,6,.2)}
+.ht-blue{background:rgba(37,99,235,.08);color:var(--blue);border:1px solid rgba(37,99,235,.2)}
+.ht-purple{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2)}
+.ht-teal{background:rgba(13,148,136,.08);color:var(--teal);border:1px solid rgba(13,148,136,.2)}
+.ht-dim{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── Lesson blocks ── */
+.lesson-block{padding:12px 14px;border-radius:8px;margin-bottom:10px;border-left:4px solid}
+.lesson-block.red{background:rgba(220,38,38,.05);border-color:var(--red)}
+.lesson-block.orange{background:rgba(217,119,6,.05);border-color:var(--accent)}
+.lesson-block.blue{background:rgba(37,99,235,.05);border-color:var(--blue)}
+.lesson-block.green{background:rgba(5,150,105,.05);border-color:var(--green)}
+.lesson-block.purple{background:rgba(124,58,237,.05);border-color:var(--purple)}
+.lesson-block.teal{background:rgba(13,148,136,.05);border-color:var(--teal)}
+.lesson-block .lb-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.lesson-block .lb-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ── Search ── */
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+
+/* ── Alert box ── */
+.alert-strip{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.alert-item{flex:1;min-width:140px;padding:12px 14px;border-radius:8px;border-left:4px solid}
+.alert-item.danger{background:rgba(220,38,38,.06);border-color:var(--red)}
+.alert-item.danger .ai-num{font-size:28px;font-weight:800;color:var(--red)}
+.alert-item.danger .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.success{background:rgba(5,150,105,.06);border-color:var(--green)}
+.alert-item.success .ai-num{font-size:28px;font-weight:800;color:var(--green)}
+.alert-item.success .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.neutral{background:rgba(217,119,6,.06);border-color:var(--accent)}
+.alert-item.neutral .ai-num{font-size:28px;font-weight:800;color:var(--accent)}
+.alert-item.neutral .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a id="back-home" href="../index.html#reviews" class="back">← 平台</a>
+  <div class="title">W23 周复盘（2026-06-01 至 2026-06-05）</div>
+  <div class="meta">
+    <span class="chip blue">6/1-6/5 · 5天</span>
+    <span class="chip green">账户 +1.29%</span>
+    <span class="chip accent">周末资产 720,227.62</span>
+    <span class="chip purple">W23</span>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+<div class="label">目录</div>
+<a href="#s0">核心发现（先看这里）</a>
+<a href="#s1">第〇部分：本周概览</a>
+<a href="#s2">一、节奏与打法回顾</a>
+<a href="#s3">二、主线与板块</a>
+<a href="#s4">三、盈亏归因</a>
+<a href="#s5">四、认知迭代</a>
+<a href="#s6">五、下周基调</a>
+<a href="#s7">附录：周度数据汇总</a>
+</nav>
+<div class="content">
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>核心发现（先看这里）</div>
+<div class="sb">
+<div class="sbx">一张表总结本周，读完这张表就知道这周发生了什么。</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><strong>盈亏</strong></td><td>账户资产口径约 <strong>+9,172元 / +1.29%</strong>（711,055.67 → 720,227.62）；交易归因口径需单列，因本周发生账户切换</td></tr>
+<tr><td><strong>胜率</strong></td><td>交易结果分化：光迅减仓盈利、立讯止损大亏、佰维清仓正确但执行偏晚；剩余光迅浮盈支撑账户净值</td></tr>
+<tr><td><strong>盈亏比</strong></td><td>已实现交易口径偏差大：光迅减仓 +4,620，立讯 -13,300，佰维 -1,824；靠剩余光迅浮盈与账户切换后的持仓修复对冲</td></tr>
+<tr><td><strong>节奏</strong></td><td>预案方向大体正确（连续封锁W1、转向趋势持仓管理），但执行端在止损时效和仓位节奏上有明显拖延</td></tr>
+<tr><td><strong>主线</strong></td><td>电力高标分歧 → 通信设备/算力网确立 → 半导体/元件轮动 → 光纤涨价独立 → 周五CPO中军退潮</td></tr>
+<tr><td><strong>梯队</strong></td><td>4板→3板→3板→4板→5板，连板高度回升但晋级率和封板率持续差，连板生态不可追</td></tr>
+<tr><td><strong>赚钱效应</strong></td><td>情绪数值反复修复，但炸板率长期70%+，周五涨停收益-0.6%、炸板收益-2.7%，追涨生态仍差</td></tr>
+<tr><td><strong>盈亏模式</strong></td><td>赚钱=主线持仓有浮盈时主动降仓；亏钱=尾盘缩量拉升误判+止损破线后拖延</td></tr>
+<tr><td><strong>认知迭代</strong></td><td>5条需要固化：脉冲修复不追、涨停数量不能替代赚钱效应、中军崩是退潮信号、止损到线立即执行、主动风险线+止损线双线管理</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>下周目标</strong>：连板W1继续低权重；持仓票破主动风险线先降仓，破止损线立即执行；总仓位先按 ≤20% 防守，等通信/CPO退潮结束后再恢复进攻。</div>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第〇部分：本周概览</div>
+<div class="sb">
+<div class="sbx">一张表看清5天，只记关键结论，不抄日复盘数据。</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>模式</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏/资产</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>冰点反弹但质量差</td><td>68.5% 强势</td><td>原账户清仓，新账户切换</td><td>佰维清仓 -1,824；新账户持华电/光迅</td><td>新账户 711,055.67</td><td>✅纪律正确，执行偏晚</td><td>涨停120但炸板85%，华电涨停翻绿</td></tr>
+<tr><td>周二</td><td>V型修复</td><td>27.5% 低迷</td><td>持仓管理，通信主线确认</td><td>华电加仓3000；光迅V反确认</td><td>资产约72万</td><td>⚠️华电加仓待评估</td><td>通信设备+219亿，电力退潮</td></tr>
+<tr><td>周三</td><td>极端结构市</td><td>32.4% 低迷</td><td>趋势主做，W1封锁</td><td>华电全清；光迅加/减仓；立讯W2买入</td><td>资产约72.4万</td><td>✅方向对，尾盘判断需谨慎</td><td>科技牛、其他惨，炸板80%</td></tr>
+<tr><td>周四</td><td>冲高回落第二日</td><td>24.1% 低迷</td><td>纯趋势持仓管理</td><td>光迅加仓200；立讯持有</td><td>光迅小浮盈，立讯小浮亏</td><td>☑弈沐决策</td><td>半导体独大，通信整体流出</td></tr>
+<tr><td>周五</td><td>早盘反包诱多，尾盘杀跌</td><td>59% 主升表象</td><td>降仓控风险</td><td>光迅减仓 +4,620；立讯止损 -13,300</td><td>资产 720,227.62</td><td>✅减仓对，止损慢</td><td>CPO中军崩，立讯破止损</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>周累计盈亏（账户资产口径）</strong>：约 <strong>+9,172元 / +1.29%</strong>。 <strong>周内净值路径</strong>：0.999995 → 1.011624 → 1.023003 → 1.018058 → 1.012894。 <strong>周内仓位路径</strong>：0% → 39.76% → 48.28% → 48.03% → 18.96%。</div>
+<div class="para"><strong>本周操作</strong>：</div>
+<ul class="tight-list">
+<li>买/加仓：华电能源 +3000；光迅科技 +200、+200；立讯精密 +2000。</li>
+<li>卖/减仓：佰维存储清仓；华电能源全清；光迅科技减仓合计700股；立讯精密清仓止损。</li>
+</ul>
+<div class="para"><strong>一句话总结</strong>： 本周不是简单的赚钱周，而是一次“新账户切换 + 主线从电力切到通信/CPO + 周五退潮”的压力测试。账户净值最终为正，靠的是光迅主线持仓和及时降仓；最大教训是立讯破止损后拖到尾盘，说明规则识别已经够用，真正短板在执行时效。</div>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、节奏与打法回顾</div>
+<div class="sb">
+<div class="sbx">这周的打法选择对不对？有没有系统性偏差？</div>
+<div class="para"><strong>预案命中率</strong>：约60%。</div>
+<ul class="tight-list">
+<li>对的部分：周一佰维清仓方向正确；周三起连续封锁W1，避免在炸板率80%环境里追连板；周五光迅主动降仓正确。</li>
+<li>偏差部分：周二冰点中加仓华电，和“冰点不买/电力退潮”有冲突；周五立讯止损执行明显偏慢。</li>
+</ul>
+<div class="para"><strong>方向错误日</strong>：</div>
+<ul class="tight-list">
+<li>周二：通信已成为新主线，华电所属电力持续流出，仍加仓华电，虽然收盘未明显亏，但方向与主线切换不匹配。</li>
+<li>周五：立讯盘中已破70.04止损线，但直到14:50附近才走，少亏窗口被拖延消耗。</li>
+</ul>
+<div class="para"><strong>模式切换</strong>：</div>
+<ul class="tight-list">
+<li>周一：电力高标与冰点反弹共振，但涨停质量极差。</li>
+<li>周二：通信设备在恐慌中逆势确立为新主线。</li>
+<li>周三：通信+半导体冲高，市场进入“科技牛、其他惨”的极端结构市。</li>
+<li>周四：通信设备整体流出，光纤涨价成为通信内部独立题材。</li>
+<li>周五：CPO中军中际/天孚先崩，光迅仍红但必须降仓。</li>
+</ul>
+<div class="para"><strong>打法切换</strong>：</div>
+<ul class="tight-list">
+<li>连板侧：本周大部分时间应该关闭或低权重。即使最高板从4到5，封板率和晋级率都不支持追涨。</li>
+<li>趋势侧：本周是趋势持仓管理周，不是大规模开仓周。有效动作是主线确认后持有、冲高后降仓、破线后止损。</li>
+</ul>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、主线与板块</div>
+<div class="sb">
+<div class="sbx">主线有没有切换？资金方向变了没？</div>
+<div class="para"><strong>主线演变</strong>：</div>
+<ul class="tight-list">
+<li>周一：电力高标仍热，但华电涨停翻绿，已出现高标冲顶分歧。</li>
+<li>周二：通信设备+219亿，光迅V型反转，通信主线确立。</li>
+<li>周三：通信设备+半导体共振，光模块三剑客爆发，但午后炸板率抬升，出现结构分化。</li>
+<li>周四：半导体独大，通信设备整体-35亿，光纤涨价线独立走强。</li>
+<li>周五：通信/CPO早盘反包诱多，尾盘中军崩盘，机器人趋势加速但仍待确认。</li>
+</ul>
+<div class="para"><strong>周初主线</strong>：电力/文化传媒/软件修复，质量不足。 <strong>周中主线</strong>：通信设备/算力网 + 半导体。 <strong>周末状态</strong>：CPO中军退潮，光迅剩余仓位转为风险管理，不再按强主线无脑持有。</div>
+<div class="para"><strong>梯队演变</strong>：</div>
+<ul class="tight-list">
+<li>周一最高板：4板（粤电力A/合锻智能）</li>
+<li>周二最高板：3板（春秋电子/中央商场）</li>
+<li>周三最高板：3板（节能铁汉/红星发展/大有能源等）</li>
+<li>周四最高板：4板（3只）</li>
+<li>周五最高板：5板（1只）</li>
+<li>高度变化：<strong>先压缩后抬升</strong>，但连板股数量和晋级率没有同步改善，属于“高度在、生态差”。</li>
+</ul>
+<div class="para"><strong>本周活跃板块</strong>（持续或有关键影响）：</div>
+<ol class="tight-list">
+<li><strong>通信设备/算力网/CPO</strong>：本周主线，光迅是核心持仓；周五中军崩后进入风险管理。</li>
+<li><strong>半导体</strong>：周三/周四资金强，周五兆易等走坏，持续性存疑。</li>
+<li><strong>电力</strong>：周一高标强、周二退潮、周三尾盘修复，最终只适合清仓观察。</li>
+<li><strong>元件/面板/消费电子</strong>：轮动活跃，但立讯验证失败，不能把板块反转直接等同个股可扛。</li>
+<li><strong>机器人</strong>：周五趋势加速待确认，下周只能观察是否有资金承接，不追第一天。</li>
+</ol>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因</div>
+<div class="sb">
+<div class="sbx">赚在哪、亏在哪，归因到规则层面。</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日</th><th>卖日</th><th>盈亏</th><th>归因（做对/做错了什么）</th></tr></thead>
+<tbody>
+<tr><td>佰维存储</td><td>半导体/存储</td><td>5/29</td><td>6/1</td><td><strong>-1,824元</strong></td><td>✅方向正确：连亏铁律清仓；⚠️执行偏晚，竞价清仓可少亏约千元</td></tr>
+<tr><td>华电能源</td><td>电力高标</td><td>6/1前/6/2加仓</td><td>6/3</td><td>未单列</td><td>⚠️加仓发生在电力退潮+低迷环境，方向不优；清仓结果正确，尾盘拉高给了更好出局价</td></tr>
+<tr><td>光迅科技</td><td>通信/CPO趋势</td><td>6/1前/6/3/6/4加仓</td><td>6/5减仓</td><td><strong>+4,620元已实现，剩余600股浮盈</strong></td><td>✅本周最佳：主线持仓V反确认，周五中军崩前后主动降仓，保留核心仓而不硬扛</td></tr>
+<tr><td>立讯精密</td><td>消费电子W2</td><td>6/3</td><td>6/5</td><td><strong>-13,300元</strong></td><td>🔴本周最差：尾盘缩量拉升误判，次日低开走弱后未及时止损，破70.04后拖到尾盘</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>本周最佳操作</strong>：</div>
+<ul class="tight-list">
+<li><strong>光迅科技周五减仓</strong>：CPO中军中际/天孚先崩时，光迅仍红，但主动风险线触发后减仓，兑现+4,620并把仓位降至18%左右。这个动作避免了“等持仓自己跌了才承认退潮”。</li>
+</ul>
+<div class="para"><strong>本周最差操作</strong>：</div>
+<ul class="tight-list">
+<li><strong>立讯精密止损拖延</strong>：止损线70.04已破，实际68.66清仓，少亏窗口损失约2,000+。根因不是规则缺失，而是给了“再等一下”过长验证时间。</li>
+</ul>
+<div class="para"><strong>盈亏模式识别</strong>：</div>
+<ul class="tight-list">
+<li><strong>赚钱的操作共性</strong>：主线有合力、持仓有浮盈、主动风险线先降仓，不把止盈变止损。</li>
+<li><strong>亏钱的操作共性</strong>：把尾盘缩量拉升当修复、个股破线后等待盘感二次验证、用“板块还行”对抗个股止损。</li>
+</ul>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、认知迭代</div>
+<div class="sb">
+<div class="sbx">从5天心得中提炼共性问题，该固化还是调整？</div>
+<div class="para"><strong>本周心得汇总</strong>（从日复盘提炼，只留值得固化的，流水式心得不抄）：</div>
+<ol class="tight-list">
+<li><strong>脉冲式修复不追</strong>：周一情绪28.4%→77.4%→68.5%，修复很猛但炸板85.37%。冰点反弹首日必须看次日持续性，不能因开盘暴涨追。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>涨停数量不能替代赚钱效应</strong>：周一涨停120只，但109只首板、炸板率85.37%、涨停收益2.44%低于3%。涨停数量是表象，赚钱效应才是验证。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>新主线会在恐慌中确立</strong>：周二早盘情绪16.7%，通信设备逆势流入并全天+219亿，光迅V反确认。冰点日不是乱买，而是观察逆势抗跌板块是否成为新主线。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>板块次日定性必须重验</strong>：周四元件从昨日-30亿转为+50亿，通信内部光纤涨价线独立。不能沿用昨天的板块标签，次日要重新看资金、指数和中军。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>中军崩是退潮信号</strong>：周五中际/天孚先崩时，光迅仍红，但中军崩已说明主线合力松动。不能等自己的票补跌才动。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>止损到了不走是纪律问题</strong>：立讯破70.04后拖到14:50，说明“盘感窗口”要有时间边界。窗口到期验证失败，必须执行。</li>
+</ol>
+<ol class="tight-list">
+<li><strong>主动风险线+止损线双线管理有效</strong>：光迅230主动线用于降仓，209/止损线用于全走，比单线管理更适合趋势持仓。</li>
+</ol>
+<div class="para"><strong>蒸馏判断</strong>：</div>
+<div class="tw"><table>
+<thead><tr><th>心得摘要</th><th>来源日期</th><th>类型</th><th>目标文件</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>脉冲式修复不追</td><td>6/1</td><td>认知强化</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加</td></tr>
+<tr><td>涨停数量不能替代赚钱效应</td><td>6/1</td><td>认知强化</td><td><code>insights/情绪与周期.md</code></td><td>→ 追加</td></tr>
+<tr><td>冰点中新主线逆势确立</td><td>6/2</td><td>认知</td><td><code>insights/资金与主线.md</code></td><td>→ 追加</td></tr>
+<tr><td>板块次日定性必须重验</td><td>6/4</td><td>认知</td><td><code>insights/资金与主线.md</code></td><td>✅ 已在门户 insights 追加同类认知</td></tr>
+<tr><td>中军崩是退潮信号</td><td>6/5</td><td>认知</td><td><code>insights/资金与主线.md</code></td><td>✅ 已在门户 insights 追加</td></tr>
+<tr><td>止损到线立即执行</td><td>6/5</td><td>规则/教训</td><td><code>Core-趋势.md</code> / feedback</td><td>→ 建议固化</td></tr>
+<tr><td>主动风险线+止损线双线管理</td><td>6/5</td><td>规则建议</td><td><code>Core-趋势.md</code></td><td>→ 建议写入</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>是否需要改 rules？</strong></div>
+<ul class="tight-list">
+<li>□ 是 → <code>Core-趋势.md</code>：趋势持仓增加“双线管理”：主动风险线触发先降仓，硬止损线触发立即清仓。</li>
+<li>□ 是 → <code>Core-趋势.md</code>：止损线破位后最多给一个明确时间窗口；窗口到期仍未修复，不能顺延到次日。</li>
+<li>□ 是 → <code>Core-仓位管理.md</code>：周五退潮后，下周一默认仓位上限≤20%，待主线中军修复后再恢复。</li>
+<li>□ 否</li>
+</ul>
+<div class="para"><strong>是否需要写 insights/feedback？</strong></div>
+<ul class="tight-list">
+<li>□ insights → <code>情绪与周期</code>：脉冲修复、涨停数量与赚钱效应背离。</li>
+<li>□ insights → <code>资金与主线</code>：冰点中新主线逆势确立、中军崩先于持仓补跌。</li>
+<li>□ feedback → <code>止损执行拖延</code>：立讯破线后未立即走，属于执行问题而非规则问题。</li>
+<li>□ 否</li>
+</ul>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、下周基调</div>
+<div class="sb">
+<div class="sbx">基于本周积累，下周注意什么。</div>
+<div class="para"><strong>方向判断</strong>： 周五收盘表面情绪59%，但涨停收益-0.6%、炸板率86.54%、CPO中军崩盘，说明这不是健康强势，而是“数值修复 + 赚钱效应差”的高风险结构。下周优先防守，观察通信/CPO是否止跌，机器人是否真能接棒。</div>
+<div class="para"><strong>情绪预期</strong>： 本周情绪均值约42.3%，波动极大（68.5→27.5→32.4→24.1→59）。下周不能按收盘59%简单进攻，必须以赚钱效应和中军承接为确认。</div>
+<div class="para"><strong>重点盯的板块/标的</strong>：</div>
+<ul class="tight-list">
+<li><strong>光迅科技</strong>：剩余600股，主动风险线与硬止损线分开执行。若通信/CPO中军继续走弱，先减剩余仓。</li>
+<li><strong>CPO中军</strong>：中际旭创/天孚通信/新易盛，作为光迅风险温度计。</li>
+<li><strong>机器人趋势</strong>：周五加速，观察是否有持续资金承接，不追第一天。</li>
+<li><strong>半导体/元件</strong>：只看二次确认，不用昨日强弱标签替代当日资金。</li>
+</ul>
+<div class="para"><strong>需要调整的习惯或规则</strong>：</div>
+<ul class="tight-list">
+<li>不用“涨停数量”判断赚钱效应，必须同时看炸板率、涨停收益、连板收益。</li>
+<li>主线持仓看中军，不只看自己持仓涨跌。</li>
+<li>止损线破位后不再“再等一天”，盘感窗口必须有截止时间。</li>
+<li>周五退潮后下周一默认防守，仓位先压到20%以内。</li>
+</ul>
+<div class="para"><strong>目标</strong>： 保住本周账户净值修复成果；不让光迅盈利回吐成亏损；立讯式拖延止损不再出现；下周只在“中军修复 + 赚钱效应恢复 + 仓位规则允许”三者同时出现时加仓。</div>
+<div class="para">---</div>
+</div>
+</div>
+<div class="section" id="s7">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>附录：周度数据汇总</div>
+<div class="sb">
+<div class="sh3">账户周度表现</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>周累计收益（账户资产口径）</td><td><strong>+1.29% / 约+9,172元</strong></td><td>711,055.67 → 720,227.62</td></tr>
+<tr><td>周末总资产</td><td><strong>720,227.62</strong></td><td>Portal PnL meta，云端资产缺字段时按净值估算</td></tr>
+<tr><td>累计入金</td><td><strong>711,059.23</strong></td><td>Portal PnL meta</td></tr>
+<tr><td>周末净值</td><td><strong>1.012894</strong></td><td>2026-06-05</td></tr>
+<tr><td>周内最高净值</td><td><strong>1.023003</strong></td><td>2026-06-03</td></tr>
+<tr><td>周末仓位</td><td><strong>18.96%</strong></td><td>光迅减仓后</td></tr>
+<tr><td>最大仓位</td><td><strong>48.28%</strong></td><td>2026-06-03</td></tr>
+<tr><td>最大已实现单笔盈利</td><td>光迅减仓 <strong>+4,620元</strong></td><td>6/5</td></tr>
+<tr><td>最大已实现单笔亏损</td><td>立讯清仓 <strong>-13,300元</strong></td><td>6/5</td></tr>
+</tbody>
+</table></div>
+<div class="sh3">情绪与大盘周度数据</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>情绪</th><th>上证</th><th>涨跌%</th><th>涨停</th><th>跌停</th><th>量能</th><th>赚钱效应</th></tr></thead>
+<tbody>
+<tr><td>周一</td><td>68.5%</td><td>4057.74</td><td>-0.27%</td><td>120</td><td>21</td><td>2.88万亿</td><td>一般</td></tr>
+<tr><td>周二</td><td>27.5%</td><td>4075.10</td><td>+0.43%</td><td>67</td><td>16</td><td>2.79万亿</td><td>差</td></tr>
+<tr><td>周三</td><td>32.4%</td><td>4083.97</td><td>+0.22%</td><td>51</td><td>11</td><td>3.13万亿</td><td>好</td></tr>
+<tr><td>周四</td><td>24.1%</td><td>4057.78</td><td>-0.64%</td><td>80</td><td>7</td><td>2.76万亿</td><td>差</td></tr>
+<tr><td>周五</td><td>59.0%</td><td>4027.74</td><td>-0.74%</td><td>73</td><td>11</td><td>3.07万亿</td><td>差</td></tr>
+</tbody>
+</table></div>
+<div class="sh3">卖出追踪（周度汇总）</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>买日</th><th>买价</th><th>卖日</th><th>卖价</th><th>盈亏</th><th>校准</th></tr></thead>
+<tbody>
+<tr><td>佰维存储</td><td>5/29</td><td>335.50</td><td>6/1</td><td>326.38</td><td>-1,824元</td><td>✅方向正确；⚠️竞价未执行导致少亏窗口丢失</td></tr>
+<tr><td>华电能源</td><td>6/1前/6/2加仓</td><td>9.486/9.12</td><td>6/3</td><td>9.57/9.59</td><td>未单列</td><td>✅清仓方向正确；尾盘拉高出局有运气成分</td></tr>
+<tr><td>光迅科技</td><td>6/1前/6/3/6/4加仓</td><td>218.023/219.49/220.02</td><td>6/5部分</td><td>229.26均价附近</td><td>+4,620元</td><td>✅中军崩前后主动降仓正确，剩余600股继续跟踪</td></tr>
+<tr><td>立讯精密</td><td>6/3</td><td>75.31</td><td>6/5</td><td>68.66</td><td>-13,300元</td><td>🔴止损执行偏慢，规则识别正确但纪律不够</td></tr>
+</tbody>
+</table></div>
+<div class="para">---</div>
+<div class="para">*周复盘生成时间：2026-06-06* *数据来源：W23_第23周/2026_6_1 至 2026_6_5 日复盘笔记 + Portal PnL 数据*</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function toggleSection(el) { el.classList.toggle('collapsed'); const b = el.nextElementSibling; if (b) b.classList.toggle('hide'); }
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .lesson-block, .para, .tight-list li, .tw table tr, .sh, .sbx');
+  if (!q.trim()) { items.forEach(el => el.style.opacity = '1'); return; }
+  const lq = q.toLowerCase();
+  items.forEach(el => { el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15'; });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
+</body>
+</html>
