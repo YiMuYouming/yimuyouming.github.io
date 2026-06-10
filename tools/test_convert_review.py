@@ -40,6 +40,42 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertLess(lianban_heading, lianban_table)
         self.assertLess(lianban_table, guide_heading)
 
+    def test_parse_s4_supports_blockquote_round_marker(self):
+        markdown = """> 洋米 Round 1 — 2026-06-10 16:00
+
+### Q0 数据口径校验
+
+| 标的 | 问财主力 | 稳米主力 |
+|------|---------|---------|
+| 豪恩汽电 | +4526万 | +4526万 |
+
+### Round 1 总结
+
+| 维度 | 评级 |
+|------|------|
+| 盲区扫描 | 光伏 |
+
+### Round 2 — 稳米回应（2026-06-10）
+
+| # | 洋米质疑 | 稳米回应 |
+|---|---------|---------|
+| 1 | 光伏盲区 | 已采纳 |
+
+### Round 3 — 洋米终审（2026-06-10 16:45）
+
+**红方对抗闭环完成。**
+"""
+
+        html = convert_review.parse_s4(markdown)
+
+        self.assertIn("3轮辩论", html)
+        self.assertIn("Q0 数据口径校验", html)
+        self.assertIn("<th>问财主力</th>", html)
+        self.assertIn("Round 1 总结", html)
+        self.assertIn("盲区扫描", html)
+        self.assertIn("光伏盲区", html)
+        self.assertIn("红方对抗闭环完成", html)
+
 
 if __name__ == "__main__":
     unittest.main()

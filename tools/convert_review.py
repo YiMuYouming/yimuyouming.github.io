@@ -438,6 +438,42 @@ def md_text_with_tables_to_html(text):
     return '\n'.join(chunks)
 
 
+def split_red_team_rounds(text):
+    """Split red-team debate text by Round markers.
+
+    Supports both standard headings (`### Round 1 ...`) and the older
+    blockquote marker style (`> 洋米 Round 1 — ...`).
+    """
+    round_bodies = {}
+    current_round = None
+    current_lines = []
+
+    def flush():
+        nonlocal current_lines
+        if current_round:
+            body = '\n'.join(current_lines).strip()
+            if body:
+                round_bodies[current_round] = body
+        current_lines = []
+
+    for raw_line in text.split('\n'):
+        stripped = raw_line.strip()
+        heading_match = re.match(r'^###\s+(Round\s+[123])\s*(?:[：:—-].*)?$', stripped)
+        quote_match = re.match(r'^>\s*.*\b(Round\s+[123])\b.*$', stripped)
+        marker = heading_match or quote_match
+
+        if marker:
+            flush()
+            current_round = marker.group(1)
+            continue
+
+        if current_round:
+            current_lines.append(raw_line)
+
+    flush()
+    return round_bodies
+
+
 # ── Section parsers ──
 
 def parse_s0(text):
@@ -714,17 +750,9 @@ def parse_s3(text):
 
 def parse_s4(text):
     """Parse §四 红方对抗."""
-    total_rounds = len(re.findall(r'### Round [123]', text))
+    round_bodies = split_red_team_rounds(text)
+    total_rounds = len(round_bodies)
     html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
-
-    # Split entire text into rounds by ### Round boundaries
-    round_splits = re.split(r'^### (Round [123])[：:].*$', text, flags=re.MULTILINE)
-    # round_splits: [pre, 'Round 1', r1_body, 'Round 2', r2_body, 'Round 3', r3_body]
-    round_bodies = {}
-    for i in range(1, len(round_splits), 2):
-        round_id = round_splits[i].strip()
-        round_body = round_splits[i+1] if i+1 < len(round_splits) else ""
-        round_bodies[round_id] = round_body.strip()
 
     for round_id, round_label, round_anchor in [
         ("Round 1", "🔴 Round 1：洋米红方质疑", "s4a"),
@@ -738,27 +766,15 @@ def parse_s4(text):
 
         # ── Round 1: full narrative + tables ──
         if round_id == "Round 1":
-            # Render everything: first pass md→html, then overlay tables
-            html += md_text_to_html(round_text)
-            # Add tables that md_text_to_html missed (it doesn't handle tables)
-            for t in extract_tables(round_text):
-                hdr, rows = parse_md_table(t)
-                if hdr and rows:
-                    html += html_table(hdr, rows, cell_color)
+            html += md_text_with_tables_to_html(round_text)
 
         # ── Round 2: response table + summary ──
         elif round_id == "Round 2":
-            html += md_text_to_html(round_text)
-            r2_tables = extract_tables(round_text)
-            if r2_tables:
-                hdr, rows = parse_md_table(r2_tables[0])
-                if hdr:
-                    html += html_subheading("逐条回应")
-                    html += html_table(hdr, rows, cell_color)
+            html += md_text_with_tables_to_html(round_text)
 
         # ── Round 3: verdict + table ──
         elif round_id == "Round 3":
-            html += md_text_to_html(round_text)
+            html += md_text_with_tables_to_html(round_text)
             # Verdict box
             for vt_key in ['**终审定论**', '**终稿定论**']:
                 verdict_text = extract_between(round_text, vt_key, '---')
@@ -767,11 +783,6 @@ def parse_s4(text):
                 if verdict_text:
                     html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text.strip())}</div></div>'
                     break
-            # Tables
-            for t in extract_tables(round_text):
-                hdr, rows = parse_md_table(t)
-                if hdr and rows:
-                    html += html_table(hdr, rows, cell_color)
 
     html += html_section_footer()
     return html
