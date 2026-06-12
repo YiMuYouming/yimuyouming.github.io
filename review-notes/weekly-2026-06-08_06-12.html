@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W24 周复盘（2026-06-08 至 2026-06-12）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F5F3;
+  --bg2:#FFFFFF;
+  --bg3:#FAFAF9;
+  --bg4:#F5F2EE;
+  --border:#E5E2DE;
+  --text:#2D2926;
+  --text2:#5C5652;
+  --text3:#8A8480;
+  --accent:#D97706;
+  --accent-hover:#B45309;
+  --red:#DC2626;
+  --green:#059669;
+  --blue:#2563EB;
+  --purple:#7C3AED;
+  --teal:#0D9488;
+}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.9);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.accent{border-color:var(--accent);color:var(--accent);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+
+/* ── Layout ── */
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.s3{padding-left:34px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.sidebar .sep{height:1px;background:var(--border);margin:6px 10px}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+@media(max-width:640px){.topbar{align-items:flex-start}.topbar .title{white-space:normal;flex-basis:100%;line-height:1.35}.topbar .meta{margin-left:0;width:100%}}
+
+/* ── Sections ── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh.collapsed{border-bottom-color:transparent}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+
+/* ── Typography ── */
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.tw tbody tr:nth-child(even):hover{background:var(--bg4)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--accent)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.badge-purple{background:rgba(124,58,237,.08);color:var(--purple)}
+.badge-teal{background:rgba(13,148,136,.08);color:var(--teal)}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--accent)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sbx.teal{border-left-color:var(--teal)}
+.sh2{font-size:16px;font-weight:700;margin:16px 0 8px;color:var(--text);padding-top:4px}
+.sh3{font-size:14px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px;display:flex;align-items:center;gap:6px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.para .dim{color:var(--text2)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+[id]{scroll-margin-top:70px}
+
+/* ── Summary cards ── */
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.summary-card .label{font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.summary-card .value{font-size:22px;font-weight:700;color:var(--text)}
+.summary-card .value.green{color:var(--green)}
+.summary-card .value.red{color:var(--red)}
+.summary-card .value.accent{color:var(--accent)}
+.summary-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ── Emotion strip ── */
+.day-strip{display:grid;grid-template-columns:100px repeat(5,1fr);gap:1px;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);font-size:12px}
+.ds-label{background:var(--bg4);padding:10px 8px;font-size:11px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:3px}
+.ds-label .ds-date{font-size:10px;color:var(--text3)}
+.ds-cell{background:var(--bg2);padding:10px 10px;display:flex;flex-direction:column;gap:4px}
+.ds-em{font-size:12px;font-weight:700;padding:1px 7px;border-radius:4px;text-align:center;width:fit-content}
+.em40{background:rgba(217,119,6,.12);color:var(--accent)}
+.em24{background:rgba(220,38,38,.1);color:var(--red)}
+.em17{background:rgba(220,38,38,.2);color:var(--red)}
+.em54{background:rgba(5,150,105,.12);color:var(--green)}
+.em28{background:rgba(220,38,38,.1);color:var(--red)}
+
+/* ── Fund bar chart ── */
+.fund-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.fund-row .fname{min-width:90px;color:var(--text2)}
+.fund-row .fbar{flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.fund-row .fbar-fill{height:100%;border-radius:4px}
+.fund-row .fval{min-width:52px;text-align:right;font-weight:600}
+
+/* ── Board heat grid ── */
+.heat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.heat-tag{padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.ht-red{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.ht-green{background:rgba(5,150,105,.1);color:var(--green);border:1px solid rgba(5,150,105,.2)}
+.ht-accent{background:rgba(217,119,6,.1);color:var(--accent);border:1px solid rgba(217,119,6,.2)}
+.ht-blue{background:rgba(37,99,235,.08);color:var(--blue);border:1px solid rgba(37,99,235,.2)}
+.ht-purple{background:rgba(124,58,237,.08);color:var(--purple);border:1px solid rgba(124,58,237,.2)}
+.ht-teal{background:rgba(13,148,136,.08);color:var(--teal);border:1px solid rgba(13,148,136,.2)}
+.ht-dim{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+/* ── Lesson blocks ── */
+.lesson-block{padding:12px 14px;border-radius:8px;margin-bottom:10px;border-left:4px solid}
+.lesson-block.red{background:rgba(220,38,38,.05);border-color:var(--red)}
+.lesson-block.orange{background:rgba(217,119,6,.05);border-color:var(--accent)}
+.lesson-block.blue{background:rgba(37,99,235,.05);border-color:var(--blue)}
+.lesson-block.green{background:rgba(5,150,105,.05);border-color:var(--green)}
+.lesson-block.purple{background:rgba(124,58,237,.05);border-color:var(--purple)}
+.lesson-block.teal{background:rgba(13,148,136,.05);border-color:var(--teal)}
+.lesson-block .lb-title{font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.lesson-block .lb-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* ── Search ── */
+.sb2{position:relative;margin-bottom:16px}
+.sb2 input{width:100%;padding:10px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:15px;outline:none}
+.sb2 input:focus{border-color:var(--accent)}
+.sb2 input::placeholder{color:var(--text3)}
+
+/* ── Alert box ── */
+.alert-strip{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.alert-item{flex:1;min-width:140px;padding:12px 14px;border-radius:8px;border-left:4px solid}
+.alert-item.danger{background:rgba(220,38,38,.06);border-color:var(--red)}
+.alert-item.danger .ai-num{font-size:28px;font-weight:800;color:var(--red)}
+.alert-item.danger .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.success{background:rgba(5,150,105,.06);border-color:var(--green)}
+.alert-item.success .ai-num{font-size:28px;font-weight:800;color:var(--green)}
+.alert-item.success .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+.alert-item.neutral{background:rgba(217,119,6,.06);border-color:var(--accent)}
+.alert-item.neutral .ai-num{font-size:28px;font-weight:800;color:var(--accent)}
+.alert-item.neutral .ai-label{font-size:12px;color:var(--text2);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a id="back-home" href="../index.html#reviews" class="back">← 平台</a>
+  <div class="title">W24 周复盘（2026-06-08 至 2026-06-12）</div>
+  <div class="meta">
+    <span class="chip blue">6/8-6/12 · 5天</span>
+    <span class="chip red">周内 -3.4543%</span>
+    <span class="chip accent">净值 0.964595</span>
+    <span class="chip purple">W24</span>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+<div class="label">目录</div>
+<a href="#s0">核心发现（先看这里）</a>
+<a href="#s1">第〇部分：本周概览</a>
+<a href="#s2">一、节奏与打法回顾</a>
+<a href="#s3">二、主线与板块</a>
+<a href="#s4">三、盈亏归因</a>
+<a href="#s5">四、认知迭代</a>
+<a href="#s6">五、下周基调</a>
+<a href="#s7">附录：周度数据汇总</a>
+</nav>
+<div class="content">
+<div class="sb2"><input type="text" placeholder="🔍 搜索标的、板块、关键词…" oninput="searchContent(this.value)"></div>
+<div class="section" id="s0">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>核心发现（先看这里）</div>
+<div class="sb">
+<div class="sbx">一张表总结本周，读完这张表就知道这周发生了什么。</div>
+<div class="tw"><table>
+<thead><tr><th>维度</th><th>结论</th></tr></thead>
+<tbody>
+<tr><td><strong>盈亏</strong></td><td>Portal 周内曲线 <strong>-3.4543%</strong>（0.999106 → 0.964595）；若按上周五净值 1.012894 比较，跨周回撤约 <strong>-4.77%</strong></td></tr>
+<tr><td><strong>胜率</strong></td><td>已了结交易口径 <strong>0盈5亏</strong>；周二浮盈未兑现，最终在周四机器人退潮中转为大亏</td></tr>
+<tr><td><strong>盈亏比</strong></td><td>本周没有已兑现盈利；主要亏损来自机器人方向止损（豪恩约 -11,384、绿的约 -9,976）和光迅清仓亏损</td></tr>
+<tr><td><strong>节奏</strong></td><td>预案/执行约 <strong>2/5 有效</strong>：周一恐慌不割正确，周二方向切换正确；周三加仓、周四止损拖延、周五缩量高开追涨均需修正</td></tr>
+<tr><td><strong>主线</strong></td><td>CPO/通信退潮 → 机器人修复失败 → 半导体/电子化学品尝试接棒 → 周五有色/小金属与基础化工成为下周观察核心</td></tr>
+<tr><td><strong>梯队</strong></td><td>6板 → 3板 → 4板 → 3板 → 4板；高度反复但底部断层，周五二进三 0% 是连板生态最诚实信号</td></tr>
+<tr><td><strong>赚钱效应</strong></td><td>情绪从 12.2% 冰点修到 72.6% 强势，但封板质量和持仓收益不匹配；本周核心问题是“情绪修复 ≠ 持仓赚钱”</td></tr>
+<tr><td><strong>盈亏模式</strong></td><td>赚钱=恐慌不割、方向切换及时；亏钱=浮盈未兑现、止损触发后拖延、缩量高开未确认就追</td></tr>
+<tr><td><strong>认知迭代</strong></td><td>5条需要固化：浮盈不是胜利、止损触发后不等、缩量高开先确认、普涨找唯一休整板块、连板头强底弱是危险信号</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>下周目标</strong>：先处理雅克科技，不扩大亏损；新仓只做“板块延续 + 个股确认 + 风控允许”的交集，避免用新方向交易去修复旧亏损心态。</div>
+</div>
+</div>
+<div class="section" id="s1">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>第〇部分：本周概览</div>
+<div class="sb">
+<div class="sbx">一张表看清 5 天，只记关键结论，不抄日复盘数据。</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>模式</th><th>情绪档位</th><th>打法</th><th>操作</th><th>盈亏/资产</th><th>对不对</th><th>关键词</th></tr></thead>
+<tbody>
+<tr><td>周一 6/8</td><td>外盘冲击后三冰</td><td>12.2% 极冰</td><td>持仓减法，不开新仓</td><td>光迅 215.49 减 300 股，留 300 股哨兵</td><td>周内基准 0.0%；跨周约 -1.36%</td><td>✅恐慌不割、反弹减仓正确</td><td>黑色星期五、CPO退潮、机器人逆势</td></tr>
+<tr><td>周二 6/9</td><td>冰点修复到沸点</td><td>64.0% 强势</td><td>清弱换强</td><td>光迅清仓；买豪恩 500、绿的 200</td><td>周内 +0.5531%</td><td>✅方向切换正确，质量隐患未充分处理</td><td>广度修复、机器人、炸板66.67%</td></tr>
+<tr><td>周三 6/10</td><td>修复次日分歧</td><td>29.7% 低迷</td><td>持仓观察，W2低吸</td><td>豪恩加仓 200；豪恩/绿的仍浮盈</td><td>周内 +0.4620%</td><td>⚠️加仓逻辑可解释，但忽视龙头埃斯顿走弱</td><td>地缘冲击、缩量承接、机器人分歧</td></tr>
+<tr><td>周四 6/11</td><td>持仓方向崩溃</td><td>26.5% 低迷</td><td>止损清仓</td><td>豪恩 700 清仓、绿的 200 清仓</td><td>周内 -2.8704%</td><td>🔴止损方向对，但执行太晚</td><td>机器人退潮、电子化学品唯一主线</td></tr>
+<tr><td>周五 6/12</td><td>普涨无主线</td><td>72.6% 强势</td><td>电子化学品试错</td><td>买雅克 500@140.2，W2加 200@135.7</td><td>周内 -3.4543%</td><td>⚠️方向可跟踪，W1缩量高开追涨偏急</td><td>二进三0%、半导体冲高回落、有色走强</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>周累计盈亏</strong>：Portal 周内收益曲线 <strong>-3.4543%</strong>。 <strong>周内净值路径</strong>：0.999106 → 1.004632 → 1.003722 → 0.970428 → 0.964595。 <strong>周内仓位路径</strong>：8.74% → 23.61% → 28.16% → 0.00% → 13.57%。</div>
+<div class="para"><strong>本周操作</strong>：</div>
+<ul class="tight-list"><li>买/加仓：豪恩汽电 500、绿的谐波 200、豪恩汽电加 200、雅克科技 500、雅克科技加 200。</li><li>卖/减仓：光迅科技 300 + 100 + 200；豪恩汽电 200 + 500；绿的谐波 200。</li><li>空仓过夜：1 天（6/11 收盘空仓）。</li></ul>
+<div class="para"><strong>一句话总结</strong>： 本周真正的问题不是看不见主线，而是“节奏从恐慌修复切到退潮时，持仓处理慢了一拍”。周二切机器人方向是对的，周三加仓把浮盈变成风险暴露，周四止损晚执行导致周内收益曲线断崖，周五又在缩量高开的修复盘里过早追雅克。体系已经能识别风险，短板仍在执行时点和确认条件。</div>
+</div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、节奏与打法回顾</div>
+<div class="sb">
+<div class="sbx">这周的打法选择对不对？有没有系统性偏差？</div>
+<div class="para"><strong>预案命中率</strong>：约 40%-50%。</div>
+<ul class="tight-list"><li>预案对的：周一恐慌低点不割、反弹压力位减仓；周二看到修复后从光迅切到机器人，方向选择短期有效；周四最终全部止损清仓，避免继续扛机器人退潮。</li><li>预案错的：周三在机器人龙头埃斯顿全天走弱时仍 W2 加仓豪恩；周四止损触发后没有立即执行，亏损扩大；周五竞价缩量高开没有等 9:30-9:35 确认就追雅克。</li></ul>
+<div class="para"><strong>方向错误日</strong>：</div>
+<ul class="tight-list"><li><strong>周三</strong>：机器人龙头埃斯顿从竞价 +5.68% 到收盘 -4.61%，方向内核心已经走弱，但持仓仍加豪恩。错误不是“买错板块”，而是对板块内龙头走弱的权重给低了。</li><li><strong>周四</strong>：豪恩、绿的均破止损后，止损动作拖到尾盘，导致账户亏损接近 -3% 熔断线。规则识别有效，执行时点失真。</li><li><strong>周五</strong>：电子化学品方向可以继续观察，但竞价量能偏缩时不该直接 W1 追涨，应该等待开盘砸完 V 回或放量确认。</li></ul>
+<div class="para"><strong>模式切换</strong>：</div>
+<ul class="tight-list"><li>周一：CPO/通信在外盘冲击下退潮，市场进入极冰。</li><li>周二：冰点修复，机器人、半导体、通信均有反弹；但涨停质量不足，属于“广度修复优先”。</li><li>周三：修复次日分歧，机器人龙头断板杀跌，半导体/光伏等方向出现轮动。</li><li>周四：机器人全面退潮，电子化学品/半导体材料成为唯一明确主线候选。</li><li>周五：指数强修复但半导体/电子化学品冲高回落，有色/小金属和基础化工接过盘面关注度。</li></ul>
+<div class="para"><strong>打法切换</strong>：</div>
+<ul class="tight-list"><li>连板侧：本周不适合重仓追低位晋级。周五三进四 50% 但二进三 0%、一进二 13.79%，说明头强底弱，不是健康接力。</li><li>趋势侧：趋势打分多次偏趋势，但上证/沪深300 20日线仍向下，趋势仓位应保持“观察 + 回踩确认”，不能把普涨日当趋势确立日。</li><li>持仓侧：本周最该提升权重的是“止损执行优先级”。一旦持仓破线，先处理风险，再讨论主线是否还在。</li></ul>
+</div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、主线与板块</div>
+<div class="sb">
+<div class="sbx">主线有没有切换？资金方向变了没？</div>
+<div class="para"><strong>主线演变</strong>：</div>
+<ul class="tight-list"><li><strong>周初主线</strong>：通信/CPO 从上周延续到周一，但被外盘科技冲击打成退潮；中际逆势资金只能作为反弹观察，不能支撑光迅重仓。</li><li><strong>周二主线</strong>：机器人在埃斯顿带动下成为修复日最清晰方向；半导体/通信广度也强，但炸板率 66.67% 提醒质量不足。</li><li><strong>周三主线</strong>：机器人开始分歧，埃斯顿断板下杀；半导体材料、光伏被红方补盲，说明资金正在轮动找新承接。</li><li><strong>周四主线</strong>：电子化学品/半导体材料最强，江丰电子 +20%、中船特气 +19.79%，雅克 2 板进入次日观察。</li><li><strong>周五主线</strong>：电子化学品冲高回落，半导体资金大逆转；全红无主线，资金转向有色/小金属、军工、证券等轮动方向。</li></ul>
+<div class="para"><strong>切换信号</strong>：</div>
+<ul class="tight-list"><li>CPO/通信：周一通信设备大流出、光迅破位，主线从“持仓主攻”降级为“风险管理”。</li><li>机器人：周三埃斯顿高开低走，周四自动化设备继续流出，确认修复失败。</li><li>电子化学品：周四强、周五休整，不等于退潮；下周一需看资金是否回流和雅克是否守住止损。</li></ul>
+<div class="para"><strong>梯队演变</strong>：</div>
+<ul class="tight-list"><li>周一最高板：6板（大有能源）</li><li>周二最高板：3板（泰和新材 / 天娱数科等）</li><li>周三最高板：4板（天娱数科）</li><li>周四最高板：3板（和远气体 / 中化国际等）</li><li>周五最高板：4板（基础化工三只 4 板）</li><li>高度变化：<strong>先压缩、再反弹，但底部晋级断层严重</strong>。周五二进三 0% 说明低位接力资金不愿承接。</li></ul>
+<div class="para"><strong>本周活跃板块</strong>：</div>
+<ol class="tight-list"><li><strong>通信/CPO</strong>：周初持仓线，周一退潮确认；后续只作为风险锚，不再作为主攻。</li><li><strong>机器人/自动化</strong>：周二修复主线，周三龙头走弱，周四全面退潮，是本周最大亏损来源。</li><li><strong>电子化学品/半导体材料</strong>：周四唯一主线候选，周五分化休整；下周看回流，不盲目加仓。</li><li><strong>基础化工</strong>：周四、周五连板梯队最强，三只 4 板同时存在，但高位天花板风险大。</li><li><strong>有色/小金属</strong>：周五中军驱动最强，下周优先看中钨高新、章源钨业等是否缩量回踩。</li></ol>
+</div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因</div>
+<div class="sb">
+<div class="sbx">赚在哪、亏在哪，归因到规则层面。</div>
+<div class="tw"><table>
+<thead><tr><th>标的</th><th>方向</th><th>买日</th><th>卖日</th><th>盈亏</th><th>归因（做对/做错了什么）</th></tr></thead>
+<tbody>
+<tr><td>光迅科技</td><td>通信/CPO</td><td>上周持仓</td><td>6/8、6/9</td><td>6/8 减仓 -1,200；6/9 清仓约 -2,782</td><td>✅周一恐慌不割、反弹减仓正确；⚠️上周遗留仓位在 CPO 退潮中仍承担了亏损</td></tr>
+<tr><td>豪恩汽电</td><td>机器人</td><td>6/9、6/10</td><td>6/11</td><td>约 <strong>-11,384元</strong></td><td>🔴周二买入后短浮盈，周三加仓遇龙头走弱；周四破止损后执行偏晚，亏损扩大</td></tr>
+<tr><td>绿的谐波</td><td>机器人</td><td>6/9</td><td>6/11</td><td>约 <strong>-9,976元</strong></td><td>🔴周二买入浮盈，周三逆势缩量被判断为强势整理；周四补跌，竞价卖单未成交后未第一分钟补单</td></tr>
+<tr><td>雅克科技</td><td>电子化学品</td><td>6/12</td><td>持有</td><td>收盘浮亏约 <strong>-4.26% / -4,144元</strong></td><td>⚠️方向判断可跟踪，仓位 13.57% 可控；但 W1 缩量高开追涨偏急，二进三生态不支持</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>本周最佳操作</strong>：</div>
+<ul class="tight-list"><li><strong>周一光迅恐慌不割、反弹减仓</strong>。竞价接近跌停时没有被情绪打穿，等 V 修到 215.49 才减半仓，位置比恐慌低点好很多。这说明“恐慌低点不卖”的纪律有效。</li></ul>
+<div class="para"><strong>本周最差操作</strong>：</div>
+<ul class="tight-list"><li><strong>周四绿的/豪恩止损拖延</strong>。破 -7% 止损后仍等待反弹，最终在尾盘清仓。规则没有缺失，亏损来自执行不够机械。尤其绿的竞价卖单未成交后，9:30 第一分钟没有补市价单，是本周最应固化的执行漏洞。</li></ul>
+<div class="para"><strong>盈亏模式识别</strong>：</div>
+<ul class="tight-list"><li><strong>赚钱或少亏的共性</strong>：先看恐慌性质，不在竞价低点杀；确认方向弱后主动降仓；不为了追回损失扩大仓位。</li><li><strong>亏钱的共性</strong>：浮盈时未定义兑现/保护线；持仓票对标龙头走弱时仍按个股承接解释；止损触发后寻找二次理由；缩量高开时把竞价强势当真实买盘。</li></ul>
+</div>
+</div>
+<div class="section" id="s5">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、认知迭代</div>
+<div class="sb">
+<div class="sbx">从 5 天心得中提炼共性问题，该固化还是调整？</div>
+<div class="para"><strong>本周心得汇总</strong>（从日复盘提炼，只留值得固化的，流水式心得不抄）：</div>
+<ol class="tight-list"><li><strong>浮盈不是胜利，浮盈保护才是胜利</strong></li></ol>
+<div class="para">周二豪恩、绿的均有浮盈，周三仍有小浮盈，但没有明确保护线；周四退潮时浮盈变成大亏。以后“新仓浮盈 + 次日龙头走弱”必须触发保护性减仓，而不是继续按原逻辑加仓。</div>
+<ol class="tight-list"><li><strong>止损触发后不讨论，不等窗口</strong></li></ol>
+<div class="para">绿的早盘已破 -7% 止损，豪恩也破成本和止损压力，但实际拖到尾盘。止损线不是观点线，是动作线。触发后第一任务是成交，不是重新论证。</div>
+<ol class="tight-list"><li><strong>竞价缩量高开不能追</strong></li></ol>
+<div class="para">周五雅克竞价强，但竞价量能偏缩，开盘后砸到 135 再拉回。如果等 9:30-9:35 确认，成本可以降到 137-138。以后 W1 追涨必须加“竞价量能 / 开盘确认”条件。</div>
+<ol class="tight-list"><li><strong>全红无主线时，找唯一休整板块</strong></li></ol>
+<div class="para">周五 50 板块全红但电子化学品休整，不能简单判退潮。普涨日钱散，分化后资金可能回到昨日最强但今日休整的方向。下周一重点验证电子化学品是否回流。</div>
+<ol class="tight-list"><li><strong>连板生态头强底弱是危险信号</strong></li></ol>
+<div class="para">周五三进四 50%，但二进三 0%、一进二 13.79%。高位有人封，低位没人接，说明资金只抱团少数高标，不支持低位晋级试错。</div>
+<ol class="tight-list"><li><strong>对标票强，我的票弱，是换仓/清仓信号</strong></li></ol>
+<div class="para">周四天娱等对标票强弱分化明显，豪恩/绿的没有被带动，说明它们不是方向核心。持仓票有明确锚时，锚强而我弱，不应继续等风来。</div>
+<ol class="tight-list"><li><strong>仪表盘风控数据必须盘前交叉验证</strong></li></ol>
+<div class="para">周三发现 dashboard_data 过期导致连亏天数误判。风控字段 stale 比没数据危险，因为它会给出错误确定性。开盘前连亏、周回撤、仓位上限必须交叉验证。</div>
+<div class="para"><strong>蒸馏判断</strong>：</div>
+<div class="tw"><table>
+<thead><tr><th>心得摘要</th><th>来源日期</th><th>类型</th><th>目标文件</th><th>处理</th></tr></thead>
+<tbody>
+<tr><td>浮盈保护优先于继续加仓</td><td>6/9-6/11</td><td>规则/认知</td><td><code>Core-仓位管理.md</code> / <code>insights/操作评估.md</code></td><td>→ 待固化</td></tr>
+<tr><td>止损触发后不讨论不等窗口</td><td>6/11</td><td>feedback/规则</td><td><code>feedback/止损执行拖延.md</code> / <code>Core-趋势.md</code></td><td>→ 建议新建 lesson</td></tr>
+<tr><td>竞价卖单未成交，9:30 第一分钟补单</td><td>6/11</td><td>feedback/规则</td><td><code>feedback/止损执行拖延.md</code></td><td>→ 建议写入执行清单</td></tr>
+<tr><td>竞价缩量高开不能追</td><td>6/12</td><td>insight/规则</td><td><code>insights/选股与买点.md</code> / W1规则</td><td>✅ 已提炼到 insight；规则待固化</td></tr>
+<tr><td>普涨无主线找唯一休整板块</td><td>6/12</td><td>insight</td><td><code>insights/资金合力.md</code></td><td>✅ 已提炼到 insight</td></tr>
+<tr><td>补仓不等于加仓</td><td>6/12</td><td>insight/规则</td><td><code>insights/操作评估.md</code> / <code>Core-仓位管理.md</code></td><td>✅ 已提炼到 insight；规则待固化</td></tr>
+<tr><td>二进三0%是生态否决信号</td><td>6/12</td><td>insight</td><td><code>insights/情绪与周期.md</code></td><td>✅ 已提炼到 insight</td></tr>
+<tr><td>stale 仪表盘风控数据需交叉验证</td><td>6/8、6/10</td><td>工程/规则</td><td><code>ai-rule-system</code> / dashboard stale 保护</td><td>→ 已有任务线索，需跟进</td></tr>
+</tbody>
+</table></div>
+<div class="para"><strong>是否需要改 rules？</strong></div>
+<ul class="tight-list"><li>☑ 是 → W1 规则：竞价量能不足昨日同段 80% 时，不直接追高，等待 9:30-9:35 放量或 V 回确认。</li><li>☑ 是 → 止损执行：竞价卖单未成交，开盘第一分钟必须补市价/更低限价单，不允许进入“等反弹”模式。</li><li>☑ 是 → 加仓规则：持仓浮盈但板块龙头走弱时，禁止加仓；先定义保护线。</li><li>☑ 是 → ACCT-RISK-001：连亏&gt;=2天且仍有持仓→强制空仓；已空仓→计数器归零，下一交易日按新周期处理。</li></ul>
+<div class="para"><strong>是否需要写 insights/feedback？</strong></div>
+<ul class="tight-list"><li>☑ insights → 已从 6/12 日复盘提炼：资金合力、情绪与周期、选股与买点、操作评估。</li><li>☑ feedback → 建议新增“止损执行拖延/竞价单未成交补单”事故卡。</li><li>☑ rules → 建议把 W1 缩量高开确认条件和止损补单动作写入规则卡。</li></ul>
+</div>
+</div>
+<div class="section" id="s6">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、下周基调</div>
+<div class="sb">
+<div class="sbx">基于本周积累，下周注意什么。</div>
+<div class="para"><strong>方向判断</strong>： 下周不是无脑进攻周，而是“处理雅克 + 验证新主线”的周。电子化学品周四最强、周五休整，仍有回流可能；有色/小金属周五中军驱动强，是更清晰的趋势观察方向；基础化工连板梯队最强，但三只 4 板同时冲 5 板，天花板风险大。</div>
+<div class="para"><strong>情绪预期</strong>： 本周情绪从 12.2% 修复到 72.6%，但赚钱效应始终差。下周一如果情绪继续高开而赚钱效应不跟，优先按“强修复后的分化”处理；若电子化学品回流且雅克守住止损，再考虑持仓修复。</div>
+<div class="para"><strong>重点盯的板块/标的</strong>：</div>
+<ul class="tight-list"><li><strong>雅克科技</strong>：持仓 700 股，均价 138.91，收盘 132.99，止损 129.19。周一先处理持仓，不用新仓掩盖旧仓风险。</li><li><strong>电子化学品/半导体材料</strong>：南大光电、鼎龙股份、雅克科技、富创精密、兴福电子。关键看资金回流和雅克是否重新站回 135-138。</li><li><strong>有色/小金属</strong>：中钨高新、章源钨业。优先等缩量回踩 5 日线，不追周五冲高。</li><li><strong>基础化工</strong>：和远气体、宿迁联盛、中化国际。只观察 4 进 5 是否突破上周天花板，不在高位情绪里重仓接。</li><li><strong>风控锚</strong>：二进三晋级率、炸板率、涨停收益、电子化学品资金净流入。</li></ul>
+<div class="para"><strong>需要调整的习惯或规则</strong>：</div>
+<ul class="tight-list"><li>浮盈仓第二天先设保护线，再谈加仓。</li><li>止损触发后不再等待 W2；卖不掉就补单，先成交。</li><li>竞价强不等于真实强，缩量高开必须等开盘确认。</li><li>普涨日不追最热板块，找昨日最强且今日休整的候选回流。</li><li>连板高位强、低位弱时，低位试错仓位必须压低。</li></ul>
+<div class="para"><strong>目标</strong>： 下周把亏损控制从“事后清仓”前移到“触发即执行”。雅克若验证失败，按止损走；若电子化学品回流，先修复持仓再考虑新仓。全周第一目标不是追回 W24 亏损，而是不让 W24 的执行漏洞重复发生。</div>
+</div>
+</div>
+<div class="section" id="s7">
+<div class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>附录：周度数据汇总</div>
+<div class="sb">
+<div class="sh3">账户周度表现</div>
+<div class="tw"><table>
+<thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>周内收益曲线</td><td><strong>-3.4543%</strong></td><td>Portal <code>week_sh.portfolio</code>：0.0 → -3.4543</td></tr>
+<tr><td>周内净值</td><td><strong>0.999106 → 0.964595</strong></td><td>Portal <code>week_sh.nav</code></td></tr>
+<tr><td>跨周净值比较</td><td><strong>1.012894 → 0.964595，约 -4.77%</strong></td><td>与 6/5 收盘净值比较</td></tr>
+<tr><td>最大仓位</td><td><strong>28.16%</strong></td><td>6/10 豪恩 + 绿的持仓</td></tr>
+<tr><td>周五收盘仓位</td><td><strong>13.57%</strong></td><td>雅克科技 700 股</td></tr>
+<tr><td>空仓日</td><td><strong>1天</strong></td><td>6/11 收盘空仓</td></tr>
+</tbody>
+</table></div>
+<div class="sh3">日度指标</div>
+<div class="tw"><table>
+<thead><tr><th>日期</th><th>上证</th><th>涨幅</th><th>涨停/跌停</th><th>炸板率</th><th>情绪值</th><th>最高板</th><th>盘后持仓</th></tr></thead>
+<tbody>
+<tr><td>6/8</td><td>3959.34</td><td>-1.70%</td><td>57 / 35</td><td>90.00%</td><td>12.2</td><td>6</td><td>光迅科技 300@219.49</td></tr>
+<tr><td>6/9</td><td>4010.03</td><td>+1.28%</td><td>128 / 5</td><td>66.67%</td><td>64.0</td><td>3</td><td>豪恩 500@164.61、绿的 200@416.79</td></tr>
+<tr><td>6/10</td><td>3993.23</td><td>-0.42%</td><td>70 / 25</td><td>89.47%</td><td>29.7</td><td>4</td><td>豪恩 700@164.75、绿的 200@416.79</td></tr>
+<tr><td>6/11</td><td>3987.01</td><td>-0.16%</td><td>69 / 32</td><td>73.33%</td><td>26.5</td><td>3</td><td>空仓</td></tr>
+<tr><td>6/12</td><td>4031.51</td><td>+1.12%</td><td>89 / 15</td><td>75.81%</td><td>72.6</td><td>4</td><td>雅克科技 700@138.91</td></tr>
+</tbody>
+</table></div>
+<div class="sh3">下周一速查</div>
+<div class="tw"><table>
+<thead><tr><th>场景</th><th>条件</th><th>动作</th></tr></thead>
+<tbody>
+<tr><td>Plan A：电子化学品回流</td><td>雅克站回 135-138，板块资金转正，南大/鼎龙止跌</td><td>先持仓修复，暂不急加仓</td></tr>
+<tr><td>Plan B：有色/小金属延续</td><td>中钨/章源缩量回踩 5 日线，板块未退潮</td><td>小仓位趋势试错，不能追高</td></tr>
+<tr><td>Plan C：半导体继续退潮</td><td>雅克跌破 129.19 或板块继续净流出</td><td>先止损，不用新方向对冲</td></tr>
+<tr><td>Plan D：连板高位继续抱团</td><td>基础化工 4进5成功但一进二/二进三仍弱</td><td>只盯不重仓，避免接高位最后一棒</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function toggleSection(el) { el.classList.toggle('collapsed'); const b = el.nextElementSibling; if (b) b.classList.toggle('hide'); }
+function searchContent(q) {
+  const items = document.querySelectorAll('.section, .lesson-block, .para, .tight-list li, .tw table tr, .sh, .sbx');
+  if (!q.trim()) { items.forEach(el => el.style.opacity = '1'); return; }
+  const lq = q.toLowerCase();
+  items.forEach(el => { el.style.opacity = el.textContent.toLowerCase().includes(lq) ? '1' : '0.15'; });
+}
+document.querySelectorAll('.sidebar a').forEach(link => {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
+</body>
+</html>

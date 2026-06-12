@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-06-12 周五 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+[id]{scroll-margin-top:70px}
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+.debate-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
+.debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
+  <div class="title">2026-06-12 周五 复盘笔记</div>
+  <div class="meta">
+    <span class="chip green">情绪 72.6%</span>
+    <span class="chip red">上证 4031.51 +1.12%</span>
+    <span class="chip blue">89涨停 / 15跌停</span>
+    <span class="chip purple">持仓 雅克科技 700@均价138.91</span>
+    <span class="chip green">终稿 (红蓝对抗完成)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">节点说明</a>
+  <a href="#s1d" class="s2">涨停结构</a>
+  <a href="#s1e" class="s2">自选池表现</a>
+  <a href="#s1f" class="s2">持仓与交易</a>
+  <a href="#s1g" class="s2">风格检测</a>
+  <a href="#s1h" class="s2">趋势持仓复盘</a>
+  <a href="#s1i" class="s2">窗口操作</a>
+  <a href="#s1j" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+  <a href="#sd">数据附录</a>
+</div>
+
+<div class="content">
+
+<div class="section" id="s0">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 第〇部分 · 昨日预案<span class="cnt">昨日终审定稿</span>
+</div>
+<div class="sb"><div class="si">
+来源：6/11 复盘笔记 附录A（红蓝对抗终稿）<br>
+</div>
+<div class="sh2">持仓处理</div>
+<div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>T+1可卖</th><th>操作策略</th></tr></thead><tbody><tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>空仓，无持仓处理</td></tr></tbody></table></div>
+<div class="sh2">连板板块→操作映射</div>
+<div class="para"><strong>⛔ 情绪<35%→W1关闭。2进3策略开放仅限W2窗口（情绪修复至35%+后）</strong></div>
+<div class="tw"><table><thead><tr><th>板块</th><th>温度标（只盯）</th><th>操作标的</th><th>触发条件</th></tr></thead><tbody><tr><td>🧪 基础化工🔥</td><td>和远气体(3板)/中化国际(3板)</td><td>❌ W1关闭/W2观察</td><td>明日竞价情绪>35%+和远/中化竞价量能>昨日50%+高开3-7%</td></tr><tr><td>🔬 电子化学品🔥</td><td>雅克科技(2板🚀)/南大光电(+8%中军)</td><td>❌ W1关闭/W2观察</td><td>雅克科技2进3竞价确认型(高开+量>50%)；南大/W2回踩缩量</td></tr><tr><td>⛏️ 小金属</td><td>中钨高新(+6.9%/103亿)</td><td>❌ W1关闭/W2观察</td><td>板块首日爆发，明日继续走强+放量=新方向确认</td></tr><tr><td>🛰️ 军工/商业航天</td><td>中国卫通(+4.2%/17.7亿)</td><td>❌ W1关闭/W2观察</td><td>军工方向持续性待验证</td></tr></tbody></table></div>
+<div class="sh2">趋势板块→操作映射</div>
+<div class="para"><strong>⛔ 趋势空仓（上证20日线↓），但电子化学品方向独立走强</strong></div>
+<div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇 电子化学品🔥🔥</td><td>南大光电(+8%/82亿)/鼎龙(+6.3%/37亿)</td><td>🔍W2</td><td>盘中回踩缩量+板块未退潮→缩量企稳后低吸</td></tr><tr><td>🥇 小金属🔥</td><td>中钨高新(+6.9%/103亿)/厦门钨业(+6.5%/80亿)</td><td>🔍W2</td><td>明日持续走强+板块合力确认→回踩买</td></tr><tr><td>🆕 基础化工(漏网)</td><td>滨化股份(+5.3%)/石英股份(+3.9%)</td><td>🔍W2</td><td>板块合力已确认，回踩5日线+缩量</td></tr><tr><td>🛰️ 军工/商业航天</td><td>西部材料(+8.7%/36亿)/中国卫通(+4.2%)</td><td>🔍W2</td><td>低空经济+军工叠加，观察持续性</td></tr><tr><td>👁️ 半导体材料(只盯)</td><td>江丰电子+20%🚀/中船特气+19.8%🔥</td><td>只盯</td><td>涨停次日不追，等分歧确认</td></tr></tbody></table></div>
+<div class="sh2">操作指南</div>
+<div class="para"><strong>总基调</strong>：半导体材料主线确认，空仓后谨慎建仓。趋势方向为主（电子化学品），连板仅W2窗口。</div>
+<div class="para"><strong>W1</strong>：❌ 关闭（情绪26.5<35%）。若明日竞价修复至35%+，和远气体/中化国际2进3竞价确认型可开仓</div>
+<div class="para"><strong>W2</strong>：🔍 观察南大光电/鼎龙股份盘中缩量回踩企稳；中钨高新/厦门钨业等板块合力确认</div>
+<div class="para"><strong>趋势观察</strong>：电子化学品中军（南大/鼎龙）回踩缩量企稳→低吸；小金属持续走强确认</div>
+<div class="para"><strong>仓位</strong>：0%（空仓），新增≤30%</div>
+<div class="para"><strong>不碰</strong>：天娱数科/机器人方向/通信设备/煤炭电力/豪恩汽电/绿的谐波</div>
+<div class="para"><strong>风险</strong>：情绪低迷W1关闭/炸板率73%🚨/跌停32只/赚钱效应差/半导体材料过度集中</div>
+<hr class="divider"></div>
+</div>
+<div class="section" id="s1">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §一 · 当日复盘
+</div>
+<div class="sb"><div class="sh3" id="s1a">📊 表1：大盘全景</div><div class="tw"><table><thead><tr><th>节点</th><th>情绪</th><th>上证(%)</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>总竞价涨幅</th><th>关键异动</th></tr></thead><tbody><tr><td>竞价</td><td>—🔵</td><td><span class="up">+0.77%(4017.86)</span></td><td>5/3</td><td>344.87亿</td><td>4249/640</td><td>—</td><td>外盘利好兑现高开：美股反包+SpaceX上市。半导体+3.45%🔥/电子化学品+2.69%🔥领涨。雅克+3.86%🔥/康强+9.94%🔥🔥/江丰+15.32%🚀</td></tr><tr><td>早盘</td><td>73.8%🟠强势</td><td><span class="up">+1.10%(4030.77)</span></td><td>42/7</td><td>1.04万亿</td><td>3752/1335</td><td>—</td><td>大盘从+0.77%→+1.10%继续走强。半导体+75亿🔥🔥🔥最大资金流入。康强3板🚀/和远4板🚀。雅克+4.24%持仓稳住。电子化学品-1.73亿🔴</td></tr><tr><td>午盘</td><td>82.7%🔴高潮</td><td><span class="up">+1.56%(4049.29)</span></td><td>98/4</td><td>2.06万亿</td><td>4313/902</td><td>—</td><td>大盘持续走强+1.56%，情绪82.7%高潮。但半导体从+75亿→-27亿🔴🔴大逆转！电子化学品-25亿🔴。小金属+48亿🔥/电池+52亿🔥/证券+49亿🔥。雅克+0.29%🔴回吐</td></tr><tr><td>尾盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>收盘</td><td>72.6%🟠强势</td><td><span class="up">+1.12%(4031.51)</span></td><td>89/15</td><td>3.21万亿</td><td>3768/1423</td><td>—</td><td>大盘冲高回落：从午盘+1.56%→收盘+1.12%。半导体-87亿🔴🔴🔴、电子化学品-41亿🔴🔴大逆转！证券+71亿🔥、电池+46亿🔥、小金属+38亿🔥。雅克-1.35%🔴持仓承压</td></tr></tbody></table></div><div class="sh3" id="s1b">📈 表2：情绪高标</div><div class="tw"><table><thead><tr><th>指标</th><th>竞价</th><th>早盘</th><th>午盘</th><th>尾盘</th><th>收盘</th><th>门槛</th></tr></thead><tbody><tr><td>竞价强势家数</td><td>37🔥🔥</td><td>—</td><td>—</td><td>—</td><td>—</td><td>>10(降温)/>30(高位)</td></tr><tr><td>涨停收益</td><td>3.11%✅</td><td>1.38%❌</td><td>1.69%❌</td><td>—</td><td>0.75%❌</td><td>>2%(低迷)/>3%(正常)</td></tr><tr><td>连板收益</td><td>1.79%</td><td>1.50%</td><td>1.0%</td><td>—</td><td>-0.29%❌</td><td>—</td></tr><tr><td>炸板收益</td><td>-0.48%</td><td>-0.09%</td><td>-0.15%</td><td>—</td><td>-0.84%</td><td>—</td></tr><tr><td>封板率</td><td>—</td><td>15.38%🚨</td><td>18.52%🚨</td><td>—</td><td>24.19%🚨</td><td>—</td></tr><tr><td>炸板率</td><td>—</td><td>84.62%🚨</td><td>81.48%🚨</td><td>—</td><td>75.81%🚨</td><td><30%(W1追涨)/<40%(W2冰点)</td></tr><tr><td>整体晋级率</td><td>—</td><td>10.14%</td><td>14.49%</td><td>—</td><td>14.49%</td><td>辅助参考</td></tr><tr><td>一进二晋级率</td><td>—</td><td>6.9%🚨</td><td>12.07%🚨</td><td>—</td><td>13.79%🚨</td><td>>15%(低迷)/>18%(主升)</td></tr><tr><td>二进三晋级率</td><td>—</td><td>14.29%⚠️</td><td>0.0%🚨🚨</td><td>—</td><td>0.0%🚨🚨</td><td>>20%(环境)/>25%(2进3策略)</td></tr><tr><td>三进四晋级率</td><td>—</td><td>50.0%✅</td><td>75.0%✅</td><td>—</td><td>50.0%✅</td><td>>35%(3进4+策略)</td></tr><tr><td>赚钱效应</td><td>好✅</td><td>差⚠️</td><td>差⚠️</td><td>—</td><td>差⚠️</td><td>好(>3%+>40%)/差(<2%+<20%)</td></tr><tr><td>梯队</td><td>首5</td><td>4(2)-3(1)-2(4)-首35</td><td>4(3)-2(7)-首88</td><td>—</td><td>4(2)-2(8)-首79</td><td>—</td></tr><tr><td>最高板/次高板</td><td>—/—</td><td>4/3</td><td>4/2</td><td>—</td><td>4/2</td><td>—</td></tr><tr><td>竞价验证结论</td><td>A好+B好→W1积极追涨🔥</td><td>—</td><td>—</td><td>—</td><td>—</td><td>A好+B好/A差+B好/A好+B差/A差+B差</td></tr></tbody></table></div><div class="sh3" id="s1c">🔍 节点说明</div><div class="node-grid"><div class="node-card"><div class="nhead">竞价</div><div class="nbody"><div class="para">情绪 <strong>—🔵</strong>（竞价阶段涨跌比失真）。上证 <strong>+0.77%</strong>(4017.86)高开——外盘暴力反弹(道指+1.86%/纳指+2.54%/日经+4%🔥) + SpaceX上市催化+美伊地缘缓和，多重利好共振。涨跌比 <strong>4249/640</strong>(86.9%上涨)，竞价量能 <strong>344.87亿</strong>。<br>- 核心信号：<strong>外盘利好完美兑现，A股高开+0.77%响应</strong>。相较于昨日美股反包、日韩涨4-6%，A股竞价+0.77%虽温和但方向明确。竞价强势家数 <strong>37🔥🔥</strong>（≥30只高位区间），远超">10降温"线，反映市场抢筹意愿极强。<br>- <strong>竞价自选池关键信号🔥</strong>：雅克科技 <strong>+3.86%🔥</strong>（电子化学品龙头2板高开，量比12.18正常，3-7%理想区间！）。康强电子 <strong>+9.94%🔥🔥</strong>（电子方向竞价接近涨停，量比29.57异常放量）。中化国际 <strong>+9.57%🔥🔥</strong>（基础化工竞价涨停，量比275异常）。江丰电子 <strong>+15.32%🚀🚀</strong>（电子化学品总龙头连续第二天大幅高开！）。和远气体 <strong>+4.27%🔥</strong>（基础化工3板高开温和）。中钨高新 <strong>+3.03%🔥</strong>（小金属持续走强）。<br>- <strong>半导体上游全面爆发🔥</strong>：江丰+15.32%🚀/鼎龙+12.61%🔥/中科飞测+8.11%/富创精密+12.64%/兴福电子+7.17%/神工股份+8.02%/佰维存储+7.59%——半导体材料/设备方向竞价全面走强！电子化学品+2.69%🔥板块领涨。雅克+3.86%作为电子化学品唯一连板标的，竞价处于理想开仓区间。<br>- <strong>连板生态竞价信号🔥🔥</strong>：昨日涨停收益 <strong>3.11%✅</strong>（远超>2%低迷线，已达正常线）→ B好。竞价强势家数 <strong>37🔥</strong>（>30高位区间）→ A好。竞价验证结论 <strong>A好+B好→W1积极追涨🔥</strong>。三个硬卡：二进三昨日38.46%>20%✅(连板侧开放)、最高板待开盘确认、涨停家数3日均值48>30✅。<br>- <strong>板块资金</strong>：竞价阶段主力数据尚未可用（未开盘交易）。板块方向溢价明显——半导体+3.45%🔥、电子化学品+2.69%🔥、小金属+3.18%🔥、贵金属+3.08%🔥。通信设备+1.67%修复，自动化设备+1.51%小幅修复。银行-0.46%🔴/保险-0.48%🔴护盘方向走弱。<br>- <strong>结论</strong>：外盘暴力反包+SpaceX上市+美伊地缘缓和，多重利好共振。上证+0.77%高开，半导体上游方向全面爆发。雅克科技+3.86%🔥处于理想开仓区间（3-7%高开+量比12.18正常+电子化学品唯一2板龙头）。竞价强势家数37🔥远超阈值，A好+B好→W1积极追涨。<strong>今日执行方向：雅克科技2进3为主目标。</strong> [待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">早盘</div><div class="nbody"><div class="para">情绪 <strong>73.8%🟠强势</strong>（较早盘真实值）。上证 <strong>+1.10%</strong>(4030.77)较早盘竞价+0.77%<strong>继续走高+0.33pp</strong>，大盘高开高走，外盘利好全面兑现。涨停 <strong>42/跌停7</strong>，半日量能 <strong>1.04万亿</strong>（放量），涨跌比 <strong>3752/1335</strong>（73.8%上涨），情绪真实值73.8%🟠强势。<br>- 核心信号：<strong>大盘从+0.77%→+1.10%继续走强，但赚钱效应快速回落</strong>。昨日涨停收益从竞价阶段的3.11%→1.38%❌（跌破>2%低迷线），说明早盘大量涨停股炸板/回落——炸板率 <strong>84.62%🚨</strong>、封板率仅15.38%，W1窗口虽然A好+B好但涨停赚钱效应在快速恶化。<br>- <strong>连板生态早盘🔥</strong>：最高板升至 <strong>4板</strong>（宿迁联盛+和远气体🚀），次高板 <strong>3板</strong>（康强电子🚀），梯队 <strong>4(2)-3(1)-2(4)-首35</strong>。三进四晋级率 <strong>50.0%✅</strong>（宿迁连盛+和远从3→4板成功！）。但一进二仅 <strong>6.9%🚨</strong>（首板几乎不晋级），二进三 <strong>14.29%⚠️</strong>（低于20%硬卡线，虽然前日均值22.54%>20%仍保持开放）。连板生态<strong>头部强但底部弱</strong>——高位接力好做但首板套利难。<br>- <strong>自选池早盘表现</strong>：<strong>雅克科技 +4.24%🔥</strong>（持仓140.2→140.52，浮盈+0.23%，尚未封板）。康强电子 <strong>+10.00%涨停🚀3板</strong>（电子封装材料方向）。和远气体 <strong>+10.01%涨停🚀4板</strong>（基础化工）。中化国际 <strong>+9.85%</strong>（接近涨停）。宗申动力 <strong>+10.02%涨停🚀</strong>（低空经济反包2板）。金安国纪 <strong>+10.00%涨停🚀</strong>（覆铜板方向）。鼎龙股份 <strong>+14.83%🔥🔥</strong>（电子化学品方向继续大涨）。中钨高新 <strong>+5.09%🔥</strong>（小金属延续走强）。<br>- <strong>半导体+75亿💥💥全场最大流入</strong>：半导体板块 <strong>+75.10亿🔥🔥🔥</strong>（半日即超昨日全天+14亿），今日资金全力涌入半导体！军工装备 <strong>+10.53亿🔥</strong>（SpaceX上市带动）。但<strong>电子化学品 -1.73亿🔴</strong>（从竞价领涨转为小幅流出——板块内部分化：江丰从+15.32%回落到+3.28%大幅回落，鼎龙+14.83%维持高位，南大光电<strong>-4.33%🔴</strong>）。电子化学品方向出现内部分化，雅克作为该方向唯一连板锚，尚未封板需观察。<br>- <strong>雅克持仓分析🟡</strong>：买入500股@140.2，早盘现价140.52（+4.24%），浮盈几乎为0。早盘未封板意味着抛压存在——作为电子化学品唯一2进3标的，今日本应是最佳封板时机。关注午后能否在板块资金带动下封板。若持续在140附近震荡不放量，需警惕连板失败风险。<br>- <strong>结论</strong>：大盘高开高走（+1.10%），半导体+75亿🔥🔥🔥全场吸金。连板生态头强底弱（4板2只vs一进二6.9%🚨），赚钱效应从竞价3.11%→1.38%快速回落。雅克+4.24%未封板是最大不确定性，午后需要看半导体+75亿能否带动它封板。当前W1已关闭，进入W2等待窗口。[待弈沐补充盘感]</div></div></div><div class="node-card"><div class="nhead">午盘</div><div class="nbody"><div class="para">情绪 <strong>82.7%🔴高潮</strong>（较早盘73.8%继续走高+8.9pp！）。上证 <strong>+1.56%</strong>(4049.29)较早盘+1.10%<strong>继续走高</strong>，大盘全天强势，收盘前情绪已飙至高潮区间。涨停 <strong>98/跌停4</strong>，半日量能 <strong>2.06万亿</strong>（持续放量），涨跌比 <strong>4313/902</strong>（82.7%上涨）。<br>- ⚠️ <strong>核心信号：资金方向发生大逆转！</strong> 半导体从早盘 <strong>+75亿🔥🔥🔥→午盘-27.38亿🔴🔴</strong>（100亿倒流！），电子化学品从 <strong>-1.73亿→-25.11亿🔴🔴</strong>（加速流出！）。这意味着上午追半导体/电子化学品的资金在午盘前全部出逃，<strong>高位接盘被套</strong>。<br>- <strong>资金转向有色+金融</strong>：小金属 <strong>+47.62亿🔥🔥</strong>、电池 <strong>+51.76亿🔥🔥</strong>、证券 <strong>+49.17亿🔥🔥</strong>、工业金属 <strong>+25.87亿🔥</strong>。市场资金从半导体全面转向有周期+金融方向，典型的<strong>情绪高潮后板块轮动</strong>。<br>- <strong>连板生态午盘</strong>：最高板 <strong>4板</strong>（3只：宿迁联盛/和远气体/中化国际🚀），次高板降至 <strong>2板</strong>（7只）。<strong>康强电子3板炸板🔴</strong>（早盘+10%涨停→午盘+5.64%），<strong>二进三晋级率0%🚨🚨</strong>——今日所有2进3标的全部失败！雅克科技未封板即是其一。三进四75%✅高位接力尚可。一进二12.07%🚨仍低迷。<br>- <strong>雅克持仓恶化🚨</strong>：买入500股@140.2，午盘价<strong>135.2（+0.29%）→浮亏约-3.6%</strong>。从早盘+4.24%回吐至+0.29%，几乎回调全部涨幅。电子化学品板块从-1.73亿→-25.11亿🔴🔴，二进三晋级率0%🚨，雅克2进3失败已成定局。当前浮亏约-2,500元。午后看能否守住135，若继续走弱需考虑止损。<br>- <strong>结论</strong>：大盘虽然+1.56%强势，但**半导体/电子化学品方</div></div></div></div><div class="sh3" id="s1d">🏗️ 涨停结构</div><div class="tw"><table><thead><tr><th>板块</th><th>涨停数</th><th>连板梯队</th><th>核心</th><th>板块涨跌幅</th><th>板块主力净流入</th><th>5日线</th><th>备注</th></tr></thead><tbody><tr><td>基础化工</td><td>3+</td><td>和远4板🚀/宿迁4板🚀/新金路2板</td><td>和远气体🚀</td><td>—</td><td>—</td><td>站上</td><td>今日最强连板板块，但无板块涨跌数据</td></tr><tr><td>小金属</td><td>3+</td><td>金钼2板/盛龙2板</td><td>金钼股份🚀</td><td><span class="up">+3.17%🔥</span></td><td>+38.46亿🔥🔥</td><td>站上</td><td>有色延续走强</td></tr><tr><td>军工装备</td><td>5+</td><td>宗申2板</td><td>中航西飞🚀</td><td><span class="up">+4.44%🔥</span></td><td>+0.48亿</td><td>站上</td><td>SpaceX催化+航天发射</td></tr><tr><td>证券</td><td>1+</td><td>—</td><td>中银证券🚀</td><td><span class="up">+3.88%🔥</span></td><td>+71.47亿🔥🔥🔥</td><td>站上</td><td>尾盘资金主力，金融切换</td></tr><tr><td>电池</td><td>1+</td><td>—</td><td>雄韬股份🚀</td><td><span class="up">+2.67%🔥</span></td><td>+46.30亿🔥🔥</td><td>站上</td><td>新轮动方向</td></tr><tr><td>电子化学品</td><td>—</td><td>雅克2进3❌/康强3板炸</td><td>雅克科技-1.35%</td><td><span class="down">-4.55%🔴🔴</span></td><td>-40.69亿🔴🔴🔴</td><td>回踩MA5</td><td>冲高回落、内部分化，从+22亿→-41亿</td></tr><tr><td>半导体</td><td>—</td><td>—</td><td>江丰-6.27%🔴</td><td><span class="down">-1.64%🔴</span></td><td>-87.47亿🔴🔴🔴</td><td>站上</td><td>资金从+75亿到-87亿，反转最惨烈</td></tr><tr><td>自动化设备/机器人</td><td>—</td><td>—</td><td>埃斯顿-3.39%</td><td><span class="down">-0.44%</span></td><td>-19.52亿🔴</td><td>站上</td><td>持续弱势</td></tr><tr><td>通信设备</td><td>—</td><td>—</td><td>亨通-4.19%</td><td><span class="down">-0.29%</span></td><td>-57.51亿🔴🔴🔴</td><td>站上</td><td>连续两日大流出</td></tr></tbody></table></div><div class="sh3" id="s1e">🎯 当日自选池表现</div><div class="sh3" id="s1f">💰 持仓与交易</div><div class="tw"><table><thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>电子化学品</td><td>🟢买入(W1)</td><td>雅克科技</td><td>+500股@140.2</td><td>-2,500(浮亏)</td><td>W1竞价确认型，A好+B好→追涨。午盘+0.29%未封板</td></tr><tr><td>电子化学品</td><td>🟢补仓(W2)</td><td>雅克科技</td><td>+200股@135.7</td><td>—</td><td>W2低吸补仓，均价降至138.91</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>现价</th><th>浮盈/股</th><th>浮盈率</th><th>仓位</th><th>T+1可卖</th><th>评价</th></tr></thead><tbody><tr><td>雅克科技</td><td>138.91</td><td>135.7</td><td>-3.21</td><td>-2.3%⚠️</td><td>~9.5万(~13.5%)</td><td>❌(今日买入)</td><td>W1买140.2+W2补135.7，均价138.91。电子化学品-25亿继续承压</td></tr></tbody></table></div><div class="sh3">🛡️ 账户风控</div><div class="tw"><table><thead><tr><th>指标</th><th>数值</th><th>阈值</th><th>状态</th></tr></thead><tbody><tr><td>当日盈亏</td><td>—</td><td>-3%熔断</td><td>✅</td></tr><tr><td>周累计回撤</td><td>—</td><td>6%预警</td><td>✅</td></tr><tr><td>月累计回撤</td><td>—</td><td>10%预警</td><td>✅</td></tr><tr><td>连亏天数</td><td>已override（W1/W2被LOSS_STREAK阻断，弈沐人工裁决：昨日清仓=断连亏，新开仓视为新周期）</td><td>≥2天空仓</td><td>✅（已override）</td></tr><tr><td>单日熔断</td><td>未触发</td><td>-3%</td><td>✅</td></tr><tr><td>规则修正</td><td>ACCT-RISK-001修正：连亏>=2天且仍有持仓→空仓；已空仓→计数器归零</td><td>—</td><td>修正单已出给欧米</td></tr></tbody></table></div><div class="sh3" id="s1g">📐 风格检测</div><div class="tw"><table><thead><tr><th>维度</th><th>分数</th><th>明细</th></tr></thead><tbody><tr><td>维度一：量能</td><td>—/25</td><td>—</td></tr><tr><td>维度二：连板生态</td><td>—/35</td><td>—</td></tr><tr><td>维度三：趋势赚钱效应</td><td>—/25</td><td>—</td></tr><tr><td>维度四：情绪广度</td><td>—/15</td><td>—</td></tr><tr><td>总分</td><td>—/100</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1i">🪟 窗口操作记录</div><div class="tw"><table><thead><tr><th>窗口</th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead><tbody><tr><td>W1(9:30-10:00)</td><td>❌关闭（情绪<35%）</td><td>竞价情绪86.9%(失真)但开盘后情绪73.8%🟠强势。A好+B好→W1应追涨。雅克+3.86%高开3-7%区间。⚠️瑕疵：竞价量能344亿偏缩量，应等开盘确认后再追</td><td>买500股@140.2</td><td>🟡 执行方向正确（A好+B好+高开3-7%条件全满足），但入价偏急（未等开盘放量确认），雅克最终2进3失败</td></tr><tr><td>W2(14:00-14:50)</td><td>🔍观察</td><td>情绪82.7%🔴高潮。雅克从+4.24%回吐至+0.29%，盘中回落至135.7。全天红盘+换手20%+有承接+其他板块冲高回落→洗盘逻辑验证</td><td>加仓200股@135.7</td><td>🟢 加仓逻辑清晰（预判验证非被动摊平），均价降至138.91。收盘-1.35%浮亏可控</td></tr></tbody></table></div><div class="sh3">🎭 预期差与盘感</div><div class="si"><div class="para"><strong>盘前基准</strong>：外盘暴力反弹+SpaceX上市催化，预期竞价高开。情绪26.5冰点→预估今日修复至50-60%。雅克科技2进3为主攻方向。</div>
+<div class="para"><strong>实际竞价</strong>：上证+0.77%高开，4249涨/640跌，竞价强势家数37🔥远超阈值。A好+B好→W1积极追涨。半导体/电子化学品竞价全面爆发。但<strong>竞价量能344亿偏缩量</strong>——高开虚火，需要开盘确认。</div>
+<div class="para"><strong>盘面定性</strong>：大盘+1.12%强势但半导体/电子化学品冲高回落、资金大逆转（半导体+75亿→-87亿）。全市场50板块全红但无明确主线，属超跌修复日。电子化学品昨日+22亿唯一主线今天休整，不是退潮。雅克2进3失败收盘-1.35%，全天换手20%洗盘充分。</div>
+<div class="para"><strong>弈沐盘感</strong>：</div>
+<ol class="tight-list">
+<li>竞价缩量高开不能追，必须等开盘确认（砸完V回或放量确认后再进）</li>
+<li>冲高回落三形态排序：放量不破支撑 > 缩量不破支撑 > 放量破支撑。雅克今天属🥈缩量不破支撑（-1.35%未破昨收134.81）</li>
+<li>全红无主线→半导体休整→下周板块分化后可能被选中回流</li>
+<li>趋势摸底（上证20日线↓）+ 连板冰点修复 → 连板占主导。同一板块内连板侧优于趋势侧</li>
+<li>补仓（被动摊平）≠ 加仓（预判验证），W2买入135.7是基于换手20%+全天红盘承接+板块分化的主动预判</li>
+</ol></div><div class="sh3" id="s1j">💡 一句话结论</div><div class="sbx"><div class="para">大盘+1.12%强势但半导体/电子化学品冲高回落。雅克科技2进3失败，700股浮亏-4.26%。方向判断（半导体上游）和仓位控制（13.8%）均正确，2进3封板失败是连板生态问题（二进三全天0%），非选股失误。下周一核心看电子化学品板块能否企稳回流，Plan A有色延续、Plan B半导体回流、Plan C继续退潮止损。</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §二 · 心得与教训
+</div>
+<div class="sb"><ol class="tight-list"><li><div class="si">
+最多 8 条。格式：`[教训/认知/议题] 标题 — 结论`。能落规则的再进入规则反馈流程。<br>
+</div>
+<ol class="tight-list">
+<li>[认知] <strong>竞价缩量高开不能追，必须等开盘确认</strong> — 竞价强势家数37🔥看起来A好+B好，但竞价量能344亿偏缩量。缩量高开=虚火，没有真金白银在买。正确流程：9:25看量→缩量则等9:30-9:35开盘→砸完V回或放量确认后再追。今天雅克竞价140.01→开盘砸至135→拉回140，如果等确认再追能买在137-138而非140.2。固化为W1规则：<strong>竞价量能<昨日同时段80%→W1不追，等开盘确认。</strong></li>
+</ol>
+<ol class="tight-list">
+<li>[认知] <strong>冲高回落三形态排序：放量不破支撑 > 缩量不破支撑 > 放量破支撑</strong> — 支撑线不是画出来的，是打出来的。缩量没破只是"暂时没人卖"，放量不破才是"有人卖但有人接住了"。雅克今天-1.35%未破昨收（134.81），属🥈缩量不破支撑，下周如果放量冲击前高144.5后回踩不破135→升级为🥇。</li>
+</ol>
+<ol class="tight-list">
+<li>[认知] <strong>全红无主线→休整板块下周被选中</strong> — 今天50板块全红，但唯一的"弱势"板块是昨日最强的电子化学品（+22亿→-41亿）。这不是退潮，是休整。全红=无主线（钱撒得到处都是），下周分化后资金要找方向，昨天最强+今天休整的板块最可能被选中。<strong>固化为复盘框架：当日普涨日 → 找唯一休整板块 → 优先作为次日回流候选。</strong></li>
+</ol>
+<ol class="tight-list">
+<li>[认知] <strong>补仓 ≠ 加仓</strong> — 补仓是亏损后不问逻辑被动摊平（POS-SIZE-001禁止）。加仓是预判被盘面验证后顺势放大（允许）。W2买135.7属于加仓：全天红盘有承接+换手20%洗盘充分+其他板块冲高回落→验证了"半导体休整非退潮"的预判。判断标准：能说清楚"为什么现在加"=加仓；只能说"跌了想摊平"=补仓。</li>
+</ol>
+<ol class="tight-list">
+<li>[议题] <strong>ACCT-RISK-001 修正</strong> — 盘中确认：连亏>=2天且仍有持仓→强制空仓。已空仓则losing_account_days重置为0，下一交易日正常交易。修正单已出给欧米，待同步到 ai-rule-system 规则卡。</li>
+</ol>
+<ol class="tight-list">
+<li>[认知] <strong>二进三0%是今日最诚实的信号</strong> — W1竞价A好+B好→追雅克2进3，但全天二进三晋级率0%（所有2板冲3板全部失败）。说明竞价信号和实际盘面存在时间差：竞价看预期，盘中看实力。二进三0%不是雅克不行，是今天的连板生态不支持2进3。康强电子涨停→炸板是同样的逻辑。</li>
+</ol>
+<ol class="tight-list">
+<li>[认知] <strong>连板生态"头强底弱"是危险信号</strong> — 三进四50%✅（高位接力成功），但一进二13.79%🚨、二进三0%🚨（低位断层）。这意味着连板资金只敢接力高位板（4板有人封），不敢做低板（首板和2板没人接）。基础化工3只4板下周一面临4进5天花板（上周天娱数科4→5断板跌停），高位接力风险极大。</li>
+</ol>
+<ol class="tight-list">
+<li>[教训] <strong>系统阻断需在复盘中记录override过程和理由</strong> — W1和W2两笔交易均被LOSS_STREAK阻断（连亏2天），经弈沐人工裁决override。复盘必须记录：①阻断规则 ②override理由 ③裁决人 ④后续规则修正。今天漏记录，终审时补充。</li>
+</ol>
+<hr class="divider"></li></ol></div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §三 · 次日预案
+</div>
+<div class="sb"><div class="stats-grid"><div class="stat-card"><div class="lbl">风格</div><div class="val amber">连板38% / 趋势62%（趋势行情，置信度74%）</div></div><div class="stat-card"><div class="lbl">资金分配</div><div class="val">连板20% / 趋势40% / 现金40%</div></div><div class="stat-card"><div class="lbl">仓位上限</div><div class="val amber">≤60%（周五控仓+震荡偏上）</div></div></div><div class="sbx warn"><strong>总基调</strong>：趋势为主（有色/小金属），连板为辅（基础化工高位接力）。周五W1正常开放但硬卡偏弱，控仓谨慎<br><strong>为什么</strong>：趋势64%强势+沪深300+1.16%+有色/小金属中军巨量；但上证/沪深300 20日线均向下，连板二进三均值16.99%<20%硬卡不通过，情绪与赚钱效应背离（72.6% vs 0.75%）<br><strong>基准预期</strong>：周一关注外盘周末变化，有色/小金属延续性需竞价确认</div><div class="sh3">🔮 明日连板判定</div><div class="tw"><table><thead><tr><th>板层</th><th>晋级率</th><th>阈值</th><th>结果</th></tr></thead><tbody><tr><td>一进二</td><td>近3日均值11.84%</td><td>>15%(低迷)/>18%(主升)</td><td>🚨❌ 低迷</td></tr><tr><td>二进三(近3日均值)</td><td>16.99%</td><td>>25%</td><td>🚨❌</td></tr><tr><td>三进四+</td><td>近3日均值33.33%</td><td>>35%</td><td>⚠️ 略低于</td></tr><tr><td>大环境(二进三)</td><td>16.99%</td><td>>20%开放/<20%关闭</td><td>🚨❌ 连板环境偏弱</td></tr><tr><td>情绪</td><td>72.6%🟠</td><td>60-80%强势</td><td>✅ 非冰点非高潮</td></tr></tbody></table></div><div class="sh3" id="s3a">🎯 连板自选池</div><div class="sh3" id="s3b">📈 趋势自选池</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>看什么</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🔴主趋势股</td><td>中钨高新</td><td>000657</td><td>回踩5日线+缩量确认</td><td>有色/小金属最强势中军/成交130亿/完美多头</td><td>MA5 73.71>MA10 71.44>MA20 66.67✅/+1.35%</td></tr><tr><td>🟡趋势候选</td><td>章源钨业</td><td>002378</td><td>回踩5日线+板块未破20日线</td><td>均线完美多头+70亿/漏网确认</td><td>MA5 31.87>MA10 30.95>MA20 29.80✅/+3%</td></tr><tr><td>🟡趋势候选</td><td>中金黄金</td><td>600489</td><td>观察等买点</td><td>黄金避险+有色联动</td><td>MA5>MA10>MA20待确认</td></tr></tbody></table></div><div class="sh3">🚫 不碰</div><div class="si"><div class="para">- ❌ 南大光电/中船特气/国瓷材料 — 电子化学品退潮标志，-10%以上大跌</div>
+<div class="para">- ❌ 天娱数科 — 传媒退潮连续跌停</div>
+<div class="para">- ❌ 亨通光电/烽火通信 — 通信设备连续3天流出</div>
+<div class="para">- ❌ 厦门钨业 — -3.91%收盘跳破均线</div>
+<div class="para">- ❌ 石英股份/圣泉集团/昊华科技 — 基础化工内走弱跟风</div>
+<div class="para">- ❌ 江丰电子 — 日内回撤21%+，趋势锚失效</div></div><div class="sh3">📏 Rules 校验</div><div class="si"><div class="para">- T+1：雅克700股今日买入，周一才可卖</div>
+<div class="para">- 情绪 <35%：❌不适用（72.6%）</div>
+<div class="para">- 情绪 >80%：❌不适用（72.6%）</div>
+<div class="para">- 周五W1：✅按正常情绪档位开放</div>
+<div class="para">- W1硬条件使用SSOT：✅板块合力确认/昨涨停收益>2%/个股高开3-7%/热度≤300或成交>50亿</div>
+<div class="para">- 仓位/连亏：雅克仓位~13.5%≤20%单票上限；无连亏（昨空仓）✅</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §四 · 红方对抗<span class="cnt">3轮辩论</span>
+</div>
+<div class="sb"><div class="sh3" id="s4a">🔴 Round 1：洋米红方质疑</div><div class="sh3">数据基础</div>
+<div class="para">- Q1 情绪指标：已验证。情绪 72.4%、涨停收益 0.75%、连板收益 -0.29%、炸板收益 -0.84%、赚钱效应"一般"、最高板 4。稳米 frontmatter 数据准确 ✅</div>
+<div class="para">- Q2 板块资金：已验证。证券+71.5亿、电池+46.3亿、小金属+38.5亿。半导体和电子化学品流出数据稳米准确 ✅</div>
+<div class="para">- Q3 雅克 vs 基础化工：已验证。和远+10.01%、中化+9.99%、雅克-1.35%。稳米准确 ✅</div>
+<div class="para">- Q4 南大/中船/江丰：已验证。南大-10.97%、中船-13.66%、江丰-6.27%。稳米准确 ✅</div>
+<div class="para">- Q5 热榜题材：央企13只、一季报增长13只、低空经济6只、商业航天6只。基础化工/电子化学品未进入前10题材 ✅</div>
+<div class="para">- Q6 盘感记录：弈沐今日早盘五条盘感已记录于 project_session_2026-06-12_morning.md，稳米初稿未引用 ⚠️</div>
+<div class="sh3">五维强制清单</div>
+<div class="para"><strong>1. 定性校准 — 🔴 严重分歧</strong></div>
+<div class="para">稳米定性"电子化学品全线溃败"、"半导体全面出逃"、"早盘诱多午盘出货"。独立数据确认资金确实从+75亿翻转到-87亿，数字没错。但<strong>定性用词有严重偏差</strong>：</div>
+<div class="para">- 同样的事实可以用"洗盘"解释：竞价高开吸引跟风→早盘推高试盘→午盘砸盘洗掉跟风→尾盘接回。雅克换手 20%+、康强换手 23%+，如此巨量换手如果没有承接盘，价格不会只跌 -1.35% 和 +2.44%——真出货的话康强应该直奔昨收 31.2，但它稳在 32 附近（+2.44%）。</div>
+<div class="para">- 南大 -10.97% 跌到了 MA5 附近（59.39 vs MA5 61.92），是标准的"回踩5日线"形态，不是破位。</div>
+<div class="para">- "溃败"和"洗盘"两种定性会导出完全不同的次日预案：溃败→全部放弃；洗盘→持有等回流。</div>
+<div class="para">→ <strong>要求</strong>：收盘定性改为"半导体/电子化学品冲高回落、资金大幅流出、板块内部严重分化"，删掉"溃败""全面出逃""诱多"等情绪化用词。保留数据事实，让弈沐自己判断洗盘 vs 出货。</div>
+<div class="para"><strong>2. 操作漏判 — 🟡 中等</strong></div>
+<div class="para">- <strong>W1 竞价缩量未提及</strong>：竞价强势家数 37🔥 是好信号，但弈沐明确观察到了"竞价缩量高开=虚的"。稳米写"A好+B好→W1积极追涨"，但没提到竞价量能不足这个关键瑕疵。这是弈沐说的"应该等开盘确认再追"的核心原因。</div>
+<div class="para">- <strong>W2 加仓被标为"补仓"</strong>：稳米在窗口操作记录中写"W2低吸补仓"。但弈沐有明确的主动加仓逻辑："全天红盘有承接+换手20%洗盘充分+其他板块冲高回落"。这两者性质不同——补仓是被动摊平，加仓是主动预判验证。复盘应准确反映操作者的实际意图。</div>
+<div class="para">- <strong>尾盘数据缺失</strong>：表1 尾盘行为空，表2 尾盘列为空。无法判断尾盘 14:30-15:00 的资金走向。</div>
+<div class="para">→ <strong>要求</strong>：①W1 操作评判补充"竞价缩量"瑕疵；②W2 将"补仓"改为"加仓"，注明加仓逻辑；③尾盘数据用 <code>--window weipan</code> 补拉。</div>
+<div class="para"><strong>3. 规则执行 — 🟡 轻微</strong></div>
+<div class="para">- <strong>LOSS_STREAK override 未记录</strong>：W1 和 W2 两笔交易都被系统的 LOSS_STREAK 阻断，经弈沐人工裁决 override（清仓=断连亏）。账户风控表写"连亏天数：—"但未说明 override 过程和理由。</div>
+<div class="para">- <strong>ACCT-RISK-001 修正未跟进</strong>：盘中已确认修正方案（连亏>=2天 <strong>且仍有持仓</strong> → 空仓，已空仓则计数器归零）。修正单已出给欧米，但复盘未记录此规则变更。</div>
+<div class="para">→ <strong>要求</strong>：①账户风控表补充 LOSS_STREAK override 记录和理由；②心得区追加一条规则变更记录。</div>
+<div class="para"><strong>4. 反向情景 — 🔴 严重缺失</strong></div>
+<div class="para">稳米预案完全放弃了半导体/电子化学品方向，全面转向有色/小金属/证券。但缺少以下反向情景：</div>
+<div class="para">- <strong>Plan B 缺失</strong>：如果周末外盘半导体反弹（费城半导体指数）、或下周一电子化学品竞价回流，预案完全没有应对方案。雅克 700 股持仓的处理策略只有一条"竞价观察→暴跌则止损"，缺少"板块企稳→持有/加仓"的积极路径。</div>
+<div class="para">- <strong>弈沐盘感 3 被忽略</strong>：弈沐早盘明确提出"全红无主线→半导体休整→下周分化后可能被选中"。这是一个有逻辑支撑的预判（昨日电子化学品+22亿是唯一主线，今天休整不是退潮），稳米预案完全没有体现。</div>
+<div class="para">- <strong>基础化工 3 只 4 板的风险</strong>：和远气体、宿迁联盛、中化国际全部 4 板。上周四天娱数科 4 板→周五断板跌停，3进4是近期连板天花板。下周一三只同时冲击 4进5，概率极低。稳米预案把基础化工 W1 作为主力方向，风险敞口过大。</div>
+<div class="para">→ <strong>要求</strong>：①增加"半导体/电子化学品回流"的 Plan B（含雅克持仓的积极处理路径）；②基础化工 W1 增加"3只4板天花板风险"提示；③预案总基调改为"两条腿走路"而非单向押注有色。</div>
+<div class="para"><strong>5. 盲区扫描 — 🟡 四项遗漏</strong></div>
+<div class="para">- <strong>趋势自选池为空</strong>：稳米自判"趋势62% > 连板38%"，但趋势自选池表完全空白。数据附录中趋势池也全空。风格判断和标的推荐自相矛盾。</div>
+<div class="para">- <strong>弈沐五条盘感未录入</strong>：①竞价缩量不能追 ②冲高回落三形态排序 ③全红无主线→休整板块下周被选中 ④趋势摸底+连板修复→连板占主导 ⑤补仓 vs 加仓的边界。这五条是今天最有价值的认知产出，复盘心得区未收录。</div>
+<div class="para">- <strong>科创板方向被忽略</strong>：中科飞测+8.11%、富创精密+12.64%、兴福电子+7.17%——竞价阶段半导体设备/材料方向有多只科创板标的异动，稳米自选池完全没有覆盖。</div>
+<div class="para">- <strong>江丰电子的警示意义</strong>：江丰从竞价+15.32%→收盘-6.27%，日内回撤 21%+。它是电子化学品总龙头锚，它的大幅回落是板块走弱的先行指标。稳米在节点说明中提到了江丰回落但未提炼为"龙头锚失效→板块承压"的判断逻辑。</div>
+<div class="para">→ <strong>要求</strong>：①补趋势自选池；②心得区收录弈沐五条盘感（至少取前 3 条）；③自选池增加科创板半导体材料观察标的。</div>
+<div class="sh3">自选池对抗</div>
+<div class="tw"><table><thead><tr><th>挑战类型</th><th>稳米原判</th><th>红方质疑</th><th>数据依据</th></tr></thead><tbody><tr><td>遗漏标的</td><td>趋势自选池为空</td><td>南大光电 -10.97% 回踩 MA5，是半导体最强的 W2 低吸候选。如果半导体下周回流，南大是最佳买点</td><td>MA5=61.92，现价59.39，距MA5仅-4%。昨日+8%成交82亿中军。稳米把它放进"不碰"是错误的</td></tr><tr><td>遗漏标的</td><td>科创板未覆盖</td><td>中科飞测+8.11%/富创精密+12.64%/兴福电子+7.17% 竞价异动，应纳入半导体材料观察池</td><td>竞价阶段半导体设备方向科创板标的集体走强，虽然后来回落但辨识度在</td></tr><tr><td>排除有误</td><td>南大光电排入"不碰"</td><td>南大是电子化学品中军，回踩 MA5 而非破位。排入"不碰"意味着完全放弃半导体方向，与弈沐盘感 3 矛盾</td><td>-10.97% 但成交 62.8 亿量平，MA5 支撑仍在。是"回踩"不是"崩盘"</td></tr><tr><td>忽略板块</td><td>预案单向押注有色/小金属</td><td>有色今天+3-5% 已经大涨，下周一追涨风险高。且有色不是新主线（连续两日走强后可能分化）。预案没有保留半导体回流的仓位空间</td><td>证券+71亿、电池+46亿、小金属+38亿——三个方向今天都已经大涨，周一竞价追高性价比低</td></tr><tr><td>忽略板块</td><td>基础化工 3 只 4 板</td><td>和远/宿迁/中化三家全部 4 板，下周一一起冲 4进5。上周天娱数科 4 板→次日断板跌停。3 只同时冲 5 板概率极低，预案应该降低基础化工 W1 权重</td><td>三进四晋级率 50%，但四进五历史数据极少。4板是近期天花板，不应重仓押注</td></tr></tbody></table></div><div class="sh3" id="s4b">🔵 Round 2：蓝方回应（稳米）</div><div class="tw"><table><thead><tr><th>红方质疑</th><th>蓝方回应</th><th>结果</th></tr></thead><tbody><tr><td>1. 定性校准：半导体/电子化学品"溃败"→"洗盘"</td><td>采纳。稳米数据引用准确但用词偏情绪化。"溃败/全面出逃/诱多"等词非客观表述，保留数据事实（+75亿→-87亿，南大-10.97%→MA5附近回踩），删情绪化定性，改"半导体/电子化学品资金大逆转、高位回落后严重分化"</td><td>采纳</td></tr><tr><td>2.1 W1 竞价缩量瑕疵未提</td><td>采纳。竞价强势家数37🔥是大信号，但弈沐观察到竞价缩量高开。W1操作评判补充"竞价缩量高开=信号被稀释，开盘确认后再追更为稳妥"</td><td>采纳</td></tr><tr><td>2.2 W2 补仓→加仓</td><td>采纳。稳米原写"补仓"是被动摊平描述，弈沐实际是主动加仓逻辑（全天红盘有承接+换手充分+其他板块冲高回落验证预判）。改为"W2主动加仓，逻辑：全天红盘有承接+洗盘充分+板块分化验证"</td><td>采纳</td></tr><tr><td>2.3 尾盘数据缺失</td><td>采纳。表1尾盘行为空、表2尾盘列为空。用`--window weipan`补拉尾盘14:30-15:00数据</td><td>采纳</td></tr><tr><td>3.1 LOSS_STREAK override 未记录</td><td>采纳。账户风控补充override记录：W1/W2两笔交易被LOSS_STREAK阻断，经弈沐人工裁决override（昨日清空持仓=断连亏，新开仓视为新周期）</td><td>采纳</td></tr><tr><td>3.2 ACCT-RISK-001 修正未跟进</td><td>采纳。在心得区追加规则变更记录：ACCT-RISK-001修正为"连亏≥2天且仍有持仓→空仓；已空仓则计数器归零"，修正单已出给欧米</td><td>采纳</td></tr><tr><td>4.1 Plan B 半导体/电子化学品回流</td><td>部分采纳。承认缺乏Plan B是核心缺陷。但加仓路径需谨慎：雅克T+1不可卖，周一竞价无法预先决定"加仓"。可做的是：①Plan A（有色延续）②Plan B（半导体回流→雅克持有等反弹，但不加仓）③Plan C（半导体继续退潮→雅克止损）</td><td>部分采纳（加仓需弈沐周一盘中裁决）</td></tr><tr><td>4.2 弈沐盘感3被忽略</td><td>采纳。"全红无主线→半导体休整→下周分化后可能被选中"是有逻辑支撑的预判。预案应体现双线思维（有色/小金属 vs 半导体材料回流）</td><td>采纳</td></tr><tr><td>4.3 基础化工3只4板天花板风险</td><td>采纳。上周天娱数科4→5断板跌停，3只同时冲击4进5概率极低。降低基础化工W1权重，改为"只做最强一只（和远气体），另两只只盯不买"</td><td>采纳</td></tr><tr><td>5.1 趋势自选池为空</td><td>部分采纳。§三趋势自选池已填写（中钨高新/章源钨业/中金黄金），但数据附录趋势表确为空白→补填数据附录趋势表。断言"趋势池全空"不准确</td><td>部分采纳（§三有但数据附录缺）</td></tr><tr><td>5.2 弈沐五条盘感未录入</td><td>采纳。心得区收录五条盘感（选取前3条：竞价缩量不能追/冲高回落三形态/全红无主线→休整板块下周被选中），标注"弈沐盘感"</td><td>采纳</td></tr><tr><td>5.3 科创板方向被忽略</td><td>采纳。自选池增加科创板半导体材料观察标的：富创精密(688409)、兴福电子(688545)。标注为"候选观察"</td><td>采纳</td></tr><tr><td>5.4 江丰电子警示意义</td><td>部分采纳。江丰日内回撤21%+确实是龙头锚走弱信号。但电子化学品板块整体+75亿→-87亿已经是明确信号，江丰是"龙头锚失效→板块承压"的验证而非独立变量。提炼判断逻辑："电子化学品总龙头江丰日内回撤21%+确认板块高位回落，回踩支撑位前不再视为强势方向"</td><td>部分采纳</td></tr><tr><td>自选池：南大光电回踩MA5不应排不碰</td><td>待裁决。数据支持南大回踩MA5（59.39 vs MA5 61.92，距-4%）而非破位，排"不碰"过于绝对。但南大-10.97%的日线形态与电子化学品-41亿资金共振，建议改"⚠️候选观察（回踩MA5支撑，需周一确认板块企稳）"而非直接纳入操作池</td><td>待弈沐裁决</td></tr><tr><td>自选池：科创板半导体材料</td><td>采纳。增加富创精密(688409, 科创板, +3.60%/32亿, 候选观察)；兴福电子(688545, 科创板, +3.63%/36亿, 候选观察)</td><td>采纳</td></tr><tr><td>自选池：有色已大涨不应主推</td><td>反驳。有色今天+3-5%大涨是事实，但板块2天强+61.9亿资金连续流入+中军紫金147亿/中钨130亿巨量，不是一日游量级。周一竞价小幅高开/平开/低开才是买点，并非追高。有色金属是大体量板块（紫金/洛阳/中金等），连续性强于概念题材</td><td>反驳（有色是中军驱动非题材脉冲）</td></tr><tr><td>自选池：基础化工3只4板降低权重</td><td>采纳。基础化工W1仅保留和远气体4进5，宿迁/中化只盯不买</td><td>采纳</td></tr></tbody></table></div><div class="sh3" id="s4c">🟢 Round 3：洋米终审</div><div class="para"><strong>终稿定论</strong>：§三预案修改后总体可接受，稳米 Round 2 回应诚恳务实。核心改进体现在：①定性从"溃败"改客观表述（但板块状态表漏改，见下方）；②W1/W2操作评判补充了缩量瑕疵和加仓逻辑（但今日操作表仍写"补仓"，漏改）；③增加了半导体回流的Plan B（A/B/C三条路径）；④心得区即将收录弈沐盘感；⑤趋势自选池从空→5只；⑥基础化工降为仅和远一只W1操作。附录A已更新为双线思维（有色/小金属为主 + 电子化学品持仓处理）。</div>
+<div class="para"><strong>仍存分歧（待弈沐裁决）</strong>：</div>
+<div class="tw"><table><thead><tr><th>#</th><th>分歧点</th><th>稳米立场</th><th>洋米立场</th><th>建议</th></tr></thead><tbody><tr><td>1</td><td>电子化学品定性</td><td>Round 2 文字说采纳，但板块状态表（§数据附录）电子化学品仍写"全线溃败"</td><td>应统一改为"冲高回落、严重分化"</td><td>🟡 稳米技术性漏改，奕沐裁决时顺带过一眼</td></tr><tr><td>2</td><td>W2操作标记</td><td>今日操作表仍写"补仓"，未改为"加仓"</td><td>弈沐意图是主动加仓（预判验证）非被动补仓（摊平）</td><td>🟡 同上，漏改。复盘应准确反映操作者意图</td></tr><tr><td>3</td><td>南大光电</td><td>建议改"⚠️候选观察（回踩MA5，需周一确认板块企稳）"</td><td>同意。南大-10.97%确实不能直接入池，但也不该进"不碰"</td><td>✅ 一致：改"候选观察"</td></tr><tr><td>4</td><td>有色/小金属主推</td><td>反驳：有色是中军驱动（紫金147亿/中钨130亿）非题材脉冲，连续性强。周一竞价平开/低开即为买点</td><td>接受稳米反驳。有色量级确实不同于概念题材，但提醒：今天已大涨+3-5%，周一竞价需严格确认（不大幅高开才能追）</td><td>🟢 终审：稳米判断可接受，备注"竞价追高需控制"</td></tr><tr><td>5</td><td>附录A 操作指南</td><td>"不碰"部分仍保留"半导体方向"</td><td>与Plan B"半导体回流"矛盾。既然接受了Plan B，就不该写"半导体方向"在"不碰"里。应改为"半导体方向仅观察，不主动开新仓"</td><td>🟡 文本自相矛盾，修正措辞</td></tr></tbody></table></div>
+<div class="para"><strong>终审附加提示</strong>：</div>
+<div class="para">- 板块状态表（§数据附录）电子化学品"全线溃败"→应改为"冲高回落、内部分化严重"，与正文定性保持一致</div>
+<div class="para">- 今日操作表 W2 "补仓"→应改为"加仓"，理由改为"W2主动加仓：全天红盘承接+换手20%洗盘充分+板块分化验证预判"</div>
+<div class="para">- 附录A "不碰：半导体方向"→改为"不碰：半导体方向新开仓（已有雅克持仓仅处理，不开新仓）"</div>
+<div class="para">- 五条盘感尽快录入心得区（至少前3条），这是今天最有价值的认知沉淀</div>
+<hr class="divider"><div class="verdict"><div class="vt">终审定论</div><div class="vb"><div class="para">：§三预案修改后总体可接受，稳米 Round 2 回应诚恳务实。核心改进体现在：①定性从"溃败"改客观表述（但板块状态表漏改，见下方）；②W1/W2操作评判补充了缩量瑕疵和加仓逻辑（但今日操作表仍写"补仓"，漏改）；③增加了半导体回流的Plan B（A/B/C三条路径）；④心得区即将收录弈沐盘感；⑤趋势自选池从空→5只；⑥基础化工降为仅和远一只W1操作。附录A已更新为双线思维（有色/小金属为主 + 电子化学品持仓处理）。</div>
+<div class="para"><strong>仍存分歧（待弈沐裁决）</strong>：</div>
+<div class="para">|</div></div></div></div>
+</div>
+<div class="section" id="sa">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 附录A · 盘前速查<span class="cnt">周一开盘只看这里</span>
+</div>
+<div class="sb"><div class="sh3">📋 持仓处理</div><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>仓位</th><th>止损</th><th>T+1可卖</th><th>操作策略</th></tr></thead><tbody><tr><td>雅克科技</td><td>138.91×700</td><td>~9.5万(13.5%)</td><td>129.19(-7%)</td><td>❌(今日买入)</td><td>Plan A（有色延续→资金继续分流半导体）→ 持有等反弹减仓；Plan B（半导体回流→电子化学品企稳）→ 持有，确认回流后不加仓（T+1不可卖）；Plan C（半导体继续退潮→南大再-5%+）→ 竞价止损</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>温度标（只盯）</th><th>操作标的（买/低吸）</th><th>触发条件</th></tr></thead><tbody><tr><td>🧪 基础化工🔥</td><td>宿迁联盛(4板🚀)/中化国际(4板🚀)</td><td>🔴和远气体(W1追涨)</td><td>竞价量能>昨日50%+高开3-7%+情绪非冰点非高潮。⚠️仅和远一只操作（3只4板冲5板天花板风险，降低权重）</td></tr><tr><td>⛏️ 有色/小金属🔥</td><td>洛阳钼业(涨停)/金钼股份(2板)</td><td>🔴洛阳钼业(W1)/🟡章源钨业(W2)</td><td>W1：竞价量能+高开3-7%（⚠️今天已大涨，周一不能大幅高开追）；W2：回踩5日线+缩量</td></tr><tr><td>🔬 电子化学品(持仓)⚠️</td><td>鼎龙股份(+4.65%)/兴福电子(+3.63%)/南大光电(⚠️候选观察, MA5 61.92)</td><td>🔴雅克科技(处理) + 👁️南大光电(观察)</td><td>南大回踩MA5后企稳→买入信号；板块竞价回流→雅克持有</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作标的（回踩买）</th><th>触发条件</th></tr></thead><tbody><tr><td>🥇 有色/小金属🔥🔥</td><td>中钨高新(+130亿)/章源钨业(+70亿)/紫金矿业(+147亿)</td><td>🔴中钨高新(回踩5日线 73.71)/🟡章源钨业(回踩5日线 31.87)</td><td>回踩5日线+缩量+板块未退潮。中军驱动非题材脉冲，连续性强</td></tr><tr><td>👁️ 半导体材料(候选观察)</td><td>富创精密(+3.60%/科创板)/兴福电子(+3.63%/科创板)</td><td>仅观察</td><td>竞价半导体方向修复+板块资金回流确认→升级为操作候选</td></tr><tr><td>🔴 电子化学品(观察+持仓处理)⚠️</td><td>南大光电(回踩MA5,候选)/鼎龙股份(+4.65%)</td><td>持仓：雅克科技(三路径Plan A/B/C)</td><td>详见持仓处理</td></tr></tbody></table></div><div class="sh3">📋 操作指南</div><div class="si"><div class="para"><strong>总基调</strong>：双线布局——有色/小金属主攻（中军驱动+连续性强），半导体/电子化学品持仓处理+观察回流。基础化工仅和远一只谨慎操作（3只4板天花板风险）。周五W1正常开放但硬卡偏弱，控仓≤60%</div>
+<div class="para"><strong>W1</strong>：🔍 和远气体4进5竞价确认型（量能>50%+高开3-7%）。洛阳钼业竞价确认型（⚠️不能大幅高开）。情绪72.6%强势区间</div>
+<div class="para"><strong>W2</strong>：🔍 章源钨业回踩5日线+有色板块延续</div>
+<div class="para"><strong>趋势观察</strong>：中钨高新回踩5日线=最强趋势买点；南大光电回踩MA5企稳=半导体回流确认信号</div>
+<div class="para"><strong>仓位</strong>：连板≤20% + 趋势≤40% = 总仓≤60%。雅克~13.5%已占用</div>
+<div class="para"><strong>不碰</strong>：中船特气(连续大跌)/天娱数科(断板退潮)/亨通光电(通信持续流出)/厦门钨业(-3.91%跳水)/半导体方向新开仓（已有雅克仅处理，不开新仓）</div>
+<div class="para"><strong>风险</strong>：连板环境偏弱(二进三均值16.99%<20%) / 雅克浮亏-4.26%周一处理 / 情绪与赚钱效应背离 / 上证/沪深300 20日线向下 / 基础化工3只4板天花板风险</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="sd">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 数据附录<span class="cnt">机器解析用</span>
+</div>
+<div class="sb"><div class="sh3">持仓明细</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th><th>T+1可卖</th><th>状态</th></tr></thead><tbody><tr><td>雅克科技</td><td>002409</td><td>连板</td><td>700</td><td>138.91</td><td>132.99</td><td><span class="down">-4.26%⚠️</span></td><td>129.19(-7%)</td><td>❌(今日买入)</td><td>🟢持有（T+1不可卖，周一处理）</td></tr></tbody></table></div><div class="sh3">连板自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>宿迁联盛</td><td>603065</td><td>基础化工</td><td>W2</td><td>🔴龙头</td><td>4板🚀</td><td><span class="up">+10.03%</span></td><td>—</td><td>—</td><td>—</td><td>4板稳封</td></tr><tr><td>和远气体</td><td>002971</td><td>基础化工</td><td>W2</td><td>🔴龙头</td><td>4板🚀</td><td><span class="up">+10.01%</span></td><td>58.03</td><td>48.39</td><td>—</td><td>4板最强</td></tr><tr><td>中化国际</td><td>600500</td><td>基础化工</td><td>W2</td><td>🔴高度板</td><td>4板🚀</td><td><span class="up">+9.99%</span></td><td>7.93</td><td>6.61</td><td>—</td><td>4板稳封</td></tr><tr><td>雅克科技</td><td>002409</td><td>电子化学品</td><td>W2</td><td>🟡持仓</td><td>2进3❌</td><td><span class="down">-1.35%🔴</span></td><td>132.99</td><td>121.48</td><td>—</td><td>均价138.91×700股，收盘浮亏-4.26%</td></tr><tr><td>康强电子</td><td>002119</td><td>半导体材料</td><td>W2</td><td>🔴龙头(炸)</td><td>3板→炸板❌</td><td><span class="up">+2.44%🔴</span></td><td>31.96</td><td>28.3</td><td>—</td><td>早盘3板涨停到收盘仅+2.44%</td></tr><tr><td>宗申动力</td><td>001696</td><td>低空经济</td><td>W2</td><td>🟡龙头</td><td>2板🚀</td><td><span class="up">+10.02%</span></td><td>22.84</td><td>19.27</td><td>—</td><td>2板稳封</td></tr><tr><td>金安国纪</td><td>002636</td><td>覆铜板</td><td>W2</td><td>🟡龙头</td><td>+5.99%</td><td>—</td><td>89.88</td><td>77.29</td><td>—</td><td>未封板</td></tr></tbody></table></div><div class="sh3">趋势自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>窗口</th><th>角色</th><th>操作</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>MA20</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>中钨高新</td><td>000657</td><td>小金属</td><td>W2</td><td>🔴主趋势股</td><td>回踩5日线</td><td><span class="up">+1.35%</span></td><td>79.00</td><td>73.71</td><td>66.67</td><td>—</td><td>130亿成交/完美均线多头</td></tr><tr><td>章源钨业</td><td>002378</td><td>小金属</td><td>W2</td><td>🟡趋势候选</td><td>回踩5日线</td><td><span class="up">+3.00%</span></td><td>34.64</td><td>31.87</td><td>29.80</td><td>16.89%</td><td>70亿/漏网确认/均线多头</td></tr><tr><td>中金黄金</td><td>600489</td><td>黄金</td><td>W2</td><td>🟡趋势候选</td><td>观察</td><td><span class="up">+1.35%</span></td><td>21.51</td><td>—</td><td>—</td><td>—</td><td>黄金避险同步</td></tr><tr><td>富创精密</td><td>688409</td><td>半导体设备</td><td>只盯</td><td>👁候选观察</td><td>观察</td><td><span class="up">+3.60%</span></td><td>182.00</td><td>—</td><td>—</td><td>5.56%</td><td>科创板半导体材料</td></tr></tbody></table></div><div class="sh3">板块状态</div><div class="tw"><table><thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>板块涨跌幅</th><th>主力净流入</th><th>5日线位置</th><th>状态</th></tr></thead><tbody><tr><td>基础化工</td><td>🟢主线</td><td>3+</td><td>和远4板/宿迁4板/新金路2板</td><td>和远气体🚀</td><td>—</td><td>—</td><td>站上✅</td><td>连板最强方向</td></tr><tr><td>小金属</td><td>🟢走强</td><td>3+</td><td>金钼2板/盛龙2板</td><td>金钼股份🚀</td><td><span class="up">+3.17%🔥</span></td><td>+38.46亿🔥🔥</td><td>站上✅</td><td>持续走强</td></tr><tr><td>军工装备</td><td>🟢事件驱动</td><td>5+</td><td>宗申2板</td><td>中航西飞🚀</td><td><span class="up">+4.44%🔥</span></td><td>+0.48亿</td><td>站上✅</td><td>SpaceX上市催化</td></tr><tr><td>证券</td><td>🟢走强</td><td>1+</td><td>—</td><td>中银证券🚀</td><td><span class="up">+3.88%🔥</span></td><td>+71.47亿🔥🔥🔥</td><td>站上✅</td><td>尾盘资金主力</td></tr><tr><td>电池</td><td>🟡新方向</td><td>1+</td><td>—</td><td>雄韬股份🚀</td><td><span class="up">+2.67%🔥</span></td><td>+46.30亿🔥🔥</td><td>站上✅</td><td>新轮动方向</td></tr><tr><td>电子化学品</td><td>🔴严重分化</td><td>—</td><td>雅克2进3❌/康强炸板</td><td>南大-10.97%🔴</td><td><span class="down">-4.55%🔴🔴</span></td><td>-40.69亿🔴🔴🔴</td><td>回踩MA5</td><td>冲高回落、内部分化严重（+75亿早盘流入→-41亿收盘流出）</td></tr><tr><td>半导体</td><td>🔴严重分化</td><td>—</td><td>—</td><td>江丰-6.27%🔴</td><td><span class="down">-1.64%🔴</span></td><td>-87.47亿🔴🔴🔴</td><td>站上✅</td><td>资金大逆转（+75亿→-87亿），内部剧烈分化</td></tr><tr><td>自动化设备</td><td>🔴弱势</td><td>—</td><td>—</td><td>埃斯顿-3.39%</td><td><span class="down">-0.44%</span></td><td>-19.52亿🔴</td><td>站上✅</td><td>持续弱势</td></tr><tr><td>通信设备</td><td>🔴退潮</td><td>—</td><td>—</td><td>—</td><td><span class="down">-0.29%</span></td><td>-57.51亿🔴🔴🔴</td><td>站上✅</td><td>连续大流出</td></tr></tbody></table></div><div class="sh3">今日操作</div><div class="tw"><table><thead><tr><th>时间</th><th>动作</th><th>标的</th><th>价格</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>~9:35 W1</td><td>🟢买入</td><td>雅克科技</td><td>140.2(500股)</td><td>—</td><td>A好+B好→W1追涨。雅克竞价+3.86%高开3-7%理想区间，电子化学品方向唯一2进3标的。浮亏中</td></tr><tr><td>~14:00 W2</td><td>🟢加仓</td><td>雅克科技</td><td>135.7(200股)</td><td>—</td><td>W2主动加仓：全天红盘承接+换手20%洗盘充分+板块分化验证预判，均价降至138.91</td></tr></tbody></table></div><div class="sh3">锚定股状态</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>窗口</th><th>状态</th><th>影响</th><th>灯</th></tr></thead><tbody><tr><td>和远气体</td><td>002971</td><td>4板</td><td>+10.01%🚀</td><td>基础化工方向强度锚</td><td>🟢</td></tr><tr><td>宿迁联盛</td><td>603065</td><td>4板</td><td>+10.03%🚀</td><td>基础化工高度板</td><td>🟢</td></tr><tr><td>雅克科技</td><td>002409</td><td>2进3❌</td><td>-1.35%🔴</td><td>电子化学品方向2进3失败锚</td><td>🔴</td></tr><tr><td>江丰电子</td><td>300666</td><td>趋势锚</td><td>-6.27%🔴🔴</td><td>电子化学品总龙头冲高回落</td><td>🔴</td></tr><tr><td>康强电子</td><td>002119</td><td>3板→炸</td><td>+2.44%🔴</td><td>半导体材料连板失败锚</td><td>🔴</td></tr><tr><td>南大光电</td><td>300346</td><td>中军</td><td>-10.97%🔴🔴🔴</td><td>电子化学品方向全面走弱</td><td>🔴</td></tr></tbody></table></div></div>
+</div>
+
+</div>
+</div>
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+</script>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
+</body>
+</html>
