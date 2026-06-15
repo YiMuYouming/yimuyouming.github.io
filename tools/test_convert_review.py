@@ -76,6 +76,29 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("光伏盲区", html)
         self.assertIn("红方对抗闭环完成", html)
 
+    def test_parse_s1_renders_emotion_table_as_board(self):
+        markdown = """### 表2：情绪高标
+
+| 指标 | 竞价 | 早盘 | 午盘 | 尾盘 | 收盘 | 门槛 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 涨停收益 | — | — | — | 1.98 | 1.98 | >2%(低迷)/>3%(正常) |
+| 炸板率 | 63.86 | — | — | 73.17 | —(收盘封板改善) | <30%(W1追涨)/<40%(W2冰点) |
+| 封板率 | 36.14 | — | — | 26.83 | —(收盘批量封板后回升) | — |
+| 一进二晋级率 | 11.84 | — | — | 8.86 | 8.86 | >15%(低迷)/>18%(主升) |
+| 梯队 | 5/4/3 | 5/3/3 | 3/3 | 3(6)-2(11) | 3(4非ST+2ST)-2(8非ST+3ST) | — |
+| 最高板/次高板 | 上海贝岭(5板) | 贝岭5板 | 5板断 | 深桑达A/新金路 | 深桑达A(20.81)/新金路(21.31) | — |
+| 竞价验证结论 | — | — | — | — | A好+B差 | A好+B差 |
+"""
+
+        html = convert_review.parse_s1(markdown)
+        table2 = html.split("📈 表2：情绪高标", 1)[1]
+
+        self.assertIn('class="emotion-board"', table2)
+        self.assertIn("3(4非ST+2ST)-2(8非ST+3ST)", table2)
+        self.assertIn("A好+B差", table2)
+        self.assertIn("&lt;30%(W1追涨)/&lt;40%(W2冰点)", table2)
+        self.assertNotIn("<th>指标</th>", table2)
+
 
 if __name__ == "__main__":
     unittest.main()

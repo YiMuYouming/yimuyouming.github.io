@@ -22,6 +22,7 @@ import re
 import sys
 import os
 import subprocess
+from html import escape as html_escape
 from datetime import datetime
 from pathlib import Path
 
@@ -110,7 +111,27 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
 .debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
 .debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
-.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}"""
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+.emotion-board{display:grid;gap:14px;margin:10px 0 16px}
+.emotion-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.emotion-kpi{background:linear-gradient(180deg,#fff,var(--bg3));border:1px solid var(--border);border-radius:10px;padding:11px 12px;min-height:76px}
+.emotion-kpi .klabel{font-size:12px;color:var(--text3);margin-bottom:4px}
+.emotion-kpi .kval{font-size:20px;line-height:1.15;font-weight:800;color:var(--text);word-break:break-word}
+.emotion-kpi.good .kval{color:var(--red)}.emotion-kpi.warn .kval{color:var(--amber)}.emotion-kpi.bad .kval{color:var(--green)}
+.emotion-stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.emotion-stage{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px}
+.emotion-stage .stage-title{font-size:14px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.emotion-row{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;border-top:1px solid rgba(229,226,222,.75);padding:7px 0;font-size:12px}
+.emotion-row:first-of-type{border-top:0}
+.emotion-row .rlabel{color:var(--text3);white-space:nowrap}
+.emotion-row .rval{color:var(--text2);line-height:1.45;word-break:break-word}
+.emotion-row.major{display:block;background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 10px;margin-top:8px}
+.emotion-row.major .rlabel{display:block;margin-bottom:3px;font-weight:700;color:var(--text)}
+.emotion-thresholds{background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.24);border-radius:10px;padding:12px}
+.emotion-thresholds .threshold-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.emotion-thresholds .threshold-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.emotion-thresholds .threshold-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:12px;line-height:1.45}
+.emotion-thresholds .threshold-item strong{color:var(--text);margin-right:6px}"""
 
 JS_FOOTER = """<script>
 const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
@@ -258,6 +279,92 @@ def html_table(headers, rows, cell_fn=None):
         tbody += '</tr>'
     tbody += '</tbody>'
     return f'<div class="tw"><table>{thead}{tbody}</table></div>'
+
+
+def html_emotion_board(headers, rows):
+    """Render 表2 情绪高标 as scan-friendly cards instead of a very wide table."""
+    if not headers or not rows:
+        return ""
+
+    stages = [h for h in headers if h not in ("指标", "门槛")]
+    row_by_metric = {row.get("指标", ""): row for row in rows}
+
+    def clean(value):
+        s = str(value or "").strip().replace("**", "")
+        return s if s else "—"
+
+    def safe(value):
+        return html_escape(clean(value), quote=False)
+
+    def meaningful(value):
+        return clean(value) not in ("—", "TBD", "...")
+
+    def metric_value(metric, stage_preference=("收盘", "尾盘", "午盘", "早盘", "竞价")):
+        row = row_by_metric.get(metric, {})
+        for stage in stage_preference:
+            value = row.get(stage)
+            if meaningful(value):
+                return clean(value)
+        return "—"
+
+    def kpi_class(value):
+        s = clean(value)
+        if "好" in s or "A好" in s or "3.92" in s:
+            return "good"
+        if "0.0" in s or "8.86" in s or "73.17" in s or "⚠️" in s:
+            return "bad"
+        if "26.83" in s or "1.98" in s or "12.36" in s:
+            return "warn"
+        return ""
+
+    kpis = [
+        ("赚钱效应", metric_value("赚钱效应")),
+        ("涨停收益", metric_value("涨停收益")),
+        ("连板收益", metric_value("连板收益")),
+        ("封板率", metric_value("封板率")),
+        ("炸板率", metric_value("炸板率")),
+        ("一进二", metric_value("一进二晋级率")),
+        ("三进四", metric_value("三进四晋级率")),
+        ("结论", metric_value("竞价验证结论")),
+    ]
+    html = '<div class="emotion-board">'
+    html += '<div class="emotion-summary-grid">'
+    for label, value in kpis:
+        html += (
+            f'<div class="emotion-kpi {kpi_class(value)}">'
+            f'<div class="klabel">{safe(label)}</div><div class="kval">{cell_color(label, safe(value))}</div></div>'
+        )
+    html += '</div>'
+
+    major_metrics = {"梯队", "最高板/次高板"}
+    html += '<div class="emotion-stage-grid">'
+    for stage in stages:
+        html += f'<div class="emotion-stage"><div class="stage-title">{stage}</div>'
+        stage_has_data = False
+        for row in rows:
+            metric = row.get("指标", "")
+            value = row.get(stage, "")
+            if not meaningful(value):
+                continue
+            stage_has_data = True
+            major = " major" if metric in major_metrics else ""
+            html += (
+                f'<div class="emotion-row{major}">'
+                f'<span class="rlabel">{safe(metric)}</span><span class="rval">{cell_color(metric, safe(value))}</span></div>'
+            )
+        if not stage_has_data:
+            html += '<div class="emotion-row"><span class="rlabel">记录</span><span class="rval">—</span></div>'
+        html += '</div>'
+    html += '</div>'
+
+    thresholds = [(row.get("指标", ""), clean(row.get("门槛", ""))) for row in rows if meaningful(row.get("门槛", ""))]
+    if thresholds:
+        html += '<div class="emotion-thresholds"><div class="threshold-title">门槛速查</div><div class="threshold-grid">'
+        for metric, threshold in thresholds:
+            html += f'<div class="threshold-item"><strong>{safe(metric)}</strong>{safe(threshold)}</div>'
+        html += '</div></div>'
+    html += '</div>'
+    return html
 
 
 def cell_color(header, value):
@@ -548,7 +655,7 @@ def parse_s1(text):
         elif heading_has(h, '情绪高标') or heading_has(h, '表2'):
             if tables:
                 html += html_subheading("📈 表2：情绪高标", "s1b")
-                html += html_table(*tables[0], cell_fn=cell_color)
+                html += html_emotion_board(*tables[0])
 
         elif heading_has(h, '节点说明'):
             html += html_subheading("🔍 节点说明", "s1c")

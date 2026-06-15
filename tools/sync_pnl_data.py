@@ -91,6 +91,30 @@ def build_market_html(baseline, live):
             return "neutral"
         return "up" if num > 0 else "down" if num < 0 else "neutral"
 
+    def present(v):
+        return v not in (None, "", "—")
+
+    def baseline_matches_live():
+        live_sh = parse_float(li.get("上证指数"))
+        baseline_sh = parse_float(m.get("上证指数"))
+        if live_sh is None or baseline_sh is None:
+            return True
+        return abs(live_sh - baseline_sh) < 0.05
+
+    def review_limit_counts():
+        updated = str(li.get("_updated") or "")
+        date = updated[:10] if re.match(r"\d{4}-\d{2}-\d{2}", updated) else ""
+        if not date:
+            return {}
+        path = PORTAL / "review-notes" / f"{date}.html"
+        if not path.exists():
+            return {}
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        match = re.search(r"(\d+)涨停\s*/\s*(\d+)跌停", text)
+        if not match:
+            return {}
+        return {"涨停家数": int(match.group(1)), "跌停家数": int(match.group(2))}
+
     def index_card(name, price_key, change_key):
         price = li.get(price_key, "—")
         chg = str(li.get(change_key, "—") or "—")
@@ -100,12 +124,19 @@ def build_market_html(baseline, live):
             f'<span>{name}</span><strong>{price}</strong><em>{chg}</em></div>'
         )
 
-    def live_or_baseline_count(key):
+    review_counts = review_limit_counts()
+    use_baseline_counts = baseline_matches_live()
+
+    def live_or_fallback_count(key):
         v = iw.get(key)
         bv = m.get(key)
-        if v in (None, "", "—") or (v == 0 and bv not in (None, "", "—", 0)):
+        if present(v) and not (v == 0 and present(review_counts.get(key))):
+            return v
+        if present(review_counts.get(key)):
+            return review_counts.get(key)
+        if use_baseline_counts and present(bv):
             return bv
-        return v
+        return None
 
     up_cnt, dn_cnt = li.get("上涨家数"), li.get("下跌家数")
     if up_cnt is not None and dn_cnt is not None:
@@ -113,8 +144,8 @@ def build_market_html(baseline, live):
     else:
         ratio_html = str(m.get("涨跌比") or "—")
 
-    zt = live_or_baseline_count("涨停家数")
-    dt = live_or_baseline_count("跌停家数")
+    zt = live_or_fallback_count("涨停家数")
+    dt = live_or_fallback_count("跌停家数")
     emotion_val = round(up_cnt / (up_cnt + dn_cnt) * 100) if (up_cnt and dn_cnt and up_cnt + dn_cnt > 0) else None
 
     cards = [

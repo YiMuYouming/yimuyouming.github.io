@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 import sys
+import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import sync_pnl_data
@@ -44,6 +45,45 @@ class ResolveMetaTest(unittest.TestCase):
             sync_pnl_data.extract_existing_pnl_data(html),
             {"meta": {"total_asset": 1}},
         )
+
+    def test_market_snapshot_uses_same_day_review_limits_before_stale_baseline(self):
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            notes = tmp / "review-notes"
+            notes.mkdir()
+            (notes / "2026-06-15.html").write_text(
+                '<span class="chip blue">160涨停 / 10跌停</span>',
+                encoding="utf-8",
+            )
+            old_portal = sync_pnl_data.PORTAL
+            sync_pnl_data.PORTAL = tmp
+            try:
+                html = sync_pnl_data.build_market_html(
+                    {"market": {"上证指数": 4031.51, "涨停家数": 89, "跌停家数": 15}},
+                    {"live_index": {"上证指数": 4096.47, "_updated": "2026-06-15T15:05:29+08:00"}, "iwencai": {}},
+                )
+            finally:
+                sync_pnl_data.PORTAL = old_portal
+
+        self.assertIn("<b>160</b><small>/</small><b>10</b>", html)
+        self.assertNotIn("<b>89</b><small>/</small><b>15</b>", html)
+
+    def test_market_snapshot_does_not_use_stale_baseline_limits_without_review(self):
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d)
+            (tmp / "review-notes").mkdir()
+            old_portal = sync_pnl_data.PORTAL
+            sync_pnl_data.PORTAL = tmp
+            try:
+                html = sync_pnl_data.build_market_html(
+                    {"market": {"上证指数": 4031.51, "涨停家数": 89, "跌停家数": 15}},
+                    {"live_index": {"上证指数": 4096.47, "_updated": "2026-06-15T15:05:29+08:00"}, "iwencai": {}},
+                )
+            finally:
+                sync_pnl_data.PORTAL = old_portal
+
+        self.assertIn("<b>—</b><small>/</small><b>—</b>", html)
+        self.assertNotIn("<b>89</b><small>/</small><b>15</b>", html)
 
 
 if __name__ == "__main__":
