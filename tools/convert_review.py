@@ -101,6 +101,23 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
 .node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
 .node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+.node-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 16px}
+.node-note-card{background:linear-gradient(180deg,#fff,var(--bg3));border:1px solid var(--border);border-radius:10px;padding:14px;min-width:0}
+.node-phase{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:800;color:var(--accent);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.node-detail{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid rgba(229,226,222,.7)}
+.node-detail:first-of-type{border-top:0}
+.node-label{font-size:12px;font-weight:700;color:var(--text3);line-height:1.5}
+.node-copy{font-size:13px;color:var(--text2);line-height:1.65;word-break:break-word}
+.node-copy strong{color:var(--text)}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:10px 0 16px}
+.lesson-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 1px 0 rgba(45,41,38,.03)}
+.lesson-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:8px}
+.lesson-card.cognition .lesson-tag{background:rgba(37,99,235,.08);color:var(--blue)}
+.lesson-card.warning .lesson-tag{background:rgba(220,38,38,.08);color:var(--red)}
+.lesson-card.topic .lesson-tag{background:rgba(124,58,237,.08);color:var(--purple)}
+.lesson-card h4{font-size:15px;line-height:1.45;margin-bottom:8px;color:var(--text)}
+.lesson-body{font-size:13px;line-height:1.7;color:var(--text2)}
+.lesson-body .para{font-size:13px;margin-bottom:0}
 .warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
 .warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
 [id]{scroll-margin-top:70px}
@@ -510,6 +527,84 @@ def md_text_to_html(text):
     return '\n'.join(out)
 
 
+def md_inline_to_html(text):
+    """Render a short markdown-ish phrase safely inside custom cards."""
+    value = html_escape(str(text or "").strip(), quote=False)
+    value = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', value)
+    return value
+
+
+def html_node_notes(body):
+    """Render 节点说明 as one readable card per market phase."""
+    marker_re = re.compile(r'^\*\*(竞价|早盘|午盘|尾盘|收盘)(?:\([^)]*\))?\*\*(?:\([^)]*\))?[：:]\s*$', re.MULTILINE)
+    matches = list(marker_re.finditer(body))
+    if not matches:
+        return f'<div class="si">{md_text_to_html(body.strip())}</div>'
+
+    html = '<div class="node-timeline">'
+    for idx, match in enumerate(matches):
+        phase = match.group(1)
+        start = match.end()
+        end = matches[idx + 1].start() if idx + 1 < len(matches) else len(body)
+        segment = body[start:end].strip()
+
+        details = []
+        for raw_line in segment.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            if line.startswith('-'):
+                line = line[1:].strip()
+            m = re.match(r'^\*\*(.+?)\*\*[：:]\s*(.+)$', line)
+            if m:
+                details.append((m.group(1).strip(), m.group(2).strip()))
+            else:
+                details.append(("记录", line))
+
+        html += f'<article class="node-note-card"><div class="node-phase">{md_inline_to_html(phase)}</div>'
+        if details:
+            for label, copy in details:
+                html += (
+                    '<div class="node-detail">'
+                    f'<div class="node-label">{md_inline_to_html(label)}</div>'
+                    f'<div class="node-copy">{md_inline_to_html(copy)}</div>'
+                    '</div>'
+                )
+        else:
+            html += '<div class="node-detail"><div class="node-label">记录</div><div class="node-copy">—</div></div>'
+        html += '</article>'
+    html += '</div>'
+    return html
+
+
+def html_lesson_cards(text):
+    """Render §二 心得与教训 as type-coded cards."""
+    item_re = re.compile(
+        r'^\d+\.\s+\*\*\[(?P<kind>[^\]]+)\]\s*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)',
+        re.MULTILINE | re.DOTALL,
+    )
+    items = list(item_re.finditer(text))
+    if not items:
+        return f'<div class="si">{md_text_to_html(text.strip())}</div>'
+
+    class_by_kind = {"认知": "cognition", "教训": "warning", "议题": "topic"}
+    html = '<div class="lesson-grid">'
+    for item in items:
+        kind = item.group("kind").strip()
+        title = item.group("title").strip()
+        body = item.group("body").strip()
+        css = class_by_kind.get(kind, "topic")
+        html += (
+            f'<article class="lesson-card {css}">'
+            f'<div class="lesson-tag">{md_inline_to_html(kind)}</div>'
+            f'<h4>{md_inline_to_html(title)}</h4>'
+            f'<div class="lesson-body">{md_text_to_html(body)}</div>'
+            '</article>'
+        )
+    html += '</div>'
+    return html
+
+
 def md_text_with_tables_to_html(text):
     """Convert markdown text while preserving table position."""
     chunks = []
@@ -659,29 +754,7 @@ def parse_s1(text):
 
         elif heading_has(h, '节点说明'):
             html += html_subheading("🔍 节点说明", "s1c")
-            html += '<div class="node-grid">'
-            node_names = ['竞价', '早盘', '午盘']
-            for idx, node_name in enumerate(node_names):
-                # Extract between this node and the next node (or end)
-                parts = body.split(f'**{node_name}**')
-                if len(parts) < 2:
-                    continue
-                after = parts[1]
-                if idx + 1 < len(node_names):
-                    next_marker = f'**{node_names[idx+1]}**'
-                    next_pos = after.find(next_marker)
-                    if next_pos != -1:
-                        node_text = after[:next_pos]
-                    else:
-                        node_text = after[:800]
-                else:
-                    node_text = after[:800]
-                if node_text:
-                    node_text = node_text.strip().lstrip('\n- 说明：').lstrip('\n- 结论：').lstrip('\n说明：').lstrip('\n结论：')
-                    lines = node_text.strip().split('\n')
-                    body_text = '<br>'.join(l.strip() for l in lines)
-                    html += f'<div class="node-card"><div class="nhead">{node_name}</div><div class="nbody">{md_text_to_html(body_text)}</div></div>'
-            html += '</div>'
+            html += html_node_notes(body)
 
         elif heading_has(h, '涨停结构'):
             if tables:
@@ -756,13 +829,7 @@ def parse_s1(text):
 def parse_s2(text):
     """Parse §二 心得与教训."""
     html = html_section_header("s2", "§二 · 心得与教训", "")
-    items = re.findall(r'\d+\.\s+\*\*\[.+?\].+?(?=\n\d+\.\s+\*\*\[|$)', text, re.DOTALL)
-    if not items:
-        items = [text.strip()]
-    html += '<ol class="tight-list">'
-    for item in items:
-        html += f'<li>{md_text_to_html(item.strip())}</li>'
-    html += '</ol>'
+    html += html_lesson_cards(text)
     html += html_section_footer()
     return html
 

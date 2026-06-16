@@ -99,6 +99,46 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("&lt;30%(W1追涨)/&lt;40%(W2冰点)", table2)
         self.assertNotIn("<th>指标</th>", table2)
 
+    def test_parse_s1_renders_all_node_notes_as_cards(self):
+        markdown = """### 节点说明
+
+**竞价**：
+- **说明**：低开分歧，创业板偏强。
+- **结论**：观察板块承接。
+**尾盘**(~14:30)：
+- **说明**：电子化学品持续走强。
+**收盘**(~15:00)：
+- **结论**：分歧日 V 型反转确认。
+"""
+
+        html = convert_review.parse_s1(markdown)
+
+        self.assertIn('class="node-timeline"', html)
+        self.assertIn("node-note-card", html)
+        self.assertIn("竞价", html)
+        self.assertIn("尾盘", html)
+        self.assertIn("收盘", html)
+        self.assertIn("电子化学品持续走强", html)
+        self.assertEqual(html.count('class="node-note-card"'), 3)
+        self.assertNotIn("<strong>尾盘</strong>(~14:30)：", html)
+
+    def test_parse_s2_renders_lesson_cards(self):
+        markdown = """> 最多 8 条。
+
+1. **[认知] 分歧日=趋势买点** — 回踩买才是正确出手方式。
+
+2. **[教训] 出手之前停3秒** — 自选池、窗口、量能三问必须前置。
+"""
+
+        html = convert_review.parse_s2(markdown)
+
+        self.assertIn('class="lesson-grid"', html)
+        self.assertIn('class="lesson-card cognition"', html)
+        self.assertIn('class="lesson-card warning"', html)
+        self.assertIn("分歧日=趋势买点", html)
+        self.assertIn("自选池、窗口、量能三问", html)
+        self.assertNotIn("<ol class=\"tight-list\">", html)
+
 
 if __name__ == "__main__":
     unittest.main()
