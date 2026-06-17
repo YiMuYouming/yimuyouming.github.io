@@ -439,8 +439,20 @@ def html_subheading(text, id_=None):
     return f'<div class="sh3"{id_attr}>{text}</div>'
 
 
+REVIEW_PLACEHOLDER_RE = re.compile(r'\[待弈沐补充(?:盘感)?\]')
+
+
+def strip_review_placeholders(text):
+    """Remove source-note placeholders that should not appear in portal pages."""
+    value = REVIEW_PLACEHOLDER_RE.sub('', str(text or ''))
+    value = re.sub(r'[（(]待弈沐裁决[）)]', '', value)
+    value = value.replace('待定', '尚未确认')
+    return value.strip()
+
+
 def md_text_to_html(text):
     """Convert markdown text block to HTML, preserving paragraphs/lists/quotes."""
+    text = strip_review_placeholders(text)
     if not text:
         return ""
     lines = text.strip().split('\n')
@@ -514,6 +526,9 @@ def md_text_to_html(text):
         if in_list:
             out.append('</ol>')
             in_list = False
+        if re.match(r'^\*\*[^*]+\*\*[：:]$', line):
+            i += 1
+            continue
         para = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', line)
         para = re.sub(r'`([^`]+)`', r'<code>\1</code>', para)
         out.append(f'<div class="para">{para}</div>')
@@ -529,7 +544,7 @@ def md_text_to_html(text):
 
 def md_inline_to_html(text):
     """Render a short markdown-ish phrase safely inside custom cards."""
-    value = html_escape(str(text or "").strip(), quote=False)
+    value = html_escape(strip_review_placeholders(text), quote=False)
     value = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', value)
     return value
 
@@ -547,6 +562,8 @@ def html_node_notes(body):
         start = match.end()
         end = matches[idx + 1].start() if idx + 1 < len(matches) else len(body)
         segment = body[start:end].strip()
+        if not segment:
+            continue
 
         details = []
         for raw_line in segment.splitlines():
