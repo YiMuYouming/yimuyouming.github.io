@@ -139,14 +139,13 @@ a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
           <div class="pnl-kpi-card"><div class="pnl-kpi-lbl">相对指数</div><div class="pnl-kpi-val" id="pnl_alpha">—</div><div class="pnl-kpi-sub" id="pnl_alpha_sub">—</div></div>
           <div class="pnl-kpi-card"><div class="pnl-kpi-lbl">历史最大回撤</div><div class="pnl-kpi-val" id="pnl_maxdd">—</div><div class="pnl-kpi-sub" id="pnl_maxdd_sub">—</div></div>
         </div>
-        <div class="kpi-ribbon"><span>今日状态</span><em>盘中 / 收盘快照</em></div>
+        <div class="kpi-ribbon"><span>周期状态</span><em>随曲线周期联动</em></div>
         <div class="pnl-kpi secondary">
-          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl">今日指数参考</div><div class="pnl-kpi-val" id="pnl_bm_twr">—</div><div class="pnl-kpi-sub" id="pnl_bm_twr_sub">—</div></div>
-          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl">今日浮动盈亏</div><div class="pnl-kpi-val" id="pnl_pnl">—</div><div class="pnl-kpi-sub" id="pnl_pnl_sub">—</div></div>
-          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl">今日仓位</div><div class="pnl-kpi-val" id="pnl_pos">—</div><div class="pnl-kpi-sub" id="pnl_pos_sub">—</div></div>
+          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl" id="pnl_pnl_label">今日收益</div><div class="pnl-kpi-val" id="pnl_pnl">—</div><div class="pnl-kpi-sub" id="pnl_pnl_sub">—</div></div>
+          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl" id="pnl_pos_label">今日仓位</div><div class="pnl-kpi-val" id="pnl_pos">—</div><div class="pnl-kpi-sub" id="pnl_pos_sub">—</div></div>
           <div class="pnl-kpi-card"><div class="pnl-kpi-lbl" id="pnl_period_label">今日 TWR</div><div class="pnl-kpi-val" id="pnl_period_val">—</div><div class="pnl-kpi-sub" id="pnl_period_val_sub">—</div></div>
+          <div class="pnl-kpi-card"><div class="pnl-kpi-lbl" id="pnl_today_alpha_label">今日相对指数</div><div class="pnl-kpi-val" id="pnl_today_alpha">—</div><div class="pnl-kpi-sub" id="pnl_today_alpha_sub">—</div></div>
           <div class="pnl-kpi-card"><div class="pnl-kpi-lbl" id="pnl_dd_label">今日回撤</div><div class="pnl-kpi-val" id="pnl_dd_val">—</div><div class="pnl-kpi-sub" id="pnl_dd_val_sub">—</div></div>
-          <span id="pnl_today_alpha" style="display:none"></span><span id="pnl_today_alpha_sub" style="display:none"></span>
         </div>
         <div class="pnl-ctrl">
           <span class="pnl-ctrl-label">对比</span>
@@ -425,6 +424,35 @@ a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
     return worst.dd < 0 ? worst : null;
   }
 
+  function calendarPeriodMetrics(period, idx) {
+    var all = allDaily();
+    if (!all || !all.dates || !all.dates.length) return null;
+    var now = new Date();
+    var sinceMap = {
+      today: now.toISOString().slice(0, 10),
+      week: (function () { var d0 = new Date(now); d0.setDate(d0.getDate() - ((d0.getDay() || 7) - 1)); return d0.toISOString().slice(0, 10); })(),
+      month: now.toISOString().slice(0, 7) + '-01',
+      quarter: new Date(now.getFullYear(), now.getMonth() - 3, 1).toISOString().slice(0, 10),
+      year: now.getFullYear() + '-01-01',
+      all: all.dates[0],
+    };
+    var since = sinceMap[period] || all.dates[0];
+    var rawP = [], rawB = [];
+    for (var i = 0; i < all.dates.length; i++) {
+      if (all.dates[i] >= since) {
+        rawP.push(all.portfolio[i] || 0);
+        rawB.push(all.benchmark[i] || 0);
+      }
+    }
+    if (!rawP.length) return null;
+    var cumP = twrChain(rawP), cumB = twrChain(rawB);
+    return {
+      twr: cumP.length ? cumP[cumP.length - 1] : 0,
+      bm: cumB.length ? cumB[cumB.length - 1] : 0,
+      dd: calcDD(cumP),
+    };
+  }
+
   // ═══════════════ KPI Update ═══════════════
   function updateKPIs() {
     var d = cd();
@@ -448,31 +476,44 @@ a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent2)}
     setKPI('pnl_alpha', fmt(allTWR - allBM), (allTWR - allBM) >= 0, 'TWR − 指数参考');
     setKPI('pnl_maxdd', (allDD ? allDD.dd.toFixed(2) : '0.00') + '%', false, '历史最大');
 
-    // ── Row 2: today snapshot ──
-    var today = (PNL_DATA || {})['today_' + S.idx] || d;
-    var p = today.portfolio || [];
-    var b = today.benchmark || [];
-    var pos = today.position || [];
-    var lastP = p.length ? p[p.length - 1] : 0;
-    var lastB = b.length ? b[b.length - 1] : 0;
-    var lastPos = pos.length ? pos[pos.length - 1] : 0;
-
-    setKPI('pnl_bm_twr', fmt(lastB), lastB >= 0, MET[S.idx] + '今日');
-    setKPI('pnl_pnl', fmt(lastP), lastP >= 0, '今日浮动盈亏');
-    $('pnl_pos').textContent = lastPos.toFixed(1) + '%';
-    $('pnl_pos_sub').textContent = '今日仓位';
-
-    $('pnl_period_label').textContent = '今日 TWR';
-    setKPI('pnl_period_val', fmt(lastP), lastP >= 0, '相对指数 ' + fmt(lastP - lastB));
-
-    if ($('pnl_today_alpha')) {
-      setKPI('pnl_today_alpha', fmt(lastP - lastB), (lastP - lastB) >= 0, 'TWR − 指数参考');
+    // ── Row 2: selected period, matching Live Dashboard semantics ──
+    var periodText = PER[S.period] || '今日';
+    var p = d.portfolio || [];
+    var b = d.benchmark || [];
+    var pos = d.position || [];
+    var lastI = p.length - 1;
+    while (lastI >= 0 && p[lastI] == null) lastI--;
+    var lastP = lastI >= 0 ? p[lastI] : 0;
+    var lastB = lastI >= 0 && b[lastI] != null ? b[lastI] : 0;
+    var validPos = [];
+    for (var k = 0; k < pos.length; k++) {
+      if (p[k] != null && pos[k] != null && !isNaN(parseFloat(pos[k]))) validPos.push(parseFloat(pos[k]));
     }
+    var avgPos = validPos.length ? validPos.reduce(function (a, v) { return a + v; }, 0) / validPos.length : null;
+    var lastPos = validPos.length ? validPos[validPos.length - 1] : 0;
+    var posVal = S.period === 'today' ? lastPos : avgPos;
+    var cal = S.period === 'today' ? null : calendarPeriodMetrics(S.period, S.idx);
+    var periodTWR = cal ? cal.twr : lastP;
+    var periodBM = cal ? cal.bm : lastB;
+    var alpha = periodTWR - periodBM;
+    var perDD = cal ? cal.dd : calcDD(p);
 
-    // Today drawdown from intraday cumulative values.
-    var perDD = calcDD(p);
-    $('pnl_dd_label').textContent = '今日回撤';
-    setKPI('pnl_dd_val', (perDD ? perDD.dd.toFixed(2) : '0.00') + '%', false, '今日峰谷');
+    if ($('pnl_pnl_label')) $('pnl_pnl_label').textContent = periodText + '收益';
+    setKPI('pnl_pnl', fmt(lastP), lastP >= 0, periodText + ' TWR');
+
+    if ($('pnl_pos_label')) $('pnl_pos_label').textContent = S.period === 'today' ? '今日仓位' : periodText + '平均仓位';
+    $('pnl_pos').textContent = posVal == null ? '—' : (S.period === 'today' ? posVal.toFixed(1) : posVal.toFixed(0)) + '%';
+    $('pnl_pos').style.color = posVal == null ? '' : (posVal > 80 ? '#DC2626' : posVal > 50 ? '#D97706' : '#059669');
+    $('pnl_pos_sub').textContent = S.period === 'today' ? '今日仓位' : validPos.length + ' 个采样';
+
+    $('pnl_period_label').textContent = periodText + ' TWR';
+    setKPI('pnl_period_val', fmt(periodTWR), periodTWR >= 0, '相对指数 ' + fmt(alpha));
+
+    if ($('pnl_today_alpha_label')) $('pnl_today_alpha_label').textContent = periodText + ' 相对指数';
+    setKPI('pnl_today_alpha', fmt(alpha), alpha >= 0, 'TWR − 指数参考');
+
+    $('pnl_dd_label').textContent = periodText + ' 回撤';
+    setKPI('pnl_dd_val', (perDD ? perDD.dd.toFixed(2) : '0.00') + '%', false, S.period === 'today' ? '今日峰谷' : '—');
   }
 
   function setKPI(id, text, isPos, sub) {
