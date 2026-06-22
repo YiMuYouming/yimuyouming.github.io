@@ -47,6 +47,7 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
 .chip.blue{border-color:var(--blue);color:var(--blue)}
 .chip.purple{border-color:var(--purple);color:var(--purple)}
+@media(max-width:768px){.topbar .meta{width:100%;margin-left:0}.topbar .chip{white-space:normal;overflow-wrap:anywhere}}
 .layout{display:flex}
 .sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
 .sidebar::-webkit-scrollbar{width:4px}

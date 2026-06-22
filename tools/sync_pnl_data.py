@@ -146,6 +146,11 @@ def build_market_html(baseline, live):
 
     zt = live_or_fallback_count("涨停家数")
     dt = live_or_fallback_count("跌停家数")
+    limit_note = (
+        "云端口径"
+        if present(iw.get("涨停家数")) or present(iw.get("跌停家数"))
+        else "涨停 / 跌停"
+    )
     emotion_val = round(up_cnt / (up_cnt + dn_cnt) * 100) if (up_cnt and dn_cnt and up_cnt + dn_cnt > 0) else None
 
     cards = [
@@ -162,7 +167,7 @@ def build_market_html(baseline, live):
         ),
         (
             '<div class="market-card limit">'
-            f'<span>涨跌停</span><strong><b>{zt or "—"}</b><small>/</small><b>{dt or "—"}</b></strong><em>涨停 / 跌停</em></div>'
+            f'<span>涨跌停</span><strong><b>{zt or "—"}</b><small>/</small><b>{dt or "—"}</b></strong><em>{limit_note}</em></div>'
         ),
         (
             '<div class="market-card neutral">'
