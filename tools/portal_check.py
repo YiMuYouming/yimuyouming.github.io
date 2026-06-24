@@ -154,6 +154,12 @@ FALSE_POSITIVE_CONTEXT: list[tuple[re.Pattern, re.Pattern, str]] = [
         re.compile(r"待补充\s+补充规则"),
         "周报规则补充行动项",
     ),
+    # 12. 复盘笔记中的规则状态短语 draft/unverified（非草稿页占位）
+    (
+        re.compile(r"review-notes/"),
+        re.compile(r"draft/unverified"),
+        "review-notes 规则状态短语",
+    ),
 ]
 
 # ── 占位文案白名单配置 ─────────────────────────────────────────────────────

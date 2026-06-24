@@ -122,6 +122,31 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertEqual(html.count('class="node-note-card"'), 3)
         self.assertNotIn("<strong>尾盘</strong>(~14:30)：", html)
 
+    def test_parse_s1_renders_node_notes_without_colon_as_cards(self):
+        markdown = """### 节点说明
+
+**竞价**
+- 说明：低开分歧。
+- 结论：观察承接。
+
+**早盘**
+- 说明：半导体反包。
+- 弈沐操作[TICKET-20260624-688041-0002]：买入海光信息。
+- 持仓：雅克走强。
+
+---
+"""
+
+        html = convert_review.parse_s1(markdown)
+
+        self.assertIn('class="node-timeline"', html)
+        self.assertEqual(html.count('class="node-note-card"'), 2)
+        self.assertIn('class="node-label">说明</div>', html)
+        self.assertIn('class="node-label">操作</div>', html)
+        self.assertIn('class="node-label">持仓</div>', html)
+        self.assertNotIn('class="node-copy">--</div>', html)
+        self.assertNotIn('<div class="para"><strong>竞价</strong></div>', html)
+
     def test_parse_s2_renders_lesson_cards(self):
         markdown = """> 最多 8 条。
 

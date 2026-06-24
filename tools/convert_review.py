@@ -102,13 +102,17 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
 .node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
 .node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
-.node-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 16px}
-.node-note-card{background:linear-gradient(180deg,#fff,var(--bg3));border:1px solid var(--border);border-radius:10px;padding:14px;min-width:0}
-.node-phase{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:800;color:var(--accent);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.node-detail{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid rgba(229,226,222,.7)}
+.node-timeline{position:relative;display:grid;gap:14px;margin:12px 0 18px;padding-left:18px}
+.node-timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,rgba(217,119,6,.55),rgba(217,119,6,.12))}
+.node-note-card{position:relative;background:linear-gradient(180deg,#fff,#FBF8F3);border:1px solid rgba(229,226,222,.95);border-radius:12px;padding:14px 16px;min-width:0;box-shadow:0 10px 26px rgba(45,41,38,.045)}
+.node-note-card::before{content:"";position:absolute;left:-19px;top:20px;width:10px;height:10px;border-radius:999px;background:#D97706;box-shadow:0 0 0 4px #F7F5F3,0 0 0 6px rgba(217,119,6,.18)}
+.node-phase{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:16px;font-weight:900;color:var(--text);margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid rgba(229,226,222,.8)}
+.node-phase span{font-family:'Noto Serif SC',serif}
+.node-phase em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--accent);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.18);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.node-detail{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid rgba(229,226,222,.64)}
 .node-detail:first-of-type{border-top:0}
-.node-label{font-size:12px;font-weight:700;color:var(--text3);line-height:1.5}
-.node-copy{font-size:13px;color:var(--text2);line-height:1.65;word-break:break-word}
+.node-label{font-size:12px;font-weight:900;color:var(--accent);line-height:1.5}
+.node-copy{font-size:13px;color:var(--text2);line-height:1.7;word-break:break-word}
 .node-copy strong{color:var(--text)}
 .lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:10px 0 16px}
 .lesson-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 1px 0 rgba(45,41,38,.03)}
@@ -550,13 +554,63 @@ def md_inline_to_html(text):
     return value
 
 
+def normalize_node_label(label):
+    """Keep long node-note labels compact enough for the left rail."""
+    label = label.strip()
+    aliases = [
+        ('说明', '说明'),
+        ('结论', '结论'),
+        ('持仓', '持仓'),
+        ('账户', '账户'),
+        ('板块', '板块'),
+        ('自选池', '自选池'),
+        ('连板', '连板'),
+        ('弈沐操作', '操作'),
+        ('风险', '风险'),
+        ('午后关注', '关注'),
+        ('明日预案', '预案'),
+    ]
+    for prefix, compact in aliases:
+        if label.startswith(prefix):
+            return compact
+    return label[:8]
+
+
+def split_node_detail(line):
+    """Parse both bold-label and plain-label node-note rows."""
+    line = line.strip()
+    if line.startswith('-'):
+        line = line[1:].strip()
+    m = re.match(r'^(弈沐操作)(\[[^\]]+\])?[：:]\s*(.+)$', line)
+    if m:
+        ticket = f'{m.group(2)} ' if m.group(2) else ''
+        return "操作", f'{ticket}{m.group(3).strip()}'
+    m = re.match(r'^\*\*(.+?)\*\*[：:]\s*(.+)$', line)
+    if m:
+        return normalize_node_label(m.group(1)), m.group(2).strip()
+    m = re.match(r'^([^：:\n]{2,28})[：:]\s*(.+)$', line)
+    if m:
+        return normalize_node_label(m.group(1)), m.group(2).strip()
+    return "记录", line
+
+
 def html_node_notes(body):
     """Render 节点说明 as one readable card per market phase."""
-    marker_re = re.compile(r'^\*\*(竞价|早盘|午盘|尾盘|收盘)(?:\([^)]*\))?\*\*(?:\([^)]*\))?[：:]\s*$', re.MULTILINE)
+    marker_re = re.compile(
+        r'^\*\*(竞价|早盘|午盘|尾盘|收盘)(?:[（(][^）)]*[）)])?\*\*(?:[（(][^）)]*[）)])?[：:]?\s*$',
+        re.MULTILINE,
+    )
     matches = list(marker_re.finditer(body))
     if not matches:
         return f'<div class="si">{md_text_to_html(body.strip())}</div>'
 
+    phase_times = {
+        '竞价': '09:25',
+        '早盘': '10:00',
+        '午盘': '11:30',
+        '尾盘': '14:30',
+        '收盘': '15:00',
+    }
     html = '<div class="node-timeline">'
     for idx, match in enumerate(matches):
         phase = match.group(1)
@@ -571,15 +625,15 @@ def html_node_notes(body):
             line = raw_line.strip()
             if not line:
                 continue
-            if line.startswith('-'):
-                line = line[1:].strip()
-            m = re.match(r'^\*\*(.+?)\*\*[：:]\s*(.+)$', line)
-            if m:
-                details.append((m.group(1).strip(), m.group(2).strip()))
-            else:
-                details.append(("记录", line))
+            if re.fullmatch(r'-{2,}', line):
+                continue
+            details.append(split_node_detail(line))
 
-        html += f'<article class="node-note-card"><div class="node-phase">{md_inline_to_html(phase)}</div>'
+        time_label = phase_times.get(phase, '')
+        html += (
+            f'<article class="node-note-card" data-phase="{md_inline_to_html(phase)}">'
+            f'<div class="node-phase"><span>{md_inline_to_html(phase)}</span><em>{time_label}</em></div>'
+        )
         if details:
             for label, copy in details:
                 html += (
@@ -1198,12 +1252,12 @@ def convert_md_to_html(md_path):
 
 
 def shorten_pos(pos_raw):
-    """Shorten position string for card display: '北华+领益'."""
+    """Shorten position string for card display: '北华+领益+海光'."""
     if not pos_raw or pos_raw == '空仓':
         return '空仓'
     # Extract stock abbreviations
     names = [n for n in re.findall(r'([一-鿿]+)', pos_raw) if n not in ('股', '空仓')]
-    short = '+'.join(n[:2] for n in names[:2])
+    short = '+'.join(n[:2] for n in names[:3])
     return short if short else pos_raw[:10]
 
 
