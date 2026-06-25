@@ -23,36 +23,39 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .hero .stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .hero .stats span{font-size:12px;color:var(--text3);background:var(--bg4);padding:3px 10px;border-radius:8px}
 
-.container{max-width:1100px;margin:0 auto;padding:0 32px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-@media(max-width:720px){.container{grid-template-columns:1fr;padding:0 20px 60px}.hero h1{font-size:22px}.header{padding:12px 16px}}
+.container{max-width:1120px;margin:0 auto;padding:0 32px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;align-items:start}
+@media(max-width:720px){.container{grid-template-columns:1fr;padding:0 20px 60px}.hero h1{font-size:22px}.header{padding:12px 16px;flex-wrap:wrap}.header .sub{width:100%;margin-left:0}}
 
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .15s;display:flex;flex-direction:column;scroll-margin-top:78px}
-.card:hover{border-color:var(--accent);box-shadow:0 2px 16px rgba(217,119,6,.08)}
-.card-header{padding:16px 18px 0;display:flex;align-items:flex-start;gap:10px}
+.card{position:relative;background:linear-gradient(180deg,#fff,#FCFAF7);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .15s;display:flex;flex-direction:column;scroll-margin-top:78px;box-shadow:0 12px 30px rgba(45,41,38,.045)}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--accent),rgba(217,119,6,0))}
+.card:hover{border-color:rgba(217,119,6,.42);box-shadow:0 18px 42px rgba(45,41,38,.08)}
+.card-header{padding:18px 18px 0;display:flex;align-items:flex-start;gap:10px}
 .card-icon{font-size:22px;flex-shrink:0;margin-top:1px}
 .card-title{font-size:16px;font-weight:700;color:var(--text)}
 .card-subtitle{font-size:11px;color:var(--text3);margin-top:1px}
 
-.card-core{margin:10px 18px 0;padding:10px 14px;background:var(--bg4);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.6}
+.card-core{position:relative;margin:12px 18px 0;padding:24px 14px 12px;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.18);border-left:4px solid var(--accent);border-radius:0 9px 9px 0;font-size:13px;font-weight:700;color:var(--text);line-height:1.65}
+.card-core::before{content:"主题原则";position:absolute;left:14px;top:7px;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--accent)}
 
-.card-tags{padding:8px 18px;display:flex;gap:5px;flex-wrap:wrap}
-.tag{padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--bg4);color:var(--text3)}
+.card-tags{padding:10px 18px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:var(--bg4);color:var(--text3);border:1px solid var(--border-light)}
 
-.card-body{padding:0 18px 4px;flex:1}
-.insight-item{border-top:1px solid var(--border-light);padding:8px 0}
-.insight-item:first-child{border-top:none}
-.insight-summary{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
-.insight-summary .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.card-body{padding:0 18px 8px;flex:1;display:grid;gap:8px}
+.insight-item{border:1px solid var(--border-light);border-radius:10px;background:rgba(255,255,255,.78);padding:0;overflow:hidden}
+.insight-summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:9px;cursor:pointer;user-select:none;padding:10px 11px}
+.insight-summary .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 4px rgba(217,119,6,.07)}
 .dot.red{background:var(--red)}.dot.green{background:var(--green)}.dot.blue{background:var(--blue)}.dot.purple{background:var(--purple)}.dot.amber{background:var(--accent)}
-.insight-text{font-size:12px;color:var(--text);line-height:1.6;flex:1}
-.insight-text strong{color:var(--accent)}
-.insight-detail{display:none;margin-top:6px;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.7}
+.insight-text{font-size:12px;color:var(--text);line-height:1.6;min-width:0}
+.insight-text::before{content:"原则";display:block;font-size:9px;font-weight:800;letter-spacing:.12em;color:var(--text3);line-height:1.2;margin-bottom:2px}
+.insight-text strong{color:var(--accent);font-size:13px}
+.insight-detail{display:none;margin:0;padding:24px 12px 10px;background:var(--bg3);border-top:1px solid var(--border-light);font-size:11px;color:var(--text2);line-height:1.75;position:relative}
+.insight-detail::before{content:"证据与边界";position:absolute;left:12px;top:7px;font-size:9px;font-weight:800;letter-spacing:.12em;color:var(--accent)}
 .insight-detail.show{display:block}
 .insight-toggle{font-size:10px;color:var(--text3);flex-shrink:0;transition:transform .15s}
 .insight-toggle.open{transform:rotate(180deg)}
 
-.card-footer{padding:6px 18px 14px;margin-top:auto}
-.count-badge{display:inline-block;padding:1px 8px;border-radius:5px;font-size:10px;font-weight:600;background:var(--bg4);color:var(--text3)}
+.card-footer{padding:8px 18px 16px;margin-top:auto}
+.count-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;background:rgba(217,119,6,.08);color:var(--accent);border:1px solid rgba(217,119,6,.16)}
 
 .footer{border-top:1px solid var(--border);padding:20px 32px;text-align:center;font-size:12px;color:var(--text3)}
 </style>
@@ -62,14 +65,14 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <div class="header">
   <a id="back-home" href="../index.html#research">← 平台</a>
   <div class="brand"><span>弈沐资本</span> · 交易认知</div>
-  <span class="sub">8 个主题</span>
+  <span class="sub">9 个主题</span>
 </div>
 
 <div class="hero">
   <h1>交易认知</h1>
   <p>从实战中提纯的认知片段。每条都改变了看市场的方式。<br>不写操作、不写仓位、不写具体股票。</p>
   <div class="stats">
-    <span>8 个主题</span><span>7 已验证</span><span>1 部分验证</span><span>持续积累</span>
+    <span>9 个主题</span><span>7 已验证</span><span>1 含待验证</span><span>1 部分验证</span>
   </div>
 </div>
 
@@ -111,8 +114,9 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot purple"></span><span class="insight-text"><strong>天量结构分化</strong>：大成交不等于全面牛市</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/18成交3.31万亿，但资金流向高度分化：半导体、AI、CPO强流入，银行、电力、保险大流出。天量日先做板块资金切片，不能直接按指数热闹程度判断全面进攻。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>主力净流入不是强弱指标</strong>：强弱回到量价本身</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/23复盘确认，主力净流入是对大单成交的二次加工，不是真实买入记录。判断强弱要回到竞价量、涨幅、量比、换手和K线位置，避免被单一资金字段误导。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>逆外围买入</strong>：独立逻辑比外围联动更强</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/24费城半导体隔夜-8%，A股半导体却从竞价低开修复到收盘+3.80%、主力+313亿。资金逆外围买入，说明国内半导体逻辑强于外围联动，方向强弱要看本土资金确认。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>缩量突破续涨</strong>：放量突破后缩量涨才是惜售</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/25药明康德前日放巨量突破，次日缩量约三成仍能上涨，说明突破资金没有出货、卖盘稀少。放量突破后的缩量续涨和涨停次日放量分歧不是同一类信号。</div></div>
   </div>
-  <div class="card-footer"><span class="count-badge">30 条认知 · 已验证</span></div>
+  <div class="card-footer"><span class="count-badge">31 条认知 · 已验证</span></div>
 </div>
 <div class="card" id="sentiment-cycle">
   <div class="card-header"><div class="card-icon">🔥</div><div><div class="card-title">情绪与周期</div><div class="card-subtitle">情绪是温度计，不是方向盘</div></div></div>
@@ -161,8 +165,9 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>买入等 10 分钟</strong>：竞价确认关注，不确认买点</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/23复盘把买卖节奏拆开：竞价只说明方向有资金关注，买入要等开盘10分钟看分时承接，不破均线、不创新低再动手；怕踏空不能替代买点确认。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>方向对了 ≠ 选票对了</strong>：细分位置要正宗</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/23巨化案例说明，液冷方向判断对，不等于材料端就是最正宗标的。和6/22合锻对比中钨、翔鹭同类，选股要落到细分位置、产业链角色和资金偏好的匹配度。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>缩量反包</strong>：趋势股最优买入信号</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/24雅克昨日缩量回踩，今日缩量涨停且成交量低于昨日，说明卖盘已在分歧日出清。趋势股里缩量反包优于放量反包，前者是空头投降，后者仍是多空拉扯。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>新方向先看板块</strong>：单票好看不能直接下单</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/25药明和中信建仓暴露了同一问题：个股形态好看不等于方向成立。新方向建仓前必须先验证板块指数、板块资金和中军表现，再落到个股。</div></div>
     </div>
-  <div class="card-footer"><span class="count-badge">17 条认知 · 已验证</span></div>
+  <div class="card-footer"><span class="count-badge">18 条认知 · 已验证</span></div>
 </div>
 
 <!-- 建仓节奏 -->
@@ -175,8 +180,9 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>追涨唯一正确条件</strong>：已有底仓+浮盈安全垫</span><span class="insight-toggle">▼</span></div><div class="insight-detail">追已有持仓不是追别人的热点。已有底仓意味着已经在车上，浮盈安全垫意味着加仓后成本仍可控；裸开新仓追涨仍然要避免。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>强势股浅回踩</strong>：60m MA10 也可确认</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/17 合锻和新宙邦都没有精确踩到日线 MA5 就反弹。强势股有资金支撑时，浅回踩看 60 分钟 MA10 或分时企稳，不能死等日线 MA5。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>底部反弹首次回踩</strong>：优于高位连阳追高</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/18拓维从底部反弹、涨停后回踩MA10/MA5再确认，结构比高位连续加速票更适合新仓。高位连阳更偏持仓管理和锁利，不适合裸追。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>加速段不追高</strong>：用移动止盈替代加仓冲动</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/25海光连续两天大阳进入加速段，正确动作不是再追，而是设移动止盈：看MA5、放量滞涨和长上影。加速段赚持仓的钱，不赚追高的钱。</div></div>
   </div>
-  <div class="card-footer"><span class="count-badge">4 条认知 · 已验证</span></div>
+  <div class="card-footer"><span class="count-badge">5 条认知 · 已验证</span></div>
 </div>
 
 <!-- 窗口节奏与W2 -->
@@ -264,8 +270,10 @@ body{font:15px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>不放量不走，放量走弱就走</strong>：卖出纪律看量价配合</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/22合锻低开放量后清仓，卖后继续跌；拓维竞价不符预期直接退出；雅克早盘冲高回落但缩量，继续持有到尾盘涨停。三笔操作统一验证：卖出不看单点涨跌，先看是否放量破坏原逻辑。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot amber"></span><span class="insight-text"><strong>减仓先清缓跌放量</strong>：急跌可等反弹</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/23横店急跌后反弹，北方缓跌放量后继续走低。多持仓需要减仓时，先处理缓跌放量的大资金出货票；急跌是恐慌盘集中释放，可以等反弹再处理。</div></div>
     <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot blue"></span><span class="insight-text"><strong>趋势股卖出</strong>：不能套连板封板规则</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/24雅克盘中涨7%但未封板时，不应按连板股规则纠结是否卖出。趋势角色卖出看放量滞涨、中军分化、5日线转平等T6.3信号，不能把封不封板当趋势股卖点。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot green"></span><span class="insight-text"><strong>涨停次日分批锁利</strong>：高开放量分歧不赌方向</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/25雅克涨停次日竞价+6.33%，开盘后放量从184回落到177附近。获利盘兑现时最优解不是一把砸或贪心不卖，而是按分歧节奏分批锁利。</div></div>
+    <div class="insight-item"><div class="insight-summary" onclick="this.querySelector('.insight-toggle').classList.toggle('open');this.nextElementSibling.classList.toggle('show')"><span class="dot red"></span><span class="insight-text"><strong>旧仓卖出要果断</strong>：转弱信号出现不等回拉</span><span class="insight-toggle">▼</span></div><div class="insight-detail">6/25巨化早盘小涨后转跌，叠加板块资金流出和无反弹承接，卖出信号已经出现。犹豫等回拉，本质是卖飞恐惧；趋势股触发卖出条件后应和买入一样果断。</div></div>
   </div>
-  <div class="card-footer"><span class="count-badge">14 条认知 · 已验证</span></div>
+  <div class="card-footer"><span class="count-badge">16 条认知 · 已验证</span></div>
 </div>
 
 </div>

@@ -114,15 +114,24 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .node-label{font-size:12px;font-weight:900;color:var(--accent);line-height:1.5}
 .node-copy{font-size:13px;color:var(--text2);line-height:1.7;word-break:break-word}
 .node-copy strong{color:var(--text)}
-.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:10px 0 16px}
-.lesson-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:0 1px 0 rgba(45,41,38,.03)}
-.lesson-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:8px}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:12px 0 18px}
+.lesson-card{position:relative;background:linear-gradient(180deg,#fff,#FCFAF7);border:1px solid rgba(229,226,222,.96);border-radius:12px;padding:15px 15px 14px;box-shadow:0 12px 28px rgba(45,41,38,.045);overflow:hidden}
+.lesson-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.lesson-card.warning::before{background:var(--red)}
+.lesson-card.topic::before{background:var(--purple)}
+.lesson-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.lesson-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:900}
 .lesson-card.cognition .lesson-tag{background:rgba(37,99,235,.08);color:var(--blue)}
 .lesson-card.warning .lesson-tag{background:rgba(220,38,38,.08);color:var(--red)}
 .lesson-card.topic .lesson-tag{background:rgba(124,58,237,.08);color:var(--purple)}
-.lesson-card h4{font-size:15px;line-height:1.45;margin-bottom:8px;color:var(--text)}
-.lesson-body{font-size:13px;line-height:1.7;color:var(--text2)}
-.lesson-body .para{font-size:13px;margin-bottom:0}
+.lesson-type{font-size:11px;font-weight:900;color:var(--text3);letter-spacing:.08em;white-space:nowrap}
+.lesson-principle{font-family:'Noto Serif SC',serif;font-size:17px;line-height:1.45;font-weight:800;color:var(--text);margin-bottom:11px;word-break:break-word}
+.lesson-label{font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;margin-bottom:5px}
+.lesson-evidence{background:rgba(245,242,238,.72);border:1px solid rgba(229,226,222,.82);border-radius:9px;padding:10px 11px;font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:10px}
+.lesson-evidence .para{font-size:13px;margin-bottom:0;color:var(--text2)}
+.lesson-action{position:relative;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.18);border-radius:9px;padding:9px 11px 9px 32px;font-size:13px;line-height:1.6;color:var(--text)}
+.lesson-action::before{content:"→";position:absolute;left:12px;top:9px;color:var(--accent);font-weight:900}
+@media(max-width:520px){.lesson-grid{grid-template-columns:1fr}.lesson-head{align-items:flex-start}.lesson-type{white-space:normal;text-align:right}.lesson-principle{font-size:16px}}
 .warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
 .warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
 [id]{scroll-margin-top:70px}
@@ -657,24 +666,90 @@ def html_lesson_cards(text):
     )
     items = list(item_re.finditer(text))
     if not items:
+        untagged = list(re.finditer(
+            r'^(?:\d+\.\s+\*\*(?P<title_a>.+?)\*\*|\*\*\d+\.\s+(?P<title_b>.+?)\*\*)\s*\n+(?P<body>.*?)(?=^(?:\d+\.\s+\*\*|\*\*\d+\.)|^#{2,5}\s+|\Z)',
+            text,
+            re.MULTILINE | re.DOTALL,
+        ))
+        if untagged:
+            before = text[:untagged[0].start()].strip()
+            after = text[untagged[-1].end():].strip()
+            html = ""
+            if before:
+                html += f'<div class="si">{md_text_to_html(before)}</div>'
+            html += render_lesson_card_grid([
+                {
+                    "kind": "认知",
+                    "title": (item.group("title_a") or item.group("title_b")).strip(),
+                    "body": item.group("body").strip(),
+                }
+                for item in untagged
+            ])
+            if after:
+                html += f'<div class="si">{md_text_to_html(after)}</div>'
+            return html
         return f'<div class="si">{md_text_to_html(text.strip())}</div>'
 
+    return render_lesson_card_grid([
+        {
+            "kind": item.group("kind").strip(),
+            "title": item.group("title").strip(),
+            "body": item.group("body").strip(),
+        }
+        for item in items
+    ])
+
+
+def render_lesson_card_grid(items):
     class_by_kind = {"认知": "cognition", "教训": "warning", "议题": "topic"}
+    type_by_kind = {"认知": "今日提炼", "教训": "风险校正", "议题": "待验证问题"}
     html = '<div class="lesson-grid">'
     for item in items:
-        kind = item.group("kind").strip()
-        title = item.group("title").strip()
-        body = item.group("body").strip()
+        kind = item["kind"]
+        title = item["title"]
+        body = item["body"]
         css = class_by_kind.get(kind, "topic")
+        action = infer_lesson_action(kind, title, body)
         html += (
             f'<article class="lesson-card {css}">'
+            '<div class="lesson-head">'
             f'<div class="lesson-tag">{md_inline_to_html(kind)}</div>'
-            f'<h4>{md_inline_to_html(title)}</h4>'
-            f'<div class="lesson-body">{md_text_to_html(body)}</div>'
+            f'<div class="lesson-type">{type_by_kind.get(kind, "认知提炼")}</div>'
+            '</div>'
+            f'<div class="lesson-label">可复用原则</div>'
+            f'<div class="lesson-principle">{md_inline_to_html(title)}</div>'
+            f'<div class="lesson-label">当日证据</div>'
+            f'<div class="lesson-evidence">{md_text_to_html(body)}</div>'
+            f'<div class="lesson-label">下次动作</div>'
+            f'<div class="lesson-action">{md_inline_to_html(action)}</div>'
             '</article>'
         )
     html += '</div>'
     return html
+
+
+def infer_lesson_action(kind, title, body):
+    """Convert a daily lesson into a conservative next-action prompt."""
+    source = f"{title} {body}"
+    if kind == "议题":
+        return "保留为观察问题，次日用板块、中军和资金数据重新验证。"
+    if kind == "教训":
+        return "下次出手前先停顿复核预案、窗口、量能和失效点，缺一项就降级处理。"
+    if re.search(r"加速|追高|超买|高潮", title):
+        return "加速段只做持仓管理，不把情绪高潮当新增买点。"
+    if re.search(r"缩量|突破|量价|承接|回踩", title):
+        return "把量价确认和承接作为前置条件，次日继续验证是否延续。"
+    if re.search(r"建仓|买点|开仓|选股|板块|个股", title):
+        return "开仓前先确认板块强度、对标标的、买点窗口和失效点，再定个股。"
+    if re.search(r"卖|清仓|止盈|锁利|减仓|涨停次日|不赌|转弱", source):
+        return "触发高开放量、转弱或分歧信号时，先分批锁利或降风险，再看承接。"
+    if re.search(r"建仓|买点|开仓|选股|板块|方向|个股", source):
+        return "开仓前先确认板块强度、对标标的、买点窗口和失效点，再定个股。"
+    if re.search(r"缩量|突破|量价|承接|回踩", source):
+        return "把量价确认和承接作为前置条件，次日继续验证是否延续。"
+    if re.search(r"犹豫|执行|纪律|理由", source):
+        return "信号触发后按预案执行，复盘只评估规则质量，不倒果为因。"
+    return "下次交易前把这条转成检查项，先验信号，再决定动作。"
 
 
 def md_text_with_tables_to_html(text):
@@ -1332,6 +1407,7 @@ def update_review_notes_index(date_str, fm):
     total_days = len(re.findall(r'<a href="\d{4}-\d{2}-\d{2}\.html" class="day-card"', content))
     content = re.sub(r'(全部记录 · )(\d+)(篇)', rf'\g<1>{total_days}\3', content, count=1)
     content = re.sub(r'(<strong>)(\d+)(</strong> 个交易日)', rf'\g<1>{total_days}\3', content, count=1)
+    content = re.sub(r'(交易复盘系统 · )\d+(个交易日)', rf'\g<1>{total_days}\2', content, count=1)
 
     day_label = date_str[8:10].lstrip('0')
     content = re.sub(

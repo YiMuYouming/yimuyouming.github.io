@@ -1,5 +1,6 @@
 import unittest
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -7,6 +8,47 @@ import convert_review
 
 
 class ConvertReviewTest(unittest.TestCase):
+    def test_update_review_notes_index_refreshes_footer_day_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            original_review_notes = convert_review.REVIEW_NOTES
+            convert_review.REVIEW_NOTES = Path(tmp)
+            try:
+                idx = convert_review.REVIEW_NOTES / "index.html"
+                idx.write_text(
+                    """<html><body>
+<span class="sub">全部记录 · 1篇</span>
+<span><strong>1</strong> 个交易日</span>
+<!-- 2026年6月 -->
+<div class="month-group">
+  <div class="month-label"><span class="cnt">1篇 · 进行中</span></div>
+  <div class="day-list">
+    <a href="2026-06-02.html" class="day-card"><div class="dt">2</div></a>
+  </div>
+</div>
+<div class="footer">弈沐资本 · 交易复盘系统 · 1个交易日 · 3/23 至今</div>
+</body></html>""",
+                    encoding="utf-8",
+                )
+
+                convert_review.update_review_notes_index(
+                    "2026-06-03",
+                    {
+                        "weekday": "周三",
+                        "上证涨幅": "+0.22",
+                        "涨停家数": "51",
+                        "情绪值": "32.4",
+                        "赚钱效应": "差",
+                        "盘后持仓": "光迅科技 100@200",
+                    },
+                )
+
+                html = idx.read_text(encoding="utf-8")
+                self.assertIn("全部记录 · 2篇", html)
+                self.assertIn("<strong>2</strong> 个交易日", html)
+                self.assertIn("2个交易日 · 3/23 至今", html)
+            finally:
+                convert_review.REVIEW_NOTES = original_review_notes
+
     def test_parse_s0_keeps_tables_with_their_headings(self):
         markdown = """> 来源：昨日预案
 
@@ -162,7 +204,41 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn('class="lesson-card warning"', html)
         self.assertIn("分歧日=趋势买点", html)
         self.assertIn("自选池、窗口、量能三问", html)
+        self.assertIn('class="lesson-principle"', html)
+        self.assertIn('class="lesson-evidence"', html)
+        self.assertIn('class="lesson-action"', html)
+        self.assertIn("可复用原则", html)
+        self.assertIn("当日证据", html)
+        self.assertIn("下次动作", html)
         self.assertNotIn("<ol class=\"tight-list\">", html)
+
+    def test_parse_s2_renders_today_cognition_numbered_bold_as_cards(self):
+        markdown = """最多 5 条。
+
+### 今日认知
+
+**1. 涨停次日高开放量分歧 = 分批锁利，不赌方向**
+
+雅克昨日涨停，今日高开后放量回落，正确做法是分批减仓而不是一次性清仓。
+
+**2. 新方向建仓必须先看板块再定个股**
+
+建仓理由是单票缩量突破，但没有先确认板块强度、资金流向和中军表现。
+
+### 规则教训
+
+- **W1开仓偏离预案**：今日情绪低迷，新开仓偏离了前日预案。
+"""
+
+        html = convert_review.parse_s2(markdown)
+
+        self.assertEqual(html.count('class="lesson-card cognition"'), 2)
+        self.assertIn("涨停次日高开放量分歧", html)
+        self.assertIn("新方向建仓必须先看板块", html)
+        self.assertIn("触发高开放量", html)
+        self.assertIn("开仓前先确认板块强度", html)
+        self.assertIn("规则教训", html)
+        self.assertNotIn("<ol class=\"tight-list\">", html.split("规则教训", 1)[0])
 
 
 if __name__ == "__main__":
