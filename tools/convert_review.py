@@ -1453,6 +1453,152 @@ def extract_close_ratio(date_str):
     return ratio or "--"
 
 
+def strip_html_tags(value):
+    return re.sub(r"<.*?>", "", value or "").strip()
+
+
+def compact_period_title(title):
+    title = re.sub(r"（.*?）", "", title or "").strip()
+    return title or "阶段复盘"
+
+
+def period_label(start_date, end_date):
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    return f"{start.month}/{start.day}–{end.month}/{end.day}"
+
+
+def compact_period_metric_label(start_date, end_date):
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    if start.month == end.month:
+        return f"{start.month}/{start.day}-{end.day}"
+    return f"{start.month}/{start.day}-{end.month}/{end.day}"
+
+
+def parse_period_review_path(path):
+    m = re.match(r"^(weekly|monthly)-(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})\.html$", path.name)
+    if not m:
+        return None
+    kind, year, start_month, start_day, end_month, end_day = m.groups()
+    end_year = int(year)
+    if int(end_month) < int(start_month):
+        end_year += 1
+    return {
+        "kind": kind,
+        "start": f"{year}-{start_month}-{start_day}",
+        "end": f"{end_year:04d}-{end_month}-{end_day}",
+    }
+
+
+def extract_period_metric(html, labels, fallback="--"):
+    for label in labels:
+        m = re.search(rf"<span>{re.escape(label)}</span>\s*<strong>(.*?)</strong>", html, flags=re.S)
+        if m:
+            return strip_html_tags(m.group(1)) or fallback
+    return fallback
+
+
+def build_period_review_card(path):
+    info = parse_period_review_path(path)
+    if not info:
+        return None
+    html = path.read_text(encoding="utf-8")
+    title_match = re.search(r"<h1[^>]*>(.*?)</h1>", html, flags=re.S) or re.search(r"<title>(.*?)</title>", html, flags=re.S)
+    title = compact_period_title(strip_html_tags(title_match.group(1)) if title_match else "")
+    label = period_label(info["start"], info["end"])
+    metric_label = compact_period_metric_label(info["start"], info["end"])
+    start_id = info["start"].replace("-", "")
+    end_id = info["end"].replace("-", "")
+    kind_label = "周复盘" if info["kind"] == "weekly" else "月复盘"
+    kind_cls = "review-kind-weekly" if info["kind"] == "weekly" else "review-kind-monthly"
+    metric_period = "周期" if info["kind"] == "weekly" else "区间"
+    metric_return = extract_period_metric(html, ["周度收益", "月度收益", "收益"])
+    metric_days = extract_period_metric(html, ["交易日"], "阶段")
+    metric_focus = extract_period_metric(html, ["风控事件", "月末仓位", "周末仓位"], kind_label)
+    card_id = f"recent-review-{info['kind']}-{start_id}-{end_id}"
+    return {
+        "id": card_id,
+        "kind": info["kind"],
+        "date": info["end"],
+        "html": f'''          <a id="{card_id}" href="review-notes/{path.name}?from={card_id}" class="recent-review-card period-review-card {info["kind"]}-review-card">
+            <div class="recent-review-top"><span class="recent-date">{label}</span><span class="review-kind {kind_cls}">{kind_label}</span><span class="review-read">阅读 →</span></div>
+            <div class="recent-review-title">{html_escape(title)}</div>
+            <div class="review-metric-row"><span class="metric-structure"><em>{metric_period}</em><strong>{html_escape(metric_label)}</strong></span><span class="metric-strong"><em>收益</em><strong>{html_escape(metric_return)}</strong></span><span class="metric-warn"><em>交易日</em><strong>{html_escape(metric_days)}</strong></span><span class="metric-risk"><em>重点</em><strong>{html_escape(metric_focus)}</strong></span></div>
+    </a>
+''',
+    }
+
+
+def extract_recent_daily_cards(content):
+    cards = []
+    pattern = re.compile(
+        r'<a id="recent-review-(\d{4})" href="review-notes/(\d{4}-\d{2}-\d{2})\.html\?from=recent-review-\1" class="recent-review-card">.*?</a>',
+        re.S,
+    )
+    for match in pattern.finditer(content):
+        cards.append({
+            "id": f"recent-review-{match.group(1)}",
+            "kind": "daily",
+            "date": match.group(2),
+            "html": match.group(0).strip() + "\n",
+        })
+    return cards
+
+
+def recent_review_grid_bounds(content):
+    start = content.find('<div class="recent-review-grid"')
+    if start < 0:
+        return None
+    inner_start = content.find(">", start)
+    if inner_start < 0:
+        return None
+    inner_start += 1
+    depth = 1
+    for match in re.finditer(r"</?div\b[^>]*>", content[inner_start:], flags=re.I):
+        tag = match.group(0)
+        if tag.startswith("</"):
+            depth -= 1
+        else:
+            depth += 1
+        if depth == 0:
+            return inner_start, inner_start + match.start()
+    return None
+
+
+def rebuild_recent_review_timeline(content, current_date, current_daily_card):
+    cards_by_id = {}
+    for card in extract_recent_daily_cards(content):
+        if card["date"] != current_date:
+            cards_by_id[card["id"]] = card
+    current_card_id = f"recent-review-{current_date[5:7]}{current_date[8:10]}"
+    cards_by_id[current_card_id] = {
+        "id": current_card_id,
+        "kind": "daily",
+        "date": current_date,
+        "html": current_daily_card.strip() + "\n",
+    }
+    for pattern in ("weekly-*.html", "monthly-*.html"):
+        for path in REVIEW_NOTES.glob(pattern):
+            card = build_period_review_card(path)
+            if card:
+                cards_by_id[card["id"]] = card
+
+    kind_priority = {"daily": 3, "weekly": 2, "monthly": 1}
+    cards = sorted(
+        cards_by_id.values(),
+        key=lambda c: (datetime.strptime(c["date"], "%Y-%m-%d"), kind_priority.get(c["kind"], 0)),
+        reverse=True,
+    )[:6]
+
+    bounds = recent_review_grid_bounds(content)
+    if not bounds:
+        return content
+    inner_start, inner_end = bounds
+    timeline_html = "\n" + "".join(card["html"] for card in cards) + "        "
+    return content[:inner_start] + timeline_html + content[inner_end:]
+
+
 def update_main_index(date_str, fm):
     """Update portal/index.html with latest 6 review cards."""
     idx_path = PORTAL / "index.html"
@@ -1581,23 +1727,7 @@ def update_main_index(date_str, fm):
     </a>
 '''
 
-    if existing_entry:
-        card_pattern = rf'<a id="{re.escape(card_id)}" href="review-notes/{re.escape(date_str)}\.html\?from={re.escape(card_id)}" class="recent-review-card">.*?</a>'
-        content, replaced = re.subn(card_pattern, new_entry.rstrip(), content, count=1, flags=re.S)
-        if not replaced:
-            print(f"⚠️  已存在 {date_str}.html，但未找到首页近期复盘卡片，跳过卡片刷新")
-    else:
-        # Insert after the homepage recent-review grid.
-        content = re.sub(r'(<div class="recent-review-grid">\s*)', r'\1' + new_entry, content, count=1)
-
-        # Keep only 6 most recent entries
-        day_rows = list(re.finditer(r'<a id="recent-review-\d{4}" href="review-notes/\d{4}-\d{2}-\d{2}\.html\?from=recent-review-\d{4}" class="recent-review-card">', content))
-        if len(day_rows) > 6:
-            # Remove the last (oldest) entry
-            last = day_rows[-1]
-            # Find the closing </a> for this entry
-            close_pos = content.find('</a>', last.end())
-            content = content[:last.start()] + content[close_pos + 5:]
+    content = rebuild_recent_review_timeline(content, date_str, new_entry)
 
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)

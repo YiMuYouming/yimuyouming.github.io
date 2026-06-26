@@ -49,6 +49,75 @@ class ConvertReviewTest(unittest.TestCase):
             finally:
                 convert_review.REVIEW_NOTES = original_review_notes
 
+    def test_update_main_index_rebuilds_recent_reviews_as_mixed_timeline(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            original_portal = convert_review.PORTAL
+            original_review_notes = convert_review.REVIEW_NOTES
+            tmp_path = Path(tmp)
+            review_notes = tmp_path / "review-notes"
+            review_notes.mkdir()
+            convert_review.PORTAL = tmp_path
+            convert_review.REVIEW_NOTES = review_notes
+            try:
+                (review_notes / "weekly-2026-06-22_06-26.html").write_text(
+                    """<html><head><title>W26 周复盘</title></head><body>
+<h1>W26 周复盘（2026-06-22 至 2026-06-26）</h1>
+<div class="kpi green"><span>周度收益</span><strong>+3.08%</strong></div>
+<div class="kpi"><span>交易日</span><strong>5天</strong></div>
+<div class="kpi red"><span>风控事件</span><strong>DAY_STOP</strong></div>
+</body></html>""",
+                    encoding="utf-8",
+                )
+                (review_notes / "2026-06-26.html").write_text(
+                    """<html><body><table><tr><td>收盘</td><td></td><td></td><td></td><td></td><td>768/4456</td></tr></table></body></html>""",
+                    encoding="utf-8",
+                )
+                existing_cards = "\n".join(
+                    f'''<a id="recent-review-06{day:02d}" href="review-notes/2026-06-{day:02d}.html?from=recent-review-06{day:02d}" class="recent-review-card">
+            <div class="recent-review-top"><span class="recent-date">6月{day}日</span><span class="review-kind">日复盘</span><span class="review-read">阅读 →</span></div>
+            <div class="recent-review-title">旧日复盘 {day}</div>
+            <div class="review-metric-row"></div>
+    </a>'''
+                    for day in [25, 24, 23, 22, 18, 17]
+                )
+                (tmp_path / "index.html").write_text(
+                    f"""<html><body>
+<div class="review-stat"><span>最新复盘</span><strong>6月25日</strong><em>日复盘</em></div>
+<div class="recent-review-grid">
+{existing_cards}
+</div>
+</body></html>""",
+                    encoding="utf-8",
+                )
+
+                convert_review.update_main_index(
+                    "2026-06-26",
+                    {
+                        "weekday": "周五",
+                        "上证涨幅": "-2.26",
+                        "涨停家数": "60",
+                        "跌停家数": "30",
+                        "情绪值": "14.7",
+                        "赚钱效应": "差",
+                        "市场状态": "冰点",
+                    },
+                )
+
+                html = (tmp_path / "index.html").read_text(encoding="utf-8")
+                self.assertIn("recent-review-0626", html)
+                self.assertIn("recent-review-weekly-20260622-20260626", html)
+                self.assertIn("W26 周复盘", html)
+                self.assertIn("周复盘", html)
+                self.assertIn("<strong>6/22-26</strong>", html)
+                self.assertNotIn("<strong>6/22–6/26</strong>", html)
+                self.assertNotIn("recent-review-0618", html)
+                self.assertEqual(html.count('class="recent-review-card'), 6)
+                self.assertLess(html.index("recent-review-0626"), html.index("recent-review-weekly-20260622-20260626"))
+                self.assertLess(html.index("recent-review-weekly-20260622-20260626"), html.index("recent-review-0625"))
+            finally:
+                convert_review.PORTAL = original_portal
+                convert_review.REVIEW_NOTES = original_review_notes
+
     def test_parse_s0_keeps_tables_with_their_headings(self):
         markdown = """> 来源：昨日预案
 
