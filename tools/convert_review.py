@@ -590,6 +590,8 @@ def split_node_detail(line):
     line = line.strip()
     if line.startswith('-'):
         line = line[1:].strip()
+    if re.match(r'^\d+[.)、]\s+', line):
+        return "记录", line
     m = re.match(r'^(弈沐操作)(\[[^\]]+\])?[：:]\s*(.+)$', line)
     if m:
         ticket = f'{m.group(2)} ' if m.group(2) else ''
@@ -1095,15 +1097,16 @@ def parse_s4(text):
 
         # ── Round 3: verdict + table ──
         elif round_id == "Round 3":
-            html += md_text_with_tables_to_html(round_text)
-            # Verdict box
-            for vt_key in ['**终审定论**', '**终稿定论**']:
-                verdict_text = extract_between(round_text, vt_key, '---')
-                if not verdict_text:
-                    verdict_text = extract_between(round_text, vt_key, '\n\n')
-                if verdict_text:
-                    html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text.strip())}</div></div>'
-                    break
+            verdict_text = ""
+            verdict_re = re.compile(r'\*\*(终审定论|终稿定论)\*\*[：:]\s*(.*?)(?:\n\s*\n|$)', re.S)
+            verdict_match = verdict_re.search(round_text)
+            display_text = round_text
+            if verdict_match:
+                verdict_text = verdict_match.group(2).strip()
+                display_text = f"{round_text[:verdict_match.start()]}{round_text[verdict_match.end():]}"
+            html += md_text_with_tables_to_html(display_text)
+            if verdict_text:
+                html += f'<div class="verdict"><div class="vt">终审定论</div><div class="vb">{md_text_to_html(verdict_text)}</div></div>'
 
     html += html_section_footer()
     return html

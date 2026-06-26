@@ -118,6 +118,22 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("光伏盲区", html)
         self.assertIn("红方对抗闭环完成", html)
 
+    def test_parse_s4_renders_terminal_verdict_once(self):
+        markdown = """### Round 3 — 洋米终审（2026-06-26）
+
+| 维度 | 结论 |
+|------|------|
+| 数据口径 | 通过 |
+
+**终稿定论**：蓝方可发布，但 STYLE 分数必须标注估算来源。
+"""
+
+        html = convert_review.parse_s4(markdown)
+
+        self.assertEqual(html.count("蓝方可发布"), 1)
+        self.assertIn('class="verdict"', html)
+        self.assertIn("STYLE 分数必须标注估算来源", html)
+
     def test_parse_s1_renders_emotion_table_as_board(self):
         markdown = """### 表2：情绪高标
 
@@ -188,6 +204,22 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn('class="node-label">持仓</div>', html)
         self.assertNotIn('class="node-copy">--</div>', html)
         self.assertNotIn('<div class="para"><strong>竞价</strong></div>', html)
+
+    def test_parse_s1_keeps_ordered_operation_times_in_node_notes(self):
+        markdown = """### 节点说明
+
+**午盘**
+⭐**今日操作（从票据读取）**：
+1. **09:42 药明加仓300股@119.20**——笔2
+2. **10:04 海光减仓200股@348.57**——执行预案
+"""
+
+        html = convert_review.parse_s1(markdown)
+
+        self.assertIn("09:42 药明加仓300股", html)
+        self.assertIn("10:04 海光减仓200股", html)
+        self.assertNotIn('class="node-label">1. **09', html)
+        self.assertNotIn('class="node-copy">42 药明加仓', html)
 
     def test_parse_s2_renders_lesson_cards(self):
         markdown = """> 最多 8 条。
