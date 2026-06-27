@@ -203,6 +203,7 @@ class CheckResult:
 
 BACK_LINK_REQUIRED = [
     (re.compile(r"review-notes/\d{4}-\d{2}-\d{2}\.html$"), "复盘笔记"),
+    (re.compile(r"daily-notes/\d{4}-\d{2}-\d{2}\.html$"), "每日市场手记"),
     (re.compile(r"review-notes/weekly-\d{4}"), "周报"),
     (re.compile(r"review-notes/monthly-\d{4}"), "月报"),
     (re.compile(r"report/[a-z]+/.+\.html$"), "研究报告"),
