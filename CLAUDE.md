@@ -2,7 +2,7 @@
 
 > 触发词：**"同步门户"**（全局 CLAUDE.md 已注册）
 
-## 同步流程（四步）
+## 同步流程
 
 > 数据模块默认以 Hermes 云端 bridge 为 SSOT，通过 SSH 读取 `agentuser@43.132.146.234:127.0.0.1:8088`。
 > 本地 `live-dashboard` / `bridge.py` 不需要启动；只有明确调试本地改动时才使用 `--source local`。
@@ -59,6 +59,31 @@ python3 ~/Documents/YM_Capital/portal/tools/convert_review.py <vault_md_path>
 - 打开生成的 HTML 文件预览，核对顶部 chip 数据（情绪/涨跌停/持仓）与 Vault frontmatter 一致
 - 大盘全景表、涨停结构表是否完整渲染
 - 心得条数、红方对抗轮次是否完整
+
+### Step 3.5: 生成每日市场手记
+
+每日市场手记是公开阅读层，内容 SSOT 是 Vault ReviewNote；Portal 不直接读取 Market Watch 盯盘笔记，也不在 HTML 里重写一句话结论。
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/convert_daily_note.py <vault_md_path>
+```
+
+可选传入一句人工感受：
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/convert_daily_note.py <vault_md_path> "今天真实感受..."
+```
+
+字段映射固定：
+
+| Portal 字段 | ReviewNote 来源 |
+|---|---|
+| 今日一句话 | §一 `### 一句话结论` |
+| 今日一个认知 | §二 `### 今日认知` 第一条 |
+| 明日只看什么 | §三 `**总基调**` 或 `### 明日观察` |
+| 今日市场状态 | frontmatter `市场状态/赚钱效应/情绪值/上证涨幅/涨停家数/跌停家数/盘后持仓` |
+
+`convert_daily_note.py` 会过滤 ticket、股数、成本、精确买卖指令、部分持仓标的。若 ReviewNote 缺源字段，先回 ReviewNote 补，不要手改 Portal HTML。
 
 ### Step 4: 抽 insights
 

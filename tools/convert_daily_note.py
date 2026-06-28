@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-"""Generate public Daily Notes pages from Vault review notes.
+"""Generate public Daily Notes pages from Vault ReviewNotes.
 
-Daily Notes are a collaborative public reading layer. The generator builds a
-safe first draft from the review note; the operator can pass a short feeling
-paragraph and review the generated page before publishing.
+Daily Notes are a public reading layer, not a content SSOT. Market Watch may
+draft candidates in its watch note, but the source of truth for this converter
+is the Vault ReviewNote:
+
+- §一 `### 一句话结论` -> 今日一句话 and home summary card.
+- §二 `### 今日认知` first item -> 今日一个认知.
+- §三 `**总基调**` or `### 明日观察` -> 明日只看什么.
+- frontmatter market fields -> 今日市场状态.
+
+The generator builds a public-safe page from the ReviewNote; the operator can
+pass a short feeling paragraph and review the generated page before publishing.
 """
 
 from __future__ import annotations

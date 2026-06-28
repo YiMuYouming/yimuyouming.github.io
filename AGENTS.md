@@ -11,11 +11,14 @@ Portal 2.0 是弈沐资本对外展示窗口，首页顺序为：首屏品牌区
 1. 刷新云端数据模块：`tools/sync_pnl_data.py`
 2. 查 Vault 复盘笔记与 `review-notes/` 差异，定位今天待同步 md
 3. 用 `tools/convert_review.py <vault_md_path>` 转 HTML 并更新首页、归档页
-4. 从 §二 心得与教训抽取认知，归类写入 `insights/index.html`，同步首页认知计数
-5. 做发布前验证和浏览器 QA
-6. 列出 `git diff --stat` 变更摘要，等主人确认后才提交推送
+4. 用 `tools/convert_daily_note.py <vault_md_path>` 生成「每日市场手记」HTML、归档页和首页卡片
+5. 从 §二 心得与教训抽取认知，归类写入 `insights/index.html`，同步首页认知计数
+6. 做发布前验证和浏览器 QA
+7. 列出 `git diff --stat` 变更摘要，等主人确认后才提交推送
 
 `convert_review.py` 已内置复盘页认知卡转化，不要手工重排每篇复盘的 §二。它会把今日认知渲染为「可复用原则 / 当日证据 / 下次动作」三层卡片。
+
+「每日市场手记」的内容 SSOT 是 Vault ReviewNote，不是 Portal HTML，也不是 Market Watch 盯盘笔记。Market Watch 负责把盘中过程提炼进 ReviewNote；Portal 只负责公开化、脱敏、HTML 样式、首页/归档同步。
 
 ## 同步流程
 
@@ -108,6 +111,37 @@ python3 ~/Documents/YM_Capital/portal/tools/convert_review.py <vault_md_path>
 - 首页近期复盘卡片显示上证、涨跌比、涨跌停、情绪值，且不截断
 - 首页和详情页返回主页时能回到原进入位置
 
+### Step 3.5: 生成每日市场手记
+
+每日市场手记是公开阅读层，由 Vault ReviewNote 派生：
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/convert_daily_note.py <vault_md_path>
+```
+
+可选地传入一句人工感受，作为「系统今天做了什么」的补充素材：
+
+```bash
+python3 ~/Documents/YM_Capital/portal/tools/convert_daily_note.py <vault_md_path> "今天真实感受..."
+```
+
+字段映射固定如下：
+
+| Portal 字段 | ReviewNote 来源 | 说明 |
+|---|---|---|
+| 今日一句话 | §一 `### 一句话结论` | 首页摘要卡片和手记 hero 使用这句。 |
+| 今日一个认知 | §二 `### 今日认知` 第一条 | 生成「今日一个认知 / 当日证据 / 下次动作」。 |
+| 明日只看什么 | §三 `**总基调**` 或 `### 明日观察` | 只保留观察口径，不能变成公开买入号令。 |
+| 今日市场状态 | frontmatter | 读取 `市场状态/赚钱效应/情绪值/上证涨幅/涨停家数/跌停家数/盘后持仓`。 |
+
+`convert_daily_note.py` 会过滤 ticket、股数、成本、精确买卖指令、部分持仓标的。若 ReviewNote 缺 `一句话结论` 或 `今日认知`，先回到 ReviewNote 补源字段，不要在 Portal 里临时改 HTML 文案。
+
+**✔ 检查项**：
+- `daily-notes/YYYY-MM-DD.html` 已生成或刷新。
+- `daily-notes/index.html` 归档只出现一次该日期。
+- 首页 `#daily-notes` 最新卡片摘要来自 ReviewNote `一句话结论`。
+- 页面无 ticket、股数、成本、精确买卖指令或未脱敏持仓细节。
+
 ### Step 4: 抽 insights
 
 读 §二 心得中的认知条目，匹配 insights 9 主题的触发标签：
@@ -129,6 +163,7 @@ python3 ~/Documents/YM_Capital/portal/tools/convert_review.py <vault_md_path>
 
 ```bash
 python3 tools/test_convert_review.py
+python3 tools/test_convert_daily_note.py
 python3 tools/test_sync_pnl_data.py
 python3 tools/test_portal_pnl_kpi.py
 python3 tools/portal_check.py --self-test
