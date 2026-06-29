@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>每日市场手记 · 弈沐资本</title>
+<title>2026-06-29 每日市场手记 · 弈沐资本</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#F7F5F3;--paper:#FFFFFF;--paper2:#FAFAF9;--line:#E5E2DE;--line2:#F0EEEC;--text:#2D2926;--muted:#5C5652;--faint:#8A8480;--accent:#D97706;--accent2:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB}
@@ -56,24 +56,74 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 <div class="note-topbar">
-  <a href="../index.html#daily-notes">返回首页</a>
+  <a id="back-home" href="../index.html#daily-notes">返回首页</a>
+  <a href="index.html">全部手记</a>
   <strong>每日市场手记</strong>
 </div>
 <main class="daily-note-shell">
   <section class="note-hero">
-    <div class="note-kicker">Daily Notes Archive</div>
-    <h1>每日市场手记</h1>
+    <div class="note-kicker">Daily Market Note</div>
+    <h1>不追错过的目标票</h1>
     <div class="note-meta">
-      <span class="note-seal">共 2 篇</span>
-      <span class="note-seal">最新 2026-06-29</span>
+      <span class="note-seal">2026-06-29 周一</span>
+      <span class="note-seal">观察</span>
+      <span class="note-seal">市场手记</span>
     </div>
-    <p class="note-thesis">把每天的市场状态、系统约束和真实交易感受，压缩成可公开阅读的短手记。</p>
+    <p class="note-thesis"><strong>今日一句话：</strong>市场进入需要降速观察的一天里，先确认系统约束，再处理主观判断。</p>
   </section>
-  <section class="daily-archive-list">
-    <a class="daily-archive-card" href="2026-06-29.html"><time>2026-06-29</time><strong>不追错过的目标票</strong><span>市场进入需要降速观察的一天里，先确认系统约束，再处理主观判断。</span></a>
-<a class="daily-archive-card" href="2026-06-26.html"><time>2026-06-26</time><strong>冰点W1不该提高暴露——纪律比"感觉好"重要</strong><span>冰点14.7%+上证-2.26%+创-4.07%+跌停30——标准周五分歧兑现日，且比预期更差。</span></a>
-  </section>
+
+  <div class="note-grid">
+    <article class="note-main">
+      <section class="note-cognition-card">
+        <div class="note-label">今日一个认知</div>
+        <div class="note-principle">不追错过的目标票</div>
+        <div class="note-label">当日证据</div>
+        <div class="note-evidence">标的、标的早盘冲高带出材料链机会，但电子化学品盘中一度回落，追高会把 T+1 风险锁进账户；目标在池子里不等于可以买，必须等缩量回踩或平台承接。</div>
+        <div class="note-label">下次动作</div>
+        <div class="note-action">把量价确认和承接作为前置条件，次日继续验证是否延续。</div>
+      </section>
+
+      <section class="note-panel note-system-voice">
+        <h2>系统今天做了什么</h2>
+        <p>系统今天的作用，是把主观解释压回到市场状态、风险门禁和复盘证据上，帮助人少做情绪化动作。</p>
+      </section>
+
+      <section class="note-panel">
+        <h2>明日只看什么</h2>
+        <ol class="note-watch-list">
+          <li><strong>持仓第一优先级</strong>：标的继续按强趋势持有，但承认医药“涨幅强、热度弱”的错配风险。若医疗服务/CXO不退潮且个股守住短周期保护则持有；若跌破短周期保护位并拉不回，或医药/CXO明显退潮，则先保护利润。</li>
+<li><strong>半导体/电子是第一观察板块</strong>：半导体收盘+2.74%、主力净流入128.63亿；洋米红方查询显示 TOP50 热度和主力资金 TOP20 均明显偏向半导体/电子。明天重点看存储、设备、材料三条线的分歧承接，候选清单保留在内部复盘；不追开盘加速。</li>
+<li><strong>医药/CXO是持仓主线，不是新增追涨方向</strong>：医疗服务/生物制品/化学制药涨幅最强，但红方指出 TOP50 热度为0，说明这条线可能是消息驱动/低热度扩散。明天只用于标的持仓判断，不主动追新票。</li>
+        </ol>
+      </section>
+
+      <section class="note-panel">
+        <h2>边界声明</h2>
+        <p>个人交易系统复盘与认知记录，不构成投资建议。</p>
+      </section>
+    </article>
+
+    <aside class="note-market-aside">
+      <h2>今日市场状态</h2>
+      <ul>
+        <li>市场状态：观察。</li>
+<li>情绪值：47.1%。</li>
+<li>上证涨幅：+1.16%。</li>
+<li>涨跌停：107 / 38。</li>
+<li>持仓状态以公开摘要呈现，不展开标的、数量和成本。</li>
+      </ul>
+    </aside>
+  </div>
+  <div class="note-disclaimer">个人交易系统复盘与认知记录，不构成投资建议。</div>
 </main>
 <footer class="note-footer">弈沐资本 · YiMu Capital · Daily Notes</footer>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
 </body>
 </html>

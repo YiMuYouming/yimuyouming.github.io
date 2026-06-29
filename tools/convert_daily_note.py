@@ -116,19 +116,22 @@ a{color:inherit;text-decoration:none}
 
 
 HOME_CSS = """.daily-notes-showcase{background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(247,245,243,.9))}
-.daily-notes-shell{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.82);padding:18px;box-shadow:0 20px 48px rgba(45,41,38,.06)}
-.daily-notes-feature{display:grid;grid-template-columns:minmax(0,.9fr) minmax(280px,1.1fr);gap:14px;align-items:stretch}
+.daily-notes-shell{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.82);padding:18px;box-shadow:0 20px 48px rgba(45,41,38,.06)}
+.daily-notes-shell::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,rgba(217,119,6,.55),rgba(217,119,6,0))}
+.daily-notes-feature{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(280px,.72fr);gap:14px;align-items:stretch}
+.daily-note-latest,.daily-note-mini{position:relative;overflow:hidden;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
 .daily-note-latest{display:flex;flex-direction:column;border:1px solid rgba(217,119,6,.2);border-radius:18px;background:linear-gradient(145deg,#fff,#FBF8F3);padding:22px;color:var(--text);min-height:260px;box-shadow:0 16px 34px rgba(45,41,38,.045)}
+.daily-note-latest::before,.daily-note-mini::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,rgba(217,119,6,.52),rgba(217,119,6,.08))}
 .daily-note-latest:hover,.daily-note-mini:hover{border-color:rgba(217,119,6,.46);box-shadow:0 18px 38px rgba(45,41,38,.08);color:var(--text);transform:translateY(-1px)}
 .daily-note-latest time,.daily-note-mini time{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .daily-note-latest strong{font-family:"Noto Serif SC",serif;font-size:27px;line-height:1.3;margin:16px 0 12px}
 .daily-note-latest span{font-size:14px;color:var(--muted);line-height:1.7}
 .daily-note-latest em{margin-top:auto;font-style:normal;font-size:11px;font-weight:900;color:var(--accent);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.16);border-radius:999px;padding:3px 10px;align-self:flex-start}
-.daily-note-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.daily-note-mini{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px;color:var(--text);min-height:126px;box-shadow:0 10px 24px rgba(45,41,38,.035)}
-.daily-note-mini strong{font-size:15px;line-height:1.35}.daily-note-mini span{font-size:12px;color:var(--muted);line-height:1.5}
-@media(max-width:940px){.daily-notes-feature{grid-template-columns:1fr}.daily-note-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:720px){.daily-note-mini-grid{grid-template-columns:1fr}.daily-note-latest strong{font-size:23px}}
+.daily-note-mini-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.daily-note-mini{display:flex;flex-direction:column;gap:10px;border:1px solid rgba(217,119,6,.16);border-radius:18px;background:linear-gradient(145deg,#fff,#FDF9F3);padding:20px 20px 18px 22px;color:var(--text);min-height:260px;box-shadow:0 14px 32px rgba(45,41,38,.045)}
+.daily-note-mini strong{font-family:"Noto Serif SC",serif;font-size:21px;line-height:1.35}.daily-note-mini-summary{font-size:13px;color:var(--muted);line-height:1.65}.daily-note-mini-tag{margin-top:auto;font-style:normal;font-size:11px;font-weight:900;color:var(--accent);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.16);border-radius:999px;padding:3px 10px;align-self:flex-start}
+@media(max-width:940px){.daily-notes-feature{grid-template-columns:1fr}.daily-note-mini{min-height:220px}}
+@media(max-width:720px){.daily-notes-shell{padding:14px;border-radius:20px}.daily-note-latest,.daily-note-mini{min-height:220px}.daily-note-latest strong{font-size:23px}.daily-note-mini strong{font-size:21px}}
 """
 
 
@@ -146,12 +149,19 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"TICKET-[A-Za-z0-9_-]+", "交易记录", line)
         line = re.sub(r"\d+\s*股", "若干仓位", line)
         line = re.sub(r"成本价\s*[0-9.]+", "成本信息", line)
+        line = re.sub(r"候选补入[^；。]+", "候选清单保留在内部复盘", line)
+        line = re.sub(r"跌破\s*(?:\d+(?:m|分钟)\s*)?MA\d+\s*[0-9.]+", "跌破短周期保护位", line, flags=re.I)
+        line = re.sub(r"站上\s*[0-9.]+", "站上关键确认位", line)
         line = re.sub(r"明日买入", "明日观察", line)
         line = re.sub(r"新买入|买入", "开仓", line)
         line = re.sub(r"加仓", "提高暴露", line)
         line = re.sub(r"减仓|清仓|卖出", "降低风险", line)
         line = re.sub(r"\d{1,2}:\d{2}", "盘中", line)
-        line = re.sub(r"(海光信息|海光|中信证券|中信|药明康德|药明)", "持仓标的", line)
+        line = re.sub(
+            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料)",
+            "标的",
+            line,
+        )
         line = re.sub(r"\s+", " ", line).strip(" -")
         if line:
             cleaned_lines.append(line)
@@ -195,6 +205,16 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     if tagged:
         title = tagged.group("title").strip()
         body = sanitize_public_text(tagged.group("body").strip())
+        return title, body, convert_review.infer_lesson_action("认知", title, body)
+
+    numbered_inline = re.search(
+        r"^\d+\.\s+\*\*(?P<title>.+?)\*\*\s*[：:]\s*(?P<body>.*?)(?=^\d+\.\s+\*\*|^###|\Z)",
+        s2_text,
+        re.M | re.S,
+    )
+    if numbered_inline:
+        title = numbered_inline.group("title").strip()
+        body = sanitize_public_text(numbered_inline.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     untagged = re.search(
@@ -480,18 +500,20 @@ def inject_home_css(content: str) -> str:
 def home_section_html(notes: list[dict]) -> str:
     latest = notes[0]
     mini_cards = "\n".join(
-        f'''          <a class="daily-note-mini" href="daily-notes/{esc(n["date"])}.html?from=daily-notes">
+        f'''          <a class="daily-note-mini daily-note-secondary" href="daily-notes/{esc(n["date"])}.html?from=daily-notes">
             <time>{esc(n["date"])}</time>
             <strong>{esc(n["title"])}</strong>
-            <span>{esc(n.get("tag", "市场手记"))}</span>
+            <span class="daily-note-mini-summary">{esc(n.get("summary", ""))}</span>
+            <em class="daily-note-mini-tag">{esc(n.get("tag", "市场手记"))}</em>
           </a>'''
         for n in notes[1:5]
     )
     if not mini_cards:
-        mini_cards = f'''          <a class="daily-note-mini" href="daily-notes/index.html">
+        mini_cards = f'''          <a class="daily-note-mini daily-note-secondary" href="daily-notes/index.html">
             <time>Archive</time>
             <strong>全部市场手记</strong>
-            <span>按日期查看公开摘要层</span>
+            <span class="daily-note-mini-summary">按日期查看公开摘要层</span>
+            <em class="daily-note-mini-tag">归档</em>
           </a>'''
     return f"""<!-- DAILY_NOTES_SECTION_START -->
   <section class="section daily-notes-showcase" id="daily-notes">

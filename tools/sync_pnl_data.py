@@ -271,6 +271,15 @@ def resolve_meta(data, existing_data_list):
     return {"total_asset": total_asset, "total_deposit": deposit}
 
 
+def sanitize_public_pnl_data(data):
+    """Keep public PnL chart data while dropping account/trade detail from summary."""
+    public = dict(data or {})
+    summary = public.get("summary") or {}
+    safe_summary_keys = {"last_nav", "last_date", "daily_count", "today_snapshots", "_updated", "pnl_pct"}
+    public["summary"] = {k: summary[k] for k in safe_summary_keys if k in summary}
+    return public
+
+
 def main(argv=None):
     args = parse_args(argv)
     api = BridgeAPI(source=args.source, remote=args.remote, base_url=args.base_url)
@@ -308,6 +317,7 @@ def main(argv=None):
 
     # ── Meta: 云端 production summary 优先；估值缺失时用旧入金本金 × 最新净值估算，避免空值覆盖首页资产。 ──
     data["meta"] = resolve_meta(data, [extract_existing_pnl_data(html), extract_git_pnl_data()])
+    data = sanitize_public_pnl_data(data)
 
     # PNL_DATA
     js_blob = f"<script>\nvar PNL_DATA = {json.dumps(data, ensure_ascii=False)};\n</script>"

@@ -126,6 +126,41 @@ class ConvertDailyNoteTest(unittest.TestCase):
         ]:
             self.assertIn(class_name, html)
 
+    def test_daily_note_extracts_numbered_bold_colon_cognition(self):
+        review_note = self.root / "2026_6_29_Monday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace(
+                "date: 2026-06-26",
+                "date: 2026-06-29",
+            )
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. **不追错过的目标票**：南大、雅克早盘冲高，但目标在池子里不等于可以买，必须等缩量回踩或平台承接。",
+            )
+            .replace(
+                "1. 观察指数是否止跌。",
+                "1. **持仓第一优先级**：若跌破60m MA10 120.82并拉不回，则先保护利润。",
+            )
+            .replace(
+                "3. 看主线是否从恐慌里走出合力。",
+                "3. **半导体/电子是第一观察板块**：候选补入澜起科技、中微公司、聚和材料；不追开盘加速。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-06-29.html").read_text(encoding="utf-8")
+        self.assertIn("不追错过的目标票", html)
+        self.assertIn("目标在池子里不等于可以买", html)
+        self.assertNotIn("先把当天经验压成可复用原则", html)
+        self.assertNotIn("南大", html)
+        self.assertNotIn("雅克", html)
+        self.assertNotIn("澜起科技", html)
+        self.assertNotIn("中微公司", html)
+        self.assertNotIn("聚和材料", html)
+        self.assertNotIn("120.82", html)
+
     def test_daily_note_filters_sensitive_execution_details(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
 
@@ -157,6 +192,29 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertIn("daily-notes/2026-06-26.html?from=daily-notes", home)
         self.assertIn("daily-notes/index.html", home)
         self.assertIn("<strong>65</strong><em>篇</em>", home)
+
+    def test_home_secondary_daily_note_card_keeps_summary_and_design_class(self):
+        convert_daily_note.convert_review_to_daily_note(self.review_note)
+        review_note = self.root / "2026_6_29_Monday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-06-29")
+            .replace(
+                "冰点日更重要的是确认系统有没有帮人少犯错，而不是解释每一笔波动。",
+                "市场进入需要降速观察的一天里，先确认系统约束，再处理主观判断。",
+            )
+            .replace(
+                "冰点日先看系统门禁，再看观点",
+                "不追错过的目标票",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        home = (self.root / "index.html").read_text(encoding="utf-8")
+        self.assertIn('class="daily-note-mini daily-note-secondary"', home)
+        self.assertIn("冰点日更重要的是确认系统有没有帮人少犯错", home)
+        self.assertIn("daily-note-mini-tag", home)
 
 
 if __name__ == "__main__":

@@ -38,6 +38,50 @@ class ResolveMetaTest(unittest.TestCase):
 
         self.assertEqual(meta, {"total_asset": 712345.67, "total_deposit": 700000.0})
 
+    def test_public_pnl_data_drops_sensitive_summary_details(self):
+        data = {
+            "today_sh": {"labels": ["09:30"], "portfolio": [1.2], "position": [34.5]},
+            "summary": {
+                "last_nav": 1.055575,
+                "last_date": "2026-06-29",
+                "daily_count": 52,
+                "today_snapshots": 72,
+                "total_asset": 750576.47,
+                "total_deposit": 711059.23,
+                "cash": 488995.47,
+                "positions": [
+                    {
+                        "标的": "药明康德",
+                        "数量": 1300,
+                        "成本": 117.1,
+                        "lots": [{"source_ticket_id": "TICKET-20260625-603259-0001"}],
+                    }
+                ],
+                "trades": [{"ticket_id": "TICKET-20260629-300065-0002", "qty": 2500}],
+            },
+            "meta": {"total_asset": 750576.47, "total_deposit": 711059.23},
+        }
+
+        public = sync_pnl_data.sanitize_public_pnl_data(data)
+
+        self.assertEqual(public["today_sh"], data["today_sh"])
+        self.assertEqual(public["meta"], data["meta"])
+        self.assertEqual(
+            public["summary"],
+            {
+                "last_nav": 1.055575,
+                "last_date": "2026-06-29",
+                "daily_count": 52,
+                "today_snapshots": 72,
+            },
+        )
+        public_json = str(public)
+        self.assertNotIn("positions", public_json)
+        self.assertNotIn("trades", public_json)
+        self.assertNotIn("TICKET-", public_json)
+        self.assertNotIn("药明康德", public_json)
+        self.assertNotIn("成本", public_json)
+
     def test_extract_existing_pnl_data_from_index_html(self):
         html = '<!-- PNL_DATA_START --><script>\nvar PNL_DATA = {"meta":{"total_asset":1}};\n</script>'
 

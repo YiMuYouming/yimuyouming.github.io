@@ -1,0 +1,4 @@
+interface:
+  display_name: "Portal Sync Flow"
+  short_description: "Checklist for Portal sync publish gates"
+  default_prompt: "Use $portal-sync-flow as a flexible checklist to sync today's Portal from the Vault ReviewNote through validation and publish gating."
