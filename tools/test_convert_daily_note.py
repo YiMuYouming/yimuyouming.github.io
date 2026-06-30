@@ -161,6 +161,30 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("聚和材料", html)
         self.assertNotIn("120.82", html)
 
+    def test_daily_note_skips_portal_guidance_and_extracts_bracket_cognition(self):
+        review_note = self.root / "2026_6_30_Tuesday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-06-30")
+            .replace(
+                "冰点日更重要的是确认系统有没有帮人少犯错，而不是解释每一笔波动。",
+                "> **Portal 今日一句话来源**：一句话讲清当日市场状态和系统判断；不写 ticket、股数、成本、精确买卖指令。\n\n市场从竞价低迷修复为科技主升，系统顺势降低非主线暴露。",
+            )
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. [认知] 主线强势股的买点不是越强越追，而是缩量回踩或强横守住关键位时建仓。\n2. [教训] 二笔不是缩量回踩，而是追趋势加速的小仓试探。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-06-30.html").read_text(encoding="utf-8")
+        self.assertIn("市场从竞价低迷修复为科技主升", html)
+        self.assertIn("主线强势股的买点不是越强越追", html)
+        self.assertNotIn("Portal 今日一句话来源", html)
+        self.assertNotIn("先把当天经验压成可复用原则", html)
+        self.assertNotIn("不写 ticket", html)
+
     def test_daily_note_filters_sensitive_execution_details(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
 

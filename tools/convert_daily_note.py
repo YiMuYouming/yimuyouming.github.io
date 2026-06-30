@@ -168,7 +168,25 @@ def sanitize_public_text(text: str) -> str:
     return "\n".join(cleaned_lines).strip()
 
 
+def strip_source_guidance(text: str) -> str:
+    """Drop ReviewNote operator guidance that should not become public copy."""
+    kept: list[str] = []
+    for raw in (text or "").splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if "Portal 今日一句话来源" in line:
+            continue
+        if "一句话讲清当日市场状态和系统判断" in line:
+            continue
+        if "不写 ticket" in line or "精确买卖指令" in line:
+            continue
+        kept.append(raw)
+    return "\n".join(kept).strip()
+
+
 def first_sentence(text: str, fallback: str) -> str:
+    text = strip_source_guidance(text)
     text = sanitize_public_text(convert_review.strip_html_tags(text) if "<" in text else text)
     text = re.sub(r"^[>\-\d.、\s]+", "", text).strip()
     if not text:
@@ -197,6 +215,18 @@ def extract_one_line(s1_text: str, fm: dict) -> str:
 
 
 def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
+    bracket_tagged = re.search(
+        r"^\d+\.\s+\[(?P<kind>认知)\]\s*(?P<title>.+?)(?:[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
+        s2_text,
+        re.M | re.S,
+    )
+    if bracket_tagged:
+        title = bracket_tagged.group("title").strip()
+        body = sanitize_public_text((bracket_tagged.group("body") or "").strip())
+        if not body:
+            body = title
+        return title, body, convert_review.infer_lesson_action("认知", title, body)
+
     tagged = re.search(
         r"^\d+\.\s+\*\*\[(?P<kind>认知)\]\s*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)",
         s2_text,
