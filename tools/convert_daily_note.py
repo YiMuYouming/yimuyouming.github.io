@@ -149,8 +149,13 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"TICKET-[A-Za-z0-9_-]+", "交易记录", line)
         line = re.sub(r"\d+\s*股", "若干仓位", line)
         line = re.sub(r"成本价\s*[0-9.]+", "成本信息", line)
-        line = re.sub(r"候选补入[^；。]+", "候选清单保留在内部复盘", line)
         line = re.sub(r"跌破\s*(?:\d+(?:m|分钟)\s*)?MA\d+\s*[0-9.]+", "跌破短周期保护位", line, flags=re.I)
+        line = re.sub(r"MA\d+\s*[0-9.]+", "短周期保护位", line, flags=re.I)
+        line = re.sub(r"(收回|突破|跌破|站回|守住|守|回踩|防守|止损线|修复线)\s*[0-9]+(?:\.[0-9]+)?", r"\1关键确认位", line)
+        line = re.sub(r"[0-9]+(?:\.[0-9]+)?\s*成本线", "关键确认位", line)
+        line = re.sub(r"成本线", "关键确认位", line)
+        line = re.sub(r"成本下(?:方)?", "关键位下方", line)
+        line = re.sub(r"候选补入[^；。]+", "候选清单保留在内部复盘", line)
         line = re.sub(r"站上\s*[0-9.]+", "站上关键确认位", line)
         line = re.sub(r"明日买入", "明日观察", line)
         line = re.sub(r"新买入|买入", "开仓", line)
@@ -158,7 +163,7 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"减仓|清仓|卖出", "降低风险", line)
         line = re.sub(r"\d{1,2}:\d{2}", "盘中", line)
         line = re.sub(
-            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料)",
+            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料|太极实业|太极|华工科技|华工|江丰电子|江丰|金宏气体|金宏|长电科技|通富微电|新易盛|中际旭创|天孚通信|中国卫星|上海瀚讯|盛路通信)",
             "标的",
             line,
         )
