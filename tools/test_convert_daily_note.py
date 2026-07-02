@@ -225,7 +225,34 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("成本线", html)
         self.assertNotIn("成本下", html)
         self.assertNotIn("聚和材料", html)
+        self.assertNotIn("聚和", html)
+        self.assertNotIn("标的/标的", html)
         self.assertIn("标的按计划外仓处理", html)
+
+    def test_daily_note_collapses_multiple_position_names(self):
+        review_note = self.root / "2026_7_2_Thursday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-07-02")
+            .replace("weekday: 周五", "weekday: 周四")
+            .replace(
+                "**总基调**：先观察承接，不急于恢复进攻。",
+                "**总基调**：先降风险、再验证修复；太极/海兰信/聚和全部重新走触发/失效，不因昨日身份自动延续。",
+            )
+            .replace(
+                "### 明日观察\n\n1. 观察指数是否止跌。\n2. 明日买入海光信息 500股，突破 13.20 加仓。\n3. 看主线是否从恐慌里走出合力。",
+                "",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-07-02.html").read_text(encoding="utf-8")
+        self.assertNotIn("太极", html)
+        self.assertNotIn("海兰信", html)
+        self.assertNotIn("聚和", html)
+        self.assertNotIn("标的/标的", html)
+        self.assertIn("持仓标的全部重新走触发/失效", html)
 
     def test_updates_daily_notes_archive_and_home_without_review_count_drift(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
