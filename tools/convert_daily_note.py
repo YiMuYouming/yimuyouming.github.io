@@ -157,17 +157,21 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"成本下(?:方)?", "关键位下方", line)
         line = re.sub(r"候选补入[^；。]+", "候选清单保留在内部复盘", line)
         line = re.sub(r"站上\s*[0-9.]+", "站上关键确认位", line)
+        line = re.sub(r"低开超过\s*[0-9]+(?:\.[0-9]+)?%", "低开明显", line)
+        line = re.sub(r"[0-9]+(?:\.[0-9]+)?\s*以上", "关键位以上", line)
         line = re.sub(r"明日买入", "明日观察", line)
         line = re.sub(r"新买入|买入", "开仓", line)
         line = re.sub(r"加仓", "提高暴露", line)
         line = re.sub(r"减仓|清仓|卖出", "降低风险", line)
+        line = re.sub(r"降低风险\s*[0-9]+(?:\s*[-~—]\s*[0-9]+)?", "降低部分风险", line)
         line = re.sub(r"\d{1,2}:\d{2}", "盘中", line)
         line = re.sub(
-            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料|聚和|太极实业|太极|华工科技|华工|江丰电子|江丰|金宏气体|金宏|长电科技|通富微电|新易盛|中际旭创|天孚通信|中国卫星|上海瀚讯|盛路通信)",
+            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料|聚和|太极实业|太极|华工科技|华工|江丰电子|江丰|金宏气体|金宏|长电科技|长电|兆易创新|兆易|方正科技|方正|通富微电|新易盛|中际旭创|天孚通信|中国卫星|上海瀚讯|盛路通信)",
             "标的",
             line,
         )
         line = re.sub(r"(?:标的\s*/\s*)+标的", "持仓标的", line)
+        line = re.sub(r"标的和标的", "持仓标的", line)
         line = re.sub(r"\s+", " ", line).strip(" -")
         if line:
             cleaned_lines.append(line)
@@ -241,6 +245,18 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     if tagged:
         title = tagged.group("title").strip()
         body = sanitize_public_text(tagged.group("body").strip())
+        return title, body, convert_review.infer_lesson_action("认知", title, body)
+
+    numbered_bold = re.search(
+        r"^\d+\.\s+\*\*(?P<title>.+?)\*\*\s*(?P<body>.*?)(?=^\d+\.\s+\*\*|^###|\Z)",
+        s2_text,
+        re.M | re.S,
+    )
+    if numbered_bold:
+        title = numbered_bold.group("title").strip()
+        body = sanitize_public_text(numbered_bold.group("body").strip())
+        if not body:
+            body = title
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     numbered_inline = re.search(

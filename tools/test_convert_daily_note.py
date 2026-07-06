@@ -254,6 +254,46 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("标的/标的", html)
         self.assertIn("持仓标的全部重新走触发/失效", html)
 
+    def test_daily_note_redacts_standalone_execution_quantities_and_anchor_aliases(self):
+        review_note = self.root / "2026_7_6_Monday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-07-06")
+            .replace("weekday: 周五", "weekday: 周一")
+            .replace(
+                "冰点日更重要的是确认系统有没有帮人少犯错，而不是解释每一笔波动。",
+                "高开兑现后市场走成分化弱市；今天最大的问题是太极和聚和风险处理滞后，海兰信加仓节奏好但规则与锚点证据不足。",
+            )
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. **不追高是今天最重要的正向样本。** 竞价和开盘多条线高开，但随后市场高开兑现，说明早盘强只是入场诱惑，不是确认。",
+            )
+            .replace(
+                "### 明日观察\n\n1. 观察指数是否止跌。\n2. 明日买入海光信息 500股，突破 13.20 加仓。\n3. 看主线是否从恐慌里走出合力。",
+                "### 明日观察\n\n1. 太极实业：默认先处理风险。若7月7日开盘低开超过3%或开盘后跌破27.0，不等9:45，先减仓2000；若9:45前不能收回28.5，或收回后再次跌破27.8，减仓1000-2000；若全天不能收回29.2，继续降级为失败仓，不用长电强来安慰。只有站回30.5并且兆易/方正止跌，才从风险处理切回观察。\n2. 海兰信：不新增，不追高。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-07-06.html").read_text(encoding="utf-8")
+        self.assertIn("不追高是今天最重要的正向样本", html)
+        self.assertNotIn("先把当天经验压成可复用原则", html)
+        self.assertNotIn("标的和标的", html)
+        self.assertNotIn("2000", html)
+        self.assertNotIn("1000-2000", html)
+        self.assertNotIn("27.0", html)
+        self.assertNotIn("28.5", html)
+        self.assertNotIn("27.8", html)
+        self.assertNotIn("29.2", html)
+        self.assertNotIn("30.5", html)
+        self.assertNotIn("太极实业", html)
+        self.assertNotIn("海兰信", html)
+        self.assertNotIn("长电", html)
+        self.assertNotIn("兆易", html)
+        self.assertNotIn("方正", html)
+        self.assertIn("降低部分风险", html)
+
     def test_updates_daily_notes_archive_and_home_without_review_count_drift(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
         convert_daily_note.convert_review_to_daily_note(self.review_note)
