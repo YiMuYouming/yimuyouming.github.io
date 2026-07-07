@@ -294,6 +294,35 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("方正", html)
         self.assertIn("降低部分风险", html)
 
+    def test_daily_note_extracts_plain_numbered_cognition_and_redacts_reduce_ranges(self):
+        review_note = self.root / "2026_7_7_Tuesday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-07-07")
+            .replace("weekday: 周五", "weekday: 周二")
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. 利润保护要早于“看空间”：海兰信这种大仓位浮盈仓，遇到市场冰点、板块锚点分化、个股冲高后无持续确认时，先卖一层保护结果；今天 22.99 降低风险方向正确，但若早盘 23.4 附近锚点不跟时就卖一层。",
+            )
+            .replace(
+                "### 明日观察\n\n1. 观察指数是否止跌。\n2. 明日买入海光信息 500股，突破 13.20 加仓。\n3. 看主线是否从恐慌里走出合力。",
+                "### 明日观察\n\n1. 明日第一优先级是海兰信利润保护：不因尾盘走强加仓；若锚点继续弱，明确再减2000-3000。\n2. 不做：徐工加仓、海兰信加仓、太极加仓。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-07-07.html").read_text(encoding="utf-8")
+        self.assertIn("利润保护要早于", html)
+        self.assertNotIn("先把当天经验压成可复用原则", html)
+        self.assertNotIn("海兰信", html)
+        self.assertNotIn("徐工", html)
+        self.assertNotIn("太极", html)
+        self.assertNotIn("2000-3000", html)
+        self.assertNotIn("22.99", html)
+        self.assertNotIn("23.4", html)
+        self.assertIn("降低部分风险", html)
+
     def test_updates_daily_notes_archive_and_home_without_review_count_drift(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
         convert_daily_note.convert_review_to_daily_note(self.review_note)
