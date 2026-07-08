@@ -323,6 +323,32 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("23.4", html)
         self.assertIn("降低部分风险", html)
 
+    def test_daily_note_redacts_position_percent_without_leaving_numeric_tail(self):
+        review_note = self.root / "2026_7_8_Wednesday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-07-08")
+            .replace("weekday: 周五", "weekday: 周三")
+            .replace(
+                "冰点日更重要的是确认系统有没有帮人少犯错，而不是解释每一笔波动。",
+                "市场重回冰点防守；海兰信独强但组合仓位因徐工补仓升至45.65%，明日先处理持仓标的风险。",
+            )
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. **竞价显著缩量、开盘第一波急拉，优先按诱多风险处理。** 开盘第一波不能直接当作强做信号。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-07-08.html").read_text(encoding="utf-8")
+        self.assertNotIn("45.65", html)
+        self.assertNotIn("关键位置5%", html)
+        self.assertNotIn("组合仓位", html)
+        self.assertNotIn("海兰信", html)
+        self.assertNotIn("徐工", html)
+        self.assertIn("组合风险暴露因持仓动作升至关键比例", html)
+
     def test_updates_daily_notes_archive_and_home_without_review_count_drift(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
         convert_daily_note.convert_review_to_daily_note(self.review_note)
