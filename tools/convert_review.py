@@ -663,7 +663,7 @@ def html_node_notes(body):
 def html_lesson_cards(text):
     """Render §二 心得与教训 as type-coded cards."""
     item_re = re.compile(
-        r'^\d+\.\s+\*\*\[(?P<kind>[^\]]+)\]\s*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)',
+        r'^\d+\.\s+\*\*\[(?P<kind>[^\]]+)\]\s*(?P<title>.+?)\*\*\s*(?:[—-]\s*)?(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)',
         re.MULTILINE | re.DOTALL,
     )
     items = list(item_re.finditer(text))
@@ -710,7 +710,7 @@ def render_lesson_card_grid(items):
         kind = item["kind"]
         title = item["title"]
         body = item["body"]
-        css = class_by_kind.get(kind, "topic")
+        css = class_by_kind.get(kind, "cognition")
         action = infer_lesson_action(kind, title, body)
         html += (
             f'<article class="lesson-card {css}">'
@@ -743,6 +743,10 @@ def infer_lesson_action(kind, title, body):
         return "把量价确认和承接作为前置条件，次日继续验证是否延续。"
     if re.search(r"建仓|买点|开仓|选股|板块|个股", title):
         return "开仓前先确认板块强度、对标标的、买点窗口和失效点，再定个股。"
+    if re.search(r"未盯盘|过程缺失|事实层|source_gaps|盘中授权|门禁", source):
+        return "先补事实层和缺口清单，不用收盘结果倒推盘中授权，次日交给实时门禁重新裁决。"
+    if re.search(r"账户|批次|对账|数量|冲突", source):
+        return "先核对账户事实和基础数量，冲突解除前主动交易动作降级为观察/核对。"
     if re.search(r"卖|清仓|止盈|锁利|减仓|涨停次日|不赌|转弱", source):
         return "触发高开放量、转弱或分歧信号时，先分批锁利或降风险，再看承接。"
     if re.search(r"建仓|买点|开仓|选股|板块|方向|个股", source):

@@ -313,6 +313,26 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("下次动作", html)
         self.assertNotIn("<ol class=\"tight-list\">", html)
 
+    def test_parse_s2_renders_bracketed_category_inline_body_as_cognition_cards(self):
+        markdown = """### 今日认知
+
+1. **[流程纪律] 未盯盘日只补事实，不补编盘中授权。** 今日的最大约束不是行情强弱，而是过程缺失。
+2. **[账户纪律] 批次对账冲突优先于一切行情判断。** 基础数量不可信时，所有主动交易动作都应降级为观察/核对。
+"""
+
+        html = convert_review.parse_s2(markdown)
+
+        self.assertEqual(html.count('class="lesson-card cognition"'), 2)
+        self.assertIn("流程纪律", html)
+        self.assertIn("未盯盘日只补事实", html)
+        self.assertIn("今日的最大约束不是行情强弱", html)
+        self.assertIn("账户纪律", html)
+        self.assertIn("批次对账冲突优先于一切行情判断", html)
+        self.assertIn("基础数量不可信时", html)
+        self.assertIn("先补事实层和缺口清单", html)
+        self.assertIn("先核对账户事实", html)
+        self.assertNotIn("<ol class=\"tight-list\">", html)
+
     def test_parse_s2_renders_today_cognition_numbered_bold_as_cards(self):
         markdown = """最多 5 条。
 
