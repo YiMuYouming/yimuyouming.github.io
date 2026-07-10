@@ -185,6 +185,24 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("先把当天经验压成可复用原则", html)
         self.assertNotIn("不写 ticket", html)
 
+    def test_daily_note_strips_bold_bracket_cognition_label(self):
+        review_note = self.root / "2026_7_10_Friday_ReviewNote.md"
+        review_note.write_text(
+            SAMPLE_REVIEW_NOTE.replace("date: 2026-06-26", "date: 2026-07-10")
+            .replace("weekday: 周五", "weekday: 周五")
+            .replace(
+                "### 今日认知\n\n**1. 冰点日先看系统门禁，再看观点**\n\n今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+                "### 今日认知\n\n1. **[认知] 首笔试仓看结构，后续加仓看确认与利润垫。** 瑞芯微第一笔有前序放量、缩量回踩和分时均线承接；第二笔没有等待板块止跌。",
+            ),
+            encoding="utf-8",
+        )
+
+        convert_daily_note.convert_review_to_daily_note(review_note)
+
+        html = (self.daily_notes / "2026-07-10.html").read_text(encoding="utf-8")
+        self.assertIn("首笔试仓看结构，后续提高暴露看确认与利润垫", html)
+        self.assertNotIn("[认知]", html)
+
     def test_daily_note_filters_sensitive_execution_details(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
 

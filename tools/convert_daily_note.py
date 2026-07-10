@@ -213,6 +213,14 @@ def first_sentence(text: str, fallback: str) -> str:
     return parts[0].strip() + "。"
 
 
+def clean_cognition_title(title: str) -> str:
+    return re.sub(
+        r"^\[(?:认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*",
+        "",
+        title or "",
+    ).strip(" 。；;")
+
+
 def extract_date(md_path: Path, fm: dict) -> str:
     date = fm.get("date", "")
     if date:
@@ -239,7 +247,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if bracket_tagged:
-        title = bracket_tagged.group("title").strip()
+        title = clean_cognition_title(bracket_tagged.group("title"))
         body = sanitize_public_text((bracket_tagged.group("body") or "").strip())
         if not body:
             body = title
@@ -251,8 +259,20 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if tagged:
-        title = tagged.group("title").strip()
+        title = clean_cognition_title(tagged.group("title"))
         body = sanitize_public_text(tagged.group("body").strip())
+        return title, body, convert_review.infer_lesson_action("认知", title, body)
+
+    tagged_bold_inline = re.search(
+        r"^\d+\.\s+\*\*\[(?P<kind>认知)\]\s*(?P<title>.+?)\*\*\s*(?P<body>.*?)(?=^\d+\.\s+\*\*|^###|\Z)",
+        s2_text,
+        re.M | re.S,
+    )
+    if tagged_bold_inline:
+        title = clean_cognition_title(tagged_bold_inline.group("title"))
+        body = sanitize_public_text(tagged_bold_inline.group("body").strip())
+        if not body:
+            body = title
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     numbered_bold = re.search(
@@ -261,7 +281,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if numbered_bold:
-        title = numbered_bold.group("title").strip()
+        title = clean_cognition_title(numbered_bold.group("title"))
         body = sanitize_public_text(numbered_bold.group("body").strip())
         if not body:
             body = title
@@ -273,7 +293,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if numbered_inline:
-        title = numbered_inline.group("title").strip()
+        title = clean_cognition_title(numbered_inline.group("title"))
         body = sanitize_public_text(numbered_inline.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
@@ -283,7 +303,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if plain_numbered:
-        title = plain_numbered.group("title").strip()
+        title = clean_cognition_title(plain_numbered.group("title"))
         body = sanitize_public_text(plain_numbered.group("body").strip())
         return title, body or title, convert_review.infer_lesson_action("认知", title, body)
 
@@ -293,7 +313,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         re.M | re.S,
     )
     if untagged:
-        title = untagged.group("title").strip()
+        title = clean_cognition_title(untagged.group("title"))
         body = sanitize_public_text(untagged.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
