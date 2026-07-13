@@ -207,6 +207,7 @@ def first_sentence(text: str, fallback: str) -> str:
     text = strip_source_guidance(text)
     text = sanitize_public_text(convert_review.strip_html_tags(text) if "<" in text else text)
     text = re.sub(r"^[>\-\d.、\s]+", "", text).strip()
+    text = re.sub(r"^\*{1,2}(.*?)\*{1,2}$", r"\1", text, flags=re.S).strip()
     if not text:
         return fallback
     parts = re.split(r"[。！？]\s*", text, maxsplit=1)
@@ -241,6 +242,16 @@ def extract_one_line(s1_text: str, fm: dict) -> str:
 
 
 def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
+    bracket_bold_title = re.search(
+        r"^\d+\.\s+\[(?P<kind>认知)\]\s*\*\*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
+        s2_text,
+        re.M | re.S,
+    )
+    if bracket_bold_title:
+        title = clean_cognition_title(bracket_bold_title.group("title"))
+        body = sanitize_public_text(bracket_bold_title.group("body").strip())
+        return title, body, convert_review.infer_lesson_action("认知", title, body)
+
     bracket_tagged = re.search(
         r"^\d+\.\s+\[(?P<kind>认知)\]\s*(?P<title>.+?)(?:[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
         s2_text,

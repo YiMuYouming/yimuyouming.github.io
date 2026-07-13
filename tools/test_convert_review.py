@@ -80,10 +80,16 @@ class ConvertReviewTest(unittest.TestCase):
     </a>'''
                     for day in [25, 24, 23, 22, 18, 17]
                 )
+                existing_period_card = '''<a id="recent-review-weekly-20260622-20260626" href="review-notes/weekly-2026-06-22_06-26.html?from=recent-review-weekly-20260622-20260626" class="recent-review-card period-review-card weekly-review-card">
+            <div class="recent-review-top"><span class="recent-date">6/22–6/26</span><span class="review-kind review-kind-weekly">周复盘</span><span class="review-read">阅读 →</span></div>
+            <div class="recent-review-title">W26 周复盘：保留人工提炼标题</div>
+            <div class="review-metric-row"><span class="metric-up"><em>周收益</em><strong>+3.08%</strong></span><span class="metric-warn"><em>核心风险</em><strong>DAY_STOP</strong></span></div>
+    </a>'''
                 (tmp_path / "index.html").write_text(
                     f"""<html><body>
 <div class="review-stat"><span>最新复盘</span><strong>6月25日</strong><em>日复盘</em></div>
 <div class="recent-review-grid">
+{existing_period_card}
 {existing_cards}
 </div>
 </body></html>""",
@@ -107,9 +113,10 @@ class ConvertReviewTest(unittest.TestCase):
                 self.assertIn("recent-review-0626", html)
                 self.assertIn("recent-review-weekly-20260622-20260626", html)
                 self.assertIn("W26 周复盘", html)
+                self.assertIn("W26 周复盘：保留人工提炼标题", html)
+                self.assertIn("核心风险", html)
                 self.assertIn("周复盘", html)
-                self.assertIn("<strong>6/22-26</strong>", html)
-                self.assertNotIn("<strong>6/22–6/26</strong>", html)
+                self.assertIn('<span class="recent-date">6/22–6/26</span>', html)
                 self.assertNotIn("recent-review-0618", html)
                 self.assertEqual(html.count('class="recent-review-card'), 6)
                 self.assertLess(html.index("recent-review-0626"), html.index("recent-review-weekly-20260622-20260626"))

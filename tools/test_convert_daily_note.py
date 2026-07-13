@@ -203,6 +203,29 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertIn("首笔试仓看结构，后续提高暴露看确认与利润垫", html)
         self.assertNotIn("[认知]", html)
 
+    def test_extracts_bracket_tag_with_bold_title_and_dash_body(self):
+        section = """### 今日认知
+
+1. [认知] **市场永远是对的，短线不能有固有思维** — 昨日主线、既有利润和盘前预期都只是假设。
+2. [教训] **第二条不应被第一条吞并** — 这是下一条。
+"""
+
+        title, body, _action = convert_daily_note.extract_first_cognition(section)
+
+        self.assertEqual(title, "市场永远是对的，短线不能有固有思维")
+        self.assertEqual(body, "昨日主线、既有利润和盘前预期都只是假设。")
+
+    def test_one_line_strips_blockquote_bold_markers(self):
+        section = """### 一句话结论
+
+> **极端普跌中，市场否定原预期时应立即撤销判断、保护利润。**
+"""
+
+        self.assertEqual(
+            convert_daily_note.extract_one_line(section, {}),
+            "极端普跌中，市场否定原预期时应立即撤销判断、保护利润。",
+        )
+
     def test_daily_note_filters_sensitive_execution_details(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)
 

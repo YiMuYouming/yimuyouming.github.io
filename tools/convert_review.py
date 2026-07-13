@@ -1550,6 +1550,25 @@ def extract_recent_daily_cards(content):
     return cards
 
 
+def extract_recent_period_cards(content):
+    cards = []
+    pattern = re.compile(
+        r'<a id="(recent-review-(weekly|monthly)-\d{8}-\d{8})" href="review-notes/([^"?]+)\?from=\1" class="recent-review-card period-review-card [^"]+">.*?</a>',
+        re.S,
+    )
+    for match in pattern.finditer(content):
+        info = parse_period_review_path(Path(match.group(3)))
+        if not info:
+            continue
+        cards.append({
+            "id": match.group(1),
+            "kind": match.group(2),
+            "date": info["end"],
+            "html": match.group(0).strip() + "\n",
+        })
+    return cards
+
+
 def recent_review_grid_bounds(content):
     start = content.find('<div class="recent-review-grid"')
     if start < 0:
@@ -1575,6 +1594,8 @@ def rebuild_recent_review_timeline(content, current_date, current_daily_card):
     for card in extract_recent_daily_cards(content):
         if card["date"] != current_date:
             cards_by_id[card["id"]] = card
+    for card in extract_recent_period_cards(content):
+        cards_by_id[card["id"]] = card
     current_card_id = f"recent-review-{current_date[5:7]}{current_date[8:10]}"
     cards_by_id[current_card_id] = {
         "id": current_card_id,
@@ -1585,7 +1606,7 @@ def rebuild_recent_review_timeline(content, current_date, current_daily_card):
     for pattern in ("weekly-*.html", "monthly-*.html"):
         for path in REVIEW_NOTES.glob(pattern):
             card = build_period_review_card(path)
-            if card:
+            if card and card["id"] not in cards_by_id:
                 cards_by_id[card["id"]] = card
 
     kind_priority = {"daily": 3, "weekly": 2, "monthly": 1}
