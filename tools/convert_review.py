@@ -263,6 +263,60 @@ def numeric_value(value):
     return float(m.group(0)) if m else None
 
 
+def sanitize_public_review_text(text):
+    """Redact account-specific execution details from the public review layer."""
+    cleaned = str(text or '')
+    cleaned = re.sub(r'TICKET-[A-Za-z0-9_-]+', '交易记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'\bEXEC-[A-Za-z0-9_+:-]+', '执行记录', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'\b\d{1,2}:\d{2}(?=[^，。；\n|]{0,24}(?:成交|买入|加仓|减仓|清仓|卖出))',
+        '盘中',
+        cleaned,
+    )
+    cleaned = re.sub(r'\b\d+\s*@\s*\d+(?:\.\d+)?', '部分仓位@成交价已隐藏', cleaned)
+    cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
+    cleaned = re.sub(r'@\s*\d+(?:\.\d+)?', '@成交价已隐藏', cleaned)
+    cleaned = re.sub(
+        r'(成本(?:价|线)?(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
+        r'\1已脱敏',
+        cleaned,
+    )
+
+    safe_lines = []
+    for line in cleaned.splitlines():
+        if any(marker in line for marker in (
+            'Portal 今日一句话来源',
+            'Portal 今日一个认知来源',
+            'Portal 每日市场手记 SSOT',
+        )):
+            continue
+        if re.search(r'盈亏|亏损|盈利|实现|成交|买入|加仓|减仓|清仓|卖出', line):
+            line = re.sub(r'(?<![\d.])[-+]?\d+(?:\.\d+)?\s*元', '金额已脱敏', line)
+        safe_lines.append(line)
+    return '\n'.join(safe_lines)
+
+
+def public_position_summary(position):
+    """Expose position state without publishing names, quantities, or costs."""
+    if not position or '空仓' in str(position):
+        return '空仓'
+    return '持仓状态已记录'
+
+
+def sanitize_public_review_cell(header, value):
+    """Apply header-aware redaction to sensitive review table fields."""
+    header = str(header or '')
+    if any(key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股')):
+        return '已脱敏'
+    if header == '仓位':
+        return '已脱敏'
+    if 'T+1可卖' in header:
+        return '按账户事实复核'
+    if header == '止损':
+        return '关键风险位（已脱敏）'
+    return sanitize_public_review_text(value)
+
+
 # ── HTML generators ──
 
 def html_topbar(fm):
@@ -275,7 +329,7 @@ def html_topbar(fm):
     sh_pct = pct_text(sh_pct_raw, signed=True)
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
-    pos = fm.get('盘后持仓', '空仓')
+    pos = public_position_summary(fm.get('盘后持仓', '空仓'))
 
     emo_val = numeric_value(emo_raw)
     emo_chip = 'red' if emo_val is not None and emo_val < 25 else ('amber' if emo_val is not None and emo_val < 45 else 'green')
@@ -303,7 +357,7 @@ def html_table(headers, rows, cell_fn=None):
     for row in rows:
         tbody += '<tr>'
         for h in headers:
-            v = row.get(h, '')
+            v = sanitize_public_review_cell(h, row.get(h, ''))
             if cell_fn:
                 v = cell_fn(h, v)
             tbody += f'<td>{v}</td>'
@@ -1237,6 +1291,7 @@ def convert_md_to_html(md_path):
         content = f.read()
 
     fm = parse_frontmatter(content)
+    content = sanitize_public_review_text(content)
 
     # Parse date for filename
     date_str = fm.get('date', '')

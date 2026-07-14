@@ -368,6 +368,66 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("规则教训", html)
         self.assertNotIn("<ol class=\"tight-list\">", html.split("规则教训", 1)[0])
 
+    def test_convert_md_to_html_redacts_public_execution_details(self):
+        markdown = """---
+date: 2026-07-14
+weekday: 周二
+情绪值: 74.2
+上证指数: 3967.13
+上证涨幅: 1.36
+涨停家数: 83
+跌停家数: 22
+盘后持仓: "瑞芯微800股@219.02"
+---
+
+## 一、当日复盘
+
+### 节点说明
+
+**午盘**
+- 弈沐操作[TICKET-20260714-603893-0001]：10:39加仓200股@210.75。
+
+### 持仓与交易
+
+| 标的 | 仓位 | 盈亏 | 原因 |
+|------|------|------|------|
+| 瑞芯微 | 600股→800股 | 当日实现-2955元 | 成本219.02，违规加仓 |
+
+### 一句话结论
+
+> **Portal 今日一句话来源**：一句话讲清当日市场状态和系统判断；不写 ticket、股数、成本、精确买卖指令。
+
+公开结论保留。
+"""
+
+        with tempfile.TemporaryDirectory() as tmp:
+            original_review_notes = convert_review.REVIEW_NOTES
+            convert_review.REVIEW_NOTES = Path(tmp)
+            try:
+                source = Path(tmp) / "2026_7_14_Tuesday_ReviewNote.md"
+                source.write_text(markdown, encoding="utf-8")
+
+                _, output_path = convert_review.convert_md_to_html(source)
+                html = output_path.read_text(encoding="utf-8")
+
+                for secret in (
+                    "瑞芯微800股@219.02",
+                    "TICKET-20260714-603893-0001",
+                    "10:39加仓200股@210.75",
+                    "600股→800股",
+                    "-2955元",
+                    "成本219.02",
+                ):
+                    self.assertNotIn(secret, html)
+                self.assertIn("持仓状态已记录", html)
+                self.assertIn("上证 3967.13 +1.36%", html)
+                self.assertIn("83涨停 / 22跌停", html)
+                self.assertNotIn("Portal 今日一句话来源", html)
+                self.assertNotIn("不写 ticket", html)
+                self.assertIn("公开结论保留", html)
+            finally:
+                convert_review.REVIEW_NOTES = original_review_notes
+
 
 if __name__ == "__main__":
     unittest.main()
