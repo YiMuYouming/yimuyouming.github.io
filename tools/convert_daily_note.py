@@ -142,6 +142,12 @@ def sanitize_public_text(text: str) -> str:
         line = raw.strip()
         if not line:
             continue
+        line = re.sub(r"\s*`?WEEK_STOP`?", "周回撤门禁", line, flags=re.I)
+        line = re.sub(r"\s*`?LOSS_STREAK`?", "连亏门禁", line, flags=re.I)
+        line = re.sub(r"\s*`?W1_PROMOTION`?", "窗口门禁", line, flags=re.I)
+        line = re.sub(r"`?no_touch`?", "暂不参与", line, flags=re.I)
+        line = re.sub(r"`?observation-only`?", "仅观察", line, flags=re.I)
+        line = line.replace("`", "")
         if re.search(r"TICKET-|成本价|@\s*\d|已买|已卖|\d+\s*股", line, re.I):
             continue
         if re.search(r"(明日买入|买入|加仓|减仓|清仓|卖出).*(\d+\s*股|突破|@\s*\d)", line, re.I):
@@ -253,7 +259,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     bracket_tagged = re.search(
-        r"^\d+\.\s+\[(?P<kind>认知)\]\s*(?P<title>.+?)(?:[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
+        r"^\d+\.\s+\[(?P<kind>认知)\]\s*(?P<title>.+?)(?:\s*[—-]\s*|[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
         s2_text,
         re.M | re.S,
     )
@@ -357,7 +363,11 @@ def extract_watch_items(s3_text: str) -> list[str]:
     if not items:
         tone = re.search(r"\*\*总基调\*\*[：:]\s*(.+)", s3_text)
         if tone:
-            items.append(first_sentence(tone.group(1), "先看市场承接是否恢复。"))
+            tone_text = tone.group(1)
+            if re.search(r"D[0-3]|process_defect|no_touch|广筛对象|回写账本|机器预案", tone_text, re.I):
+                items.append("先看市场承接与风险门禁是否恢复，不以盘中强势替代收盘确认。")
+            else:
+                items.append(first_sentence(tone_text, "先看市场承接是否恢复。"))
     return items[:3] or ["先看市场承接是否恢复，再决定是否提高进攻性。"]
 
 

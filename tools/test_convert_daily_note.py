@@ -364,6 +364,20 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("23.4", html)
         self.assertIn("降低部分风险", html)
 
+    def test_daily_note_splits_plain_bracket_cognition_on_dash(self):
+        section = """### 今日认知
+
+1. [认知] 技术买点与系统授权必须分层 — 放量冲高回踩均线可以解释主观加仓逻辑，但不能覆盖 `WEEK_STOP`；下次动作前同时核对形态条件与最终门禁。
+2. [教训] 第二条不应被第一条吞并 — 这是下一条。
+"""
+
+        title, body, _action = convert_daily_note.extract_first_cognition(section)
+
+        self.assertEqual(title, "技术买点与系统授权必须分层")
+        self.assertIn("放量冲高回踩均线", body)
+        self.assertIn("周回撤门禁", body)
+        self.assertNotIn("第二条不应被第一条吞并", body)
+
     def test_daily_note_redacts_position_percent_without_leaving_numeric_tail(self):
         review_note = self.root / "2026_7_8_Wednesday_ReviewNote.md"
         review_note.write_text(
@@ -389,6 +403,23 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("海兰信", html)
         self.assertNotIn("徐工", html)
         self.assertIn("组合风险暴露因持仓动作升至关键比例", html)
+
+    def test_daily_note_translates_internal_gate_tokens_and_rejects_operator_tone(self):
+        public_text = convert_daily_note.sanitize_public_text(
+            "技术形态不能覆盖 `WEEK_STOP`；旧清单保持 `no_touch` 与 observation-only。"
+        )
+        watch_items = convert_daily_note.extract_watch_items(
+            "**总基调**：旧D1“8板块全`no_touch`”已撤回，37只广筛对象以`process_defect=true`回写账本。"
+        )
+
+        self.assertNotIn("WEEK_STOP", public_text)
+        self.assertNotIn("no_touch", public_text)
+        self.assertNotIn("observation-only", public_text)
+        self.assertNotIn("`", public_text)
+        self.assertEqual(
+            watch_items,
+            ["先看市场承接与风险门禁是否恢复，不以盘中强势替代收盘确认。"],
+        )
 
     def test_updates_daily_notes_archive_and_home_without_review_count_drift(self):
         convert_daily_note.convert_review_to_daily_note(self.review_note)

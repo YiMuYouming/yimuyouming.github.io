@@ -340,6 +340,32 @@ class ConvertReviewTest(unittest.TestCase):
         self.assertIn("先核对账户事实", html)
         self.assertNotIn("<ol class=\"tight-list\">", html)
 
+    def test_parse_s2_renders_plain_bracketed_dash_items_as_lesson_cards(self):
+        markdown = """### 今日认知
+
+1. [认知] 技术买点与系统授权必须分层 — 形态可以解释主观逻辑，但不能覆盖账户级门禁。
+2. [教训] 盘中强势不等于收盘确认 — 后续仓必须预算尾盘回落。
+3. [教训] 风险锚触发必须落到主标的 — 动作或拒绝理由必须二选一记录。
+4. [流程缺陷] 红方采纳项必须进入次日检查 — 文字采纳要形成可回读约束。
+
+---
+
+### 规则教训
+"""
+
+        html = convert_review.parse_s2(markdown)
+
+        self.assertEqual(html.count('class="lesson-card cognition"'), 1)
+        self.assertEqual(html.count('class="lesson-card warning"'), 3)
+        self.assertIn("技术买点与系统授权必须分层", html)
+        self.assertIn("后续仓必须预算尾盘回落", html)
+        self.assertIn("红方采纳项必须进入次日检查", html)
+        self.assertIn(
+            '<div class="lesson-evidence"><div class="para">文字采纳要形成可回读约束。</div></div>',
+            html,
+        )
+        self.assertNotIn("<ol class=\"tight-list\">", html)
+
     def test_parse_s2_renders_today_cognition_numbered_bold_as_cards(self):
         markdown = """最多 5 条。
 

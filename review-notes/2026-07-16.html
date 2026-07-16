@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026-07-16 周四 复盘笔记</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(247,245,243,.88);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.topbar .title{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+.topbar .back{font-size:13px;color:var(--text2);padding:3px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap;text-decoration:none;transition:all .12s}
+.topbar .back:hover{color:var(--accent);border-color:var(--accent);background:var(--bg4)}
+.topbar .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.chip{padding:3px 11px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border);white-space:nowrap;color:var(--text2)}
+.chip.red{border-color:var(--red);color:var(--red)}
+.chip.green{border-color:var(--green);color:var(--green)}
+.chip.amber{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+.chip.blue{border-color:var(--blue);color:var(--blue)}
+.chip.purple{border-color:var(--purple);color:var(--purple)}
+@media(max-width:768px){.topbar .meta{width:100%;margin-left:0}.topbar .chip{white-space:normal;overflow-wrap:anywhere}}
+.layout{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:62px;align-self:flex-start;max-height:calc(100vh - 62px);overflow-y:auto;padding:16px 0 16px 14px;border-right:1px solid var(--border);font-size:14px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar .label{font-size:11px;text-transform:uppercase;color:var(--text3);padding:8px 10px 4px;letter-spacing:1px;font-weight:600}
+.sidebar a{display:block;padding:5px 10px;color:var(--text2);text-decoration:none;font-size:13px;border-radius:4px;margin-bottom:2px;border-left:2px solid transparent;transition:all .12s}
+.sidebar a:hover{background:var(--bg4);color:var(--text)}
+.sidebar a.s2{padding-left:24px;font-size:12px}
+.sidebar a.active{color:var(--accent);background:var(--bg4);border-left-color:var(--accent)}
+.content{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+@media(max-width:768px){.sidebar{display:none}.content{padding:16px}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:16px;font-weight:700;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--bg4)}
+.sh:hover{background:var(--border)}
+.sh .tog{color:var(--text3);font-size:11px;transition:transform .15s;flex-shrink:0}
+.sh.collapsed .tog{transform:rotate(-90deg)}
+.sh .cnt{font-size:12px;font-weight:400;color:var(--text3);margin-left:auto}
+.sb{padding:0 18px 16px}
+.sb.hide{display:none}
+.si{color:var(--text2);font-size:14px;margin-bottom:12px;line-height:1.6;padding:10px 0 0}
+.tw{overflow-x:auto;margin-bottom:14px}
+.tw table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.tw thead th{position:sticky;top:0;background:var(--bg4);padding:8px 10px;text-align:left;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:12px;white-space:nowrap}
+.tw tbody td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tw tbody tr:hover{background:var(--bg4)}
+.tw tbody tr:nth-child(even){background:rgba(0,0,0,.015)}
+.up{color:var(--red);font-weight:600}
+.down{color:var(--green);font-weight:600}
+.dim{color:var(--text3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-red{background:rgba(220,38,38,.1);color:var(--red)}
+.badge-green{background:rgba(5,150,105,.1);color:var(--green)}
+.badge-yellow{background:rgba(217,119,6,.1);color:var(--amber)}
+.badge-blue{background:rgba(37,99,235,.08);color:var(--blue)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:14px}
+.sc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sbx{padding:12px 16px;background:var(--bg4);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;margin-bottom:14px;font-size:14px;line-height:1.6}
+.sbx.warn{border-left-color:var(--amber)}
+.sbx.red{border-left-color:var(--red)}
+.sbx.green{border-left-color:var(--green)}
+.sh2{font-size:17px;font-weight:700;margin:20px 0 10px;color:var(--text);padding-top:4px}
+.sh3{font-size:15px;font-weight:600;margin:14px 0 8px;color:var(--text);padding-top:2px}
+.para{font-size:14px;line-height:1.7;margin-bottom:8px;color:var(--text)}
+.tight-list{font-size:14px;line-height:1.6;margin-bottom:8px;padding-left:20px}
+.tight-list li{margin-bottom:3px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.stat-card .val{font-size:22px;font-weight:700}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-card .val.red{color:var(--red)}.stat-card .val.green{color:var(--green)}.stat-card .val.amber{color:var(--amber)}
+.node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.node-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.node-card .nhead{font-weight:700;font-size:14px;margin-bottom:6px}
+.node-card .nbody{font-size:13px;color:var(--text2);line-height:1.6}
+.node-timeline{position:relative;display:grid;gap:14px;margin:12px 0 18px;padding-left:18px}
+.node-timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,rgba(217,119,6,.55),rgba(217,119,6,.12))}
+.node-note-card{position:relative;background:linear-gradient(180deg,#fff,#FBF8F3);border:1px solid rgba(229,226,222,.95);border-radius:12px;padding:14px 16px;min-width:0;box-shadow:0 10px 26px rgba(45,41,38,.045)}
+.node-note-card::before{content:"";position:absolute;left:-19px;top:20px;width:10px;height:10px;border-radius:999px;background:#D97706;box-shadow:0 0 0 4px #F7F5F3,0 0 0 6px rgba(217,119,6,.18)}
+.node-phase{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:16px;font-weight:900;color:var(--text);margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid rgba(229,226,222,.8)}
+.node-phase span{font-family:'Noto Serif SC',serif}
+.node-phase em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--accent);background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.18);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.node-detail{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid rgba(229,226,222,.64)}
+.node-detail:first-of-type{border-top:0}
+.node-label{font-size:12px;font-weight:900;color:var(--accent);line-height:1.5}
+.node-copy{font-size:13px;color:var(--text2);line-height:1.7;word-break:break-word}
+.node-copy strong{color:var(--text)}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:12px 0 18px}
+.lesson-card{position:relative;background:linear-gradient(180deg,#fff,#FCFAF7);border:1px solid rgba(229,226,222,.96);border-radius:12px;padding:15px 15px 14px;box-shadow:0 12px 28px rgba(45,41,38,.045);overflow:hidden}
+.lesson-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.lesson-card.warning::before{background:var(--red)}
+.lesson-card.topic::before{background:var(--purple)}
+.lesson-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.lesson-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:900}
+.lesson-card.cognition .lesson-tag{background:rgba(37,99,235,.08);color:var(--blue)}
+.lesson-card.warning .lesson-tag{background:rgba(220,38,38,.08);color:var(--red)}
+.lesson-card.topic .lesson-tag{background:rgba(124,58,237,.08);color:var(--purple)}
+.lesson-type{font-size:11px;font-weight:900;color:var(--text3);letter-spacing:.08em;white-space:nowrap}
+.lesson-principle{font-family:'Noto Serif SC',serif;font-size:17px;line-height:1.45;font-weight:800;color:var(--text);margin-bottom:11px;word-break:break-word}
+.lesson-label{font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;margin-bottom:5px}
+.lesson-evidence{background:rgba(245,242,238,.72);border:1px solid rgba(229,226,222,.82);border-radius:9px;padding:10px 11px;font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:10px}
+.lesson-evidence .para{font-size:13px;margin-bottom:0;color:var(--text2)}
+.lesson-action{position:relative;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.18);border-radius:9px;padding:9px 11px 9px 32px;font-size:13px;line-height:1.6;color:var(--text)}
+.lesson-action::before{content:"→";position:absolute;left:12px;top:9px;color:var(--accent);font-weight:900}
+@media(max-width:520px){.lesson-grid{grid-template-columns:1fr}.lesson-head{align-items:flex-start}.lesson-type{white-space:normal;text-align:right}.lesson-principle{font-size:16px}}
+.warn-box{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+.warn-box .wtitle{font-weight:700;color:var(--red);margin-bottom:4px}
+[id]{scroll-margin-top:70px}
+.verdict{background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;margin:12px 0}
+.verdict .vt{font-weight:700;color:var(--green);margin-bottom:4px;font-size:15px}
+.verdict .vb{font-size:14px;color:var(--text2);line-height:1.7}
+.debate-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
+.debate-row .dr-label{min-width:100px;font-weight:600;color:var(--text2);text-align:right;padding-top:2px}
+.debate-row .dr-body{flex:1;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.debate-row .dr-body.accept{background:rgba(5,150,105,.06);border-left:3px solid var(--green)}
+.debate-row .dr-body.partial{background:rgba(217,119,6,.04);border-left:3px solid var(--amber)}
+.emotion-board{display:grid;gap:14px;margin:10px 0 16px}
+.emotion-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.emotion-kpi{background:linear-gradient(180deg,#fff,var(--bg3));border:1px solid var(--border);border-radius:10px;padding:11px 12px;min-height:76px}
+.emotion-kpi .klabel{font-size:12px;color:var(--text3);margin-bottom:4px}
+.emotion-kpi .kval{font-size:20px;line-height:1.15;font-weight:800;color:var(--text);word-break:break-word}
+.emotion-kpi.good .kval{color:var(--red)}.emotion-kpi.warn .kval{color:var(--amber)}.emotion-kpi.bad .kval{color:var(--green)}
+.emotion-stage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.emotion-stage{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px}
+.emotion-stage .stage-title{font-size:14px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.emotion-row{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;border-top:1px solid rgba(229,226,222,.75);padding:7px 0;font-size:12px}
+.emotion-row:first-of-type{border-top:0}
+.emotion-row .rlabel{color:var(--text3);white-space:nowrap}
+.emotion-row .rval{color:var(--text2);line-height:1.45;word-break:break-word}
+.emotion-row.major{display:block;background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 10px;margin-top:8px}
+.emotion-row.major .rlabel{display:block;margin-bottom:3px;font-weight:700;color:var(--text)}
+.emotion-thresholds{background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.24);border-radius:10px;padding:12px}
+.emotion-thresholds .threshold-title{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.emotion-thresholds .threshold-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.emotion-thresholds .threshold-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:12px;line-height:1.45}
+.emotion-thresholds .threshold-item strong{color:var(--text);margin-right:6px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
+  <div class="title">2026-07-16 周四 复盘笔记</div>
+  <div class="meta">
+    <span class="chip green">情绪 45.7%</span>
+    <span class="chip green">上证 3881.51 -1.87%</span>
+    <span class="chip blue">42涨停 / 33跌停</span>
+    <span class="chip purple">持仓 持仓状态已记录</span>
+    <span class="chip green">终稿 (红蓝对抗完成)</span>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  <a href="#s0">第〇部分 昨日预案</a>
+  <a href="#s1">§一 当日复盘</a>
+  <a href="#s1a" class="s2">大盘全景</a>
+  <a href="#s1b" class="s2">情绪高标</a>
+  <a href="#s1c" class="s2">节点说明</a>
+  <a href="#s1d" class="s2">涨停结构</a>
+  <a href="#s1e" class="s2">自选池表现</a>
+  <a href="#s1f" class="s2">持仓与交易</a>
+  <a href="#s1g" class="s2">风格检测</a>
+  <a href="#s1h" class="s2">趋势持仓复盘</a>
+  <a href="#s1i" class="s2">窗口操作</a>
+  <a href="#s1j" class="s2">结论</a>
+  <a href="#s2">§二 心得与教训</a>
+  <a href="#s3">§三 次日预案</a>
+  <a href="#s3a" class="s2">连板自选池</a>
+  <a href="#s3b" class="s2">趋势自选池</a>
+  <a href="#s4">§四 红方对抗</a>
+  <a href="#s4a" class="s2">Round 1 红方</a>
+  <a href="#s4b" class="s2">Round 2 蓝方</a>
+  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#sa">附录A 盘前速查</a>
+  <a href="#sd">数据附录</a>
+</div>
+
+<div class="content">
+
+<div class="section" id="s1">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §一 · 当日复盘
+</div>
+<div class="sb"><div class="sh3" id="s1a">📊 表1：大盘全景</div><div class="tw"><table><thead><tr><th>节点</th><th>情绪</th><th>上证(%)</th><th>涨/跌停</th><th>量能</th><th>涨跌比</th><th>总竞价涨幅</th><th>关键异动</th></tr></thead><tbody><tr><td>竞价</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>早盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>午盘</td><td>61.3</td><td><span class="down">-0.83%</span></td><td>47/5</td><td>1.48万亿</td><td>3163/1997</td><td>—</td><td>—</td></tr><tr><td>尾盘</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>收盘</td><td>45.7</td><td><span class="down">-1.87%</span></td><td>42/33</td><td>2.38万亿</td><td>2341/2782</td><td>—</td><td>收盘涨停池42、炸板25；炸板率37.31%</td></tr></tbody></table></div><div class="sh3" id="s1b">📈 表2：情绪高标</div><div class="emotion-board"><div class="emotion-summary-grid"><div class="emotion-kpi "><div class="klabel">赚钱效应</div><div class="kval">一般偏差</div></div><div class="emotion-kpi "><div class="klabel">涨停收益</div><div class="kval">2.64</div></div><div class="emotion-kpi "><div class="klabel">连板收益</div><div class="kval">1.6</div></div><div class="emotion-kpi "><div class="klabel">封板率</div><div class="kval">62.69</div></div><div class="emotion-kpi "><div class="klabel">炸板率</div><div class="kval">37.31</div></div><div class="emotion-kpi "><div class="klabel">一进二</div><div class="kval">—</div></div><div class="emotion-kpi "><div class="klabel">三进四</div><div class="kval">—</div></div><div class="emotion-kpi "><div class="klabel">结论</div><div class="kval">—</div></div></div><div class="emotion-stage-grid"><div class="emotion-stage"><div class="stage-title">竞价</div><div class="emotion-row"><span class="rlabel">记录</span><span class="rval">—</span></div></div><div class="emotion-stage"><div class="stage-title">早盘</div><div class="emotion-row"><span class="rlabel">记录</span><span class="rval">—</span></div></div><div class="emotion-stage"><div class="stage-title">午盘</div><div class="emotion-row"><span class="rlabel">涨停收益</span><span class="rval">3.26</span></div><div class="emotion-row"><span class="rlabel">连板收益</span><span class="rval">2.23</span></div><div class="emotion-row"><span class="rlabel">炸板收益</span><span class="rval">-1.32</span></div><div class="emotion-row"><span class="rlabel">封板率</span><span class="rval">1</span></div><div class="emotion-row"><span class="rlabel">炸板率</span><span class="rval">0</span></div><div class="emotion-row"><span class="rlabel">赚钱效应</span><span class="rval">好</span></div></div><div class="emotion-stage"><div class="stage-title">尾盘</div><div class="emotion-row"><span class="rlabel">记录</span><span class="rval">—</span></div></div><div class="emotion-stage"><div class="stage-title">收盘</div><div class="emotion-row"><span class="rlabel">涨停收益</span><span class="rval">2.64</span></div><div class="emotion-row"><span class="rlabel">连板收益</span><span class="rval">1.6</span></div><div class="emotion-row"><span class="rlabel">炸板收益</span><span class="rval">-1.63</span></div><div class="emotion-row"><span class="rlabel">封板率</span><span class="rval">62.69</span></div><div class="emotion-row"><span class="rlabel">炸板率</span><span class="rval">37.31</span></div><div class="emotion-row"><span class="rlabel">整体晋级率</span><span class="rval">14.08</span></div><div class="emotion-row"><span class="rlabel">赚钱效应</span><span class="rval">一般偏差</span></div><div class="emotion-row major"><span class="rlabel">最高板/次高板</span><span class="rval">5/—</span></div></div></div><div class="emotion-thresholds"><div class="threshold-title">门槛速查</div><div class="threshold-grid"><div class="threshold-item"><strong>竞价强势家数</strong>&gt;10(降温)/&gt;30(高位)</div><div class="threshold-item"><strong>涨停收益</strong>&gt;2%(低迷)/&gt;3%(正常)</div><div class="threshold-item"><strong>炸板率</strong>&lt;30%(W1追涨)/&lt;40%(W2冰点)</div><div class="threshold-item"><strong>整体晋级率</strong>辅助参考（非硬卡）</div><div class="threshold-item"><strong>一进二晋级率</strong>&gt;15%(低迷)/&gt;18%(主升)</div><div class="threshold-item"><strong>二进三晋级率</strong>&gt;20%(环境)/&gt;25%(2进3策略)</div><div class="threshold-item"><strong>三进四晋级率</strong>&gt;35%(3进4+策略)</div><div class="threshold-item"><strong>赚钱效应</strong>好(&gt;3%+&gt;40%)/差(&lt;2%+&lt;20%)</div><div class="threshold-item"><strong>竞价验证结论</strong>A好+B好/A好+B差/A差+B好/A差+B差</div></div></div></div><div class="sh3" id="s1c">🔍 节点说明</div><div class="node-timeline"><article class="node-note-card" data-phase="早盘"><div class="node-phase"><span>早盘</span><em>10:00</em></div><div class="node-detail"><div class="node-label">午盘</div><div class="node-copy">情绪61.3；上证-0.83%；涨跌停47/5；量能1.48万亿；涨跌比3163/1997；关键异动：—</div></div></article><article class="node-note-card" data-phase="尾盘"><div class="node-phase"><span>尾盘</span><em>14:30</em></div><div class="node-detail"><div class="node-label">收盘</div><div class="node-copy">情绪45.7；上证-1.87%；涨跌停42/33；量能2.38万亿；涨跌比2341/2782；收盘涨停池42、炸板25，炸板率37.31%、封板率62.69%；source_gaps：packet_missing: /Users/yimu/Documents/YM_Capital/live-dashboard/data/review_packets/2026-07-16/review_source_packet.json</div></div></article></div><div class="sh3" id="s1e">🎯 当日自选池表现</div><div class="sh3" id="s1f">💰 持仓与交易</div><div class="tw"><table><thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>AI芯片/半导体</td><td>持有</td><td>瑞芯微部分仓位@成交价已隐藏</td><td>已脱敏</td><td>浮盈金额已脱敏（+1.47%）；当日金额已脱敏</td><td>收盘仍高于综合成本，但从盘中涨停回落；继续作为持仓风险处理，不追加</td></tr><tr><td>消费电子</td><td>买入（已成交补录）</td><td>歌尔股份部分仓位@成交价已隐藏</td><td>已脱敏</td><td>新增仓收盘金额已脱敏（-1.75%）；合计浮盈金额已脱敏（+0.48%）</td><td>弈沐确认10:30成交；理由为放量冲高后回踩分时均线、原持仓盈利且总账户当日盈利。技术理由明确，但 `WEEK_STOP` 与目标仓位0%仍生效，属于人工成交事实，不构成系统授权买点</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>现价</th><th>浮盈/股</th><th>浮盈率</th><th>仓位</th><th>T+1可卖</th><th>评价</th></tr></thead><tbody><tr><td>瑞芯微</td><td>已脱敏</td><td>222.24</td><td>已脱敏</td><td>+1.47%</td><td>已脱敏</td><td>按账户事实复核</td><td>当日+5.58%，但从涨停回落；规则门关闭期只作风险处理，不加仓</td></tr><tr><td>歌尔股份</td><td>已脱敏</td><td>23.02</td><td>已脱敏</td><td>+0.48%</td><td>已脱敏</td><td>按账户事实复核</td><td>原仓盈利；今日新增仓收盘-1.75%，次日先处理T+1暴露，不把人工买点反推为规则通过</td></tr></tbody></table></div><div class="sh3">🛡️ 账户风控</div><div class="tw"><table><thead><tr><th>指标</th><th>数值</th><th>阈值</th><th>状态</th></tr></thead><tbody><tr><td>当日盈亏</td><td>金额已脱敏 / +1.44%</td><td>-3%熔断</td><td>✅ 未触发单日熔断</td></tr><tr><td>周累计回撤</td><td>-6.50%（规则状态回读）</td><td>6%预警</td><td>🚨 `WEEK_STOP`仍生效</td></tr><tr><td>月累计回撤</td><td>—（本次事实包未提供）</td><td>10%预警</td><td>⚠️ 待正式账户序列核验</td></tr><tr><td>连亏天数</td><td>0天（今日盈利；周停约束不解除）</td><td>≥2天空仓</td><td>✅ 日序列结束，但总仓位上限仍0%</td></tr><tr><td>单日熔断</td><td>未触发</td><td>-3%</td><td>✅</td></tr></tbody></table></div><div class="sh3" id="s1g">📐 风格检测</div><div class="tw"><table><thead><tr><th>维度</th><th>分数</th><th>明细</th></tr></thead><tbody><tr><td>维度一：量能</td><td>13/25</td><td>两市2.38万亿；上证20日线与趋势走强板块数缺失</td></tr><tr><td>维度二：连板生态</td><td>21/35</td><td>最高5板；涨停收益2.64%；炸板收益-1.63%；整体晋级率14.08%</td></tr><tr><td>维度三：趋势赚钱效应</td><td>3/25</td><td>赚钱效应一般偏差；趋势走强板块数、大市值赚钱比例与上证20日线缺失</td></tr><tr><td>维度四：情绪广度</td><td>8/15</td><td>情绪45.7；涨停42/跌停33；赚钱效应一般偏差</td></tr><tr><td>总分</td><td>45/100</td><td>连板主导；理论连板65% / 趋势35%；账户 `WEEK_STOP` 硬约束覆盖风格配置，次日总仓位上限0%</td></tr></tbody></table></div><div class="sh3">📤 卖出追踪</div><div class="tw"><table><thead><tr><th>标的</th><th>卖出日</th><th>卖出价</th><th>卖出理由</th><th>+1日收盘</th><th>+2日收盘</th><th>信号校准</th></tr></thead><tbody><tr><td>无/股票名</td><td>—</td><td>已脱敏</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1h">📈 趋势持仓复盘</div><div class="tw"><table><thead><tr><th>项目</th><th>评估结果</th><th>备注</th></tr></thead><tbody><tr><td>趋势强度</td><td>强/中/弱/不适用</td><td>—</td></tr><tr><td>板块指数位置</td><td>站上20日线/跌破20日线/不适用</td><td>—</td></tr><tr><td>主力资金趋势</td><td>近3日净流入/流出/不适用</td><td>—</td></tr><tr><td>分歧 vs 退潮</td><td>分歧/退潮/不适用</td><td>—</td></tr><tr><td>预警信号是否触发</td><td>触发/未触发/不适用</td><td>—</td></tr><tr><td>趋势规则信号校准</td><td>准确/不准确/待观察/不适用</td><td>—</td></tr></tbody></table></div><div class="sh3" id="s1i">🪟 窗口操作记录</div><div class="tw"><table><thead><tr><th>窗口</th><th>昨日预案</th><th>实际情况</th><th>实际操作</th><th>对不对</th></tr></thead><tbody><tr><td>W1</td><td>只处理持仓风险，不新增</td><td>瑞芯微、歌尔早盘走强，但最终门禁仍关闭</td><td>未新增</td><td>✅ 遵守</td></tr><tr><td>W2</td><td>两只持仓向目标0%收敛</td><td>瑞芯微部分仓位全可卖，且通富微电翻绿已触发风险锚；歌尔新增部分仓位T+1锁仓</td><td>两只均未减仓</td><td>❌ 瑞芯微无决策留痕可支持跳过减仓，确认为漏判；歌尔为部分锁仓</td></tr></tbody></table></div><div class="sh3">🎭 预期差与盘感</div><div class="si"><div class="para"><strong>盘面定性</strong>：午盘情绪61.3、涨跌停47/5，收盘降至45.7、42/33；上证-1.87%，午后由普涨修复转为显著分化，炸板率37.31%、整体晋级率14.08%，收盘赚钱效应定为“一般偏差”。</div></div><div class="sh3" id="s1j">💡 一句话结论</div><div class="sbx"><div class="si">
+午后指数与情绪同步回落，持仓贡献使账户收红，但周回撤门禁仍要求次日优先处理风险而非扩张仓位。<br>
+</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="s2">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §二 · 心得与教训
+</div>
+<div class="sb"><div class="si"><div class="si">
+最多 5 条。格式：`[教训/认知/议题] 标题 — 结论`。能落规则的再进入规则反馈流程，不在这里直接改规则。<br>
+</div>
+<div class="sh2">今日认知</div></div><div class="lesson-grid"><article class="lesson-card cognition"><div class="lesson-head"><div class="lesson-tag">认知</div><div class="lesson-type">今日提炼</div></div><div class="lesson-label">可复用原则</div><div class="lesson-principle">技术买点与系统授权必须分层</div><div class="lesson-label">当日证据</div><div class="lesson-evidence"><div class="para">放量冲高回踩均线、原仓和账户盈利可以解释主观加仓逻辑，但不能覆盖 <code>WEEK_STOP</code>；下次动作前同时核对形态条件与最终门禁。</div></div><div class="lesson-label">下次动作</div><div class="lesson-action">开仓前先确认板块强度、对标标的、买点窗口和失效点，再定个股。</div></article><article class="lesson-card warning"><div class="lesson-head"><div class="lesson-tag">教训</div><div class="lesson-type">风险校正</div></div><div class="lesson-label">可复用原则</div><div class="lesson-principle">盘中强势不等于收盘确认</div><div class="lesson-label">当日证据</div><div class="lesson-evidence"><div class="para">瑞芯微盘中涨停、歌尔冲高，收盘均明显回落；浮盈后的第二笔必须把尾盘回落与T+1锁仓纳入风险预算。</div></div><div class="lesson-label">下次动作</div><div class="lesson-action">下次出手前先停顿复核预案、窗口、量能和失效点，缺一项就降级处理。</div></article><article class="lesson-card warning"><div class="lesson-head"><div class="lesson-tag">教训</div><div class="lesson-type">风险校正</div></div><div class="lesson-label">可复用原则</div><div class="lesson-principle">风险锚触发必须落到可卖主标的</div><div class="lesson-label">当日证据</div><div class="lesson-evidence"><div class="para">通富翻绿、瑞芯微涨停与部分仓位可卖同时出现，但没有减仓也没有决策留痕；后续“锚触发→动作/拒绝理由”必须二选一记录。</div></div><div class="lesson-label">下次动作</div><div class="lesson-action">下次出手前先停顿复核预案、窗口、量能和失效点，缺一项就降级处理。</div></article><article class="lesson-card warning"><div class="lesson-head"><div class="lesson-tag">流程缺陷</div><div class="lesson-type">流程校正</div></div><div class="lesson-label">可复用原则</div><div class="lesson-principle">红方采纳项必须进入次日检查</div><div class="lesson-label">当日证据</div><div class="lesson-evidence"><div class="para">歌尔连续两日在门禁关闭期买入，说明文字采纳未形成盘中约束；弈沐已裁决暂不升级硬卡，规则完善期间保留ReviewNote文字层检查。</div></div><div class="lesson-label">下次动作</div><div class="lesson-action">先补事实层和缺口清单，不用收盘结果倒推盘中授权，次日交给实时门禁重新裁决。</div></article></div><div class="si"><hr class="divider"></div></div>
+</div>
+<div class="section" id="s3">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §三 · 次日预案
+</div>
+<div class="sb"><div class="stats-grid"><div class="stat-card"><div class="lbl">风格</div><div class="val amber">连板主导45分（D0按收盘池口径重跑）；账户门禁不受风格分数</div></div><div class="stat-card"><div class="lbl">资金分配</div><div class="val">观察资源优先给持仓风险、文化传媒与ICT；不产生仓位授权</div></div><div class="stat-card"><div class="lbl">仓位上限</div><div class="val amber">0%（`WEEK_STOP`硬约束）</div></div></div><div class="sbx warn"><strong>总基调</strong>：旧D1“8板块全`no_touch`”已撤回。新D1保留8个观察板块、37只广筛对象；文化传媒与ICT为红方补漏，白酒为15:49全市场两日强度重扫补齐，新增候选均以`process_defect=true`回写账本。<br><strong>为什么</strong>：数据降级只限制买入授权，不能把已有两日强度、宽度扩张或持仓风险映射的板块清空。<br><strong>基准预期</strong>：次日先处理瑞芯微、歌尔仓位风险；D2确认的13只锚点与观察标只用于验证板块高度、宽度、趋势和持仓动作，不产生新增买入授权。</div><div class="sh3">🔮 明日连板判定</div><div class="tw"><table><thead><tr><th>板层</th><th>晋级率</th><th>阈值</th><th>结果</th></tr></thead><tbody><tr><td>一进二</td><td>—</td><td>>15%(低迷)/>18%(主升)</td><td>可用/排除</td></tr><tr><td>二进三(近3日均值)</td><td>—</td><td>>25%</td><td>可用/排除</td></tr><tr><td>三进四+</td><td>—</td><td>>35%</td><td>可用/排除</td></tr><tr><td>大环境(二进三)</td><td>—</td><td>>20%开放/<20%关闭</td><td>数据缺失，关闭新增</td></tr><tr><td>情绪</td><td>45.7</td><td>—</td><td>只做持仓风险处理</td></tr></tbody></table></div><div class="sh3" id="s3a">🎯 连板自选池</div><div class="sh3" id="s3b">📈 趋势自选池</div><div class="tw"><table><thead><tr><th>层级</th><th>标的</th><th>代码</th><th>今日定位</th><th>窗口</th><th>今日检查</th><th>触发/失效</th><th>入选路径</th><th>板块状态</th><th>选入理由</th><th>数据依据</th></tr></thead><tbody><tr><td>🔴持仓</td><td>瑞芯微</td><td>603893</td><td>持仓处理</td><td>持仓/W2</td><td>MA5=215.49、半导体宽度</td><td>开盘15分钟不能站稳MA5或半导体继续明显弱势→先减400；W2仍不修复→清余仓</td><td>持仓保底</td><td>半导体显著退潮观察</td><td>部分仓位全可卖，优先降低风险，不加仓</td><td>收222.24、浮盈1.47%；半导体-5.35%、20涨161跌</td></tr><tr><td>🔴持仓</td><td>歌尔股份</td><td>002241</td><td>持仓处理</td><td>持仓/W2</td><td>综合成本已脱敏、MA5=22.28、消费电子宽度</td><td>跌破22.91或消费电子转弱→先减2000；W2仍未收复→清余仓</td><td>持仓保底</td><td>消费电子中性承接</td><td>次日先回读部分仓位可卖状态，只减不加</td><td>收23.02、综合浮盈0.48%；消费电子+0.13%、48涨48跌</td></tr><tr><td>锚点</td><td>通富微电</td><td>002156</td><td>风险锚</td><td>观察</td><td>半导体宽度与封测承接</td><td>转弱或翻绿→强化瑞芯微减仓；修复不覆盖板块退潮条件</td><td>持仓风险映射</td><td>半导体退潮观察</td><td>只服务瑞芯微，不授权买入</td><td>封测容量与趋势锚</td></tr><tr><td>锚点</td><td>盛科通信</td><td>688702</td><td>风险锚</td><td>观察</td><td>半导体逆势修复温度</td><td>盛科修复但板块不修复→仍按瑞芯微风险条件处理</td><td>红方补充</td><td>半导体退潮观察</td><td>只服务瑞芯微，不授权买入</td><td>核心股辨识度与趋势温度</td></tr><tr><td>锚点</td><td>东山精密</td><td>002384</td><td>风险锚</td><td>观察</td><td>消费电子价格与承接成色</td><td>价格和承接同步转弱→强化歌尔减仓</td><td>持仓风险映射</td><td>消费电子中性承接</td><td>只服务歌尔，不授权买入</td><td>容量与趋势承接证据</td></tr><tr><td>锚点</td><td>京东方A</td><td>000725</td><td>风险锚</td><td>观察</td><td>消费电子容量宽度</td><td>容量承接转弱→强化歌尔减仓</td><td>持仓风险映射</td><td>消费电子中性承接</td><td>只服务歌尔，不授权买入</td><td>容量中军与板块宽度证据</td></tr><tr><td>观察</td><td>光线传媒</td><td>300251</td><td>观察标</td><td>观察</td><td>传媒弹性与容量</td><td>文化传媒宽度延续则观察；核心股同步负反馈则失效</td><td>红方补漏</td><td>文化传媒两天强</td><td>观察弹性与容量，不授权买入</td><td>成交额与趋势辨识度</td></tr><tr><td>观察</td><td>蓝色光标</td><td>300058</td><td>观察标</td><td>观察</td><td>AI营销容量与扩散</td><td>传媒宽度延续且容量承接则观察；单点脉冲则失效</td><td>红方补漏</td><td>文化传媒两天强</td><td>观察扩散，不授权买入</td><td>容量中军与趋势证据</td></tr><tr><td>观察</td><td>分众传媒</td><td>002027</td><td>观察标</td><td>观察</td><td>传媒中军宽度</td><td>中军稳定且板块扩散则观察；中军转弱则失效</td><td>红方补漏</td><td>文化传媒两天强</td><td>观察中军承接，不授权买入</td><td>容量与趋势承接证据</td></tr><tr><td>观察</td><td>紫光股份</td><td>000938</td><td>观察标</td><td>观察</td><td>ICT容量中军</td><td>容量中军同步走强且宽度修复则观察；大面积转弱则失效</td><td>红方补漏</td><td>ICT宽度扩张</td><td>观察容量承接，不授权买入</td><td>中军聚集与成交额证据</td></tr><tr><td>观察</td><td>浪潮信息</td><td>000977</td><td>观察标</td><td>观察</td><td>算力容量承接</td><td>ICT容量同步走强则观察；仅剩单票脉冲则失效</td><td>红方补漏</td><td>ICT宽度扩张</td><td>观察算力中军，不授权买入</td><td>容量与趋势证据</td></tr><tr><td>观察</td><td>拓维信息</td><td>002261</td><td>观察标</td><td>观察</td><td>AI应用弹性与扩散</td><td>ICT扩散延续则观察；高热度股同步负反馈则失效</td><td>红方补漏</td><td>ICT宽度扩张</td><td>观察应用弹性，不授权买入</td><td>热度与趋势辨识度</td></tr><tr><td>观察</td><td>中国中免</td><td>601888</td><td>观察标</td><td>观察</td><td>文旅消费容量</td><td>旅游宽度继续扩张且容量承接则观察；宽度快速收缩则失效</td><td>D2二级雷达</td><td>文旅宽度扩张</td><td>观察文旅容量，不授权买入</td><td>旅游33涨2跌与容量中军证据</td></tr></tbody></table></div><div class="sh3">🚫 不碰</div><div class="si"><div class="para">- 金融、农业、交通能源、黑色汽车四个当日<code>invalidated</code>板块；任何新增买入、补仓或execution ticket。</div>
+<div class="para">- 因盘中浮盈、分时回踩或单一板块资金流而覆盖<code>WEEK_STOP</code>。</div></div><div class="sh3">📏 Rules 校验</div><div class="si"><div class="para">- T+1：7/17开盘前回读；瑞芯微800可卖，歌尔今日新增lot预计解锁，最终以8088为准。</div>
+<div class="para">- 情绪 <35%：不适用；收盘45.7，但账户周停门优先。</div>
+<div class="para">- 情绪 >80%：未触发。</div>
+<div class="para">- 周五W1：7/17为周五，周五本身不关闭W1；本次由<code>WEEK_STOP</code>关闭新增。</div>
+<div class="para">- W1硬条件使用SSOT：是；未使用量比作为授权条件。</div>
+<div class="para">- 仓位/连亏：当前37.83%，账户总上限0%，只能通过减仓下降。</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="s4">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> §四 · 红方对抗<span class="cnt">3轮辩论</span>
+</div>
+<div class="sb"><div class="sh3" id="s4a">🔴 Round 1：洋米红方质疑</div><div class="si">
+前置声明：D3 已于 15:39 退回 D2 重裁决，本红方对抗基于"2只持仓 + 6只建议观察标"的中间态执行；终稿前弈沐须先完成 D2 重裁决，再做红方采纳项 resolution。<br>
+</div>
+<div class="sh3">数据基础</div>
+<div class="para">- Q1 热度 TOP50：已跑（问财 16:00；排名字段本次未返回，序列有效）</div>
+<div class="para">- Q2 板块扫描：已跑（no_touch 日以板块状态复核代替 advance 扫描；文化传媒/信创补扫，问财 16:02）</div>
+<div class="para">- Q2.5 板块盲区：已跑（行业板块前20，问财 16:00）</div>
+<div class="para">- Q3 中军扫描：已跑（39只，问财 16:00）</div>
+<div class="para">- Q4 排除验证：已跑（D2重开6只观察标全量复核，问财+stock_snapshot 16:02）</div>
+<div class="para">- Q5 持仓复核：已跑（问财 15:59）</div>
+<div class="para">- Q6 板块资金：已跑（ths_industry 12板块 16:01）</div>
+<div class="para">- Q7 趋势板块复核：已跑（sector_index 16:01）</div>
+<div class="para">- Q8 中军均线复核：已跑（stock_snapshot/PyTDX 16:02，与蓝方 MA 数字交叉验证）</div>
+<div class="para">- 补查：market_limit_state 涨停池（eastmoney_limit_pool 16:00）✓；北向（16:04，沪股通-9.28亿/深股通reference_only）✓；晋级率实测（问财 16:00）✓</div>
+<div class="para">- <strong>数据缺口</strong>：龙虎榜源返回0条（16:03，疑未出数）；上证MA20（PyTDX+HTTP降级连续两日不可用）。缺口项不推断。</div>
+<div class="para"><strong>⚠️ 口径说明</strong>：蓝方板块状态表"半导体+42.88亿/消费电子+13.07亿（辅助）"= ths_industry 口径，红方复核一致且蓝方已标"辅助" ✓。个股主力为问财 L1 口径，双口径未混用。</div>
+<div class="sh3">五维强制清单</div>
+<div class="para"><strong>1. 定性校准</strong>：❌ <strong>frontmatter 三处假数据/残留，其中炸板率是 7/15 采纳项的回归</strong>。</div>
+<div class="para">- <strong>炸板率0/封板率100 再次原样写入</strong>：实测 eastmoney_limit_pool（16:00）涨停42、炸板25、跌停33、<strong>炸板率37.31%</strong>、封板率62.7%。7/15 红方已 flag 同一源异常且蓝方 Round2 采纳"终稿按收盘池口径回填"，今日初稿 frontmatter 与表2 又写入固定值 0/100——<strong>采纳项次日回归，需检查回填是否落进了模板/脚本</strong>。</div>
+<div class="para">- <strong>整体晋级率 19.75 与 7/15 完全相同</strong>：实测昨日涨停今日再板仅10只（含云创退），昨日涨停71家 → 晋级率约14.1%（剔除退市股12.7%）。19.75 为昨日残留值。</div>
+<div class="para">- <strong>最高板 frontmatter 写4，实测5</strong>（哈药股份今日+10.02%再板=5板，问财16:00；limit_pool max_board=5）。</div>
+<div class="para">- <strong>"赚钱效应 好"与自身门槛矛盾</strong>：好的定义">3%+>40%"，今日涨停收益2.64%不满足>3%；叠加炸板率37.31%（逼近W2冰点40%线）、跌停33家、情绪45.7、上证-1.87%——收盘赚钱效应应定"一般偏差"，不是"好"。定性影响次日风险预算，必须改。</div>
+<div class="para">- <strong>瑞芯微涨停未减仓，且第一风险锚当日已触发</strong>：7/15 Round3 采纳（弈沐待裁决）的单边条件是"通富翻绿→减400"，第〇部分止损栏也写入了"通富翻绿"。今日通富微电全天走弱收-3.51%（收75.95，问财16:02），瑞芯微盘中10:56涨停231.55、浮盈5.73%、部分仓位全可卖——减仓条件与最佳窗口同时在场，W2 未落一子；收盘回落至222.24，仅回落差价一项少收约金额已脱敏。W2 ❌ 行把原因写成"歌尔T+1锁仓"，但瑞芯微无锁仓，未减仓无解释——请蓝方补当时的决策留痕或承认漏判。</div>
+<div class="para">- <strong>歌尔"双条件保留"的时点漂移</strong>：保留依据是10:56消费电子+2.97%，收盘板块只剩+0.13%、48涨48跌（ths 16:01）——收盘时点双条件已不成立，初稿未写"双条件失效、恢复默认退出"的状态更新。</div>
+<div class="para">- <strong>歌尔10:30加仓部分仓位@成交价已隐藏 是连续第二天门禁关闭期买入</strong>（7/15试仓2000@成交价已隐藏 + 7/16加仓2000@成交价已隐藏），仓位30.27%→37.83%，连续3天与0%目标反向。且本次发生在 7/15 红方"歌尔默认退出"质疑被采纳之后——<strong>红蓝对抗采纳项对次日实际操作无约束力</strong>，此模式问题上升弈沐裁决（不是追责，是流程有效性问题）。</div>
+<div class="para">- <strong>与门条件换标的重现</strong>：7/15 红方质疑瑞芯微止损"与门放宽"、蓝方采纳改或门——今日瑞芯微预案已是或门 ✓，但歌尔预案又写成"跌破22.91<strong>且</strong>消费电子转弱"的与门。同一账户两只持仓、同一 WEEK_STOP 约束，一只或门一只与门，标准不一致；歌尔应同样改单边或门。</div>
+<div class="para">- 蓝方 D2 重开6只观察标的 MA5/MA20 全部验证一致（stock_snapshot 16:02：通富75.41✓、长电95.71✓、澜起250.93✓、东山254.13✓、京东方6.77✓、瑞芯微215.49/193.00✓、歌尔22.28/22.32✓），数据质量合格 ✓。</div>
+<div class="para"><strong>4. 反向情景</strong>：若蓝方错，最可能错在"8板块全no_touch的过度收缩"。</div>
+<div class="para">- 情景A（主）：<strong>文化传媒连续第二日被漏，且今日已是全市场最强</strong>——文化传媒+2.10%、80涨4跌、主力+22.29亿（ths 16:01，全板块第一）、成交242.99亿；影视院线+4.96%为板块涨幅第一、广告营销+3.02%/151.98亿。7/15 红方已 flag 游戏传媒、蓝方承诺补 <code>seed + no_touch</code> signal（process_defect=true），今日8个no_touch板块中仍无传媒分组——<strong>若明日传媒第三日扩张，将连续三天无任何代码级对象</strong>。代码级证据现成：光线传媒+9.52%/27.03亿、蓝色光标+4.34%/47.47亿、天娱数科+3.51%/31.20亿、分众传媒+2.41%/10.31亿（容量）、儒意电影涨停（昨日涨停今日再板）。</div>
+<div class="para">- 情景B（次）：半导体大跌日（-5.35%、20涨161跌）主力反而+42.88亿（ths口径）、龙头盛科通信+5.96%逆势、紫光股份+8.61%/171.17亿——若这是错杀后资金回流，明日半导体修复，瑞芯微"开盘15分钟不站稳MA5即减400"可能减在修复起点。不反对减仓方向（WEEK_STOP优先），但提示通富锚信号已混乱（主力+19.12亿问财口径 vs 价格-3.51%背离），建议补盛科通信作修复温度计对照。</div>
+<div class="para">- <strong>ICT/信创聚集未被看见</strong>：Q3中军39只中信创/ICT占7只——紫光股份+8.61%/171.17亿（热度榜#3、5日+8.16%）、浪潮信息126.91亿、盛科通信+5.96%/52.66亿、星网锐捷+3.60%/49.05亿、拓维信息+6.47%/41.14亿、深信服+3.49%（5日+4.96%）、神州数码+4.58%（问财16:02）。蓝方"AI与自动化 no_touch"理由是"趋势异动仅返回1行"——那是 C1.5 查询覆盖阻断（empty_result），不是市场证据不足；机器瞎了的方向恰好是中军聚集最密的方向，建议按"C1.5缺口方向"单独标注，与证据不足的no_touch区分。</div>
+<div class="para">- 医药分化蓝方定性正确 ✓：医疗服务主力-15.77亿、化学制药-10.74亿（ths 16:01）；CXO内部仍强（昭衍+5.20%/66.42亿、泰格+4.03%、九安+7.48%/47.36亿）。<strong>众生药业今日跌停-10%——7/15"康龙替换众生"的裁决建议精准避雷，红蓝对抗正反馈样本，建议记录</strong>。</div>
+<div class="para">- 北向：沪股通净流出-9.28亿（16:04）；深股通读数379.75亿标注为 reference_only，不作为论据。</div>
+<div class="para">- 龙虎榜源0条，未能扫描（缺口）。</div>
+<div class="sh3">自选池对抗</div>
+<div class="tw"><table><thead><tr><th>挑战类型</th><th>蓝方原判</th><th>红方质疑</th><th>数据依据</th></tr></thead><tbody><tr><td>遗漏标的（半导体锚）</td><td>D2重开建议：通富（宽度锚）+长电+澜起（风险锚）</td><td>通富锚信号已混乱（价格-3.51%与主力+19.12亿背离，且已翻绿触发过一次），建议补盛科通信为半导体修复温度计：板块龙头、大跌日逆势+5.96%、主力+1.27亿，信号更干净</td><td>盛科通信收373.50/+5.96%、成交52.66亿、量比1.08（问财/snapshot 16:02）；半导体-5.35%、20涨161跌（ths 16:01）</td></tr><tr><td>遗漏标的（消费电子锚）</td><td>东山（强锚）+京东方（风险锚）</td><td>结构完整，无遗漏 ✓；东山主力-6.69亿（问财）与+2.40%背离，提示强锚成色打折，备注即可</td><td>东山精密收268.80/+2.40%、成交306.81亿、主力-6.69亿（问财16:02）</td></tr><tr><td>排除有误（no_touch分类）</td><td>AI与自动化 no_touch："趋势异动仅1行"</td><td>no_touch结论可维持，但理由错误：1行是C1.5 empty_result阻断，非市场证据不足；实测ICT中军7只聚集（合计成交约489亿）。应改标"C1.5缺口方向、数据修复后优先重评"，避免明日继续瞎扫</td><td>紫光171.17亿、浪潮126.91亿、盛科52.66亿、星网锐捷49.05亿、拓维41.14亿、深信服25.60亿、神州数码23.28亿（问财16:00-16:02）</td></tr><tr><td>排除有误（验证正确项）</td><td>煤炭/金融组昨日advance今日失效</td><td>失效判断全部正确 ✓：煤炭-2.39%（2涨31跌）、银行-0.76%（4涨35跌）、保险-1.73%（0涨5跌）、证券-1.33%/主力-19.22亿——昨日红方"煤炭资金证据全组最弱"当日即验证</td><td>ths_industry 16:01</td></tr><tr><td>忽略板块（文化传媒）</td><td>8个no_touch板块无传媒分组；7/15承诺的seed signal未见</td><td>连续第二日忽略全市场最强主力净流入板块。要求：①核查7/15承诺的process_defect回填是否执行；②今日必须建传媒signal（seed或two_day_confirmed），绑定光线/蓝标/分众代码级证据；③若明日第三日扩张仍无对象=流程失效</td><td>文化传媒+2.10%、80涨4跌、主力+22.29亿全板块第一、成交242.99亿；影视院线+4.96%板块涨幅第一（ths/问财 16:00-16:02）；光线+9.52%/27.03亿、蓝标+4.34%/47.47亿、分众+2.41%/10.31亿、儒意电影2连板</td></tr><tr><td>忽略板块（频次统计）</td><td>—</td><td>无其他忽略：区域消费文旅/农业流通/建筑地产等no_touch与今日板块榜一致（专业连锁+4.64%、医院+3.37%等属医药消费余温，不构成独立方向）</td><td>Q2.5a 前20榜（问财16:00）</td></tr></tbody></table></div><div class="sh3" id="s4b">🔵 Round 2：蓝方回应（稳米）</div><div class="tw"><table><thead><tr><th>红方质疑</th><th>蓝方回应</th><th>结果</th></tr></thead><tbody><tr><td>炸板率/封板率、晋级率、最高板残留</td><td>采纳。按收盘池口径改为炸板率37.31%、封板率62.69%、整体晋级率14.08%、最高板5；同步修正frontmatter、表1、表2和节点说明</td><td>已修正</td></tr><tr><td>“赚钱效应好”与自身门槛矛盾</td><td>采纳。收盘赚钱效应改为“一般偏差”；不再用午盘“好”覆盖收盘退潮</td><td>已修正</td></tr><tr><td>瑞芯微涨停未减仓</td><td>采纳。现有笔记没有可验证的“拒绝减仓”决策留痕；通富翻绿、瑞芯微部分仓位全可卖且涨停窗口同时在场，蓝方确认为漏判</td><td>已写入W2复盘与今日认知</td></tr><tr><td>歌尔“双条件保留”时点漂移</td><td>采纳。收盘消费电子仅+0.13%、48涨48跌，不得继续引用10:56的+2.97%强度；收盘按条件失效处理</td><td>已修正</td></tr><tr><td>歌尔连续两日门禁关闭期买入</td><td>事实采纳，边界保留：这两笔是弈沐券商已成交事实，系统只能事后补录，不得倒置写成规则授权。“红方采纳项未形成次日硬阻断”成立</td><td>已裁决暂不升级硬卡，保留文字层检查</td></tr><tr><td>歌尔止损又回到“与门”</td><td>采纳。统一为“跌破22.91 或 消费电子转弱，任一触发即恢复减仓”；已同步§三、附录A和机器附录</td><td>已修正</td></tr><tr><td>文化传媒连续第二日被漏</td><td>采纳，且不再只修文字。D1广筛的“文化传媒与影视院线”绑定儒意电影002739、电声股份300805、分众传媒002027、蓝色光标300058、光线传媒300251；全部`process_defect=true`。D2收敛时保留儒意/分众/蓝标/光线为`observe`，电声股份明确`exclude`</td><td>D1已回写；D2已逐只裁决</td></tr><tr><td>AI/ICT的`no_touch`理由错误</td><td>采纳。“趋势异动仅1行”是查询覆盖缺口，不是市场无证据；已以紫光/浪潮/盛科/星网锐捷/拓维建立ICT观察矩阵</td><td>已回写ledger并进入D1</td></tr><tr><td>半导体需补盛科通信</td><td>采纳。通富保留宽度/风险锚作用，盛科作逆势修复温度计；两者都只服务瑞芯微持仓风险判断</td><td>D2已确认为风险锚</td></tr><tr><td>消费电子无其他遗漏</td><td>确认。保留东山精密和京东方A两个角色；东山价格+2.40%与个股主力-6.69亿背离记为成色折扣，不作授权</td><td>D2已确认为风险锚</td></tr><tr><td>煤炭/金融失效判断</td><td>确认红方验证正确；新C2将金融、农业、交通能源、黑色汽车标为`invalidated`，不再以模糊`no_touch`说明</td><td>采纳并明确失效证据</td></tr><tr><td>医药分化及众生药业避雷正反馈</td><td>确认。医药资金为负但宽度未失效，改为观察矩阵；康龙替换众生的前日裁决记为红蓝对抗正反馈，不倒推新买入权</td><td>已记录</td></tr></tbody></table></div>
+<div class="si">
+<strong>Round 2修订证据</strong>：YM-data-pipeline V2 16:45-16:47回读；`stock_snapshot` 18/18覆盖，`sector_index` 确认文化传媒+2.10%、80涨4跌、影视院线+4.96%、半导体-5.35%、20涨161跌、消费电子+0.13%、48涨48跌。只作复盘与观察证据。<br>
+</div><div class="sh3" id="s4c">🟢 Round 3：洋米终审</div><ol class="tight-list">
+<li><strong>落地验证通过（4项）</strong>：</li>
+</ol>
+<div class="para">- frontmatter/表1/表2 数据修正 ✓（炸板率37.31、封板率62.69、晋级率14.08、最高板5、赚钱效应"一般偏差"、D0重跑45分）；</div>
+<div class="para">- W2 漏判已如实改写 ✓（"瑞芯微无决策留痕可支持跳过减仓，确认为漏判"）+ 今日认知新增第3/4条 ✓；</div>
+<div class="para">- 歌尔止损或门三处同步 ✓（§三/附录A/数据附录共7处"或"表述一致）；</div>
+<div class="para">- 传媒/ICT/盛科/中免 13只趋势池 + 2只连板池，§三与数据附录代码集合一致 ✓。</div>
+<ol class="tight-list">
+<li><strong>落地缺口（已修复）</strong>：Round 2 原表述没有区分D1广筛绑定与D2最终裁决。电声股份300805仍保留在ledger作为`process_defect=true`的广筛候选，但D2已明确`exclude`，因此不进入§三或数据附录；候选守恒以D2为准。</li>
+<li><strong>蓝方自主新增标注</strong>：中国中免/文旅 observe（SIG-c43d12c99192）超出红方质疑范围——红方 Round 1 明确认为文旅"不构成独立方向"（旅游+1.91%、主力仅+0.56亿，证据弱于传媒/ICT）。作为 observation-only 无授权风险，红方不反对，但请弈沐在 D2 签收时知悉此项是蓝方自主升级，非红方要求。</li>
+<li><strong>红蓝对抗正反馈存档</strong>：7/15"康龙替换众生"避雷众生跌停、"煤炭资金最弱"当日验证失效——连续两日选股对抗产生实际价值，建议保留为 lesson 素材。</li>
+</ol>
+<div class="para"><strong>仍存分歧（已裁决）</strong>：红蓝之间无遗留分歧。以下 1 项流程升级由 Round 2 双方共同上提并已由弈沐裁决：</div>
+<div class="tw"><table><thead><tr><th>#</th><th>事项</th><th>红方立场</th><th>弈沐裁决</th></tr></thead><tbody><tr><td>1</td><td>红方采纳项是否升级为次日盘中硬检查：歌尔连续两日门禁关闭期买入证明"文字采纳无盘中约束力"。可选方案：把红方采纳的止损/退出条件写入 8088 规则门或执行卡硬阻断，而非仅留在 ReviewNote</td><td>支持升级（今日认知第4条已记录；具体机制由弈沐定）</td><td>不用硬卡，规则在完善过程中（2026-07-16裁决）；采纳项保持 ReviewNote 文字层约束，红方后续不再重复上提此项</td></tr></tbody></table></div>
+<div class="si">
+终稿动作清单已完成：①电声股份按D2 `exclude`口径澄清；②硬检查机制已裁决为暂不升级；③红方对抗完成，无遗留裁决项。<br>
+</div>
+<hr class="divider"><div class="verdict"><div class="vt">终审定论</div><div class="vb"><div class="para">红蓝对抗收敛。红方 Round 1 共 12 个质疑点，蓝方 12/12 采纳或确认、无反驳项。红方对已声称落地的修正做了抽验（grep 全文核对）：</div></div></div></div>
+</div>
+<div class="section" id="sa">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 附录A · 盘前速查<span class="cnt">周一开盘只看这里</span>
+</div>
+<div class="sb"><div class="tw"><table><thead><tr><th>笔</th><th>仓位</th><th>时机</th><th>约束</th></tr></thead><tbody><tr><td>笔 1 定方向</td><td>已脱敏</td><td>突破确认日买入</td><td>首笔，必须先做</td></tr><tr><td>笔 2 接回踩</td><td>已脱敏</td><td>缩量回踩 MA5/MA10，量比<1.0，板块净流出<10亿，建仓后2天内</td><td>笔1微亏可做；分时回踩也可做；只做一次</td></tr><tr><td>笔 3 追确认</td><td>已脱敏</td><td>笔1/笔2浮盈后 + 放量上攻 + 站回关键价位</td><td>加速段（连续2天大阳）禁止做</td></tr></tbody></table></div><div class="sh3">📋 持仓处理</div><div class="tw"><table><thead><tr><th>票</th><th>成本</th><th>现持仓</th><th>止损</th><th>阶段</th><th>加仓触发</th><th>加仓量</th><th>不做</th></tr></thead><tbody><tr><td>瑞芯微</td><td>已脱敏</td><td>部分仓位</td><td>关键风险位（已脱敏）</td><td>持仓风险处理</td><td>—</td><td>0</td><td>触发先减400；W2仍不修复清余仓；不追加；动作前回读8088</td></tr><tr><td>歌尔股份</td><td>已脱敏</td><td>部分仓位</td><td>关键风险位（已脱敏）</td><td>持仓风险处理</td><td>—</td><td>0</td><td>次日预计部分仓位可卖，开盘前回读；任一触发先减2000，W2仍未收复清余仓；不追加</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>观察标的（只盯）</th><th>操作标的</th><th>触发条件</th></tr></thead><tbody><tr><td>半导体</td><td>通富微电、盛科通信、板块宽度（收盘20涨161跌）</td><td>瑞芯微（持仓风险处理）</td><td>开盘15分钟不能站稳MA5=215.49，或板块继续明显弱势，先减400；W2仍不修复清余仓</td></tr><tr><td>消费电子</td><td>东山精密、京东方A、板块宽度（收盘48涨48跌）</td><td>歌尔股份（持仓风险处理）</td><td>跌破综合成本已脱敏或板块转弱，任一触发先减2000；W2仍未收复清余仓</td></tr><tr><td>文化传媒</td><td>光线传媒、蓝色光标、分众传媒</td><td>无（只观察）</td><td>只判断两天强后的高度、容量与宽度，不产生买入授权</td></tr><tr><td>ICT</td><td>紫光股份、浪潮信息、拓维信息</td><td>无（只观察）</td><td>只判断容量中军是否继续聚集，不产生买入授权</td></tr><tr><td>医药/文旅</td><td>哈药股份、中国中免</td><td>无（只观察）</td><td>只作二级温度与容量雷达，不产生买入授权</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>板块</th><th>温度标（只盯）</th><th>说明</th></tr></thead><tbody><tr><td>文化传媒</td><td>儒意电影、光线传媒、蓝色光标、分众传媒</td><td>D2确认观察组；只判断高度、容量与宽度，不产生买入授权</td></tr></tbody></table></div><div class="tw"><table><thead><tr><th>场景</th><th>仓位</th><th>判定</th></tr></thead><tbody><tr><td>不新增</td><td>已脱敏</td><td>✅；只通过风险处理下降</td></tr><tr><td>全部加仓</td><td>已脱敏</td><td>❌；目标总仓位0%</td></tr></tbody></table></div><div class="sh3">📋 操作指南</div><div class="si"><div class="para"><strong>总基调</strong>：<code>WEEK_STOP</code>下只处理两只持仓风险；D2确认的13只锚点与观察标全部进入明日机器观察池，但新增仓位仍为0%。</div>
+<div class="para"><strong>W1</strong>：开盘先回读8088可卖量与最终门禁；仅执行D2确认的减仓条件，不新增。</div>
+<div class="para"><strong>盘中</strong>：瑞芯微看MA5=215.49与半导体宽度；歌尔看综合成本已脱敏与消费电子宽度。</div>
+<div class="para"><strong>W2</strong>：触发后仍未修复，则按D2清余仓；14:50后不新开仓。</div>
+<div class="para"><strong>仓位</strong>：<code>WEEK_STOP</code>目标总仓位0%，当前37.83%，只能通过风险处理下降。</div>
+<div class="para"><strong>不碰</strong>：任何新增买入、补仓或execution ticket；不得用分时形态或单一资金流覆盖账户级门禁。</div>
+<div class="para"><strong>风险</strong>：瑞芯微盘中涨停后回落且半导体收盘-5.35%；歌尔新增仓收盘-1.75%，次日解锁状态必须实盘回读；C1.5缺口仍在。</div>
+<div class="sh2">rules 校验</div>
+<div class="para">- T+1：7月17日开盘前回读；瑞芯微预计可卖800，歌尔新增lot预计解锁、合计预计可卖4000，最终以8088为准</div>
+<div class="para">- POS-SIZE-008：不进入建仓流程，笔1/2/3均为0</div>
+<div class="para">- 情绪 <35%：未触发；收盘45.7，但账户周停门优先</div>
+<div class="para">- 周五W1：7月17日为周五，周五本身不关闭W1；本次由<code>WEEK_STOP</code>关闭新增</div>
+<div class="para">- 仓位/连亏：当前37.83%，账户总上限0%，新增0%，只允许持仓风险处理</div>
+<hr class="divider"></div></div>
+</div>
+<div class="section" id="sd">
+<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
+  <span class="tog">▼</span> 数据附录<span class="cnt">机器解析用</span>
+</div>
+<div class="sb"><div class="sh3">持仓明细</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>方向</th><th>数量</th><th>成本</th><th>现价</th><th>浮盈%</th><th>止损</th><th>T+1可卖</th><th>状态</th></tr></thead><tbody><tr><td>瑞芯微</td><td>603893</td><td>多</td><td>800</td><td>已脱敏</td><td>222.24</td><td><span class="up">+1.47</span></td><td>关键风险位（已脱敏）</td><td>按账户事实复核</td><td>收盘从涨停回落；全量可卖，只处理不加仓</td></tr><tr><td>歌尔股份</td><td>002241</td><td>多</td><td>4000</td><td>已脱敏</td><td>23.02</td><td><span class="up">+0.48</span></td><td>关键风险位（已脱敏）</td><td>按账户事实复核</td><td>今日新增部分仓位于07-17预计解锁；只处理T+1与持仓风险，不加仓</td></tr></tbody></table></div><div class="sh3">连板自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>今日定位</th><th>窗口</th><th>今日检查</th><th>触发/失效</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>量比</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>儒意电影</td><td>002739</td><td>文化传媒</td><td>观察标</td><td>观察</td><td>影视院线高度与封板承接</td><td>高度与宽度延续则保留观察；开板负反馈且宽度收缩则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；只观察不授权买入</td></tr><tr><td>哈药股份</td><td>600664</td><td>医药</td><td>温度标</td><td>观察</td><td>医药高度与分歧承接</td><td>医药宽度保持则观察；高标与容量同步转弱则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>二级雷达；只观察不授权买入</td></tr></tbody></table></div><div class="sh3">趋势自选池</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>板块</th><th>今日定位</th><th>窗口</th><th>今日检查</th><th>触发/失效</th><th>涨幅</th><th>收盘价</th><th>MA5</th><th>MA20</th><th>量比</th><th>换手</th><th>备注</th></tr></thead><tbody><tr><td>瑞芯微</td><td>603893</td><td>科技硬件</td><td>持仓处理</td><td>持仓/W2</td><td>MA5=215.49与半导体宽度</td><td>开盘15分钟不能站稳MA5或半导体继续明显弱势→先减400；W2仍不修复→清余仓</td><td><span class="up">+5.58</span></td><td>222.24</td><td>215.49</td><td>193.00</td><td>—</td><td>—</td><td>部分仓位全可卖；只处理风险，不加仓</td></tr><tr><td>歌尔股份</td><td>002241</td><td>消费电子</td><td>持仓处理</td><td>持仓/W2</td><td>综合成本已脱敏、MA5=22.28与板块宽度</td><td>跌破22.91或消费电子转弱→先减2000；W2仍未收复→清余仓</td><td><span class="up">+3.46</span></td><td>23.02</td><td>22.28</td><td>22.32</td><td>—</td><td>—</td><td>次日预计部分仓位可卖，开盘前回读；只处理风险，不加仓</td></tr><tr><td>通富微电</td><td>002156</td><td>半导体</td><td>风险锚</td><td>观察</td><td>封测承接与板块宽度</td><td>转弱或翻绿→强化瑞芯微减仓；修复不覆盖板块退潮条件</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>服务瑞芯微；不授权买入</td></tr><tr><td>盛科通信</td><td>688702</td><td>半导体</td><td>风险锚</td><td>观察</td><td>逆势修复温度</td><td>盛科修复但板块不修复→仍按瑞芯微风险条件处理</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>服务瑞芯微；不授权买入</td></tr><tr><td>东山精密</td><td>002384</td><td>消费电子</td><td>风险锚</td><td>观察</td><td>价格与承接成色</td><td>价格和承接同步转弱→强化歌尔减仓</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>服务歌尔；不授权买入</td></tr><tr><td>京东方A</td><td>000725</td><td>消费电子</td><td>风险锚</td><td>观察</td><td>容量与板块宽度</td><td>容量承接转弱→强化歌尔减仓</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>服务歌尔；不授权买入</td></tr><tr><td>光线传媒</td><td>300251</td><td>文化传媒</td><td>观察标</td><td>观察</td><td>传媒弹性与容量</td><td>宽度延续则观察；核心股同步负反馈则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>蓝色光标</td><td>300058</td><td>文化传媒</td><td>观察标</td><td>观察</td><td>AI营销容量与扩散</td><td>宽度延续且容量承接则观察；单点脉冲则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>分众传媒</td><td>002027</td><td>文化传媒</td><td>观察标</td><td>观察</td><td>传媒中军宽度</td><td>中军稳定且板块扩散则观察；中军转弱则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>紫光股份</td><td>000938</td><td>ICT</td><td>观察标</td><td>观察</td><td>ICT容量中军</td><td>容量中军同步走强且宽度修复则观察；大面积转弱则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>浪潮信息</td><td>000977</td><td>ICT</td><td>观察标</td><td>观察</td><td>算力容量承接</td><td>ICT容量同步走强则观察；仅剩单票脉冲则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>拓维信息</td><td>002261</td><td>ICT</td><td>观察标</td><td>观察</td><td>AI应用弹性与扩散</td><td>ICT扩散延续则观察；高热度股同步负反馈则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>红方补漏；不授权买入</td></tr><tr><td>中国中免</td><td>601888</td><td>文旅消费</td><td>观察标</td><td>观察</td><td>文旅容量与宽度</td><td>旅游宽度继续扩张且容量承接则观察；宽度收缩则失效</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>二级雷达；不授权买入</td></tr></tbody></table></div><div class="sh3">板块状态</div><div class="tw"><table><thead><tr><th>板块</th><th>类型</th><th>涨停数</th><th>梯队</th><th>龙头</th><th>板块涨跌幅</th><th>主力净流入</th><th>5日线位置</th><th>状态</th></tr></thead><tbody><tr><td>半导体</td><td>退潮风险</td><td>—</td><td>—</td><td>盛科通信</td><td><span class="down">-5.35%</span></td><td>+42.88亿（辅助）</td><td>—</td><td>20涨161跌；只服务瑞芯微风险处理</td></tr><tr><td>消费电子</td><td>中性承接</td><td>—</td><td>—</td><td>豪声电子</td><td><span class="up">+0.13%</span></td><td>+13.07亿（辅助）</td><td>—</td><td>48涨48跌；只服务歌尔风险处理</td></tr><tr><td>文化传媒</td><td>两天强观察</td><td>—</td><td>儒意电影2连板</td><td>儒意电影</td><td><span class="up">+2.10%</span></td><td>+22.29亿（同花顺辅助）</td><td>—</td><td>80涨4跌；只作观察</td></tr><tr><td>影视院线</td><td>高度观察</td><td>—</td><td>—</td><td>儒意电影</td><td><span class="up">+4.96%</span></td><td>—</td><td>—</td><td>18涨1跌；只作观察</td></tr><tr><td>ICT</td><td>容量聚集观察</td><td>—</td><td>—</td><td>紫光股份</td><td>—</td><td>—</td><td>—</td><td>中军聚集由红方补出；不授权买入</td></tr><tr><td>医药/文旅</td><td>二级雷达</td><td>—</td><td>—</td><td>哈药股份/中国中免</td><td>—</td><td>—</td><td>—</td><td>只观察高度、容量和宽度</td></tr></tbody></table></div><div class="sh3">今日操作</div><div class="tw"><table><thead><tr><th>时间</th><th>动作</th><th>标的</th><th>价格</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>10:30</td><td>加仓（券商已成交补录）</td><td>歌尔股份部分仓位</td><td>23.43</td><td>收盘23.02，新增仓-1.75%；合计持仓+0.48%</td><td>放量冲高后回踩分时均线，原持仓盈利、总账户当日盈利；但当时规则门关闭，属人工成交事实而非系统授权</td></tr></tbody></table></div><div class="sh3">锚定股状态</div><div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>窗口</th><th>状态</th><th>影响</th><th>灯</th></tr></thead><tbody><tr><td>瑞芯微</td><td>603893</td><td>持仓风险处理</td><td>收222.24、+5.58%，浮盈1.47%，可卖800；盘中涨停后回落</td><td>MA5=215.49或半导体宽度触发减仓；W2仍不修复清余仓；不加仓</td><td>黄</td></tr><tr><td>歌尔股份</td><td>002241</td><td>持仓风险处理</td><td>收23.02、+3.46%，综合浮盈0.48%；新增仓收盘-1.75%</td><td>综合成本已脱敏或消费电子宽度任一触发减仓；次日先回读可卖量；不加仓</td><td>黄</td></tr></tbody></table></div></div>
+</div>
+
+</div>
+</div>
+
+<script>
+const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
+document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+</script>
+<script>
+(function(){
+  var from = new URLSearchParams(location.search).get('from');
+  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
+    document.getElementById('back-home').href = '../index.html#' + from;
+  }
+})();
+</script>
+</body>
+</html>

@@ -722,6 +722,28 @@ def html_lesson_cards(text):
     )
     items = list(item_re.finditer(text))
     if not items:
+        plain_tagged = list(re.finditer(
+            r'^\d+\.\s+\[(?P<kind>[^\]]+)\]\s*(?P<title>.+?)\s*[—-]\s*(?P<body>.*?)(?=^\d+\.\s+\[|^#{2,5}\s+|^---\s*$|\Z)',
+            text,
+            re.MULTILINE | re.DOTALL,
+        ))
+        if plain_tagged:
+            before = text[:plain_tagged[0].start()].strip()
+            after = text[plain_tagged[-1].end():].strip()
+            html = ""
+            if before:
+                html += f'<div class="si">{md_text_to_html(before)}</div>'
+            html += render_lesson_card_grid([
+                {
+                    "kind": item.group("kind").strip(),
+                    "title": item.group("title").strip(),
+                    "body": item.group("body").strip(),
+                }
+                for item in plain_tagged
+            ])
+            if after:
+                html += f'<div class="si">{md_text_to_html(after)}</div>'
+            return html
         untagged = list(re.finditer(
             r'^(?:\d+\.\s+\*\*(?P<title_a>.+?)\*\*|\*\*\d+\.\s+(?P<title_b>.+?)\*\*)\s*\n+(?P<body>.*?)(?=^(?:\d+\.\s+\*\*|\*\*\d+\.)|^#{2,5}\s+|\Z)',
             text,
@@ -757,8 +779,8 @@ def html_lesson_cards(text):
 
 
 def render_lesson_card_grid(items):
-    class_by_kind = {"认知": "cognition", "教训": "warning", "议题": "topic"}
-    type_by_kind = {"认知": "今日提炼", "教训": "风险校正", "议题": "待验证问题"}
+    class_by_kind = {"认知": "cognition", "教训": "warning", "议题": "topic", "流程缺陷": "warning"}
+    type_by_kind = {"认知": "今日提炼", "教训": "风险校正", "议题": "待验证问题", "流程缺陷": "流程校正"}
     html = '<div class="lesson-grid">'
     for item in items:
         kind = item["kind"]
