@@ -454,6 +454,51 @@ weekday: 周二
             finally:
                 convert_review.REVIEW_NOTES = original_review_notes
 
+    def test_public_review_cells_redact_bare_position_quantities(self):
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("数量", "800"),
+            "已脱敏",
+        )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("现持仓", "4000"),
+            "已脱敏",
+        )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("T+1可卖数量", "4000"),
+            "已脱敏",
+        )
+
+    def test_public_review_text_redacts_action_amounts_and_risk_prices(self):
+        text = convert_review.sanitize_public_review_text(
+            "任一条件成立先减400；跌破22.91或不站稳MA5=215.49再减仓2000；无execution ticket"
+        )
+        self.assertNotIn("减400", text)
+        self.assertNotIn("22.91", text)
+        self.assertNotIn("215.49", text)
+        self.assertNotIn("减仓2000", text)
+        self.assertNotIn("ticket", text.lower())
+        self.assertIn("先减部分仓位", text)
+        self.assertIn("跌破关键位", text)
+        self.assertIn("内部执行记录", text)
+
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell(
+                "触发条件", "锚点继续走弱则先减400"
+            ),
+            "风险条件已记录（具体阈值已脱敏）",
+        )
+
+    def test_public_review_text_redacts_local_audit_paths_and_hashes(self):
+        text = convert_review.sanitize_public_review_text(
+            "/Users/yimu/Documents/YM_Capital/Market_Watch/artifacts/d1_draft_receipt.json "
+            "receipt_sha256=af6a406713a2a2a3eea03c6e99a33bbe1598c4e22fb4fdc886d1007cc1e927d7"
+        )
+        self.assertNotIn("/Users/", text)
+        self.assertNotIn("d1_draft_receipt.json", text)
+        self.assertNotIn("af6a406713a2", text)
+        self.assertIn("路径已隐藏", text)
+        self.assertIn("receipt_sha256=已隐藏", text)
+
 
 if __name__ == "__main__":
     unittest.main()

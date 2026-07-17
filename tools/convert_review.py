@@ -267,7 +267,14 @@ def sanitize_public_review_text(text):
     """Redact account-specific execution details from the public review layer."""
     cleaned = str(text or '')
     cleaned = re.sub(r'TICKET-[A-Za-z0-9_-]+', '交易记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'\b(?:execution\s+)?ticket\b', '内部执行记录', cleaned, flags=re.I)
     cleaned = re.sub(r'\bEXEC-[A-Za-z0-9_+:-]+', '执行记录', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'/Users/[A-Za-z0-9._-]+/[^\s`<>|，。；]+',
+        '内部审计记录（路径已隐藏）',
+        cleaned,
+    )
+    cleaned = re.sub(r'receipt_sha256=[0-9a-f]{64}', 'receipt_sha256=已隐藏', cleaned, flags=re.I)
     cleaned = re.sub(
         r'\b\d{1,2}:\d{2}(?=[^，。；\n|]{0,24}(?:成交|买入|加仓|减仓|清仓|卖出))',
         '盘中',
@@ -275,6 +282,16 @@ def sanitize_public_review_text(text):
     )
     cleaned = re.sub(r'\b\d+\s*@\s*\d+(?:\.\d+)?', '部分仓位@成交价已隐藏', cleaned)
     cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
+    cleaned = re.sub(
+        r'((?:先|再|计划)?(?:买入|卖出|加仓|减仓|清仓|买|卖|减))\s*\d+(?![\d.%])',
+        r'\1部分仓位',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'((?:跌破|站稳|收复|守住|低于|高于)(?:MA\d+=)?)\d+(?:\.\d+)?',
+        r'\1关键位',
+        cleaned,
+    )
     cleaned = re.sub(r'@\s*\d+(?:\.\d+)?', '@成交价已隐藏', cleaned)
     cleaned = re.sub(
         r'(成本(?:价|线)?(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
@@ -308,12 +325,20 @@ def sanitize_public_review_cell(header, value):
     header = str(header or '')
     if any(key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股')):
         return '已脱敏'
+    if header in ('数量', '现持仓', '持仓数量') or any(
+        key in header for key in ('股数', '可卖数量', '可卖量')
+    ):
+        return '已脱敏'
     if header == '仓位':
         return '已脱敏'
     if 'T+1可卖' in header:
         return '按账户事实复核'
-    if header == '止损':
+    if '止损' in header:
         return '关键风险位（已脱敏）'
+    if any(key in header for key in ('触发', '失效')) and re.search(
+        r'买入|卖出|加仓|减仓|清仓|止损|降险|补仓|提高暴露|先减|再减', str(value)
+    ):
+        return '风险条件已记录（具体阈值已脱敏）'
     return sanitize_public_review_text(value)
 
 

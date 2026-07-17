@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W29 周复盘（2026-07-13 至 2026-07-17）</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#F7F5F3;--paper:#FBFAF8;--card:#fff;--soft:#F5F2EE;--line:#E5E2DE;--text:#2D2926;--muted:#5C5652;--faint:#8A8480;--accent:#D97706;--green:#059669;--red:#DC2626;--blue:#2563EB;--purple:#7C3AED}
+    html{scroll-behavior:smooth;scroll-padding-top:78px}
+    body{font:15px/1.72 system-ui,-apple-system,'Noto Sans SC','PingFang SC',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 24px;background:rgba(247,245,243,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+    .back{font-size:13px;color:var(--muted);padding:4px 11px;border:1px solid var(--line);border-radius:7px;text-decoration:none;background:#fff}.title{font-size:18px;font-weight:800;color:var(--accent);white-space:nowrap}.meta{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+    .chip{border:1px solid var(--line);border-radius:999px;background:#fff;padding:3px 10px;font-size:12px;font-weight:800;color:var(--muted)}.chip.green{color:var(--green);border-color:rgba(5,150,105,.35);background:rgba(5,150,105,.06)}.chip.blue{color:var(--blue);border-color:rgba(37,99,235,.25);background:rgba(37,99,235,.06)}.chip.purple{color:var(--purple);border-color:rgba(124,58,237,.25);background:rgba(124,58,237,.06)}
+    .layout{display:flex}.sidebar{position:sticky;top:58px;align-self:flex-start;width:224px;max-height:calc(100vh - 58px);overflow:auto;border-right:1px solid var(--line);padding:16px 12px}.sidebar .label{font-size:11px;color:var(--faint);font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin:4px 8px 8px}.sidebar a{display:block;text-decoration:none;color:var(--muted);font-size:13px;padding:7px 9px;border-radius:7px;border-left:2px solid transparent}.sidebar a:hover,.sidebar a.active{background:var(--soft);color:var(--accent);border-left-color:var(--accent)}
+    .content{width:min(1080px,calc(100% - 224px));padding:24px 32px}.search{margin-bottom:16px}.search input{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;padding:11px 14px;font-size:14px}
+    .hero{background:linear-gradient(145deg,#fff,var(--paper));border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 16px 40px rgba(45,41,38,.05)}.hero h1{font-family:'Noto Serif SC',Georgia,serif;font-size:30px;line-height:1.25;margin-bottom:8px}.hero p{color:var(--muted)}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}.kpi span{display:block;font-size:11px;color:var(--faint);font-weight:800;margin-bottom:3px}.kpi strong{font-size:22px;line-height:1.15}.kpi.loss strong,.loss{color:var(--green)!important;font-weight:900}.gain{color:var(--red)!important;font-weight:900}
+    .section{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:18px;overflow:hidden}.sh{width:100%;display:flex;align-items:center;gap:9px;border:0;border-bottom:1px solid var(--line);background:var(--soft);padding:13px 18px;text-align:left;font:inherit;font-weight:900;color:var(--text);cursor:pointer}.sh .tog{font-size:11px;color:var(--faint);transition:transform .15s}.sh.collapsed .tog{transform:rotate(-90deg)}.sb{padding:16px 18px 18px}.sb.hide{display:none}
+    .note{border-left:4px solid var(--accent);background:rgba(217,119,6,.07);padding:11px 13px;border-radius:0 9px 9px 0;margin:0 0 13px;color:var(--muted)}p{margin:8px 0}ul,ol{padding-left:22px;margin:9px 0}li{margin:4px 0}
+    .tw{overflow:auto;max-width:100%;-webkit-overflow-scrolling:touch;margin:12px 0 15px;border:1px solid var(--line);border-radius:10px}.tw:before{content:"左右滑动查看完整表格";display:block;padding:5px 10px;background:#FCFBFA;border-bottom:1px solid var(--line);font-size:11px;font-weight:900;color:var(--faint)}.tw table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}.tw th{background:var(--soft);text-align:left;white-space:nowrap;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}.tw td{padding:8px 10px;border-bottom:1px solid #F0EEEC;vertical-align:top;min-width:86px}.tw tr:nth-child(even) td{background:#FCFBFA}
+    .flow-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0}.flow-card{border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#fff,#FCFBFA);padding:12px;min-width:0}.flow-card .day{font-size:12px;color:var(--faint);font-weight:900}.flow-card strong{display:block;margin:4px 0 6px;color:var(--accent)}.flow-card p{font-size:12px;color:var(--muted);line-height:1.55;margin:0}
+    .insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.insight-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:linear-gradient(180deg,#fff,#FCFBFA);border-left:5px solid var(--accent)}.insight-card h3{font-size:16px;margin:0 0 6px}.insight-card p{color:var(--muted);line-height:1.65}
+    .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 15px}.metric-card{border:1px solid var(--line);border-radius:12px;background:#FCFBFA;padding:11px;min-width:0}.metric-card span{display:block;font-size:11px;color:var(--faint);font-weight:900;margin-bottom:3px}.metric-card strong{display:block;font-size:16px;line-height:1.35}.metric-card em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:4px}
+    .hidden{display:none!important}@media(max-width:980px){.flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:920px){.insight-grid{grid-template-columns:1fr}}@media(max-width:820px){.sidebar{display:none}.content{width:100%;padding:16px}.title{white-space:normal}.meta{margin-left:0}.kpis{grid-template-columns:1fr 1fr}.hero h1{font-size:25px}}@media(max-width:560px){.flow-grid,.kpis,.metric-grid{grid-template-columns:1fr}.topbar{padding:10px 14px}.content{padding:14px}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><a id="back-home" class="back" href="../index.html#reviews">← 平台</a><div class="title">W29 周复盘（2026-07-13 至 2026-07-17）</div><div class="meta"><span class="chip blue">7/13-7/17 · 5天</span><span class="chip green">周度 -7.14%</span><span class="chip">净值 0.980435</span><span class="chip purple">W29</span></div></div>
+  <div class="layout">
+    <nav class="sidebar"><div class="label">目录</div><a href="#s0">核心发现</a><a href="#s1">本周概览</a><a href="#s2">节奏打法</a><a href="#s3">主线板块</a><a href="#s4">盈亏归因</a><a href="#s5">认知迭代</a><a href="#s6">下周基调</a><a href="#s7">数据附录</a></nav>
+    <main class="content">
+      <div class="search"><input type="text" placeholder="搜索板块、规则、关键词..." oninput="searchContent(this.value)"></div>
+      <div class="hero"><h1>W29 周复盘（2026-07-13 至 2026-07-17）</h1><p>风险方向连续被识别，但执行多次反向：旧主线退潮、科技链踩踏与周五系统性冰点共同放大回撤。真正要修的不是更多指标，而是让风险触发及时转成动作与留痕。</p><div class="kpis"><div class="kpi loss"><span>周度收益</span><strong>-7.14%</strong></div><div class="kpi"><span>交易日</span><strong>5天</strong></div><div class="kpi"><span>周末仓位</span><strong>36.38%</strong></div><div class="kpi"><span>周末净值</span><strong>0.980435</strong></div></div></div>
+      <div class="note"><strong>依据</strong>：7/13-7/17 五篇日复盘终稿与 Hermes 周度 PnL。<br><strong>公开边界</strong>：成交股数、成本、金额与精确执行指令已省略；本页只呈现阶段归因和纪律结论。<br><strong>数据边界</strong>：周序列日期已到 7/17，但 freshness 标记为 dead；NAV 已与独立账户事实和日复盘交叉核对。</div>
+
+      <section class="section" id="s0"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>核心发现（先看这里）</button><div class="sb"><div class="tw"><table><thead><tr><th>维度</th><th>结论</th></tr></thead><tbody>
+        <tr><td>盈亏</td><td>NAV <strong>1.055776 → 0.980435</strong>，周度 <strong class="loss">-7.1361%</strong>；损失主要来自既有浮盈回吐与新旧持仓继续下跌。</td></tr>
+        <tr><td>节奏</td><td>风险方向预判 5/5 基本正确，但完整执行日为 0/5；核心矛盾是知道该降风险，却没有按窗口完成。</td></tr>
+        <tr><td>主线</td><td>商业航天与半导体周初退潮，医药消费周中接棒后也失去持续性；周五仅电力、银行相对防御，周末没有确认的持续进攻主线。</td></tr>
+        <tr><td>生态</td><td>名义高度抬升，但广度、封板质量与次日溢价同步恶化，出现“高度在、赚钱效应空心化”。</td></tr>
+        <tr><td>认知</td><td>弱市利润保护必须前置；次日溢价只能是假设，不能覆盖当日仍可执行的风险处理窗口。</td></tr>
+      </tbody></table></div><p><strong>下周目标</strong>：账户风险门解除前不新增；风险锚触发后，必须留下“已处理”或“拒绝处理及证据”二选一记录。</p></div></section>
+
+      <section class="section" id="s1"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>〇、本周概览</button><div class="sb">
+        <div class="flow-grid">
+          <article class="flow-card"><div class="day">周一 7/13</div><strong>系统杀跌</strong><p>旧主线退潮，硬止损方向正确；新增暴露与利润保护仍有偏差。</p></article>
+          <article class="flow-card"><div class="day">周二 7/14</div><strong>V形修复</strong><p>指数修复不等于持仓链修复；退出旧风险与计划外提高暴露同时发生。</p></article>
+          <article class="flow-card"><div class="day">周三 7/15</div><strong>轮动接棒</strong><p>医药消费增强，科技硬件退潮；风险动作未执行，注意力仍被旧仓占据。</p></article>
+          <article class="flow-card"><div class="day">周四 7/16</div><strong>强势回落</strong><p>盘中强不等于收盘确认，账户收红也不能覆盖流程偏差。</p></article>
+          <article class="flow-card"><div class="day">周五 7/17</div><strong>系统性冰点</strong><p>科技链集中踩踏；守住未新增，但已触发的风险动作仍未执行。</p></article>
+        </div>
+        <div class="tw"><table><thead><tr><th>日期</th><th>市场模式</th><th>情绪</th><th>NAV日收益</th><th>执行判断</th></tr></thead><tbody>
+          <tr><td>7/13</td><td>系统杀跌、旧主线退潮</td><td>14.0</td><td class="loss">-3.3637%</td><td>止损方向对，新增与保护节奏混杂</td></tr>
+          <tr><td>7/14</td><td>午后V形修复</td><td>74.2</td><td class="loss">-2.3146%</td><td>退出风险正确，提高暴露违规</td></tr>
+          <tr><td>7/15</td><td>医药消费接棒</td><td>61.6</td><td class="loss">-0.7632%</td><td>风险动作未落地，门禁关闭期仍新增</td></tr>
+          <tr><td>7/16</td><td>持仓冲高回落</td><td>45.7</td><td class="gain">+1.4379%</td><td>结果为正，流程仍错</td></tr>
+          <tr><td>7/17</td><td>泥沙俱下、科技踩踏</td><td>8.0</td><td class="loss">-2.2754%</td><td>不新增合格，但未降风险</td></tr>
+        </tbody></table></div>
+        <div class="metric-grid"><div class="metric-card"><span>净值路径</span><strong>1.055776 → 0.980435</strong><em class="loss">周度 -7.1361%</em></div><div class="metric-card"><span>仓位路径</span><strong>35.72% → 36.38%</strong><em>周中一度回升至约37.83%</em></div><div class="metric-card"><span>完整执行日</span><strong>0 / 5</strong><em>风险识别与动作脱节</em></div><div class="metric-card"><span>周末状态</span><strong>极端冰点</strong><em>电力、银行相对防御</em></div></div>
+        <p><strong>一句话总结</strong>：W29 是一次“风险预案基本正确、执行却持续反向”的压力测试。</p>
+      </div></section>
+
+      <section class="section" id="s2"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>一、节奏与打法回顾</button><div class="sb">
+        <p><strong>预案质量与执行质量必须分开评价。</strong>五天都把降低旧持仓风险、不新增或只观察放在前面，随后市场也给出相应风险证据；但窗口执行多次变成不动或反向提高暴露。</p>
+        <ol><li>计划写的是降风险，手上做的是提高暴露或不动。</li><li>盈利时没有把浮盈转成选择权，等明显走弱后才处理回撤。</li><li>风险锚停留在阅读层，没有稳定落到主标的动作或拒绝理由。</li><li>已有持仓占据注意力预算，延迟识别市场状态迁移。</li><li>收盘结果被用来解释盘中动作，混淆了当时合规性与事后盈亏。</li></ol>
+        <p><strong>最大进步</strong>：硬风险线触发后能够完成旧仓退出，观察池与买入授权也保持分离。</p><p><strong>最大问题</strong>：触发—动作—留痕的执行桥仍未形成，利润保护总被推迟到流动性变差之后。</p>
+      </div></section>
+
+      <section class="section" id="s3"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>二、主线与板块</button><div class="sb"><div class="tw"><table><thead><tr><th>方向</th><th>本周演变</th><th>周末结论</th></tr></thead><tbody>
+        <tr><td>商业航天 / 半导体</td><td>上周收益线在周初快速退潮，科技硬件后续继续集中承压。</td><td>旧主线失效；只服务持仓风险判断。</td></tr>
+        <tr><td>医药 / 消费</td><td>周中完成宽度接棒，随后分化并在周五大幅回撤。</td><td>状态迁移样本；重新取得高度、容量、宽度前不追。</td></tr>
+        <tr><td>资源制造</td><td>周二强修复，周三仍有局部梯队，后半周失去持续性。</td><td>只保留轮动参考。</td></tr>
+        <tr><td>文化传媒 / ICT</td><td>周中形成两日观察底座，周五普遍重挫。</td><td>观察底座受损，必须重新验证。</td></tr>
+        <tr><td>电力 / 银行</td><td>在系统性弱市中相对占优，周五成为防御抱团。</td><td>只作风险偏好锚，不产生新增授权。</td></tr>
+      </tbody></table></div><p><strong>梯队结论</strong>：名义最高板由3板抬升至5板，但周五5板为退市股；有效高度、广度和封板质量并未共振，高度不能单独证明环境恢复。</p></div></section>
+
+      <section class="section" id="s4"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>三、盈亏归因</button><div class="sb"><div class="tw"><table><thead><tr><th>归因项</th><th>本周样本</th><th>判断</th></tr></thead><tbody>
+        <tr><td>正确退出</td><td>硬风险线触发后完成旧仓处理。</td><td>结果虽可能亏损，但流程干净；卖出质量看当时触发，不看事后反抽。</td></tr>
+        <tr><td>利润兑现</td><td>旧主线退潮中完成部分兑现与退出。</td><td>方向正确，但保护窗口仍偏晚，未充分保住此前浮盈。</td></tr>
+        <tr><td>违规提高暴露</td><td>弱市与账户风险门关闭期间，仍出现回本型或技术型加仓。</td><td>主观逻辑不能覆盖账户级门禁。</td></tr>
+        <tr><td>持仓回吐</td><td>强势日未提前保护，随后在科技链踩踏中扩大回撤。</td><td>弱市缺少“当日先保护一层”的执行分支。</td></tr>
+      </tbody></table></div><p><strong>赚钱模式</strong>：规则明确、触发清晰、动作不依赖预测未来时，执行质量最好。</p><p><strong>亏损模式</strong>：需要承认旧判断失效时，容易转向等待、摊成本或押次日溢价；越依赖未来反弹，越容易错过当日仍有流动性的窗口。</p></div></section>
+
+      <section class="section" id="s5"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>四、认知迭代</button><div class="sb"><div class="insight-grid">
+        <article class="insight-card"><h3>弱市利润保护前置</h3><p>大幅浮盈、封板松动或锚点转弱时，先保护一层，不等个股明显走弱才开始讨论。</p></article>
+        <article class="insight-card"><h3>次日溢价不是确定性</h3><p>炸板、低开和流动性抽离都可能吞掉浮盈；当天仍有流动性时必须有处置方案。</p></article>
+        <article class="insight-card"><h3>风险锚必须落到动作</h3><p>触发后只能二选一：执行风险处理，或留下拒绝动作的实时证据与失效条件。</p></article>
+        <article class="insight-card"><h3>短线板块靠状态迁移</h3><p>一日异动是线索，两日增强是观察底座，回踩或第三日宽度才是确认。</p></article>
+        <article class="insight-card"><h3>技术买点不等于系统授权</h3><p>形态、账户盈亏和个股强势只能解释主观逻辑，不能覆盖最终门禁。</p></article>
+        <article class="insight-card"><h3>规则暂不硬改</h3><p>先用观察版利润保护协议收集样本，再决定新增弱市分支还是修改既有规则。</p></article>
+      </div></div></section>
+
+      <section class="section" id="s6"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>五、下周基调</button><div class="sb"><p><strong>方向判断</strong>：先按冰点后的风险修复周处理，不按新一轮进攻周处理。技术反弹只提供风险处理窗口，不自动恢复买入权限。</p><div class="tw"><table><thead><tr><th>场景</th><th>条件</th><th>公开动作口径</th></tr></thead><tbody>
+        <tr><td>A 冰点延续</td><td>情绪低位、跌停扩散、科技锚同步弱</td><td>不新增；持仓风险只允许下降。</td></tr>
+        <tr><td>B 指数反弹但持仓链不修复</td><td>指数翻红，科技宽度仍弱</td><td>把反弹当风险处理窗口，不用指数修复为持仓续命。</td></tr>
+        <tr><td>C 持仓与锚点同步修复</td><td>主标站回关键位，板块宽度与锚点同步改善</td><td>可延后复核，但风险门解除前仍不提高暴露。</td></tr>
+        <tr><td>D 防御继续独强</td><td>银行、电力强而科技风险锚不修复</td><td>维持风险偏好下降判断。</td></tr>
+        <tr><td>E 轮动方向重新扩宽</td><td>高度、容量、宽度连续共振</td><td>只恢复观察底座，规则门通过前不建立资金底仓。</td></tr>
+      </tbody></table></div><p><strong>下周第一目标</strong>：恢复执行一致性——门禁关闭期零新增、风险触发全部有动作或拒绝留痕、所有大幅浮盈持仓提前写利润保护层。</p></div></section>
+
+      <section class="section" id="s7"><button class="sh" onclick="toggleSection(this)"><span class="tog">▼</span>附录：周度数据汇总</button><div class="sb"><div class="tw"><table><thead><tr><th>指标</th><th>数值</th><th>备注</th></tr></thead><tbody>
+        <tr><td>周度收益</td><td><strong class="loss">-7.1361%</strong></td><td>NAV 1.055776 → 0.980435</td></tr>
+        <tr><td>周内NAV日收益</td><td>-3.3637% / -2.3146% / -0.7632% / +1.4379% / -2.2754%</td><td>由相邻NAV计算</td></tr>
+        <tr><td>周内NAV</td><td>1.020263 / 0.996648 / 0.989042 / 1.003263 / 0.980435</td><td>7/13-7/17</td></tr>
+        <tr><td>周末仓位</td><td><strong>36.38%</strong></td><td>公开组合口径</td></tr>
+        <tr><td>周内最高收盘仓位</td><td><strong>约37.83%</strong></td><td>历史快照存在时点差异，以日复盘终稿为准</td></tr>
+        <tr><td>风控状态</td><td><strong>WEEK_STOP</strong></td><td>周中触发，周末仍生效</td></tr>
+      </tbody></table></div><div class="tw"><table><thead><tr><th>指标</th><th>周初前值</th><th>周末</th><th>周度变化</th></tr></thead><tbody>
+        <tr><td>上证指数</td><td>3996.16</td><td>3764.15</td><td class="loss">-5.81%</td></tr>
+        <tr><td>深证成指</td><td>15046.67</td><td>13706.88</td><td class="loss">-8.90%</td></tr>
+        <tr><td>创业板指</td><td>3842.73</td><td>3428.63</td><td class="loss">-10.78%</td></tr>
+        <tr><td>账户NAV</td><td>1.055776</td><td>0.980435</td><td class="loss">-7.14%</td></tr>
+      </tbody></table></div><p class="note"><strong>校验说明</strong>：7/13 的 PnL 历史仓位与最终成交后的日复盘终稿存在时点差异；仓位路径采用日复盘终稿，NAV 与周收益采用 7/17 PnL 日线序列。7/16、7/17 的盘中源存在降级，周报只采用已在日复盘终稿签收的收盘口径。本页不构成投资建议，也不产生新的交易授权。</p></div></section>
+    </main>
+  </div>
+  <script>
+    function toggleSection(btn){btn.classList.toggle('collapsed');btn.nextElementSibling.classList.toggle('hide')}
+    function searchContent(q){q=q.trim().toLowerCase();document.querySelectorAll('.section').forEach(s=>{s.classList.toggle('hidden',q&&!s.innerText.toLowerCase().includes(q))})}
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));const a=document.querySelector('.sidebar a[href="#'+e.target.id+'"]');if(a)a.classList.add('active')}})},{rootMargin:'-90px 0px -72% 0px'});document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
+  </script>
+</body>
+</html>
