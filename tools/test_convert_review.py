@@ -467,6 +467,14 @@ weekday: 周二
             convert_review.sanitize_public_review_cell("T+1可卖数量", "4000"),
             "已脱敏",
         )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("时间", "2026-07-20 10:46:01"),
+            "盘中",
+        )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("价格", "24.78"),
+            "已脱敏",
+        )
 
     def test_public_review_text_redacts_action_amounts_and_risk_prices(self):
         text = convert_review.sanitize_public_review_text(
@@ -498,6 +506,29 @@ weekday: 周二
         self.assertNotIn("af6a406713a2", text)
         self.assertIn("路径已隐藏", text)
         self.assertIn("receipt_sha256=已隐藏", text)
+
+    def test_public_review_text_redacts_trade_audit_identifiers_and_gate_times(self):
+        text = convert_review.sanitize_public_review_text(
+            "trade_id=143；10:43:50已成交；10:06 gate=true，10:43精确gate快照缺失；"
+            "decision_gate.allowed=false；gatestatus待补；"
+            "候选CAN-20260720-000933；无盘前ticket，仅作已成交reconciliation"
+        )
+        for secret in (
+            "trade_id=143",
+            "10:43:50",
+            "盘中:50",
+            "10:06",
+            "10:43",
+            "gate=true",
+            "decision_gate.allowed=false",
+            "gatestatus",
+            "can-20260720-000933",
+            "ticket",
+            "reconciliation",
+        ):
+            self.assertNotIn(secret, text.lower())
+        self.assertIn("交易流水已隐藏", text)
+        self.assertIn("内部执行校验已脱敏", text)
 
 
 if __name__ == "__main__":

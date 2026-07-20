@@ -267,8 +267,20 @@ def sanitize_public_review_text(text):
     """Redact account-specific execution details from the public review layer."""
     cleaned = str(text or '')
     cleaned = re.sub(r'TICKET-[A-Za-z0-9_-]+', '交易记录', cleaned, flags=re.I)
-    cleaned = re.sub(r'\b(?:execution\s+)?ticket\b', '内部执行记录', cleaned, flags=re.I)
-    cleaned = re.sub(r'\bEXEC-[A-Za-z0-9_+:-]+', '执行记录', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])(?:execution\s+)?ticket',
+        '内部执行记录',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])EXEC-[A-Za-z0-9_+:-]+', '执行记录', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])trade[_\s-]?id\s*[:=]\s*[A-Za-z0-9_-]+',
+        '交易流水已隐藏',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])CAN-[A-Za-z0-9_-]+', '内部候选记录', cleaned, flags=re.I)
     cleaned = re.sub(
         r'/Users/[A-Za-z0-9._-]+/[^\s`<>|，。；]+',
         '内部审计记录（路径已隐藏）',
@@ -276,10 +288,32 @@ def sanitize_public_review_text(text):
     )
     cleaned = re.sub(r'receipt_sha256=[0-9a-f]{64}', 'receipt_sha256=已隐藏', cleaned, flags=re.I)
     cleaned = re.sub(
-        r'\b\d{1,2}:\d{2}(?=[^，。；\n|]{0,24}(?:成交|买入|加仓|减仓|清仓|卖出))',
+        r'(?<!\d)\d{1,2}:\d{2}(?::\d{2})?(?=[^，。；\n|]{0,24}(?:成交|买入|加仓|减仓|清仓|卖出|gate|快照|内部执行校验))',
         '盘中',
         cleaned,
+        flags=re.I,
     )
+    cleaned = re.sub(
+        r'精确\s*(?:decision_)?gate\s*快照(?:缺失|未留存)',
+        '精确内部执行校验未留存',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?:decision_)?gate(?:\.allowed)?\s*=\s*(?:true|false)',
+        '内部执行校验已脱敏',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(r'gatestatus', '内部执行校验状态', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])reconciliation',
+        '成交事实核对',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(r'无盘前\s*内部执行记录', '盘前执行记录未公开', cleaned)
+    cleaned = re.sub(r'已成交\s*成交事实核对', '成交事实已核对', cleaned)
     cleaned = re.sub(r'\b\d+\s*@\s*\d+(?:\.\d+)?', '部分仓位@成交价已隐藏', cleaned)
     cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
     cleaned = re.sub(
@@ -323,6 +357,13 @@ def public_position_summary(position):
 def sanitize_public_review_cell(header, value):
     """Apply header-aware redaction to sensitive review table fields."""
     header = str(header or '')
+    if header in ('时间', '成交时间') and re.fullmatch(
+        r'(?:\d{4}-\d{1,2}-\d{1,2}\s+)?\d{1,2}:\d{2}(?::\d{2})?',
+        str(value or '').strip(),
+    ):
+        return '盘中'
+    if header == '价格':
+        return '已脱敏'
     if any(key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股')):
         return '已脱敏'
     if header in ('数量', '现持仓', '持仓数量') or any(
