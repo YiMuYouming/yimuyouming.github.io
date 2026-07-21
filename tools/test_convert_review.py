@@ -496,6 +496,94 @@ weekday: 周二
             "风险条件已记录（具体阈值已脱敏）",
         )
 
+    def test_public_review_text_redacts_prose_execution_prices(self):
+        text = convert_review.sanitize_public_review_text(
+            "瑞芯微盘中以207.36清仓最后部分仓位；神火股份按23.88卖出；"
+            "收盘208.05，距离清仓价207.36仅差0.33%。"
+        )
+
+        self.assertNotIn("207.36", text)
+        self.assertNotIn("23.88", text)
+        self.assertIn("收盘208.05", text)
+        self.assertIn("以成交价已隐藏清仓", text)
+        self.assertIn("按成交价已隐藏卖出", text)
+        self.assertIn("清仓价已脱敏", text)
+
+    def test_public_review_text_redacts_time_at_price_without_corrupting_time(self):
+        text = convert_review.sanitize_public_review_text(
+            "瑞芯微早盘两笔降险（10:15@198.71/10:29@199.38）"
+        )
+
+        self.assertNotIn("10:15", text)
+        self.assertNotIn("10:29", text)
+        self.assertNotIn("198.71", text)
+        self.assertNotIn("199.38", text)
+        self.assertNotIn("10:部分仓位", text)
+        self.assertEqual(text.count("盘中@成交价已隐藏"), 2)
+
+    def test_public_review_text_redacts_position_arithmetic(self):
+        text = convert_review.sanitize_public_review_text(
+            "盘中加仓，原4000股+2000=6000；清仓最后400股，累计800股全清。"
+        )
+
+        for secret in ("4000", "2000", "6000", "400", "800"):
+            self.assertNotIn(secret, text)
+        self.assertIn("仓位数量已脱敏", text)
+        self.assertIn("累计仓位已脱敏", text)
+
+    def test_public_review_text_redacts_t1_position_availability(self):
+        text = convert_review.sanitize_public_review_text(
+            "部分仓位T+1锁定至7月22日；全部T+1锁定至7月22日。"
+        )
+
+        self.assertNotIn("锁定至7月22日", text)
+        self.assertNotIn("部分仓位T+1", text)
+        self.assertNotIn("全部T+1", text)
+        self.assertEqual(text.count("T+1状态已记录"), 2)
+
+    def test_public_review_text_redacts_bare_risk_prices(self):
+        text = convert_review.sanitize_public_review_text(
+            "破211.93降险；站稳210.16后继续观察。"
+        )
+
+        self.assertNotIn("211.93", text)
+        self.assertNotIn("210.16", text)
+        self.assertIn("破关键位降险", text)
+        self.assertIn("站稳关键位", text)
+
+    def test_public_review_text_translates_internal_audit_terms(self):
+        text = convert_review.sanitize_public_review_text(
+            "blocked_degraded；observation_only；process_defect=true；"
+            "observe / no_touch / exclude；红方process_defect补漏"
+        )
+
+        for secret in (
+            "blocked_degraded",
+            "observation_only",
+            "process_defect",
+            "observe",
+            "no_touch",
+            "exclude",
+        ):
+            self.assertNotIn(secret, text.lower())
+        self.assertIn("数据降级，仅观察", text)
+        self.assertIn("流程缺口已记录", text)
+        self.assertIn("观察 / 不参与 / 排除", text)
+
+    def test_public_review_cells_redact_action_prices_and_monetary_pnl(self):
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("现价", "207.36(清仓)"),
+            "已脱敏",
+        )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("盈亏", "-4374"),
+            "金额已脱敏",
+        )
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell("盈亏", "+0.02%"),
+            "+0.02%",
+        )
+
     def test_public_review_text_redacts_local_audit_paths_and_hashes(self):
         text = convert_review.sanitize_public_review_text(
             "/Users/yimu/Documents/YM_Capital/Market_Watch/artifacts/d1_draft_receipt.json "

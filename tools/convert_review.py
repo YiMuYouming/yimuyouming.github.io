@@ -281,6 +281,24 @@ def sanitize_public_review_text(text):
         flags=re.I,
     )
     cleaned = re.sub(r'(?<![A-Za-z0-9_])CAN-[A-Za-z0-9_-]+', '内部候选记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'\bblocked[_-]?degraded\b', '数据降级，仅观察', cleaned, flags=re.I)
+    cleaned = re.sub(r'\b(?:finalized[_-]?degraded|degraded[_-]?(?:done|accepted))\b', '降级流程已记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'\bobservation[_-]?only\b', '仅观察', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'["`]?process_defect["`]?\s*[:=]\s*(?:true|false)',
+        '流程缺口已记录',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])process_defect(?![A-Za-z0-9_])',
+        '流程缺口',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(r'\bno_touch\b', '不参与', cleaned, flags=re.I)
+    cleaned = re.sub(r'\bobserve\b', '观察', cleaned, flags=re.I)
+    cleaned = re.sub(r'\bexclude\b', '排除', cleaned, flags=re.I)
     cleaned = re.sub(
         r'/Users/[A-Za-z0-9._-]+/[^\s`<>|，。；]+',
         '内部审计记录（路径已隐藏）',
@@ -292,6 +310,11 @@ def sanitize_public_review_text(text):
         '盘中',
         cleaned,
         flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<!\d)\d{1,2}:\d{2}(?::\d{2})?(?=\s*@\s*\d+(?:\.\d+)?)',
+        '盘中',
+        cleaned,
     )
     cleaned = re.sub(
         r'精确\s*(?:decision_)?gate\s*快照(?:缺失|未留存)',
@@ -314,19 +337,54 @@ def sanitize_public_review_text(text):
     )
     cleaned = re.sub(r'无盘前\s*内部执行记录', '盘前执行记录未公开', cleaned)
     cleaned = re.sub(r'已成交\s*成交事实核对', '成交事实已核对', cleaned)
-    cleaned = re.sub(r'\b\d+\s*@\s*\d+(?:\.\d+)?', '部分仓位@成交价已隐藏', cleaned)
+    cleaned = re.sub(
+        r'(?<![:\d])\b\d+\s*@\s*\d+(?:\.\d+)?',
+        '部分仓位@成交价已隐藏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'((?:原|合计|累计)\s*)\d+(?:\s*股)?(?:\s*[+→=]\s*\d+(?:\s*股)?)+',
+        r'\1仓位数量已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'累计\s*\d+(?:\s*股)?(?=\s*(?:全清|清仓|持有|可卖|锁定))',
+        '累计仓位已脱敏',
+        cleaned,
+    )
     cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
+    cleaned = re.sub(
+        r'(?:全部|新?部分仓位)?\s*T\+1\s*锁定至\s*\d{1,2}月\d{1,2}日',
+        'T+1状态已记录',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?:全部|新?部分仓位)?\s*锁定至\s*\d{1,2}月\d{1,2}日',
+        'T+1状态已记录',
+        cleaned,
+    )
     cleaned = re.sub(
         r'((?:先|再|计划)?(?:买入|卖出|加仓|减仓|清仓|买|卖|减))\s*\d+(?![\d.%])',
         r'\1部分仓位',
         cleaned,
     )
     cleaned = re.sub(
-        r'((?:跌破|站稳|收复|守住|低于|高于)(?:MA\d+=)?)\d+(?:\.\d+)?',
+        r'((?:跌破|破|站稳|收复|守住|低于|高于)(?:MA\d+=)?)\d+(?:\.\d+)?',
         r'\1关键位',
         cleaned,
     )
     cleaned = re.sub(r'@\s*\d+(?:\.\d+)?', '@成交价已隐藏', cleaned)
+    cleaned = re.sub(
+        r'((?:以|按)\s*)\d+(?:\.\d+)?(?=\s*(?:成交|买入|加仓|减仓|清仓|卖出|买|卖|减))',
+        r'\1成交价已隐藏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'((?:成交|买入|卖出|加仓|减仓|清仓)价(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
+        r'\1已脱敏',
+        cleaned,
+    )
     cleaned = re.sub(
         r'(成本(?:价|线)?(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
         r'\1已脱敏',
@@ -364,8 +422,16 @@ def sanitize_public_review_cell(header, value):
         return '盘中'
     if header == '价格':
         return '已脱敏'
+    if header == '现价' and re.search(r'成交|买入|卖出|加仓|减仓|清仓', str(value)):
+        return '已脱敏'
     if any(key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股')):
         return '已脱敏'
+    if any(key in header for key in ('盈亏', '损益')):
+        raw_value = str(value or '').strip()
+        if re.fullmatch(r'[-+]?\d+(?:\.\d+)?%', raw_value):
+            return raw_value
+        if re.search(r'\d', raw_value):
+            return '金额已脱敏'
     if header in ('数量', '现持仓', '持仓数量') or any(
         key in header for key in ('股数', '可卖数量', '可卖量')
     ):
