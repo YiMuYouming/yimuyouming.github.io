@@ -281,24 +281,58 @@ def sanitize_public_review_text(text):
         flags=re.I,
     )
     cleaned = re.sub(r'(?<![A-Za-z0-9_])CAN-[A-Za-z0-9_-]+', '内部候选记录', cleaned, flags=re.I)
-    cleaned = re.sub(r'\bblocked[_-]?degraded\b', '数据降级，仅观察', cleaned, flags=re.I)
-    cleaned = re.sub(r'\b(?:finalized[_-]?degraded|degraded[_-]?(?:done|accepted))\b', '降级流程已记录', cleaned, flags=re.I)
-    cleaned = re.sub(r'\bobservation[_-]?only\b', '仅观察', cleaned, flags=re.I)
     cleaned = re.sub(
-        r'["`]?process_defect["`]?\s*[:=]\s*(?:true|false)',
+        r'(?<![A-Za-z0-9_])blocked[_-]?degraded(?![A-Za-z0-9_])',
+        '数据降级，仅观察', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])(?:finalized[_-]?degraded|degraded[_-]?(?:done|accepted))(?![A-Za-z0-9_])',
+        '降级流程已记录', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])observation[_-]?only(?![A-Za-z0-9_])',
+        '仅观察', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(
+        r'["`]?(?:process[_-]?defect)["`]?\s*[:=]\s*(?:true|false)',
         '流程缺口已记录',
         cleaned,
         flags=re.I,
     )
     cleaned = re.sub(
-        r'(?<![A-Za-z0-9_])process_defect(?![A-Za-z0-9_])',
+        r'(?<![A-Za-z0-9_])process[_-]?defect(?![A-Za-z0-9_])',
         '流程缺口',
         cleaned,
         flags=re.I,
     )
-    cleaned = re.sub(r'\bno_touch\b', '不参与', cleaned, flags=re.I)
-    cleaned = re.sub(r'\bobserve\b', '观察', cleaned, flags=re.I)
-    cleaned = re.sub(r'\bexclude\b', '排除', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])no_touch(?![A-Za-z0-9_])', '不参与', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])observe(?![A-Za-z0-9_])', '观察', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])exclude(?![A-Za-z0-9_])', '排除', cleaned, flags=re.I)
+    cleaned = re.sub(r'human_required\s*=\s*[A-Z0-9_]+', '需人工复核', cleaned, flags=re.I)
+    cleaned = re.sub(
+        r'(?:added|changed)_candidate_ids\s*=\s*\[[^\]]*\]|changes\s*=\s*\[[^\]]*\]',
+        '候选变更已记录', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])(?:added|changed)_candidate_ids(?![A-Za-z0-9_])',
+        '候选变更字段', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])candidate_disposition(?![A-Za-z0-9_])',
+        '候选裁决记录', cleaned, flags=re.I,
+    )
+    cleaned = re.sub(r'scripts\.selection_closure\.artifact_sha256', '内部校验工具', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])receipt_sha256(?![A-Za-z0-9_])', '回执哈希', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])artifact_sha256(?![A-Za-z0-9_])', '记录哈希', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])canonical(?![A-Za-z0-9_])', '规范校验', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])', '哈希已隐藏', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])d2_receipt(?![A-Za-z0-9_])', '裁决记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])ledger(?![A-Za-z0-9_])', '候选记录', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])source_gap(?![A-Za-z0-9_])', '数据缺口', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])radarsignal(?![A-Za-z0-9_])', '观察信号', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])decision_gate(?![A-Za-z0-9_])', '实时门禁', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])POS-SIZE-\d+(?![A-Za-z0-9_])', '仓位规则', cleaned, flags=re.I)
+    cleaned = re.sub(r'(?<![A-Za-z0-9_])W1_[A-Z0-9_]+(?![A-Za-z0-9_])', '窗口条件', cleaned, flags=re.I)
     cleaned = re.sub(
         r'/Users/[A-Za-z0-9._-]+/[^\s`<>|，。；]+',
         '内部审计记录（路径已隐藏）',
@@ -317,6 +351,11 @@ def sanitize_public_review_text(text):
         cleaned,
     )
     cleaned = re.sub(
+        r'(?<!\d)\d{1,2}:\d{2}(?::\d{2})?(?=[^，。；\n|]{0,28}(?:两笔|执行卡|门禁|买入|卖出))',
+        '盘中',
+        cleaned,
+    )
+    cleaned = re.sub(
         r'精确\s*(?:decision_)?gate\s*快照(?:缺失|未留存)',
         '精确内部执行校验未留存',
         cleaned,
@@ -324,6 +363,18 @@ def sanitize_public_review_text(text):
     )
     cleaned = re.sub(
         r'(?:decision_)?gate(?:\.allowed)?\s*=\s*(?:true|false)',
+        '内部执行校验已脱敏',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_.])allowed\s*=\s*(?:true|false)',
+        '内部执行校验已脱敏',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'实时门禁\.allowed\s*=\s*(?:true|false)',
         '内部执行校验已脱敏',
         cleaned,
         flags=re.I,
@@ -370,10 +421,17 @@ def sanitize_public_review_text(text):
         cleaned,
     )
     cleaned = re.sub(
-        r'((?:跌破|破|站稳|收复|守住|低于|高于)(?:MA\d+=)?)\d+(?:\.\d+)?',
+        r'((?:跌破|破|站稳|收复|守住|守|不站回|未站|失守|考验|识别|上方|看|复核|低于|高于|突破)(?:MA\d+=)?)'
+        r'\d+(?:\.\d+)?(?:/\d+(?:\.\d+)?)*',
         r'\1关键位',
         cleaned,
     )
+    cleaned = re.sub(
+        r'([\u4e00-\u9fffA-Za-z]{2,16})\d{2,3}(?:\.\d+)?(?=后(?:完成|等待|再|才))',
+        r'\1关键位突破',
+        cleaned,
+    )
+    cleaned = re.sub(r'受\d+(?:\.\d+)?前高', '受前高', cleaned)
     cleaned = re.sub(r'@\s*\d+(?:\.\d+)?', '@成交价已隐藏', cleaned)
     cleaned = re.sub(
         r'((?:以|按)\s*)\d+(?:\.\d+)?(?=\s*(?:成交|买入|加仓|减仓|清仓|卖出|买|卖|减))',
@@ -386,7 +444,12 @@ def sanitize_public_review_text(text):
         cleaned,
     )
     cleaned = re.sub(
-        r'(成本(?:价|线)?(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
+        r'((?:均)?成本(?:价|线)?(?:约|为|≈)?\s*[:：]?\s*)\d+(?:\.\d+)?',
+        r'\1已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'(均价(?:约|为|≈)?\s*[:：]?\s*)\d+(?:\.\d+)?',
         r'\1已脱敏',
         cleaned,
     )
@@ -400,7 +463,18 @@ def sanitize_public_review_text(text):
         )):
             continue
         if re.search(r'盈亏|亏损|盈利|实现|成交|买入|加仓|减仓|清仓|卖出', line):
-            line = re.sub(r'(?<![\d.])[-+]?\d+(?:\.\d+)?\s*元', '金额已脱敏', line)
+            line = re.sub(r'(?<!\d)\d{1,2}:\d{2}(?::\d{2})?', '盘中', line)
+            line = re.sub(
+                r'(?<![\d.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?)\s*元',
+                '金额已脱敏',
+                line,
+            )
+            line = re.sub(
+                r'((?:浮盈|锁盈|已?实现|盈亏|亏损|盈利)(?:为|约|[:：=])?\s*[（(]?)'
+                r'[-+]?\d{1,3}(?:,\d{3})+(?!\d)',
+                r'\1金额已脱敏',
+                line,
+            )
         safe_lines.append(line)
     return '\n'.join(safe_lines)
 
@@ -415,6 +489,7 @@ def public_position_summary(position):
 def sanitize_public_review_cell(header, value):
     """Apply header-aware redaction to sensitive review table fields."""
     header = str(header or '')
+    raw_value = str(value or '')
     if header in ('时间', '成交时间') and re.fullmatch(
         r'(?:\d{4}-\d{1,2}-\d{1,2}\s+)?\d{1,2}:\d{2}(?::\d{2})?',
         str(value or '').strip(),
@@ -442,10 +517,15 @@ def sanitize_public_review_cell(header, value):
         return '按账户事实复核'
     if '止损' in header:
         return '关键风险位（已脱敏）'
-    if any(key in header for key in ('触发', '失效')) and re.search(
-        r'买入|卖出|加仓|减仓|清仓|止损|降险|补仓|提高暴露|先减|再减', str(value)
+    if any(key in header for key in ('触发', '失效')) and (
+        re.search(r'买入|卖出|加仓|减仓|清仓|止损|降险|补仓|提高暴露|先减|再减', raw_value)
+        or re.search(r'\d{2,3}\.\d+', raw_value)
     ):
         return '风险条件已记录（具体阈值已脱敏）'
+    if header == '今日检查' and re.search(
+        r'\d{2,3}\.\d+[^，。；|]{0,12}(?:突破|收复|失守|守住|回踩)', raw_value
+    ):
+        return '价格/结构确认条件已记录（具体阈值已脱敏）'
     return sanitize_public_review_text(value)
 
 

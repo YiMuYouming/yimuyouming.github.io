@@ -554,7 +554,8 @@ weekday: 周二
     def test_public_review_text_translates_internal_audit_terms(self):
         text = convert_review.sanitize_public_review_text(
             "blocked_degraded；observation_only；process_defect=true；"
-            "observe / no_touch / exclude；红方process_defect补漏"
+            "observe / no_touch / exclude；红方process_defect补漏；"
+            "本轮为observation-only，4只no_touch，process-defect检查项"
         )
 
         for secret in (
@@ -564,6 +565,7 @@ weekday: 周二
             "observe",
             "no_touch",
             "exclude",
+            "process-defect",
         ):
             self.assertNotIn(secret, text.lower())
         self.assertIn("数据降级，仅观察", text)
@@ -593,7 +595,7 @@ weekday: 周二
         self.assertNotIn("d1_draft_receipt.json", text)
         self.assertNotIn("af6a406713a2", text)
         self.assertIn("路径已隐藏", text)
-        self.assertIn("receipt_sha256=已隐藏", text)
+        self.assertIn("回执哈希=哈希已隐藏", text)
 
     def test_public_review_text_redacts_trade_audit_identifiers_and_gate_times(self):
         text = convert_review.sanitize_public_review_text(
@@ -609,6 +611,7 @@ weekday: 周二
             "10:43",
             "gate=true",
             "decision_gate.allowed=false",
+            "allowed=false",
             "gatestatus",
             "can-20260720-000933",
             "ticket",
@@ -617,6 +620,94 @@ weekday: 周二
             self.assertNotIn(secret, text.lower())
         self.assertIn("交易流水已隐藏", text)
         self.assertIn("内部执行校验已脱敏", text)
+
+    def test_public_review_text_redacts_comma_pnl_and_average_costs(self):
+        text = convert_review.sanitize_public_review_text(
+            "中科曙光均成本≈100.29，浮盈+3,087/+4.40%；"
+            "第二笔均价≈100.29；紫光清仓锁盈+13,160元，已实现+13,160。"
+        )
+
+        for secret in ("100.29", "3,087", "13,160", "+13,金额已脱敏"):
+            self.assertNotIn(secret, text)
+        self.assertIn("均成本≈已脱敏", text)
+        self.assertIn("均价≈已脱敏", text)
+        self.assertIn("浮盈金额已脱敏/+4.40%", text)
+        self.assertIn("锁盈金额已脱敏", text)
+        self.assertIn("已实现金额已脱敏", text)
+
+    def test_public_review_text_redacts_bare_gate_state_and_plan_prices(self):
+        text = convert_review.sanitize_public_review_text(
+            "08:19起已回退为`allowed=false`；歌尔考验22.91、守22.91，"
+            "未站22.48且两锚同弱时提请降险；中国软件35.89后完成回踩，"
+            "仍受35.89前高约束，失守34.09/33.49失效，上方23.09。"
+        )
+
+        for secret in ("allowed=false", "22.91", "22.48", "35.89", "34.09", "33.49", "23.09"):
+            self.assertNotIn(secret, text)
+        self.assertIn("内部执行校验已脱敏", text)
+        self.assertIn("考验关键位", text)
+        self.assertIn("关键位突破后完成回踩", text)
+
+    def test_public_review_text_redacts_execution_time_pairs_and_internal_fields(self):
+        text = convert_review.sanitize_public_review_text(
+            "两笔买入（09:46 + 09:57）都与执行卡冲突；"
+            "human_required=DATA_REVIEW_REQUIRED；added_candidate_ids=[]；"
+            "changed_candidate_ids=[]；changes=[]；ledger与d2_receipt一致；"
+            "source_gap保留；radarsignal待补；decision_gate未通过；POS-SIZE-008未适用；"
+            "W1_EMOTION与W1_PROMOTION保留。"
+        )
+
+        for secret in (
+            "09:46", "09:57", "human_required", "DATA_REVIEW_REQUIRED",
+            "added_candidate_ids", "ledger", "d2_receipt", "source_gap", "radarsignal",
+            "changed_candidate_ids", "changes=[]", "decision_gate", "POS-SIZE-008",
+            "W1_EMOTION", "W1_PROMOTION",
+        ):
+            self.assertNotIn(secret.lower(), text.lower())
+        self.assertIn("盘中", text)
+        self.assertIn("需人工复核", text)
+        self.assertIn("候选变更已记录", text)
+        self.assertIn("数据缺口", text)
+        self.assertEqual(text.count("盘中"), 2)
+
+    def test_public_review_text_redacts_bare_receipt_fields_and_hashes(self):
+        text = convert_review.sanitize_public_review_text(
+            "`receipt_sha256`与canonical不一致，`added_candidate_ids`位于"
+            "`candidate_disposition`；用`scripts.selection_closure.artifact_sha256`重算，"
+            "哈希a665f21bb24c92dafd877e78372e312fc91c1399bd0013f635c1805cbd768b7f。"
+        )
+
+        for secret in (
+            "receipt_sha256", "canonical", "added_candidate_ids", "candidate_disposition",
+            "scripts.selection_closure.artifact_sha256", "a665f21bb24c92d",
+        ):
+            self.assertNotIn(secret.lower(), text.lower())
+        self.assertIn("哈希已隐藏", text)
+
+    def test_public_review_text_redacts_plan_price_shorthand(self):
+        text = convert_review.sanitize_public_review_text(
+            "歌尔看22.48/23.01与两锚，不站回22.48则降险；"
+            "中国软件看35.89后确认，盘中节点复核22.48。"
+        )
+
+        for secret in ("22.48", "23.01", "35.89"):
+            self.assertNotIn(secret, text)
+        self.assertIn("看关键位", text)
+        self.assertIn("不站回关键位", text)
+
+    def test_public_review_cells_redact_numeric_trigger_thresholds(self):
+        self.assertEqual(
+            convert_review.sanitize_public_review_cell(
+                "触发/失效", "突破35.89后缩量守住；失守34.09/33.49失效"
+            ),
+            "风险条件已记录（具体阈值已脱敏）",
+        )
+        self.assertNotIn(
+            "35.89",
+            convert_review.sanitize_public_review_cell(
+                "今日检查", "35.89突破与价格/时间回踩"
+            ),
+        )
 
 
 if __name__ == "__main__":
