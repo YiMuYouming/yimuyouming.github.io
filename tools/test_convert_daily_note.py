@@ -215,6 +215,35 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertEqual(title, "市场永远是对的，短线不能有固有思维")
         self.assertEqual(body, "昨日主线、既有利润和盘前预期都只是假设。")
 
+    def test_extracts_core_cognition_as_the_first_daily_note_cognition(self):
+        section = """### 今日认知
+
+1. [核心认知] 反T的根因不在尾盘纠偏，而在早盘没有等目标股完成分型 — 早盘过早提高暴露，尾盘只能被动纠偏。
+2. [认知] 两日放量后的第三日缩量冲高，不是新的进攻日 — 第二条不应替代第一条。
+"""
+
+        title, body, _action = convert_daily_note.extract_first_cognition(section)
+
+        self.assertEqual(
+            title,
+            "反T的根因不在尾盘纠偏，而在早盘没有等目标股完成分型",
+        )
+        self.assertEqual(body, "早盘过早提高暴露，尾盘只能被动纠偏。")
+
+    def test_core_cognition_keeps_evidence_after_redacting_execution_details(self):
+        section = """### 今日认知
+
+1. [核心认知] 反T的根因不在尾盘纠偏，而在早盘没有等目标股自身完成分型就过早加仓 — 中科10:00以102.27元加300股，14:51以97.41元卖出等量旧仓恢复700股敞口，形成-4.86元/股、税费前-1,458元的经济拖累；账户按被卖旧lot确认已实现-744元。下次必须先回到目标股自身量价、窗口和既定计划。
+2. [认知] 第二条不应替代第一条 — 第二条证据。
+"""
+
+        title, body, _action = convert_daily_note.extract_first_cognition(section)
+
+        self.assertIn("目标股自身量价、窗口和既定计划", body)
+        self.assertNotEqual(body, title)
+        for secret in ("中科", "10:00", "102.27", "300股", "14:51", "97.41", "700股", "-4.86", "1,458", "-744"):
+            self.assertNotIn(secret, body)
+
     def test_one_line_strips_blockquote_bold_markers(self):
         section = """### 一句话结论
 

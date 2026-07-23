@@ -6,7 +6,7 @@ Default source is cloud Hermes via SSH, so local bridge is not required.
 Use --source local only when intentionally syncing from a local bridge.
 """
 
-import argparse, json, math, os, re, shlex, subprocess, sys, urllib.request
+import argparse, json, math, os, re, shlex, subprocess, sys, time, urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -54,16 +54,19 @@ class BridgeAPI:
     def _fetch_cloud(self, path):
         url = f"http://127.0.0.1:8088{path}"
         remote_cmd = f"curl -fsS --max-time 8 {shlex.quote(url)}"
-        r = subprocess.run(
-            ["ssh", self.remote, remote_cmd],
-            capture_output=True,
-            text=True,
-            timeout=15,
-        )
-        if r.returncode != 0:
-            detail = (r.stderr or r.stdout or "").strip()
-            raise RuntimeError(f"cloud bridge fetch failed: {path}; {detail}")
-        return json.loads(r.stdout)
+        for attempt in range(3):
+            r = subprocess.run(
+                ["ssh", self.remote, remote_cmd],
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+            if r.returncode == 0:
+                return json.loads(r.stdout)
+            if attempt < 2:
+                time.sleep(attempt + 1)
+        detail = (r.stderr or r.stdout or "").strip()
+        raise RuntimeError(f"cloud bridge fetch failed: {path}; {detail}")
 
 
 def fetch(url):

@@ -175,7 +175,7 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"降低风险\s*[0-9]+(?:\s*[-~—]\s*[0-9]+)?", "降低部分风险", line)
         line = re.sub(r"\d{1,2}:\d{2}", "盘中", line)
         line = re.sub(
-            r"(海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料|聚和|太极实业|太极|徐工机械|徐工|华工科技|华工|江丰电子|江丰|金宏气体|金宏|长电科技|长电|兆易创新|兆易|方正科技|方正|通富微电|新易盛|中际旭创|天孚通信|中国卫星|上海瀚讯|盛路通信)",
+            r"(中科曙光|中科|歌尔股份|歌尔|海光信息|海光|中信证券|中信|药明康德|药明|海兰信|南大光电|南大|雅克科技|雅克|澜起科技|中微公司|聚和材料|聚和|太极实业|太极|徐工机械|徐工|华工科技|华工|江丰电子|江丰|金宏气体|金宏|长电科技|长电|兆易创新|兆易|方正科技|方正|通富微电|新易盛|中际旭创|天孚通信|中国卫星|上海瀚讯|盛路通信)",
             "标的",
             line,
         )
@@ -222,10 +222,15 @@ def first_sentence(text: str, fallback: str) -> str:
 
 def clean_cognition_title(title: str) -> str:
     return re.sub(
-        r"^\[(?:认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*",
+        r"^\[(?:核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*",
         "",
         title or "",
     ).strip(" 。；;")
+
+
+def sanitize_cognition_evidence(text: str) -> str:
+    """Keep the lesson evidence while removing private execution details."""
+    return sanitize_public_text(convert_review.sanitize_public_review_text(text))
 
 
 def extract_date(md_path: Path, fm: dict) -> str:
@@ -249,45 +254,45 @@ def extract_one_line(s1_text: str, fm: dict) -> str:
 
 def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     bracket_bold_title = re.search(
-        r"^\d+\.\s+\[(?P<kind>认知)\]\s*\*\*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
+        r"^\d+\.\s+\[(?P<kind>核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*\*\*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
         s2_text,
         re.M | re.S,
     )
     if bracket_bold_title:
         title = clean_cognition_title(bracket_bold_title.group("title"))
-        body = sanitize_public_text(bracket_bold_title.group("body").strip())
+        body = sanitize_cognition_evidence(bracket_bold_title.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     bracket_tagged = re.search(
-        r"^\d+\.\s+\[(?P<kind>认知)\]\s*(?P<title>.+?)(?:\s*[—-]\s*|[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
+        r"^\d+\.\s+\[(?P<kind>核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*(?P<title>.+?)(?:\s*[—-]\s*|[。；;]|$)(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
         s2_text,
         re.M | re.S,
     )
     if bracket_tagged:
         title = clean_cognition_title(bracket_tagged.group("title"))
-        body = sanitize_public_text((bracket_tagged.group("body") or "").strip())
+        body = sanitize_cognition_evidence((bracket_tagged.group("body") or "").strip())
         if not body:
             body = title
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     tagged = re.search(
-        r"^\d+\.\s+\*\*\[(?P<kind>认知)\]\s*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)",
+        r"^\d+\.\s+\*\*\[(?P<kind>核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\*\*\[|\Z)",
         s2_text,
         re.M | re.S,
     )
     if tagged:
         title = clean_cognition_title(tagged.group("title"))
-        body = sanitize_public_text(tagged.group("body").strip())
+        body = sanitize_cognition_evidence(tagged.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     tagged_bold_inline = re.search(
-        r"^\d+\.\s+\*\*\[(?P<kind>认知)\]\s*(?P<title>.+?)\*\*\s*(?P<body>.*?)(?=^\d+\.\s+\*\*|^###|\Z)",
+        r"^\d+\.\s+\*\*\[(?P<kind>核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*(?P<title>.+?)\*\*\s*(?P<body>.*?)(?=^\d+\.\s+\*\*|^###|\Z)",
         s2_text,
         re.M | re.S,
     )
     if tagged_bold_inline:
         title = clean_cognition_title(tagged_bold_inline.group("title"))
-        body = sanitize_public_text(tagged_bold_inline.group("body").strip())
+        body = sanitize_cognition_evidence(tagged_bold_inline.group("body").strip())
         if not body:
             body = title
         return title, body, convert_review.infer_lesson_action("认知", title, body)
@@ -299,7 +304,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     )
     if numbered_bold:
         title = clean_cognition_title(numbered_bold.group("title"))
-        body = sanitize_public_text(numbered_bold.group("body").strip())
+        body = sanitize_cognition_evidence(numbered_bold.group("body").strip())
         if not body:
             body = title
         return title, body, convert_review.infer_lesson_action("认知", title, body)
@@ -311,7 +316,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     )
     if numbered_inline:
         title = clean_cognition_title(numbered_inline.group("title"))
-        body = sanitize_public_text(numbered_inline.group("body").strip())
+        body = sanitize_cognition_evidence(numbered_inline.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     plain_numbered = re.search(
@@ -321,7 +326,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     )
     if plain_numbered:
         title = clean_cognition_title(plain_numbered.group("title"))
-        body = sanitize_public_text(plain_numbered.group("body").strip())
+        body = sanitize_cognition_evidence(plain_numbered.group("body").strip())
         return title, body or title, convert_review.infer_lesson_action("认知", title, body)
 
     untagged = re.search(
@@ -331,7 +336,7 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
     )
     if untagged:
         title = clean_cognition_title(untagged.group("title"))
-        body = sanitize_public_text(untagged.group("body").strip())
+        body = sanitize_cognition_evidence(untagged.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
     return (

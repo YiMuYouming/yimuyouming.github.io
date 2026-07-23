@@ -280,6 +280,12 @@ def sanitize_public_review_text(text):
         cleaned,
         flags=re.I,
     )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])trade\s*[:=]\s*[A-Za-z0-9_-]+',
+        '交易流水已隐藏',
+        cleaned,
+        flags=re.I,
+    )
     cleaned = re.sub(r'(?<![A-Za-z0-9_])CAN-[A-Za-z0-9_-]+', '内部候选记录', cleaned, flags=re.I)
     cleaned = re.sub(
         r'(?<![A-Za-z0-9_])blocked[_-]?degraded(?![A-Za-z0-9_])',
@@ -294,14 +300,32 @@ def sanitize_public_review_text(text):
         '仅观察', cleaned, flags=re.I,
     )
     cleaned = re.sub(
-        r'["`]?(?:process[_-]?defect)["`]?\s*[:=]\s*(?:true|false)',
+        r'["`]?(?:process[ _-]?defect)["`]?\s*[:=]\s*(?:true|false)',
         '流程缺口已记录',
         cleaned,
         flags=re.I,
     )
     cleaned = re.sub(
-        r'(?<![A-Za-z0-9_])process[_-]?defect(?![A-Za-z0-9_])',
+        r'(?<![A-Za-z0-9_])process[ _-]?defect(?![A-Za-z0-9_])',
         '流程缺口',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])human_resolution(?![A-Za-z0-9_])',
+        '人工裁决',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])(?:ledger|d2)_sha256(?![A-Za-z0-9_])',
+        '内部校验字段',
+        cleaned,
+        flags=re.I,
+    )
+    cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])trade_review(?![A-Za-z0-9_])',
+        '交易复核',
         cleaned,
         flags=re.I,
     )
@@ -394,8 +418,12 @@ def sanitize_public_review_text(text):
         cleaned,
     )
     cleaned = re.sub(
-        r'((?:原|合计|累计)\s*)\d+(?:\s*股)?(?:\s*[+→=]\s*\d+(?:\s*股)?)+',
-        r'\1仓位数量已脱敏',
+        r'((?:原|合计|累计|总仓)\s*)\d+(?:\s*股)?(?:\s*[+→=]\s*\d+(?:\s*股)?)+',
+        lambda match: (
+            '总仓数量已脱敏'
+            if match.group(1).strip() == '总仓'
+            else f'{match.group(1)}仓位数量已脱敏'
+        ),
         cleaned,
     )
     cleaned = re.sub(
@@ -405,13 +433,18 @@ def sanitize_public_review_text(text):
     )
     cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
     cleaned = re.sub(
-        r'(?:全部|新?部分仓位)?\s*T\+1\s*锁定至\s*\d{1,2}月\d{1,2}日',
+        r'(?:全部|新?部分仓位)?\s*T\+1\s*锁(?:定)?至\s*(?:\d{1,2}月\d{1,2}日|\d{1,2}/\d{1,2})',
         'T+1状态已记录',
         cleaned,
         flags=re.I,
     )
     cleaned = re.sub(
         r'(?:全部|新?部分仓位)?\s*锁定至\s*\d{1,2}月\d{1,2}日',
+        'T+1状态已记录',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'(?:全部|新?部分仓位)?\s*\d{1,2}/\d{1,2}\s*解锁',
         'T+1状态已记录',
         cleaned,
     )
@@ -441,6 +474,11 @@ def sanitize_public_review_text(text):
     cleaned = re.sub(
         r'((?:成交|买入|卖出|加仓|减仓|清仓)价(?:约|为)?\s*[:：]?\s*)\d+(?:\.\d+)?',
         r'\1已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'(买入|卖出|买|卖)\s*\d{2,3}\.\d+',
+        lambda match: '买入价已脱敏' if match.group(1).startswith('买') else '卖出价已脱敏',
         cleaned,
     )
     cleaned = re.sub(

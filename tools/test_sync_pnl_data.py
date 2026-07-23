@@ -1,10 +1,32 @@
 import unittest
+from unittest import mock
 from pathlib import Path
 import sys
 import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import sync_pnl_data
+
+
+class BridgeAPITest(unittest.TestCase):
+    def test_cloud_fetch_retries_transient_ssh_disconnect(self):
+        api = sync_pnl_data.BridgeAPI()
+        disconnected = mock.Mock(
+            returncode=255,
+            stderr="Connection closed by 43.132.146.234 port 22",
+            stdout="",
+        )
+        success = mock.Mock(returncode=0, stderr="", stdout='{"ok": true}')
+
+        with (
+            mock.patch.object(sync_pnl_data.subprocess, "run", side_effect=[disconnected, success]) as run,
+            mock.patch.object(sync_pnl_data.time, "sleep") as sleep,
+        ):
+            result = api.fetch("/api/health")
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(run.call_count, 2)
+        sleep.assert_called_once_with(1)
 
 
 class ResolveMetaTest(unittest.TestCase):

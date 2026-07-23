@@ -531,6 +531,29 @@ weekday: 周二
         self.assertIn("仓位数量已脱敏", text)
         self.assertIn("累计仓位已脱敏", text)
 
+    def test_public_review_text_redacts_execution_shorthand_from_daily_review(self):
+        text = convert_review.sanitize_public_review_text(
+            "命中旧lot trade:150，总仓1000→700，保留400股可卖旧仓+300股T+1锁定至7/24；"
+            "经济上形成反T（买102.27→卖97.41，价差-4.86元/股、税费前-1458元）；"
+            "其中300股7/24解锁，7/24解锁只改变可卖数量。"
+        )
+
+        for secret in (
+            "trade:150",
+            "1000",
+            "700",
+            "7/24",
+            "102.27",
+            "97.41",
+            "-4.86",
+            "-1458",
+        ):
+            self.assertNotIn(secret, text)
+        self.assertIn("交易流水已隐藏", text)
+        self.assertIn("总仓数量已脱敏", text)
+        self.assertIn("T+1状态已记录", text)
+        self.assertIn("买入价已脱敏→卖出价已脱敏", text)
+
     def test_public_review_text_redacts_t1_position_availability(self):
         text = convert_review.sanitize_public_review_text(
             "部分仓位T+1锁定至7月22日；全部T+1锁定至7月22日。"
@@ -555,7 +578,8 @@ weekday: 周二
         text = convert_review.sanitize_public_review_text(
             "blocked_degraded；observation_only；process_defect=true；"
             "observe / no_touch / exclude；红方process_defect补漏；"
-            "本轮为observation-only，4只no_touch，process-defect检查项"
+            "本轮为observation-only，4只no_touch，process-defect检查项；"
+            "process defect；human_resolution；ledger_sha256；d2_sha256；trade_review"
         )
 
         for secret in (
@@ -566,11 +590,19 @@ weekday: 周二
             "no_touch",
             "exclude",
             "process-defect",
+            "process defect",
+            "human_resolution",
+            "ledger_sha256",
+            "d2_sha256",
+            "trade_review",
         ):
             self.assertNotIn(secret, text.lower())
         self.assertIn("数据降级，仅观察", text)
         self.assertIn("流程缺口已记录", text)
         self.assertIn("观察 / 不参与 / 排除", text)
+        self.assertIn("人工裁决", text)
+        self.assertIn("内部校验字段", text)
+        self.assertIn("交易复核", text)
 
     def test_public_review_cells_redact_action_prices_and_monetary_pnl(self):
         self.assertEqual(
