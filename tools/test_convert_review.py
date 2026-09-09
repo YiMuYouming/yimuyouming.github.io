@@ -1063,6 +1063,16 @@ weekday: 周五
         self.assertIn("账户比例已脱敏", text)
         self.assertIn("次日风控复核", text)
 
+    def test_public_review_text_redacts_compact_holding_ratio_and_locked_quantity(self):
+        text = convert_review.sanitize_public_review_text(
+            "成交回读后持仓率50.61%；剩余仓位2000锁定，可卖量0。"
+        )
+
+        self.assertNotIn("50.61%", text)
+        self.assertNotIn("2000", text)
+        self.assertIn("账户比例已脱敏", text)
+        self.assertIn("仓位数量已脱敏", text)
+
     def test_public_review_text_redacts_execution_shorthand_from_daily_review(self):
         text = convert_review.sanitize_public_review_text(
             "命中旧lot trade:150，总仓1000→700，保留400股可卖旧仓+300股T+1锁定至7/24；"
@@ -1284,6 +1294,25 @@ weekday: 周五
             self.assertNotIn(secret, text.lower())
         self.assertIn("交易流水已隐藏", text)
         self.assertIn("内部执行校验已脱敏", text)
+
+    def test_public_review_text_redacts_spaced_trade_id_ranges(self):
+        text = convert_review.sanitize_public_review_text(
+            "成交事实已补录为 trade_id 241–242；交易流水不得进入公开页。"
+        )
+
+        self.assertNotIn("trade_id", text.lower())
+        self.assertNotIn("241", text)
+        self.assertNotIn("242", text)
+        self.assertIn("交易流水已隐藏", text)
+
+    def test_public_review_text_redacts_unqualified_execution_counts(self):
+        text = convert_review.sanitize_public_review_text(
+            "今日十一笔成交已回读；六笔已完成账本补录；三笔已成交事实；八笔成交事实。"
+        )
+
+        for secret in ("十一笔", "六笔", "三笔", "八笔"):
+            self.assertNotIn(secret, text)
+        self.assertIn("若干笔", text)
 
     def test_public_review_text_redacts_comma_pnl_and_average_costs(self):
         text = convert_review.sanitize_public_review_text(

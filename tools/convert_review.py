@@ -339,6 +339,11 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
         cleaned,
     )
     cleaned = re.sub(
+        r'(?<![A-Za-z0-9_])[一二三四五六七八九十百千万两零〇\d]+\s*笔',
+        '若干笔',
+        cleaned,
+    )
+    cleaned = re.sub(
         r'(?<![A-Za-z0-9_])tickets?\s*=\s*\d+(?![A-Za-z0-9_])',
         '交易记录数量已隐藏',
         cleaned,
@@ -352,7 +357,8 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
     )
     cleaned = re.sub(r'(?<![A-Za-z0-9_])EXEC-[A-Za-z0-9_+:-]+', '执行记录', cleaned, flags=re.I)
     cleaned = re.sub(
-        r'(?<![A-Za-z0-9_])trade[_\s-]?id\s*[:=]\s*[A-Za-z0-9_-]+',
+        r'(?<![A-Za-z0-9_])trade[_\s-]?id\s*[:=]?\s*[A-Za-z0-9_-]+'
+        r'(?:\s*[–—-]\s*[A-Za-z0-9_-]+)?',
         '交易流水已隐藏',
         cleaned,
         flags=re.I,
@@ -773,6 +779,11 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
     )
     cleaned = re.sub(r'\d+\s*股', '部分仓位', cleaned)
     cleaned = re.sub(
+        r'(?<![\d.+])\d{2,6}(?=\s*(?:锁定|锁|可卖量|解锁))',
+        '仓位数量已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
         r'新\s*\d+(?:\s*股)?\s*(?:已)?解锁(?:日)?\s*'
         r'(?:\d{1,2}月\d{1,2}日|\d{1,2}/\d{1,2})?',
         '新增批次可卖状态已记录',
@@ -1185,7 +1196,7 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
         cleaned,
     )
     cleaned = re.sub(
-        r'((?:单票|总仓位|仓位|持仓\s+)[^，。；|]{0,24}?)'
+        r'((?:单票|总仓位|仓位|持仓率|持仓\s+)[^，。；|]{0,24}?)'
         r'[-+]?\d+(?:\.\d+)?%'
         r'(?=\s*(?:已|为|上限|超|基准|附近|只减|未|，|。|；|$))',
         r'\1账户比例已脱敏',
