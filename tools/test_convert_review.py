@@ -8,6 +8,33 @@ import convert_review
 
 
 class ConvertReviewTest(unittest.TestCase):
+    def test_html_topbar_keeps_pending_review_out_of_final_status(self):
+        pending = convert_review.html_topbar(
+            {
+                "date": "2026-09-10",
+                "weekday": "周四",
+                "情绪值": "18.5",
+                "上证指数": "3934.40",
+                "上证涨幅": "-0.43",
+                "涨停家数": "35",
+                "跌停家数": "11",
+                "盘后持仓": "楚天龙7000股",
+                "stage_red_team": "pending",
+                "stage_final": "pending",
+            }
+        )
+        finalized = convert_review.html_topbar(
+            {
+                "stage_red_team": "done",
+                "stage_final": "done",
+            }
+        )
+
+        self.assertIn("待签（红方对抗未完成）", pending)
+        self.assertIn('class="chip amber"', pending)
+        self.assertNotIn("终稿 (红蓝对抗完成)", pending)
+        self.assertIn("终稿 (红蓝对抗完成)", finalized)
+
     def test_update_review_notes_index_refreshes_footer_day_count(self):
         with tempfile.TemporaryDirectory() as tmp:
             original_review_notes = convert_review.REVIEW_NOTES

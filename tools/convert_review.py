@@ -1487,6 +1487,17 @@ def sanitize_public_review_cell(header, value, position_row=False):
 
 # ── HTML generators ──
 
+def public_review_status(fm):
+    """Expose a conservative public review status from the source stages."""
+    red_team = str((fm or {}).get('stage_red_team', '')).strip().lower()
+    final = str((fm or {}).get('stage_final', '')).strip().lower()
+    if red_team == 'done' and final == 'done':
+        return 'green', '终稿 (红蓝对抗完成)'
+    if red_team != 'done':
+        return 'amber', '待签（红方对抗未完成）'
+    return 'amber', '待签（终稿确认未完成）'
+
+
 def html_topbar(fm):
     """Generate the topbar with meta chips."""
     weekday = fm.get('weekday', '')
@@ -1502,6 +1513,7 @@ def html_topbar(fm):
     emo_val = numeric_value(emo_raw)
     emo_chip = 'red' if emo_val is not None and emo_val < 25 else ('amber' if emo_val is not None and emo_val < 45 else 'green')
     sh_chip = 'red' if sh_pct.startswith('+') else 'green'
+    status_chip, status_text = public_review_status(fm)
 
     return f"""<div class="topbar">
   <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
@@ -1511,7 +1523,7 @@ def html_topbar(fm):
     <span class="chip {sh_chip}">上证 {sh_idx} {sh_pct}</span>
     <span class="chip blue">{zt}涨停 / {dt}跌停</span>
     <span class="chip purple">持仓 {pos}</span>
-    <span class="chip green">终稿 (红蓝对抗完成)</span>
+    <span class="chip {status_chip}">{status_text}</span>
   </div>
 </div>"""
 
