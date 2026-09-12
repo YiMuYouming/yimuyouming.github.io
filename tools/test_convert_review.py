@@ -1405,6 +1405,17 @@ weekday: 周五
         self.assertIn("账户比例已脱敏", text)
         self.assertIn("跌幅达到风险阈值", text)
 
+    def test_public_review_text_redacts_open_position_time_and_exposure_percentages(self):
+        text = convert_review.sanitize_public_review_text(
+            "今日09:25开仓发生在冰点，同时早于W1且突破首笔6.06%超过5%，"
+            "并使总仓24.88%超过20.06%计划上限。"
+        )
+
+        for secret in ("09:25", "6.06%", "5%", "24.88%", "20.06%"):
+            self.assertNotIn(secret, text)
+        self.assertIn("盘中开仓", text)
+        self.assertIn("账户比例已脱敏", text)
+
     def test_public_review_text_redacts_bare_gate_state_and_plan_prices(self):
         text = convert_review.sanitize_public_review_text(
             "08:19起已回退为`allowed=false`；歌尔考验22.91、守22.91，"

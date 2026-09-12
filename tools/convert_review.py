@@ -1260,7 +1260,7 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
             line,
             flags=re.I,
         )
-        if re.search(r'盈亏|浮盈|亏损|浮亏|盈利|实现|成交|买入|加仓|减仓|清仓|卖出|止损|持仓|仓位|账户|试仓|暴露', line):
+        if re.search(r'盈亏|浮盈|亏损|浮亏|盈利|实现|成交|买入|开仓|加仓|减仓|清仓|卖出|止损|持仓|仓位|账户|试仓|暴露', line):
             line = re.sub(r'(?<!\d)\d{1,2}:\d{2}(?::\d{2})?', '盘中', line)
             line = re.sub(
                 r'总资产\s*[-+]?\d+(?:\.\d+)?',
@@ -1386,6 +1386,12 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
             line = re.sub(
                 r'(?:约)?\d+(?:\.\d+)?%\s*(?:账户|仓位)',
                 '账户比例已脱敏',
+                line,
+            )
+            line = re.sub(
+                r'(?:突破)?(首笔|总仓)\s*(?:约)?\d+(?:\.\d+)?%\s*(?:超过|超)\s*'
+                r'(?:计划)?\d+(?:\.\d+)?%\s*(?:(?:计划)?上限)?',
+                r'\1账户比例已脱敏且超过内部上限',
                 line,
             )
             line = re.sub(
