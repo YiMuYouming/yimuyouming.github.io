@@ -274,7 +274,8 @@ def anonymize_current_holdings(text, fm):
     position_summary = str((fm or {}).get('盘后持仓', ''))
     names = []
     for name in re.findall(
-        r'([A-Za-z\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff*]{1,15}?)\s*\d+(?:\.\d+)?\s*股',
+        r'([A-Za-z\u4e00-\u9fff][A-Za-z0-9\u4e00-\u9fff*]{1,15}?)\s*\d+(?:\.\d+)?'
+        r'(?:\s*股|\s*@\s*\d+(?:\.\d+)?)',
         position_summary,
     ):
         if name not in names:
@@ -1215,6 +1216,17 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
         cleaned,
     )
     cleaned = re.sub(
+        r'((?:现有|现有仓位)\s*)(?:约)?[-+]?\d+(?:\.\d+)?%',
+        r'\1账户比例已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
+        r'((?:加仓|减仓|买入|卖出|持仓)?批次[^，。；|]{0,20}?)'
+        r'(?:收盘较成交价|成交价较收盘)\s*[-+]?\d+(?:\.\d+)?%',
+        r'\1成交表现已脱敏',
+        cleaned,
+    )
+    cleaned = re.sub(
         r'((?:仍)?持仓时\s*)(?:约)?[-+]?\d+(?:\.\d+)?%\s*上限',
         r'\1内部集中度上限',
         cleaned,
@@ -1550,6 +1562,9 @@ def html_table(headers, rows, cell_fn=None):
             for key in ('窗口', '今日定位', '方向', '阶段', '角色')
         ) or any(
             re.search(r'(?:持仓\s*\d|成本\s*\d|收盘\s*\d)', str(value))
+            for value in row.values()
+        ) or any(
+            re.search(r'持仓风险处理|当前持仓|持仓复核', str(value))
             for value in row.values()
         ) or ('当前事实' in headers and '今日结论' in headers) or position_table
         tbody += '<tr>'
@@ -2558,12 +2573,99 @@ def generate_sidebar(fm, s0_label='昨日预案'):
 </div>"""
 
 
+# ── note schema 版本分派（P2.3）────────────────────────────────────
+# 新增内容必须显式声明版本；**禁止凭标题相似猜版本**。
+# 未知版本一律拒绝，不做"尽力解析"——那会把新格式静默解析成半成品页面。
+NOTE_SCHEMA_V1 = "yimu.review.v1"
+NOTE_SCHEMA_V2 = "yimu.review.v2"
+SUPPORTED_NOTE_SCHEMAS = (NOTE_SCHEMA_V1, NOTE_SCHEMA_V2)
+# v2 的人读正文只有四段（方案 04 篇样稿）。
+V2_SECTION_MARKERS = (
+    "1. 今天发生了什么",
+    "2. 哪些交易或遗漏值得讨论",
+    "3. 明天准备怎么做",
+    "4. 需要保留的一条经验",
+)
+V2_APPENDIX_MARKERS = ("折叠：机器附录", "机器附录")
+GENERATED_MARKERS = ("自动生成", "系统生成", "generated")
+
+
+class UnsupportedNoteSchema(ValueError):
+    """未识别的 note_schema。调用方必须显式处理，不得静默按旧格式解析。"""
+
+    def __init__(self, schema, path=None):
+        self.schema = schema
+        self.path = path
+        super().__init__(f"unsupported_note_schema:{schema}")
+
+
+def detect_note_schema(frontmatter: dict) -> str:
+    """显式读取 note_schema；缺省视为 v1（历史笔记）。"""
+    raw = str((frontmatter or {}).get("note_schema") or "").strip()
+    if not raw:
+        return NOTE_SCHEMA_V1
+    if raw in SUPPORTED_NOTE_SCHEMAS:
+        return raw
+    raise UnsupportedNoteSchema(raw)
+
+
+def split_v2_body_and_appendix(content: str) -> dict:
+    """把 v2 笔记切成「人读正文」与「机器附录」。
+
+    机器附录必须显式标记为自动生成；人工心得保留在独立区域，
+    重新生成不得覆盖（本函数只做切分，不写回）。
+    """
+    lines = content.splitlines()
+    appendix_start = None
+    for index, line in enumerate(lines):
+        stripped = line.strip().lstrip("#").strip()
+        if any(marker in stripped for marker in V2_APPENDIX_MARKERS):
+            appendix_start = index
+            break
+    if appendix_start is None:
+        return {
+            "body": content,
+            "appendix": "",
+            "appendix_is_generated": False,
+            "appendix_marker_found": False,
+        }
+    appendix = "\n".join(lines[appendix_start:])
+    body = "\n".join(lines[:appendix_start])
+    return {
+        "body": body,
+        "appendix": appendix,
+        "appendix_is_generated": any(m in appendix for m in GENERATED_MARKERS),
+        "appendix_marker_found": True,
+    }
+
+
+def find_v2_sections(content: str) -> dict:
+    """定位 v2 四段；缺失的段不伪造，报告为 missing。"""
+    found, missing = {}, []
+    for marker in V2_SECTION_MARKERS:
+        index = content.find(marker)
+        if index >= 0:
+            found[marker] = index
+        else:
+            missing.append(marker)
+    return {"found": sorted(found, key=lambda k: found[k]), "missing": missing}
+
+
 def convert_md_to_html(md_path):
     """Main conversion function."""
-    with open(md_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    fm = parse_frontmatter(content)
+    content, fm, bundle_backed = read_review_input(md_path)
+    # P2.3：按 note_schema 显式分派；未知版本拒绝，不凭标题相似猜版本。
+    note_schema = detect_note_schema(fm)
+    if note_schema == NOTE_SCHEMA_V2 and not bundle_backed:
+        parts = split_v2_body_and_appendix(content)
+        if not parts["appendix_marker_found"]:
+            raise UnsupportedNoteSchema(
+                f"{NOTE_SCHEMA_V2}:appendix_marker_missing", md_path)
+        if not parts["appendix_is_generated"]:
+            raise UnsupportedNoteSchema(
+                f"{NOTE_SCHEMA_V2}:appendix_not_marked_generated", md_path)
+        # 机器附录不进入公开页面：它含内部路径/哈希/回执。
+        content = parts["body"]
     content = anonymize_current_holdings(content, fm)
     content = sanitize_public_review_text(content)
 
@@ -2664,6 +2766,25 @@ def convert_md_to_html(md_path):
 
     print(f"✅ 已生成: {output_path}")
     return date_str, output_path
+
+
+def read_review_input(md_path):
+    """Current human prose, with facts resolved through the shared SSOT reader."""
+    content = Path(md_path).read_text(encoding='utf-8')
+    fm = parse_frontmatter(content)
+    if 'daily_bundle_ref' not in fm:
+        return content, fm, False
+    try:
+        from .daily_bundle_input import resolve_bundle_reading
+    except ImportError:
+        from daily_bundle_input import resolve_bundle_reading
+    source = resolve_bundle_reading(md_path)
+    # Consumers receive current prose only. Never concatenate sealed source,
+    # full JSON, receipt hashes or raw accounts into a public document.
+    facts = parse_frontmatter(source['machine_text'])
+    facts['note_schema'] = fm.get('note_schema')
+    body = re.sub(r'\A---\s*\n.*?\n---\s*(?:\n|$)', '', source['reading_text'], count=1, flags=re.S)
+    return body, facts, True
 
 
 def shorten_pos(pos_raw):
@@ -3114,9 +3235,7 @@ def main():
     date_str, html_path = convert_md_to_html(md_path)
 
     # Re-parse for index updates
-    with open(md_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    fm = parse_frontmatter(content)
+    _content, fm, _bundle_backed = read_review_input(md_path)
 
     # Update indexes
     update_review_notes_index(date_str, fm)

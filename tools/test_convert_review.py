@@ -8,6 +8,21 @@ import convert_review
 
 
 class ConvertReviewTest(unittest.TestCase):
+    def test_anonymize_current_holdings_parses_bundle_quantity_at_cost(self):
+        text = (
+            "| 楚天龙 003040 | 持仓风险处理；7000股可卖 |\n"
+            "| 兴森科技 002436 | 持仓风险处理；1000股今日可卖 |"
+        )
+        result = convert_review.anonymize_current_holdings(
+            text,
+            {"盘后持仓": "楚天龙 7000@21.78；兴森科技 2000@40.05"},
+        )
+
+        for secret in ("楚天龙", "兴森科技", "003040", "002436"):
+            self.assertNotIn(secret, result)
+        self.assertIn("持仓标的一", result)
+        self.assertIn("持仓标的二", result)
+
     def test_html_topbar_keeps_pending_review_out_of_final_status(self):
         pending = convert_review.html_topbar(
             {
@@ -895,6 +910,42 @@ weekday: 周五
 
         self.assertNotIn("14.99", html)
         self.assertIn("关键位", html)
+
+    def test_public_review_tables_redact_prices_in_holding_status_rows(self):
+        html = convert_review.html_table(
+            ["主标的", "状态", "锚点组"],
+            [
+                {
+                    "主标的": "持仓标的一 代码已脱敏",
+                    "状态": "持仓风险处理；盘中为17.00（-2.63%）",
+                    "锚点组": "通信设备锚点",
+                },
+                {
+                    "主标的": "持仓标的二 代码已脱敏",
+                    "状态": "持仓风险处理；盘中为39.04（-0.74%）",
+                    "锚点组": "元件锚点",
+                },
+            ],
+        )
+
+        self.assertNotIn("17.00", html)
+        self.assertNotIn("39.04", html)
+
+    def test_public_review_text_redacts_existing_position_percentage_after_summary(self):
+        text = convert_review.sanitize_public_review_text(
+            "总仓位上限：新增仓位账户比例已脱敏；现有30.54%。"
+        )
+
+        self.assertNotIn("30.54%", text)
+        self.assertIn("账户比例已脱敏", text)
+
+    def test_public_review_text_redacts_relative_execution_performance(self):
+        text = convert_review.sanitize_public_review_text(
+            "加仓批次收盘较成交价-1.48%；具体费用仍缺源。"
+        )
+
+        self.assertNotIn("-1.48%", text)
+        self.assertIn("成交表现已脱敏", text)
 
     def test_public_review_text_preserves_observation_counts(self):
         text = convert_review.sanitize_public_review_text("只观察3只；观察22.48继续验证。")

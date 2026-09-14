@@ -435,8 +435,7 @@ def public_position_summary(position: str) -> str:
 
 def build_daily_note(md_path: str | Path, user_feeling: str = "") -> DailyNote:
     md_path = Path(md_path)
-    content = md_path.read_text(encoding="utf-8")
-    fm = convert_review.parse_frontmatter(content)
+    content, fm, _bundle_backed = convert_review.read_review_input(md_path)
     content = convert_review.anonymize_current_holdings(content, fm)
     date = extract_date(md_path, fm)
     weekday = fm.get("weekday", "")
