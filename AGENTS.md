@@ -5,7 +5,7 @@
 - 日常复盘衔接先回 `../Market_Watch/docs/runbooks/daily-flow.md`；阅读、计划确认、展示发布分别恢复，不在 Portal 复制复盘顺序。
 
 - “同步门户/同步今天门户/根据流程同步门户”：执行 `docs/sync-runbook.md` 完整流程：云端数据 → Vault 差异 → convert_review → convert_daily_note → insights → 验证与桌面/移动 QA → 摘要 → 按授权提交推送。
-- **日常收盘的站内同步只跑统一入口 `tools/sync_portal.py`**（顺序固定：首页数据 → 每日市场手记；首页数据失败即中断，见 sync-runbook Step 0）。上面的完整流程仍是排查与全量重建时的手册。
+- **日常收盘的站内同步只跑统一入口 `tools/sync_portal.py`**（顺序固定：① 首页数据 → ② 复盘详情页 → ③ 每日市场手记；任一步失败即中断，见 sync-runbook Step 0）。上面的完整流程仍是排查与全量重建时的手册。
 - 页面和样式调整：读 README、DESIGN.md 与相关实现；只改本次需要的生成器/源内容，不默认触发全量同步。
 - 公开内容来源与 Portal 2.0 结构：`docs/PORTAL_2.0.md`；历史方案按需查阅。
 

@@ -9,16 +9,27 @@
 
 ### Step 0: 日常收盘只跑统一入口
 
-首页数据与每日市场手记是两条独立链路，且**顺序不能颠倒**（手记卡片与手记页都引用当日 PnL，先出手记会让卡片指向还没更新的首页）。日常收盘用统一入口一次跑完，顺序由脚本固定，不靠人记：
+Portal 有**三条互不相干的生成链**，且**顺序不能颠倒**：
+
+| 顺序 | 链 | 脚本 | 写入 |
+|---|---|---|---|
+| ① | 首页数据 | `sync_pnl_data.py` | `index.html` 的 `PNL_DATA` + `MARKET_SNAPSHOT`（收益曲线、市场卡片） |
+| ② | 复盘详情页 | `convert_review.py` | `review-notes/<date>.html` + `review-notes/index.html` + 首页复盘区块（「阅读最新复盘」、最新复盘统计、最新复盘卡片） |
+| ③ | 每日市场手记 | `convert_daily_note.py` | `daily-notes/<date>.html` + `daily-notes/index.html` + 首页手记卡片 |
+
+②③ 的正文与首页卡片都引用当日 PnL，所以 ① 必须最先；②③ 都写 `index.html`，用固定次序代替「谁先谁后都行」的默契。日常收盘用统一入口一次跑完，顺序由脚本固定，不靠人记：
 
 ```bash
-python3 tools/sync_portal.py --date YYYY-MM-DD --dry-run   # 预演，不写盘
-python3 tools/sync_portal.py --date YYYY-MM-DD             # 依次执行 Step 1 与 Step 3.5
+python3 tools/sync_portal.py --date YYYY-MM-DD --dry-run   # 预演三步，不写盘
+python3 tools/sync_portal.py --date YYYY-MM-DD             # 依次执行 Step 1 → Step 3 → Step 3.5
 ```
 
-- 退出码：`0` 全成；`2` 首页数据失败（立即中断，不执行手记）；`3` 找不到当日 Vault ReviewNote；`4` 手记生成失败。另有 `--skip-reading`（只补首页）、`--allow-missing-reading`（当日复盘未写时只同步首页）、`--source local`（仅调试）。
+- 退出码：`0` 全成；`2` 首页数据失败（立即中断）；`3` 找不到当日 Vault ReviewNote；`4` 复盘详情页失败；`5` 手记失败。另有 `--skip-review`（不出复盘详情页）、`--skip-reading`（只补首页数据）、`--allow-missing-reading`（当日复盘未写时不视为失败）、`--source local`（仅调试）。
+- 两步有落盘校验：② 跑完检查 `review-notes/<date>.html`、③ 跑完检查 `daily-notes/<date>.html` 是否真的存在，**子进程退出码不足以证明页面存在**。
 - 首页数据写盘后会回读 `index.html` 内嵌 `PNL_DATA.summary.last_date`，与目标日期不符**只告警不阻断**：云端 PnL 未出数时首页就停在昨日，这条 WARN 是唯一信号。
+- `convert_review.py` **没有 `--dry-run`**，所以预演时 ② 只打印它将生成什么、不执行——预演绝不写盘。它也没有落盘回执之外的幂等保证，重复运行会重写同一页（内容确定，实测逐字节相同）。
 - 定时入口 `~/Library/LaunchAgents/com.yimu.portal-sync.plist`（工作日 17:30 / 18:30，`--allow-missing-reading`）**需要在图形会话里装载**；非图形会话 `launchctl bootstrap` 会返回 `5: Input/output error`，此时手动跑 `sync_portal.py`，不要反复重试装载。
+- **统一入口解决的是「漏跑不报错」**：收益曲线漏同步过一次（手记到 9/15 而曲线停在 9/14），复盘详情页漏过一次（9/15 手记已上线，首页仍指向 9/14）。这两条链当时都没有统一入口。
 
 下面的 Step 1~Step 4.5 是逐步手册：排查单条链路、全量重建或新增生成器时按步执行。
 

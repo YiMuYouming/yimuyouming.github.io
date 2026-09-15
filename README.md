@@ -27,7 +27,7 @@ Portal 2.0 的定位不是内部工作台，而是“AI 增强的人机协同短
 
 ## 自动同步
 
-数据同步分两条链路：
+数据同步分三条链路：
 
 ```bash
 # 收益曲线 + 今日市场状态
@@ -35,16 +35,19 @@ python3 tools/sync_pnl_data.py
 
 # 单篇复盘 Markdown 转 HTML，并更新首页和复盘索引
 python3 tools/convert_review.py <vault_md_path>
+
+# 单篇复盘 Markdown 转每日市场手记，并更新首页手记卡片
+python3 tools/convert_daily_note.py <vault_md_path>
 ```
 
-收盘后的日常同步用统一入口一次跑完「首页数据 → 每日市场手记」，顺序由脚本固定：
+收盘后的日常同步用统一入口一次跑完三条链「首页数据 → 复盘详情页 → 每日市场手记」，顺序由脚本固定：
 
 ```bash
 python3 tools/sync_portal.py --date YYYY-MM-DD --dry-run   # 预演
 python3 tools/sync_portal.py --date YYYY-MM-DD             # 执行
 ```
 
-`sync_portal.py` 依次调用 `sync_pnl_data.py` 与 `convert_daily_note.py`；首页数据失败会立即中断（退出码 2），不会留下「手记已更新、首页还停在昨日」的半同步状态。
+`sync_portal.py` 依次调用 `sync_pnl_data.py`、`convert_review.py`、`convert_daily_note.py`；任一步失败会立即中断（退出码 2/4/5），不会留下「手记已更新、首页还停在昨日」或「手记已上线、最新复盘还在前一天」的半同步状态。
 
 `sync_pnl_data.py` 通过 Hermes 云端 bridge 同步 PnL 和市场快照，替换 `index.html` 中的 `PNL_DATA` 与 `MARKET_SNAPSHOT` 标记区。
 
