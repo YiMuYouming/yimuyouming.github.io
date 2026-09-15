@@ -1,3 +1,5 @@
+import contextlib
+import io
 import sys
 import tempfile
 import unittest
@@ -90,6 +92,26 @@ class ConvertDailyNoteTest(unittest.TestCase):
         convert_daily_note.PORTAL = self.original_portal
         convert_daily_note.DAILY_NOTES = self.original_daily_notes
         self.tmp.cleanup()
+
+    def test_dry_run_reports_targets_without_writing(self):
+        """公开面写入必须先能预演：dry-run 只报告目标，一个文件都不落盘。"""
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured):
+            note = convert_daily_note.convert_review_to_daily_note(
+                self.review_note, dry_run=True
+            )
+
+        output = captured.getvalue()
+        self.assertEqual(note["date"], "2026-06-26")
+        self.assertIn("[dry-run]", output)
+        self.assertIn("2026-06-26.html", output)
+        # 三个写盘点都不得被触发。
+        self.assertFalse((self.daily_notes / "2026-06-26.html").exists())
+        self.assertFalse((self.daily_notes / "index.html").exists())
+        self.assertNotIn(
+            "workspace-daily-notes",
+            (self.root / "index.html").read_text(encoding="utf-8"),
+        )
 
     def test_generates_public_daily_note_page_with_six_reading_sections(self):
         note = convert_daily_note.convert_review_to_daily_note(
@@ -495,6 +517,41 @@ class ConvertDailyNoteTest(unittest.TestCase):
         self.assertNotIn("徐工", html)
         self.assertIn("组合风险暴露因持仓动作升至关键比例", html)
 
+    def test_public_text_keeps_market_figures_readable(self):
+        """市场层数字已在公开页展示，正文不得再打码成病句；持仓层仍脱敏。"""
+        public_text = convert_daily_note.sanitize_public_text(
+            "半导体当日净流入61.22亿居全市场第一，风电设备指数+4.08%为全市场最强；"
+            "组合仓位因持仓动作升至45.65%。"
+        )
+
+        self.assertIn("61.22亿", public_text)
+        self.assertIn("4.08%", public_text)
+        self.assertNotIn("关键位置亿", public_text)
+        self.assertNotIn("关键位置", public_text)
+        # 持仓层百分比仍然脱敏，且不留符号残缺。
+        self.assertNotIn("45.65", public_text)
+        self.assertIn("关键比例", public_text)
+        self.assertNotIn("+关键比例", public_text)
+
+    def test_public_text_does_not_glue_redaction_to_preceding_noun(self):
+        """脱敏词前必须留出空格边界，避免「指数关键比例」这类粘连。"""
+        public_text = convert_daily_note.sanitize_public_text(
+            "风电设备指数 +4.08% 为全市场最强，组合仓位升至45.65%。"
+        )
+
+        self.assertNotIn("指数关键比例", public_text)
+        self.assertNotIn("指数 关键比例", public_text)
+        self.assertIn("4.08%", public_text)
+
+    def test_public_text_redacts_position_price_levels(self):
+        """删掉全局数字打码后，持仓价位必须由专用规则兜住。"""
+        public_text = convert_daily_note.sanitize_public_text(
+            "前收16.64，综合成本40.05，跌停价14.98，均需复核。"
+        )
+
+        for leaked in ("16.64", "40.05", "14.98"):
+            self.assertNotIn(leaked, public_text)
+
     def test_daily_note_translates_internal_gate_tokens_and_rejects_operator_tone(self):
         public_text = convert_daily_note.sanitize_public_text(
             "技术形态不能覆盖 `WEEK_STOP`；旧清单保持 `no_touch` 与 observation-only。"
@@ -591,9 +648,11 @@ class ConvertDailyNoteTest(unittest.TestCase):
             "昨日涨停股今日平均只有 +0.68%，账户回撤为 -1.25%。"
         )
 
+        # 「昨日涨停股今日平均收益」属于市场层指标，同一页面的市场状态块
+        # 本就公开，正文不再打码；账户层百分比仍然脱敏且不留孤儿符号。
         self.assertEqual(
             public_text,
-            "昨日涨停股今日平均只有关键比例，账户回撤为关键比例。",
+            "昨日涨停股今日平均只有 +0.68%，账户回撤为关键比例。",
         )
         self.assertNotIn("+关键比例", public_text)
         self.assertNotIn("-关键比例", public_text)

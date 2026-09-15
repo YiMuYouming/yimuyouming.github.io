@@ -166,7 +166,12 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"成本价\s*[0-9.]+", "成本信息", line)
         line = re.sub(r"跌破\s*(?:\d+(?:m|分钟)\s*)?MA\d+\s*[0-9.]+", "跌破短周期保护位", line, flags=re.I)
         line = re.sub(r"MA\d+\s*[0-9.]+", "短周期保护位", line, flags=re.I)
-        line = re.sub(r"(收回|突破|跌破|站回|守住|守|回踩|防守|止损线|修复线)\s*[0-9]+(?:\.[0-9]+)?", r"\1关键确认位", line)
+        line = re.sub(
+            r"(收回|收复|突破|跌破|站回|站稳|守住|守|回踩|防守|失守|触及|止损线|修复线)"
+            r"\s*[0-9]+(?:\.[0-9]+)?",
+            r"\1关键确认位",
+            line,
+        )
         line = re.sub(r"[0-9]+(?:\.[0-9]+)?\s*成本线", "关键确认位", line)
         line = re.sub(r"成本线", "关键确认位", line)
         line = re.sub(r"成本下(?:方)?", "关键位下方", line)
@@ -184,13 +189,35 @@ def sanitize_public_text(text: str) -> str:
             "金额已隐藏",
             line,
         )
-        line = re.sub(r"[+-]?\d+(?:\.\d+)?\s*%", "关键比例", line)
+        # 只有账户/持仓语境的百分比属于隐私。市场涨跌幅、晋级率、封板率在
+        # 同一页面的市场状态块里本就公开，正文再打码既无用，又会在「指数
+        # +4.08%」这类句子里造出病句。
+        line = re.sub(
+            r"((?:账户|持仓|组合|仓位|风险暴露|回撤|浮亏|浮盈|收益率)[^，。；\s]{0,20}?)"
+            r"\s*[+-]?\d+(?:\.\d+)?\s*%",
+            r"\1关键比例",
+            line,
+        )
         line = re.sub(
             r"(?<![\d.])\d{1,4}\.\d+\s*[-~—]\s*\d{1,4}\.\d+(?![\d.])",
             "关键区间",
             line,
         )
-        line = re.sub(r"(?<![\d.-])\d{1,4}\.\d+(?!\s*%)", "关键位置", line)
+        # 持仓价位仍需遮蔽。原先靠一条全局「数字→关键位置」规则顺带完成，
+        # 但它同时吃掉了净流入、量能、指数点位，改成只认价位语境。
+        line = re.sub(
+            r"(前收|前收盘|现价|股价|收盘价|综合成本|成本|止损|止盈|跌停价|涨停价)"
+            r"\s*[:：]?\s*[0-9]{1,4}(?:\.[0-9]+)?",
+            r"\1关键确认位",
+            line,
+        )
+        # 数字写在动作前面的价位写法：「22.99 降低风险」「23.4 附近」。
+        line = re.sub(
+            r"[0-9]{1,4}(?:\.[0-9]+)?\s*"
+            r"(?=(?:附近|降低风险|减仓|清仓|补仓|低吸|卖出|买入|止损|止盈))",
+            "关键确认位",
+            line,
+        )
         line = re.sub(r"明日买入", "明日观察", line)
         line = re.sub(r"今日新买入的|新买入的", "今日新增的", line)
         line = re.sub(r"新买入|买入", "开仓", line)
@@ -219,8 +246,6 @@ def sanitize_public_text(text: str) -> str:
         line = re.sub(r"组合仓位", "组合风险暴露", line)
         line = re.sub(r"标的补仓", "持仓动作", line)
         line = re.sub(r"(标的提高暴露、)+标的提高暴露", "标的提高暴露", line)
-        line = re.sub(r"\s+关键位置", "关键位置", line)
-        line = re.sub(r"\s+关键比例", "关键比例", line)
         line = re.sub(r"\s+", " ", line).strip(" -")
         if line:
             cleaned_lines.append(line)
@@ -752,22 +777,37 @@ def write_daily_note_page(note: DailyNote) -> Path:
     return path
 
 
-def convert_review_to_daily_note(md_path: str | Path, user_feeling: str = "") -> dict:
+def convert_review_to_daily_note(
+    md_path: str | Path, user_feeling: str = "", dry_run: bool = False
+) -> dict:
     note = build_daily_note(md_path, user_feeling=user_feeling)
+    target = DAILY_NOTES / f"{note.date}.html"
+    if dry_run:
+        # 公开面写入先预演：只报告目标，不落盘。
+        print(f"[dry-run] 将写入 {target}")
+        print(f"[dry-run] 将更新 {DAILY_NOTES / 'index.html'}")
+        print(f"[dry-run] 将更新 {PORTAL / 'index.html'} 的每日手记卡片")
+        return note.as_dict()
     write_daily_note_page(note)
     update_daily_notes_index(note)
     update_home_daily_notes(note)
-    print(f"✅ 已生成 Daily Note: {DAILY_NOTES / (note.date + '.html')}")
+    print(f"✅ 已生成 Daily Note: {target}")
     return note.as_dict()
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        print("Usage: python3 tools/convert_daily_note.py <ReviewNote.md> [user feeling]")
+    argv = sys.argv[1:]
+    dry_run = "--dry-run" in argv
+    argv = [item for item in argv if item != "--dry-run"]
+    if not argv:
+        print(
+            "Usage: python3 tools/convert_daily_note.py <ReviewNote.md> "
+            "[user feeling] [--dry-run]"
+        )
         sys.exit(1)
-    md_path = sys.argv[1]
-    feeling = " ".join(sys.argv[2:]).strip()
-    convert_review_to_daily_note(md_path, user_feeling=feeling)
+    md_path = argv[0]
+    feeling = " ".join(argv[1:]).strip()
+    convert_review_to_daily_note(md_path, user_feeling=feeling, dry_run=dry_run)
 
 
 if __name__ == "__main__":

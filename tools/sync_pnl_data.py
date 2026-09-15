@@ -33,6 +33,11 @@ def parse_args(argv=None):
         default=os.environ.get("PORTAL_LOCAL_BASE", DEFAULT_LOCAL_BASE),
         help="local 模式 bridge 地址，默认 http://127.0.0.1:8088。",
     )
+    p.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="只抓数并报告将写入的内容，不改动 index.html。",
+    )
     return p.parse_args(argv)
 
 
@@ -357,10 +362,19 @@ def main(argv=None):
         new_snap,
     )
 
+    n = len(data.get("all_sh", {}).get("dates", []))
+    summary = data.get("summary") or {}
+    if args.dry_run:
+        print(
+            f"[dry-run] 将写入 {target}：PNL_DATA {n} 天"
+            f"（last_date={summary.get('last_date')}，last_nav={summary.get('last_nav')}）"
+            f" + 市场快照（{source_label}）"
+        )
+        return
+
     with open(target, "w") as f:
         f.write(html)
 
-    n = len(data.get("all_sh", {}).get("dates", []))
     print(f"[{datetime.now():%Y-%m-%d %H:%M}] synced {n} PnL days + market snapshot from {source_label} → index.html")
 
 
