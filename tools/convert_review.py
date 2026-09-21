@@ -2581,9 +2581,9 @@ def parse_s4(text):
     html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
 
     for round_id, round_label, round_anchor in [
-        ("Round 1", "第一轮：洋米红方质疑", "s4a"),
-        ("Round 2", "第二轮：蓝方回应（稳米）", "s4b"),
-        ("Round 3", "第三轮：洋米终审", "s4c"),
+        ("Round 1", "🔴 Round 1：洋米红方质疑", "s4a"),
+        ("Round 2", "🔵 Round 2：蓝方回应（稳米）", "s4b"),
+        ("Round 3", "🟢 Round 3：洋米终审", "s4c"),
     ]:
         round_text = round_bodies.get(round_id, "")
         if not round_text:
@@ -2702,13 +2702,11 @@ def parse_data_appendix(text):
 
 
 # §四 分轮导航项。仅当正文存在分轮结构时输出——否则会生成指向不存在锚点
-# （#s4a/#s4b/#s4c）的死链（2026-09-21 修复清单 F7）。
-# 标签用中文：`Round N` 属阅读层审计语言，与 validate_review_note 的
-# READING_BODY_PROCESS_MARKERS 同口径收敛。
+# （#s4a/#s4b/#s4c）的死链（2026-09-21 F7）。标签沿用既有体例，不改名。
 RED_TEAM_ROUND_SIDEBAR = (
-    ("s4a", "第一轮 红方质疑"),
-    ("s4b", "第二轮 蓝方回应"),
-    ("s4c", "第三轮 终审"),
+    ("s4a", "Round 1 红方"),
+    ("s4b", "Round 2 蓝方"),
+    ("s4c", "Round 3 终审"),
 )
 
 
