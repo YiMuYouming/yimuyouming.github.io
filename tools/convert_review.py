@@ -333,6 +333,8 @@ PORTAL_TERM_ALIASES = {
     'PLAN_W1_CLOSED': 'W1 窗口关闭', 'PLAN_W2_CLOSED': 'W2 窗口关闭',
     'TREND_DIRECTION_SOURCE_GAP': '趋势方向输入缺失',
     'POS-SIZE-008': '三笔建仓规则', 'stage_final': '终稿阶段',
+    'WINDOW_REQUIRED': '窗口约束', 'POSITION_ADD_BLOCKED': '加仓受阻',
+    'CLIMAX_STOP': '情绪高潮暂停买入', 'LIANBAN_GATE_SOURCE_GAP': '连板门禁输入缺失',
     'invalidated': '已失效', 'seed': '待确认', 'advance': '纳入观察', 'no_touch': '不碰',
     'd1': '观察矩阵', 'd2': '人工裁决', 'c2': '板块矩阵', 'c15': '当日巡检',
     'query': '查询', 'degraded_clue': '降级线索', 'reject': '剔除', 'candidate': '候选',
@@ -379,6 +381,7 @@ def _unify_placeholders(text):
             cleaned = cleaned.replace(term, alias)
     cleaned = re.sub(r'(盘前基准|交易执行条件|风格检测)\.(?:sentiment|allowed|value|status)', r'\1', cleaned)
     cleaned = cleaned.replace('数据状态已记录', '—').replace('市场状态已记录', '—')
+    cleaned = cleaned.replace('可卖状态—', '—').replace('可卖状态已记录', '—')
     cleaned = re.sub(r'—(?:\s*—)+', '—', cleaned)
     cleaned = re.sub(r'[ \t]—', ' —', cleaned)
     return cleaned
@@ -400,6 +403,20 @@ def _finalize_public_readability(text):
 def sanitize_public_review_text(text, redact_internal_labels=True):
     """Redact account-specific execution details from the public review layer."""
     cleaned = str(text or '')
+    # 先保护 Markdown 表头行（含分隔行）：表头是结构契约，脱敏不得改写
+    # （2026-09-21，此前 `T+1可卖` 会被改写成「可卖状态—」）。末尾原样还原。
+    head_guard: dict[str, str] = {}
+
+    def _guard_head(match):
+        key = f'\u0000TH{len(head_guard)}\u0000'
+        head_guard[key] = match.group(0)
+        return key
+
+    cleaned = re.sub(
+        r'(?m)^(\|.*\|\n\|[\s:\-|]+\|)$',
+        _guard_head,
+        cleaned,
+    )
     cleaned = re.sub(
         r'\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:[+-]\d{2}:\d{2}|Z)?',
         '日期已记录',
@@ -1358,7 +1375,17 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
     )
 
     safe_lines = []
-    for line in cleaned.splitlines():
+    raw_lines = cleaned.splitlines()
+    for idx, line in enumerate(raw_lines):
+        # Markdown 表头行与分隔行原样保留：**表头不得被脱敏改写**
+        # （2026-09-21，此前 `T+1可卖` 会被连带替换成「可卖状态—」）。
+        if (
+            re.match(r'^\s*\|.*\|\s*$', line)
+            and idx + 1 < len(raw_lines)
+            and re.match(r'^\s*\|[\s:\-|]+\|\s*$', raw_lines[idx + 1])
+        ):
+            safe_lines.append(line)
+            continue
         if any(marker in line for marker in (
             'Portal 今日一句话来源',
             'Portal 今日一个认知来源',
@@ -1518,7 +1545,11 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
                 line,
             )
         safe_lines.append(line)
-    return _unify_placeholders('\n'.join(safe_lines))
+    result = _unify_placeholders('\n'.join(safe_lines))
+    # 还原被保护的表头行（顺序无关，key 唯一）
+    for key, original in head_guard.items():
+        result = result.replace(key, original)
+    return result
 
 
 def public_position_summary(position):
@@ -2342,8 +2373,15 @@ def parse_s1(text, fm=None):
 
         elif heading_has(h, '自选池表现'):
             html += html_subheading("🎯 当日自选池表现", "s1e")
-            # Find sector sub-headings in body text (standalone **bold** lines, not inline in tables)
-            sector_blocks = re.split(r'^\*\*(.+?)\*\*\s*$', body, flags=re.MULTILINE)
+            # 分组小标题兼容两种写法：独占一行的 `**标题**` 与 `**标题**：`（现行模板）
+            sector_blocks = re.split(r'^\*\*(.+?)\*\*\s*[：:]?\s*$', body, flags=re.MULTILINE)
+            if len(sector_blocks) == 1:
+                # 无分组结构时兜底渲染整块，避免整段不显示（2026-09-21）
+                for st in extract_tables(body):
+                    sh, sr = parse_md_table(st)
+                    if sh and sr:
+                        html += html_table(sh, sr, cell_color)
+                continue
             si = 1
             while si < len(sector_blocks):
                 sname = sector_blocks[si].strip()
@@ -2456,19 +2494,23 @@ def parse_s3(text):
 
         elif heading_has(h, '连板自选池'):
             html += html_subheading("🎯 连板自选池", "s3a")
-            # Sector blocks
+            # 旧体例按 **①板块名** 分块渲染；现行模板是一张整表（2026-09-21 兼容），
+            # 该分支原先只认分块体例，导致现行体例下整张池表不渲染。
             sector_blocks = re.split(r'\*\*[①②③④⑤]\s*(.+?)\*\*.*?\n', body)
-            si = 1
-            while si < len(sector_blocks):
-                sname = sector_blocks[si].strip()
-                sbody = sector_blocks[si+1] if si+1 < len(sector_blocks) else ""
-                stables = extract_tables(sbody)
-                for st in stables:
-                    sh, sr = parse_md_table(st)
-                    if sh and sr:
-                        html += f'<div class="sh3" style="font-size:14px">{sname}</div>'
-                        html += html_table(sh, sr, cell_color)
-                si += 2
+            if len(sector_blocks) > 1:
+                si = 1
+                while si < len(sector_blocks):
+                    sname = sector_blocks[si].strip()
+                    sbody = sector_blocks[si+1] if si+1 < len(sector_blocks) else ""
+                    stables = extract_tables(sbody)
+                    for st in stables:
+                        sh, sr = parse_md_table(st)
+                        if sh and sr:
+                            html += f'<div class="sh3" style="font-size:14px">{sname}</div>'
+                            html += html_table(sh, sr, cell_color)
+                    si += 2
+            elif tables:
+                html += html_table(*tables[0], cell_fn=cell_color)
 
         elif heading_has(h, '趋势自选池'):
             if tables:
