@@ -934,6 +934,12 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
         cleaned,
         flags=re.I,
     )
+    # 短日期锁定标记（如「锁8/7」「解锁8/7」）：账户批次日期属账户细节
+    cleaned = re.sub(
+        r'(锁|解锁|解禁)\s*\d{1,2}/\d{1,2}(?!\d)',
+        r'\1—',
+        cleaned,
+    )
     cleaned = re.sub(
         r'(?:全部|新?部分仓位)?\s*T\+1\s*(?:已)?(?:锁定|解锁|可卖|不可卖)',
         '可卖状态已记录',
@@ -1574,6 +1580,14 @@ def sanitize_public_review_cell(header, value, position_row=False):
         str(value or '').strip(),
     ):
         return '盘中'
+    # 日期式账户列（如「8/4收盘」「8/5理论可卖」）：整列占位
+    if re.search(r'\d{1,2}/\d{1,2}', header):
+        return '—'
+    # 纯价位序列（如「3.49/3.58/3.62-3.63」）：整格占位
+    if re.fullmatch(
+        r'\d+(?:\.\d+)?(?:[/\-–—]\d+(?:\.\d+)?)+', raw_value.strip()
+    ):
+        return '—'
     # 账户级数字列：一律占位
     if header in ('价格', '现价', '仓位') or any(
         key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股', '止损')
@@ -1593,23 +1607,35 @@ def sanitize_public_review_cell(header, value, position_row=False):
         return '—'
     if re.search(r'(?:理论)?可卖|可卖(?:数量|量)', header):
         return '—'
-    # 判断性文本（触发/失效/今日检查/操作策略…）保留原意；仅对持仓行里的
-    # 价位数字做定点隐去，绝不做整列替换、也不碰日期。
-    contextual_value = f'持仓复核：{raw_value}' if position_row else raw_value
-    sanitized = sanitize_public_review_text(contextual_value)
-    if position_row:
-        sanitized = re.sub(r'^持仓复核：', '', sanitized)
-        sanitized = re.sub(
-            r'((?:收盘|收盘价|现价|当前价|成交价|买入价|卖出价|成本|止损)'
-            r'(?:约|为|≈|[：:]|\s)*)[-+]?\d+(?:\.\d+)?(?![\d.%/])',
-            r'\1—',
-            sanitized,
-        )
-        sanitized = re.sub(
-            r'(MA\d+\s*(?:约|=|:|：)?\s*)\d+(?:\.\d+)?(?![\d.%/])',
-            r'\1—',
-            sanitized,
-        )
+    # 判断性文本（触发/失效/今日检查/操作策略…）保留原意；
+    # 对**账户相关价位**做定点隐去：关键词精确匹配，不碰市场级指标
+    # （板块涨幅、成交额、涨停家数等），也不做整列替换。
+    # 2026-09-21 F12：原先这段仅在 position_row 生效，导致「触发/失效」列
+    # 同为持仓价位（如「守MA5 9.52/MA20 9.36」）却未脱敏 —— 现改为全局生效。
+    sanitized = sanitize_public_review_text(raw_value)
+    sanitized = re.sub(
+        r'((?:收盘|收盘价|现价|当前价|成交价|买入价|卖出价|成本|止损|收)'
+        r'(?:约|为|≈|[：:]|\s)*)[-+]?\d+(?:\.\d+)?(?![\d.%/])',
+        r'\1—',
+        sanitized,
+    )
+    sanitized = re.sub(
+        r'(MA\d+\s*(?:约|=|:|：)?\s*)\d+(?:\.\d+)?(?![\d.%])',
+        r'\1—',
+        sanitized,
+    )
+    # 裸价位 + 突破/失守类动词（如「35.89突破」「18.50 破位」）
+    sanitized = re.sub(
+        r'(?<![\d.])\d+(?:\.\d+)?(\s*(?:突破|跌破|失守|站上|站稳|破位|击穿))',
+        r'关键位\1',
+        sanitized,
+    )
+    # 独立出现的带符号金额（非百分比）＝账户盈亏
+    sanitized = re.sub(r'(?<![\d.])[+-]\d[\d,]*(?![\d.%])', '—', sanitized)
+    # 「为/是/在 + 价位」「<、> 比较式价位」（持仓状态列与证据列）
+    sanitized = re.sub(r'((?:为|是|在)\s*)\d+(?:\.\d+)?(?![\d.%])', r'\1—', sanitized)
+    sanitized = re.sub(r'(?<![\d.])\d+(?:\.\d+)?(?=\s*[<>])', '—', sanitized)
+    sanitized = re.sub(r'([<>]\s*)\d+(?:\.\d+)?(?![\d.%])', r'\1—', sanitized)
     return sanitized
 
 

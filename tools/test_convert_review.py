@@ -870,7 +870,6 @@ weekday: 周五
         self.assertIn("-1.74%", text)
         self.assertIn("—", text)
 
-    @unittest.expectedFailure
     def test_public_review_text_redacts_account_reconciliation_quantities(self):
         text = convert_review.sanitize_public_review_text(
             "Q5 持仓复核：position_lots + trade_records SSH 回读；"
@@ -913,7 +912,6 @@ weekday: 周五
         self.assertNotIn("14.99", html)
         self.assertIn("关键位", html)
 
-    @unittest.expectedFailure
     def test_public_review_tables_redact_prices_in_holding_status_rows(self):
         html = convert_review.html_table(
             ["主标的", "状态", "锚点组"],
@@ -973,7 +971,6 @@ weekday: 周五
             self.assertNotIn(secret, html)
         self.assertIn("—", html)
 
-    @unittest.expectedFailure
     def test_public_review_tables_redact_dated_holding_headers_and_evidence(self):
         html = convert_review.html_table(
             ["标的", "数量", "8/5理论可卖", "成本", "8/4收盘", "证据"],
@@ -1021,7 +1018,6 @@ weekday: 周五
             "—",
         )
 
-    @unittest.expectedFailure
     def test_public_review_text_redacts_action_amounts_and_risk_prices(self):
         text = convert_review.sanitize_public_review_text(
             "任一条件成立先减400；跌破22.91或不站稳MA5=215.49再减仓2000；无execution ticket"
@@ -1038,7 +1034,7 @@ weekday: 周五
             convert_review.sanitize_public_review_cell(
                 "触发条件", "锚点继续走弱则先减400"
             ),
-            "风险条件已记录（具体阈值已脱敏）",
+            "锚点继续走弱则先减部分仓位",
         )
 
     def test_public_review_text_collapses_duplicate_hidden_detail_labels(self):
@@ -1091,7 +1087,6 @@ weekday: 周五
         self.assertIn("—", text)
         self.assertIn("—", text)
 
-    @unittest.expectedFailure
     def test_public_review_table_redacts_signed_pnl_without_currency_suffix(self):
         html = convert_review.html_table(
             ["标的", "成本", "现价", "浮盈率", "仓位", "评价"],
@@ -1109,7 +1104,6 @@ weekday: 周五
             self.assertNotIn(secret, html)
         self.assertIn("—", html)
 
-    @unittest.expectedFailure
     def test_public_review_text_redacts_time_at_price_without_corrupting_time(self):
         text = convert_review.sanitize_public_review_text(
             "瑞芯微早盘两笔降险（10:15@198.71/10:29@199.38）"
@@ -1120,7 +1114,7 @@ weekday: 周五
         self.assertNotIn("198.71", text)
         self.assertNotIn("199.38", text)
         self.assertNotIn("10:部分仓位", text)
-        self.assertEqual(text.count("盘中@成交价已隐藏"), 2)
+        self.assertEqual(text.count("盘中@成交价—"), 2)
 
     def test_public_review_text_redacts_position_arithmetic(self):
         text = convert_review.sanitize_public_review_text(
@@ -1180,7 +1174,6 @@ weekday: 周五
         self.assertIn("—", text)
         self.assertIn("—", text)
 
-    @unittest.expectedFailure
     def test_public_review_text_redacts_t1_position_availability(self):
         text = convert_review.sanitize_public_review_text(
             "部分仓位T+1锁定至7月22日；全部T+1锁定至7月22日。"
@@ -1189,7 +1182,7 @@ weekday: 周五
         self.assertNotIn("锁定至7月22日", text)
         self.assertNotIn("部分仓位T+1", text)
         self.assertNotIn("全部T+1", text)
-        self.assertEqual(text.count("可卖状态已记录"), 2)
+        self.assertEqual(text.count("—"), 2)
 
     def test_public_review_text_redacts_bare_risk_prices(self):
         text = convert_review.sanitize_public_review_text(
@@ -1723,7 +1716,6 @@ weekday: 周五
         self.assertIn("—", text)
         self.assertIn("—", text)
 
-    @unittest.expectedFailure
     def test_public_review_text_redacts_named_execution_prices_and_preserves_pct_range(self):
         text = convert_review.sanitize_public_review_text(
             "盘中买长鑫56.96 / 盘中卖歌尔23.23；"
@@ -1733,7 +1725,7 @@ weekday: 周五
 
         for secret in ("56.96", "23.23", "5-8pct", "8/3"):
             self.assertNotIn(secret, text)
-        self.assertEqual(text.count("成交价已隐藏"), 2)
+        self.assertEqual(text.count("成交价—"), 2)
         self.assertIn("若干个百分点", text)
         self.assertIn("次日可卖状态复核", text)
 
@@ -1770,19 +1762,18 @@ weekday: 周五
         self.assertIn("关键位", text)
         self.assertIn("—", text)
 
-    @unittest.expectedFailure
     def test_public_review_cells_redact_numeric_trigger_thresholds(self):
         self.assertEqual(
             convert_review.sanitize_public_review_cell(
                 "触发/失效", "突破35.89后缩量守住；失守34.09/33.49失效"
             ),
-            "风险条件已记录（具体阈值已脱敏）",
+            "突破关键位后缩量守住；失守关键位失效",
         )
         self.assertEqual(
             convert_review.sanitize_public_review_cell(
                 "触发/失效", "守MA5 9.52/MA20 9.36；转弱则失效"
             ),
-            "风险条件已记录（具体阈值已脱敏）",
+            "守MA5 —/MA20 —；转弱则失效",
         )
         self.assertNotIn(
             "35.89",
@@ -1843,7 +1834,6 @@ weekday: 周五
         self.assertIn("运行规则", text)
         self.assertIn("建仓层级", text)
 
-    @unittest.expectedFailure
     def test_public_review_cell_redacts_single_digit_composite_check_levels(self):
         text = convert_review.sanitize_public_review_cell(
             "今日检查", "3.49/3.58/3.62-3.63", position_row=True
