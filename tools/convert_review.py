@@ -269,7 +269,12 @@ def numeric_value(value):
 
 
 def anonymize_current_holdings(text, fm):
-    """Replace current holding names and their security codes with stable public aliases."""
+    """只隐去持仓**证券代码**，保留标的名称（2026-09-21 可读性修复）。
+
+    公开层真正需要隐藏的是「账户级数字」；把标的名替换成「持仓标的一/二」
+    会让整篇复盘无法阅读，而锚点与板块名称本就公开（锚点+板块已能反推持仓），
+    因此匿名化并不成立，只牺牲可读性。
+    """
     content = str(text or '')
     position_summary = str((fm or {}).get('盘后持仓', ''))
     names = []
@@ -281,21 +286,115 @@ def anonymize_current_holdings(text, fm):
         if name not in names:
             names.append(name)
 
-    labels = ('一', '二', '三', '四', '五', '六', '七', '八', '九', '十')
-    for index, name in enumerate(names):
-        alias = f'持仓标的{labels[index] if index < len(labels) else index + 1}'
-        short_aliases = []
-        for suffix in ('股份', '科技', '集团', '信息', '电子'):
-            if name.endswith(suffix) and len(name) - len(suffix) >= 2:
-                short_aliases.append(name[:-len(suffix)])
+    for name in names:
         codes = set(re.findall(rf'{re.escape(name)}[^\n]{{0,32}}\b([0368]\d{{5}})\b', content))
         codes.update(re.findall(rf'\b([0368]\d{{5}})\b[^\n]{{0,32}}{re.escape(name)}', content))
-        content = content.replace(name, alias)
-        for short_alias in short_aliases:
-            content = content.replace(short_alias, alias)
         for code in codes:
-            content = re.sub(rf'\b{re.escape(code)}\b', '代码已脱敏', content)
+            content = re.sub(rf'\b{re.escape(code)}\b', '—', content)
     return content
+
+
+PORTAL_AUDIT_PLACEHOLDERS = (
+    '金额已脱敏', '价格已脱敏', '账户比例已脱敏', '仓位数量已脱敏', '代码已脱敏',
+    '关键风险位（已脱敏）', '风险条件已记录（具体阈值已脱敏）',
+    '价格/结构确认条件已记录（具体阈值已脱敏）',
+    '内部校验字段', '内部执行记录', '内部候选记录', '内部账户记录', '内部执行校验已脱敏',
+    '交易记录数量已隐藏', '交易流水已隐藏', '哈希已隐藏', '账户批次已隐藏',
+    '执行条件已隐藏', '内部审计记录（路径已隐藏）', '内部执行入口已隐藏',
+    '复核记录已脱敏', '对抗记录已脱敏', '对抗回执已脱敏', '对抗状态已记录',
+    '复核状态已记录', '计划状态已记录', '估值状态已记录', '候选变更已记录',
+    '流程缺口已记录', '流程状态已确认', '降级流程已记录', '状态受限',
+    '数据降级，仅观察', '交易记录', '持仓状态已记录',
+)
+
+# 技术术语 → 中文名词（替换而非删除，保持句子完整）。
+PORTAL_TERM_ALIASES = {
+    'source_gaps': '来源缺口', 'source_gap': '来源缺口',
+    'review_state': '复核状态', 'c5_decision': '入选判定', 'c15_decision': '巡检判定',
+    'available_add_pct': '可用加仓额度', 'add_allowed': '加仓是否放行',
+    'decision_gate': '交易门禁', 'trade_entry_allowed': '交易入口放行',
+    'baseline': '观察基线', 'caps': '容量', 'signal': '信号',
+    'c2_board_matrix.json': '板块矩阵', 'c15_signal_ledger.json': '信号转译账本',
+    'c15_scan_receipt.json': '当日巡检回执', 'd1_draft_receipt.json': '观察矩阵草案',
+    'd2_decision_receipt.json': '人工裁决回执', 'red_team_receipt.json': '红方回执',
+    'degraded_acceptance_receipt.json': '降级签收回执',
+    'recommendation_snapshot.v1.json': '推荐快照', 'finalization_report.json': '终局报告',
+    'market_regime=强势': '市场状态为强势', 'market_regime': '市场状态',
+    'sentiment_basis=current': '情绪口径为实时', 'sentiment_basis': '情绪口径',
+    'tradable=true': '可交易', 'tradable': '可交易状态',
+    'row_count=0': '无返回行', 'row_count': '返回行数',
+    'situation.sentiment.value=null': '情绪值缺失',
+    'market_trend_20d_direction': '上证 20 日线方向',
+    'BOARD-01': '板块一', 'BOARD-02': '板块二', 'BOARD-03': '板块三',
+    'BOARD-04': '板块四', 'BOARD-05': '板块五',
+    '_baseline_stale=false': '基线非陈旧', '_baseline_stale=true': '基线陈旧',
+    'process_defect': '流程缺陷', 'observation_only': '仅观察', 'observation-only': '仅观察',
+    'blocked_degraded': '巡检降级', 'degraded_done': '降级收口',
+    'PLAN_W1_CLOSED': 'W1 窗口关闭', 'PLAN_W2_CLOSED': 'W2 窗口关闭',
+    'TREND_DIRECTION_SOURCE_GAP': '趋势方向输入缺失',
+    'POS-SIZE-008': '三笔建仓规则', 'stage_final': '终稿阶段',
+    'invalidated': '已失效', 'seed': '待确认', 'advance': '纳入观察', 'no_touch': '不碰',
+    'd1': '观察矩阵', 'd2': '人工裁决', 'c2': '板块矩阵', 'c15': '当日巡检',
+    'query': '查询', 'degraded_clue': '降级线索', 'reject': '剔除', 'candidate': '候选',
+    'primary_candidate': '主候选', 'observation_draft': '观察稿',
+    'finalized_degraded': '降级收口终稿', 'degraded_ready_to_finalize': '降级待收口',
+    'MARKET_SESSION_CLOSED': '市场未开市', 'PLAN_NOT_CURRENT': '计划非当前',
+    'SENTIMENT_STALE': '情绪数据陈旧', 'LIANBAN_GATE_SOURCE_GAP': '连板门禁输入缺失',
+    'CLIMAX_STOP': '情绪高潮暂停买入', 'earned_cap_pct': '盈利解锁上限',
+    'position_control_mode': '仓位控制模式', 'single_stock_cap_pct': '单票上限',
+}
+
+# 只在第〇部分（当日操作指引）里，含下列内部标识的整行不进入公开阅读层。
+PORTAL_INTERNAL_LINE_MARKERS = (
+    'meta.date', 'meta.note', 'pools_note_date', '_baseline_stale', 'next_trade_date',
+    'daily-20', 'plan-20', 'EXEC-', 'caps.', 'available_add_pct', 'add_allowed',
+    'rule_bundle', 'plan_id', 'receipt_sha256', 'source_gaps', 'stage_',
+    'decision_gate', 'MARKET_SESSION', 'PLAN_W1', 'PLAN_W2', 'PLAN_NOT_CURRENT',
+    'CLIMAX_STOP', 'SENTIMENT_STALE', 'SOURCE_GAP', 'ready_with_warnings',
+    'live_quotes', 'api/ai/context', 'artifacts/',
+)
+
+
+def _unify_placeholders(text):
+    """审计占位符统一为 `—`（全局安全：只改文案，不删内容）。"""
+    cleaned = str(text or '')
+    for placeholder in PORTAL_AUDIT_PLACEHOLDERS:
+        cleaned = cleaned.replace(placeholder, '—')
+    # 兜底：任何位置单独出现的「已脱敏 / 已隐藏 / 已记录」都收敛为占位符
+    cleaned = re.sub(r'(?<=[\s，、；：、（(【\[])(?:已脱敏|已隐藏|已记录)', '—', cleaned)
+    cleaned = re.sub(r'(?:已脱敏|已隐藏|已记录)(?=[\s，、；：、）)】\]。]|$)', '—', cleaned)
+    cleaned = cleaned.replace('已脱敏', '—').replace('已隐藏', '—')
+    # 技术术语 → 中文名词（替换而非删除，保持句子完整；未命中者保留原文，
+    # 不再塞入「技术字段」这类无信息量占位）。2026-09-21 可读性修复。
+    cleaned = re.sub(
+        r'`([A-Za-z_][A-Za-z0-9_.\[\]/=:+-]*)`',
+        lambda m: PORTAL_TERM_ALIASES.get(m.group(1), m.group(1)),
+        cleaned,
+    )
+    for term, alias in sorted(PORTAL_TERM_ALIASES.items(), key=lambda kv: -len(kv[0])):
+        if term in ('signal', 'baseline', 'caps', 'd1', 'd2', 'c2'):
+            # 短词只做词边界替换，避免误伤
+            cleaned = re.sub(rf'(?<![A-Za-z0-9_]){re.escape(term)}(?![A-Za-z0-9_])', alias, cleaned)
+        else:
+            cleaned = cleaned.replace(term, alias)
+    cleaned = re.sub(r'(盘前基准|交易执行条件|风格检测)\.(?:sentiment|allowed|value|status)', r'\1', cleaned)
+    cleaned = cleaned.replace('数据状态已记录', '—').replace('市场状态已记录', '—')
+    cleaned = re.sub(r'—(?:\s*—)+', '—', cleaned)
+    cleaned = re.sub(r'[ \t]—', ' —', cleaned)
+    return cleaned
+
+
+def _drop_internal_lines(text):
+    """丢弃含内部标识的整行（仅用于第〇部分这类流程性区块）。"""
+    return '\n'.join(
+        line for line in str(text or '').split('\n')
+        if not (line.strip() and any(m in line for m in PORTAL_INTERNAL_LINE_MARKERS))
+    )
+
+
+def _finalize_public_readability(text):
+    """第〇部分专用收口：先丢内部标识行，再统一占位符。"""
+    return _unify_placeholders(_drop_internal_lines(text))
 
 
 def sanitize_public_review_text(text, redact_internal_labels=True):
@@ -1300,7 +1399,8 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
                     '部分仓位',
                     line,
                 )
-                line = re.sub(r'(?<![\d.])\d{1,2}/\d{1,2}(?![\d/])', '次日状态', line)
+                # 2026-09-21 可读性修复：日期（如 9/21）不是账户细节，
+                # 原先替换为「次日状态」会把正文日期全部吃掉，此处不再替换。
             if re.search(r'自选池|持仓|新开仓|加仓', line):
                 line = re.sub(
                     r'((?:午盘|尾盘|收盘)[：:\s]*[-+]?\d+(?:\.\d+)?%[、,]\s*)[-+]?\d+(?:\.\d+)?',
@@ -1418,18 +1518,24 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
                 line,
             )
         safe_lines.append(line)
-    return '\n'.join(safe_lines)
+    return _unify_placeholders('\n'.join(safe_lines))
 
 
 def public_position_summary(position):
     """Expose position state without publishing names, quantities, or costs."""
     if not position or '空仓' in str(position):
         return '空仓'
-    return '持仓状态已记录'
+    return '持仓'
 
 
 def sanitize_public_review_cell(header, value, position_row=False):
-    """Apply header-aware redaction to sensitive review table fields."""
+    """Apply header-aware redaction to sensitive review table fields.
+
+    2026-09-21 可读性重写：公开层只隐去「账户级数字」，且一律以 `—` 占位，
+    不再输出「已脱敏 / 已记录 / 价格已脱敏 / 关键风险位（已脱敏）」等审计语言；
+    触发、失效、今日检查等**判断性文本原样保留**（它们不是账户细节，
+    且是复盘阅读层的核心信息）。
+    """
     header = str(header or '')
     raw_value = str(value or '')
     if header in ('时间', '成交时间') and re.fullmatch(
@@ -1437,69 +1543,42 @@ def sanitize_public_review_cell(header, value, position_row=False):
         str(value or '').strip(),
     ):
         return '盘中'
-    if header == '价格':
-        return '已脱敏'
-    if header == '现价':
-        return '已脱敏'
-    if any(key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股')):
-        return '已脱敏'
+    # 账户级数字列：一律占位
+    if header in ('价格', '现价', '仓位') or any(
+        key in header for key in ('成本', '成交价', '买入价', '卖出价', '浮盈/股', '止损')
+    ):
+        return '—'
     if any(key in header for key in ('盈亏', '损益')):
         raw_value = str(value or '').strip()
         if re.fullmatch(r'[-+]?\d+(?:\.\d+)?%', raw_value):
             return raw_value
         if re.search(r'\d', raw_value):
-            return '金额已脱敏'
+            return '—'
     if header in ('数量', '现持仓', '持仓数量') or header.endswith('数量') or any(
         key in header for key in ('股数', '可卖数量', '可卖量')
     ):
-        return '已脱敏'
-    if header == '仓位':
-        return '已脱敏'
+        return '—'
     if 'T+1可卖' in header or '可卖状态' in header:
-        return '按账户事实复核'
+        return '—'
     if re.search(r'(?:理论)?可卖|可卖(?:数量|量)', header):
-        return '已脱敏'
-    if re.search(r'\d{1,2}/\d{1,2}[^|]{0,12}收盘|收盘[^|]{0,12}\d{1,2}/\d{1,2}', header):
-        return '已脱敏'
-    if '止损' in header:
-        return '关键风险位（已脱敏）'
-    if any(key in header for key in ('触发', '失效')) and (
-        re.search(r'买入|卖出|加仓|减仓|清仓|止损|降险|补仓|提高暴露|先减|再减', raw_value)
-        or re.search(r'\d+(?:\.\d+)', raw_value)
-    ):
-        return '风险条件已记录（具体阈值已脱敏）'
-    if header == '今日检查' and (
-        re.search(r'\d{1,3}\.\d+[^，。；|]{0,12}(?:突破|收复|失守|守住|回踩)', raw_value)
-        or len(re.findall(r'\d+(?:\.\d+)', raw_value)) >= 2
-    ):
-        return '价格/结构确认条件已记录（具体阈值已脱敏）'
+        return '—'
+    # 判断性文本（触发/失效/今日检查/操作策略…）保留原意；仅对持仓行里的
+    # 价位数字做定点隐去，绝不做整列替换、也不碰日期。
     contextual_value = f'持仓复核：{raw_value}' if position_row else raw_value
     sanitized = sanitize_public_review_text(contextual_value)
     if position_row:
         sanitized = re.sub(r'^持仓复核：', '', sanitized)
         sanitized = re.sub(
-            r'((?:收盘|收盘价|现价|当前价|成交价|买入价|卖出价)'
+            r'((?:收盘|收盘价|现价|当前价|成交价|买入价|卖出价|成本|止损)'
             r'(?:约|为|≈|[：:]|\s)*)[-+]?\d+(?:\.\d+)?(?![\d.%/])',
-            r'\1价格已脱敏',
+            r'\1—',
             sanitized,
         )
         sanitized = re.sub(
             r'(MA\d+\s*(?:约|=|:|：)?\s*)\d+(?:\.\d+)?(?![\d.%/])',
-            r'\1关键位',
+            r'\1—',
             sanitized,
         )
-        if header not in ('标的', '代码', '名称', '板块', '方向', '窗口', '今日定位', '阶段', '角色'):
-            sanitized = re.sub(
-                r'(?<![\d.])[-+]?\d{1,4}\.\d+(?![\d.%/])',
-                '价格已脱敏',
-                sanitized,
-            )
-            sanitized = re.sub(
-                r'((?:今日|当日|日内|浮盈|浮亏|盈亏|实现|亏损|盈利)[^，。；|]{0,16}?)'
-                r'[-+]?(?:\d{1,3}(?:,\d{3})+|\d{3,})(?![\d.%])',
-                r'\1金额已脱敏',
-                sanitized,
-            )
     return sanitized
 
 
@@ -2421,6 +2500,16 @@ def parse_s4(text):
     """Parse §四 红方对抗."""
     round_bodies = split_red_team_rounds(text)
     total_rounds = len(round_bodies)
+
+    # 无 Round 分轮结构（现行「最终结论 / 仍存分歧」体例）：整体渲染，
+    # 不再输出三个空轮标题（2026-09-21 可读性修复）。
+    if total_rounds == 0:
+        stripped = str(text or '').strip()
+        html = html_section_header("s4", "§四 · 红方对抗", "独立红方审查与决议")
+        html += md_text_with_tables_to_html(stripped) if stripped else '<div class="si">本轮无对抗记录。</div>'
+        html += html_section_footer()
+        return html
+
     html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
 
     for round_id, round_label, round_anchor in [
@@ -2428,10 +2517,10 @@ def parse_s4(text):
         ("Round 2", "🔵 Round 2：蓝方回应（稳米）", "s4b"),
         ("Round 3", "🟢 Round 3：洋米终审", "s4c"),
     ]:
-        html += html_subheading(round_label, round_anchor)
         round_text = round_bodies.get(round_id, "")
         if not round_text:
             continue
+        html += html_subheading(round_label, round_anchor)
 
         # ── Round 1: full narrative + tables ──
         if round_id == "Round 1":
@@ -2690,6 +2779,9 @@ def convert_md_to_html(md_path):
         s0_text, rest = extract_section(content, '第〇部分：当日操作指引')
         s0_label = '当日操作指引'
     if s0_text:
+        # 第〇部分为流程性区块：丢弃含内部标识的整行（meta/计划 ID/门禁码等），
+        # 只保留可读的操作指引（2026-09-21 可读性修复）。
+        s0_text = _finalize_public_readability(s0_text)
         sections_html.append(parse_s0(s0_text, label=s0_label))
 
     # §一
