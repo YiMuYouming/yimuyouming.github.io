@@ -2555,9 +2555,9 @@ def parse_s4(text):
     html = html_section_header("s4", "§四 · 红方对抗", f"{total_rounds}轮辩论")
 
     for round_id, round_label, round_anchor in [
-        ("Round 1", "🔴 Round 1：洋米红方质疑", "s4a"),
-        ("Round 2", "🔵 Round 2：蓝方回应（稳米）", "s4b"),
-        ("Round 3", "🟢 Round 3：洋米终审", "s4c"),
+        ("Round 1", "第一轮：洋米红方质疑", "s4a"),
+        ("Round 2", "第二轮：蓝方回应（稳米）", "s4b"),
+        ("Round 3", "第三轮：洋米终审", "s4c"),
     ]:
         round_text = round_bodies.get(round_id, "")
         if not round_text:
@@ -2675,8 +2675,23 @@ def parse_data_appendix(text):
     return html
 
 
-def generate_sidebar(fm, s0_label='昨日预案'):
+# §四 分轮导航项。仅当正文存在分轮结构时输出——否则会生成指向不存在锚点
+# （#s4a/#s4b/#s4c）的死链（2026-09-21 修复清单 F7）。
+# 标签用中文：`Round N` 属阅读层审计语言，与 validate_review_note 的
+# READING_BODY_PROCESS_MARKERS 同口径收敛。
+RED_TEAM_ROUND_SIDEBAR = (
+    ("s4a", "第一轮 红方质疑"),
+    ("s4b", "第二轮 蓝方回应"),
+    ("s4c", "第三轮 终审"),
+)
+
+
+def generate_sidebar(fm, s0_label='昨日预案', s4_rounds=0):
     """Generate sidebar navigation."""
+    s4_children = "".join(
+        f'\n  <a href="#{anchor}" class="s2">{label}</a>'
+        for anchor, label in RED_TEAM_ROUND_SIDEBAR[: max(0, int(s4_rounds))]
+    )
     return f"""<div class="sidebar" id="sidebar">
   <div class="label">导航</div>
   <a href="#s0">第〇部分 {s0_label}</a>
@@ -2695,10 +2710,7 @@ def generate_sidebar(fm, s0_label='昨日预案'):
   <a href="#s3">§三 次日预案</a>
   <a href="#s3a" class="s2">连板自选池</a>
   <a href="#s3b" class="s2">趋势自选池</a>
-  <a href="#s4">§四 红方对抗</a>
-  <a href="#s4a" class="s2">Round 1 红方</a>
-  <a href="#s4b" class="s2">Round 2 蓝方</a>
-  <a href="#s4c" class="s2">Round 3 终审</a>
+  <a href="#s4">§四 红方对抗</a>{s4_children}
   <a href="#sa">附录A 盘前速查</a>
   <a href="#sd">数据附录</a>
 </div>"""
@@ -2843,6 +2855,7 @@ def convert_md_to_html(md_path):
 
     # §四
     s4_text, rest = extract_section(content, '四、红方对抗')
+    s4_round_count = len(split_red_team_rounds(s4_text)) if s4_text else 0
     if s4_text:
         sections_html.append(parse_s4(s4_text))
 
@@ -2872,7 +2885,7 @@ def convert_md_to_html(md_path):
 {html_topbar(fm)}
 
 <div class="layout">
-{generate_sidebar(fm, s0_label)}
+{generate_sidebar(fm, s0_label, s4_round_count)}
 
 <div class="content">
 
