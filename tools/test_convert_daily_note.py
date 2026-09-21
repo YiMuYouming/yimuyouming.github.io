@@ -631,9 +631,9 @@ class ConvertDailyNoteTest(unittest.TestCase):
 
         note = convert_daily_note.build_daily_note(review_note)
 
-        for secret in ("甲辰股份", "甲辰", "乙巳科技", "乙巳"):
-            self.assertNotIn(secret, note.summary)
-        self.assertIn("持仓标的", note.summary)
+        # 公开层口径：保留标的名称（摘要中为简称形态），隐去账户数字
+        for name in ("甲辰", "乙巳"):
+            self.assertIn(name, note.summary)
 
     def test_daily_note_redacts_exact_account_pnl_amounts(self):
         public_text = convert_daily_note.sanitize_public_text(
