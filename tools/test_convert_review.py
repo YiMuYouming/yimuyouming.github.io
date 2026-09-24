@@ -8,6 +8,27 @@ import convert_review
 
 
 class ConvertReviewTest(unittest.TestCase):
+    def test_missing_percentage_is_readable_source_gap(self):
+        self.assertEqual(convert_review.pct_text("N"), "待核")
+        self.assertEqual(convert_review.pct_text("--"), "待核")
+
+    def test_v2_public_summary_ends_before_internal_legacy_sections(self):
+        content = """## 1. 今天发生了什么
+市场事实。
+## 2. 哪些交易或遗漏值得讨论
+成交理由未提供。
+## 3. 明天准备怎么做
+等待确认。
+## 4. 需要保留的一条经验
+分清事实与判断。
+## 第〇部分：当日操作指引
+PRIVATE_WATCHNOTE_PATH
+"""
+        sections = convert_review.extract_public_v2_sections(content)
+        self.assertEqual(len(sections), 4)
+        self.assertIn("市场事实", sections["1. 今天发生了什么"])
+        self.assertNotIn("PRIVATE_WATCHNOTE_PATH", str(sections))
+
     def test_anonymize_current_holdings_parses_bundle_quantity_at_cost(self):
         text = (
             "| 楚天龙 003040 | 持仓风险处理；7000股可卖 |\n"
@@ -48,6 +69,7 @@ class ConvertReviewTest(unittest.TestCase):
 
         self.assertIn("待签（红方对抗未完成）", pending)
         self.assertIn('class="chip amber"', pending)
+        self.assertNotIn("持仓 持仓", pending)
         self.assertNotIn("终稿 (红蓝对抗完成)", pending)
         self.assertIn("终稿 (红蓝对抗完成)", finalized)
 

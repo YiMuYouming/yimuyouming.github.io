@@ -321,7 +321,7 @@ def extract_one_line(s1_text: str, fm: dict) -> str:
     return f"{status}里，先确认系统约束，再处理主观判断。"
 
 
-def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
+def extract_first_cognition(s2_text: str, *, allow_empty: bool = False) -> tuple[str, str, str]:
     bracket_bold_title = re.search(
         r"^\d+\.\s+\[(?P<kind>核心认知|认知|教训|议题|流程纪律|账户纪律|风险信号)\]\s*\*\*(?P<title>.+?)\*\*\s*[—-]\s*(?P<body>.*?)(?=\n\d+\.\s+\[|\Z)",
         s2_text,
@@ -415,6 +415,8 @@ def extract_first_cognition(s2_text: str) -> tuple[str, str, str]:
         body = sanitize_cognition_evidence(untagged.group("body").strip())
         return title, body, convert_review.infer_lesson_action("认知", title, body)
 
+    if allow_empty:
+        return "", "", ""
     return (
         "先把当天经验压成可复用原则",
         "今天的复盘还没有抽出单条公开认知，发布前应由人工补一句真实判断。",
@@ -453,23 +455,44 @@ def extract_watch_items(s3_text: str) -> list[str]:
 
 
 def public_position_summary(position: str) -> str:
+    if position == convert_review.POSITION_UNKNOWN:
+        return "持仓状态待核实。"
     if not position or "空仓" in position:
         return "持仓状态以空仓或低暴露方式呈现。"
     return "持仓状态以公开摘要呈现，不展开标的、数量和成本。"
 
 
-def build_daily_note(md_path: str | Path, user_feeling: str = "") -> DailyNote:
+def build_daily_note(
+    md_path: str | Path,
+    user_feeling: str = "",
+    *,
+    reading_sidecar_path: str | Path | None = None,
+) -> DailyNote:
     md_path = Path(md_path)
-    content, fm, _bundle_backed = convert_review.read_review_input(md_path)
+    content, fm, _bundle_backed = convert_review.read_review_input(
+        md_path, reading_sidecar_path=reading_sidecar_path
+    )
     content = convert_review.anonymize_current_holdings(content, fm)
     date = extract_date(md_path, fm)
     weekday = fm.get("weekday", "")
-    s1_text, _ = convert_review.extract_section(content, "一、当日复盘")
-    s2_text, _ = convert_review.extract_section(content, "二、心得与教训")
-    s3_text, _ = convert_review.extract_section(content, "三、次日预案")
+    reading_sections = convert_review.extract_review_reading_sections(content, fm)
+    if reading_sections is not None:
+        s1_text = reading_sections["1. 今天发生了什么"]
+        s2_text = reading_sections["3. 回头看"]
+        s3_text = reading_sections["4. 下一步"]
+    else:
+        s1_text, _ = convert_review.extract_section(content, "一、当日复盘")
+        s2_text, _ = convert_review.extract_section(content, "二、心得与教训")
+        s3_text, _ = convert_review.extract_section(content, "三、次日预案")
 
     one_line = extract_one_line(s1_text, fm)
-    cog_title, cog_body, cog_action = extract_first_cognition(s2_text)
+    cog_title, cog_body, cog_action = extract_first_cognition(
+        s2_text, allow_empty=reading_sections is not None or fm.get("stage_final") == "pending"
+    )
+    if fm.get("stage_final") == "pending" and (
+        "未提供" in cog_title or "不足以提炼" in cog_body
+    ):
+        cog_title, cog_body, cog_action = "", "", ""
     market_status = fm.get("市场状态") or convert_review.desc_from_fm(fm) or "观察"
     summary = one_line
     title = cog_title if cog_title else market_status
@@ -486,6 +509,8 @@ def build_daily_note(md_path: str | Path, user_feeling: str = "") -> DailyNote:
     feeling = sanitize_public_text(user_feeling)
     if feeling:
         system_voice = f"{feeling} 系统的价值不是给出更激进的解释，而是把交易动作压回到门禁、风险和复盘证据上。"
+    elif fm.get("stage_final") == "pending":
+        system_voice = "系统汇集收盘事实与来源差异；个人判断和操作原因未提供。"
     else:
         system_voice = "系统今天的作用，是把主观解释压回到市场状态、风险门禁和复盘证据上，帮助人少做情绪化动作。"
 
@@ -500,7 +525,10 @@ def build_daily_note(md_path: str | Path, user_feeling: str = "") -> DailyNote:
         cognition_evidence=sanitize_public_text(cog_body),
         cognition_action=sanitize_public_text(cog_action),
         system_voice=system_voice,
-        watch_items=extract_watch_items(s3_text),
+        watch_items=(
+            ["次日观察与处理尚未确认。"]
+            if fm.get("stage_final") == "pending" else extract_watch_items(s3_text)
+        ),
         tag=sanitize_public_text(tag),
     )
 
@@ -521,6 +549,16 @@ def render_list(items: list[str]) -> str:
 
 def render_daily_note_page(note: DailyNote) -> str:
     date_label = note.date
+    cognition_html = ""
+    if note.cognition_title or note.cognition_evidence or note.cognition_action:
+        cognition_html = f"""<section class="note-cognition-card">
+        <div class="note-label">今日一个认知</div>
+        <div class="note-principle">{esc(note.cognition_title)}</div>
+        <div class="note-label">当日证据</div>
+        <div class="note-evidence">{rich_text(note.cognition_evidence)}</div>
+        <div class="note-label">下次动作</div>
+        <div class="note-action">{rich_text(note.cognition_action)}</div>
+      </section>"""
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -551,14 +589,7 @@ def render_daily_note_page(note: DailyNote) -> str:
 
   <div class="note-grid">
     <article class="note-main">
-      <section class="note-cognition-card">
-        <div class="note-label">今日一个认知</div>
-        <div class="note-principle">{esc(note.cognition_title)}</div>
-        <div class="note-label">当日证据</div>
-        <div class="note-evidence">{rich_text(note.cognition_evidence)}</div>
-        <div class="note-label">下次动作</div>
-        <div class="note-action">{rich_text(note.cognition_action)}</div>
-      </section>
+{cognition_html}
 
       <section class="note-panel note-system-voice">
         <h2>系统今天做了什么</h2>
@@ -778,9 +809,17 @@ def write_daily_note_page(note: DailyNote) -> Path:
 
 
 def convert_review_to_daily_note(
-    md_path: str | Path, user_feeling: str = "", dry_run: bool = False
+    md_path: str | Path,
+    user_feeling: str = "",
+    dry_run: bool = False,
+    *,
+    reading_sidecar_path: str | Path | None = None,
 ) -> dict:
-    note = build_daily_note(md_path, user_feeling=user_feeling)
+    note = build_daily_note(
+        md_path,
+        user_feeling=user_feeling,
+        reading_sidecar_path=reading_sidecar_path,
+    )
     target = DAILY_NOTES / f"{note.date}.html"
     if dry_run:
         # 公开面写入先预演：只报告目标，不落盘。
@@ -799,15 +838,27 @@ def main() -> None:
     argv = sys.argv[1:]
     dry_run = "--dry-run" in argv
     argv = [item for item in argv if item != "--dry-run"]
+    reading_sidecar_path = None
+    if "--reading-sidecar" in argv:
+        option_index = argv.index("--reading-sidecar")
+        if option_index + 1 >= len(argv):
+            raise SystemExit("--reading-sidecar requires an explicit path")
+        reading_sidecar_path = argv[option_index + 1]
+        del argv[option_index:option_index + 2]
     if not argv:
         print(
             "Usage: python3 tools/convert_daily_note.py <ReviewNote.md> "
-            "[user feeling] [--dry-run]"
+            "[user feeling] [--dry-run] [--reading-sidecar <path>]"
         )
         sys.exit(1)
     md_path = argv[0]
     feeling = " ".join(argv[1:]).strip()
-    convert_review_to_daily_note(md_path, user_feeling=feeling, dry_run=dry_run)
+    convert_review_to_daily_note(
+        md_path,
+        user_feeling=feeling,
+        dry_run=dry_run,
+        reading_sidecar_path=reading_sidecar_path,
+    )
 
 
 if __name__ == "__main__":

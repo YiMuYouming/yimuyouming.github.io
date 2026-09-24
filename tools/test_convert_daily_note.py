@@ -113,6 +113,23 @@ class ConvertDailyNoteTest(unittest.TestCase):
             (self.root / "index.html").read_text(encoding="utf-8"),
         )
 
+    def test_pending_note_does_not_publish_missing_cognition_as_a_lesson(self):
+        source = SAMPLE_REVIEW_NOTE.replace(
+            "date: 2026-06-26", "date: 2026-06-26\nstage_final: pending"
+        )
+        source = source.replace(
+            "**1. 冰点日先看系统门禁，再看观点**\n\n"
+            "今天指数和情绪同时下压，主观上想找反弹解释，但系统门禁把仓位和新开仓节奏压住了。",
+            "1. 未提供弈沐的个人认知：现有材料不足以提炼可复用原则。",
+        )
+        self.review_note.write_text(source, encoding="utf-8")
+        note = convert_daily_note.build_daily_note(self.review_note)
+        html = convert_daily_note.render_daily_note_page(note)
+        self.assertEqual(note.cognition_title, "")
+        self.assertNotIn('class="note-cognition-card"', html)
+        self.assertIn("个人判断和操作原因未提供", html)
+        self.assertIn("次日观察与处理尚未确认", html)
+
     def test_generates_public_daily_note_page_with_six_reading_sections(self):
         note = convert_daily_note.convert_review_to_daily_note(
             self.review_note,

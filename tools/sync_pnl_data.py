@@ -60,17 +60,21 @@ class BridgeAPI:
         url = f"http://127.0.0.1:8088{path}"
         remote_cmd = f"curl -fsS --max-time 8 {shlex.quote(url)}"
         for attempt in range(3):
-            r = subprocess.run(
-                ["ssh", self.remote, remote_cmd],
-                capture_output=True,
-                text=True,
-                timeout=15,
-            )
-            if r.returncode == 0:
-                return json.loads(r.stdout)
+            try:
+                r = subprocess.run(
+                    ["ssh", self.remote, remote_cmd],
+                    capture_output=True,
+                    text=True,
+                    timeout=15,
+                )
+            except subprocess.TimeoutExpired as exc:
+                detail = f"ssh timed out after {exc.timeout}s"
+            else:
+                if r.returncode == 0:
+                    return json.loads(r.stdout)
+                detail = (r.stderr or r.stdout or "").strip()
             if attempt < 2:
                 time.sleep(attempt + 1)
-        detail = (r.stderr or r.stdout or "").strip()
         raise RuntimeError(f"cloud bridge fetch failed: {path}; {detail}")
 
 

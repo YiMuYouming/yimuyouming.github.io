@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:yimu:portal:review_reading:v1",
+  "title": "Portal review_reading.v1 sidecar",
+  "$comment": "Strict on-disk sidecar contract emitted by the P3 sidecar_payload function. Producer-only date/body/content_status fields are not serialized. Inline ReviewNote frontmatter remains a transition-only compatibility path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "source_id", "source_revision", "market", "account", "sections"],
+  "properties": {
+    "schema": { "const": "review_reading.v1" },
+    "source_id": { "$ref": "#/$defs/sourceId" },
+    "source_revision": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "market_state",
+        "profit_effect",
+        "emotion",
+        "sh_index_pct",
+        "limit_up_count",
+        "limit_down_count"
+      ],
+      "properties": {
+        "market_state": { "$ref": "#/$defs/sourceBoundValue", "description": "Current effective market-state conclusion and source references." },
+        "profit_effect": { "$ref": "#/$defs/sourceBoundValue", "description": "Approved profit-effect term and source references." },
+        "emotion": { "$ref": "#/$defs/sourceBoundValue", "description": "Current-day emotion value and source references." },
+        "sh_index_pct": { "$ref": "#/$defs/sourceBoundValue", "description": "Shanghai Composite percentage change, preserving source unit semantics." },
+        "limit_up_count": { "$ref": "#/$defs/sourceBoundValue", "description": "Limit-up count under the existing statistics scope; missing is not zero." },
+        "limit_down_count": { "$ref": "#/$defs/sourceBoundValue", "description": "Limit-down count under the existing statistics scope; missing is not zero." }
+      }
+    },
+    "account": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["post_close_positions"],
+      "properties": {
+        "post_close_positions": { "$ref": "#/$defs/sourceBoundValue", "description": "Private-only post-close positions. Public conversion must use the existing redacted summary." }
+      }
+    },
+    "sections": { "$ref": "#/$defs/readingSections" }
+  },
+  "$defs": {
+    "sourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9._:-]{1,160}$"
+    },
+    "sourceRef": {
+      "oneOf": [
+        { "type": "string", "minLength": 1, "pattern": "\\S" },
+        {
+          "type": "object",
+          "required": ["source_id"],
+          "properties": {
+            "source_id": { "$ref": "#/$defs/sourceId" },
+            "revision": {
+              "oneOf": [
+                { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                { "type": "null" }
+              ]
+            },
+            "section_id": { "type": "string", "minLength": 1, "maxLength": 180, "pattern": "\\S" }
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
+    "sourceBoundValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "status", "source_refs"],
+      "properties": {
+        "value": {
+          "description": "Producer value. Its concrete type is intentionally open until the producer contract is confirmed."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["available", "missing", "explicit_empty", "conflict"]
+        },
+        "source_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceRef" }
+        }
+      }
+    },
+    "readingSections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["today_happened", "judgment_and_actions", "looking_back", "next_step"],
+      "properties": {
+        "today_happened": { "type": "string" },
+        "judgment_and_actions": { "type": "string" },
+        "looking_back": { "type": "string", "description": "May be empty when there is no new cognition." },
+        "next_step": { "type": "string" }
+      }
+    }
+  }
+}

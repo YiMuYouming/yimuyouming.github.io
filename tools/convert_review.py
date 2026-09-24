@@ -26,6 +26,15 @@ from html import escape as html_escape
 from datetime import datetime
 from pathlib import Path
 
+try:
+    from . import review_reading
+    from . import promotion_metrics_shadow
+except ImportError:
+    import review_reading
+    import promotion_metrics_shadow
+
+POSITION_UNKNOWN = review_reading.POSITION_UNKNOWN
+
 PORTAL = Path(__file__).resolve().parent.parent
 REVIEW_NOTES = PORTAL / "review-notes"
 CSS_FILE = None  # will use inline CSS from template
@@ -251,8 +260,8 @@ def extract_section(text, heading):
 def pct_text(value, signed=False):
     """Render numeric frontmatter percentages consistently."""
     s = str(value).strip()
-    if not s or s == '--':
-        return s
+    if s in ('', 'N', '--', '—', 'None', 'null'):
+        return '待核'
     try:
         n = float(s.rstrip('%'))
         sign = '+' if signed and n > 0 and not s.startswith('+') else ''
@@ -1560,7 +1569,10 @@ def sanitize_public_review_text(text, redact_internal_labels=True):
 
 def public_position_summary(position):
     """Expose position state without publishing names, quantities, or costs."""
-    if not position or '空仓' in str(position):
+    text = str(position or '')
+    if text == POSITION_UNKNOWN:
+        return '待核验'
+    if not text or '空仓' in text:
         return '空仓'
     return '持仓'
 
@@ -1676,7 +1688,7 @@ def html_topbar(fm):
     <span class="chip {emo_chip}">情绪 {emo}</span>
     <span class="chip {sh_chip}">上证 {sh_idx} {sh_pct}</span>
     <span class="chip blue">{zt}涨停 / {dt}跌停</span>
-    <span class="chip purple">持仓 {pos}</span>
+    <span class="chip purple">{'持仓已记录' if pos == '持仓' else '持仓 ' + pos}</span>
     <span class="chip {status_chip}">{status_text}</span>
   </div>
 </div>"""
@@ -2740,6 +2752,53 @@ def generate_sidebar(fm, s0_label='昨日预案', s4_rounds=0):
 </div>"""
 
 
+def extract_review_reading_sections(content, fm):
+    """Return the exact four-section layout only for opted-in review_reading.v1 notes."""
+    if not (fm or {}).get("_review_reading_v1"):
+        return None
+
+    headings = (
+        "1. 今天发生了什么",
+        "2. 我的判断和动作",
+        "3. 回头看",
+        "4. 下一步",
+    )
+    present = {
+        heading: len(re.findall(rf"^## {re.escape(heading)}\s*$", content, re.MULTILINE))
+        for heading in headings
+    }
+    if not any(present.values()):
+        return None
+    if any(count != 1 for count in present.values()):
+        raise UnsupportedNoteSchema("review_reading.v1:body_sections_incomplete")
+
+    sections = {}
+    for heading in headings:
+        body, _ = extract_section(content, heading)
+        sections[heading] = body
+    return sections
+
+
+def render_review_reading_section(index, heading, body):
+    """Render one safe body section for an opted-in four-section reading."""
+    html = html_section_header(f"review-reading-{index}", heading, "")
+    if body.strip():
+        html += md_text_with_tables_to_html(body)
+    html += html_section_footer()
+    return html
+
+
+def review_reading_sidebar(headings):
+    links = "\n".join(
+        f'<a href="#review-reading-{index}">{html_escape(heading)}</a>'
+        for index, heading in enumerate(headings, 1)
+    )
+    return f'''<div class="sidebar" id="sidebar">
+  <div class="label">导航</div>
+  {links}
+</div>'''
+
+
 # ── note schema 版本分派（P2.3）────────────────────────────────────
 # 新增内容必须显式声明版本；**禁止凭标题相似猜版本**。
 # 未知版本一律拒绝，不做"尽力解析"——那会把新格式静默解析成半成品页面。
@@ -2755,6 +2814,12 @@ V2_SECTION_MARKERS = (
 )
 V2_APPENDIX_MARKERS = ("折叠：机器附录", "机器附录")
 GENERATED_MARKERS = ("自动生成", "系统生成", "generated")
+PUBLIC_V2_SECTION_MARKERS = (
+    "1. 今天发生了什么",
+    "2. 哪些交易或遗漏值得讨论",
+    "3. 明天准备怎么做",
+    "4. 需要保留的一条经验",
+)
 
 
 class UnsupportedNoteSchema(ValueError):
@@ -2818,9 +2883,24 @@ def find_v2_sections(content: str) -> dict:
     return {"found": sorted(found, key=lambda k: found[k]), "missing": missing}
 
 
-def convert_md_to_html(md_path):
+def extract_public_v2_sections(content: str):
+    """Use the short human-facing summary when all four public anchors exist."""
+    counts = {
+        heading: len(re.findall(rf"^## {re.escape(heading)}\s*$", content, re.MULTILINE))
+        for heading in PUBLIC_V2_SECTION_MARKERS
+    }
+    if not any(counts.values()):
+        return None
+    if any(count != 1 for count in counts.values()):
+        raise UnsupportedNoteSchema("yimu.review.v2:public_sections_incomplete")
+    return {heading: extract_section(content, heading)[0] for heading in PUBLIC_V2_SECTION_MARKERS}
+
+
+def convert_md_to_html(md_path, *, reading_sidecar_path=None, promotion_metrics_shadow_path=None):
     """Main conversion function."""
-    content, fm, bundle_backed = read_review_input(md_path)
+    content, fm, bundle_backed = read_review_input(
+        md_path, reading_sidecar_path=reading_sidecar_path
+    )
     # P2.3：按 note_schema 显式分派；未知版本拒绝，不凭标题相似猜版本。
     note_schema = detect_note_schema(fm)
     if note_schema == NOTE_SCHEMA_V2 and not bundle_backed:
@@ -2835,6 +2915,9 @@ def convert_md_to_html(md_path):
         content = parts["body"]
     content = anonymize_current_holdings(content, fm)
     content = sanitize_public_review_text(content)
+    reading_sections = extract_review_reading_sections(content, fm)
+    if note_schema == NOTE_SCHEMA_V2 and reading_sections is None:
+        reading_sections = extract_public_v2_sections(content)
 
     # Parse date for filename
     date_str = fm.get('date', '')
@@ -2893,6 +2976,17 @@ def convert_md_to_html(md_path):
     if sd_text:
         sections_html.append(parse_data_appendix(sd_text))
 
+    if reading_sections is not None:
+        sections_html = [
+            render_review_reading_section(index, heading, body)
+            for index, (heading, body) in enumerate(reading_sections.items(), 1)
+        ]
+
+    if promotion_metrics_shadow_path is not None:
+        sections_html.append(
+            promotion_metrics_shadow.render(promotion_metrics_shadow_path, date_str)
+        )
+
     # Assemble full HTML
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -2909,7 +3003,7 @@ def convert_md_to_html(md_path):
 {html_topbar(fm)}
 
 <div class="layout">
-{generate_sidebar(fm, s0_label, s4_round_count)}
+{review_reading_sidebar(reading_sections.keys()) if reading_sections is not None else generate_sidebar(fm, s0_label, s4_round_count)}
 
 <div class="content">
 
@@ -2939,12 +3033,51 @@ def convert_md_to_html(md_path):
     return date_str, output_path
 
 
-def read_review_input(md_path):
+def _review_note_date(md_path, fm):
+    raw_date = str((fm or {}).get("date") or "").strip()
+    if raw_date:
+        try:
+            return datetime.strptime(raw_date, "%Y-%m-%d").date().isoformat()
+        except ValueError as exc:
+            raise review_reading.UnsupportedReviewReading(
+                "review_reading_source_date_invalid"
+            ) from exc
+    match = re.match(r"^(\d{4})_(\d{1,2})_(\d{1,2})(?:_|$)", Path(md_path).name)
+    if not match:
+        raise review_reading.UnsupportedReviewReading("review_reading_source_date_missing")
+    try:
+        return datetime.strptime("-".join(match.groups()), "%Y-%m-%d").date().isoformat()
+    except ValueError as exc:
+        raise review_reading.UnsupportedReviewReading(
+            "review_reading_source_date_invalid"
+        ) from exc
+
+
+def _apply_review_reading_sidecar(content, fm, md_path, sidecar_path):
+    payload = review_reading.read_sidecar(
+        sidecar_path,
+        source_path=md_path,
+        source_date=_review_note_date(md_path, fm),
+    )
+    projected = review_reading.adapt_frontmatter({"review_reading": payload})
+    merged = dict(fm or {})
+    for key in ("review_reading", "_review_reading_v1", "_review_reading_source_gaps"):
+        merged.pop(key, None)
+    merged.update(projected)
+    return review_reading.render_sidecar_sections(payload["sections"]), merged
+
+
+def read_review_input(md_path, *, reading_sidecar_path=None):
     """Current human prose, with facts resolved through the shared SSOT reader."""
     content = Path(md_path).read_text(encoding='utf-8')
     fm = parse_frontmatter(content)
     if 'daily_bundle_ref' not in fm:
-        return content, fm, False
+        if reading_sidecar_path is not None:
+            body, projected_fm = _apply_review_reading_sidecar(
+                content, fm, md_path, reading_sidecar_path
+            )
+            return body, projected_fm, False
+        return content, review_reading.adapt_frontmatter(fm), False
     try:
         from .daily_bundle_input import resolve_bundle_reading
     except ImportError:
@@ -2955,6 +3088,12 @@ def read_review_input(md_path):
     facts = parse_frontmatter(source['machine_text'])
     facts['note_schema'] = fm.get('note_schema')
     body = re.sub(r'\A---\s*\n.*?\n---\s*(?:\n|$)', '', source['reading_text'], count=1, flags=re.S)
+    if reading_sidecar_path is not None:
+        body, facts = _apply_review_reading_sidecar(
+            body, facts, md_path, reading_sidecar_path
+        )
+    else:
+        facts = review_reading.adapt_frontmatter(facts)
     return body, facts, True
 
 
@@ -3395,18 +3534,39 @@ def update_main_index(date_str, fm):
 # ── CLI ──
 
 def main():
-    if len(sys.argv) < 2:
+    argv = list(sys.argv[1:])
+    sidecar_path = None
+    promotion_shadow_path = None
+    if "--reading-sidecar" in argv:
+        option_index = argv.index("--reading-sidecar")
+        if option_index + 1 >= len(argv):
+            raise SystemExit("--reading-sidecar requires an explicit path")
+        sidecar_path = argv[option_index + 1]
+        del argv[option_index:option_index + 2]
+    if "--promotion-metrics-shadow" in argv:
+        option_index = argv.index("--promotion-metrics-shadow")
+        if option_index + 1 >= len(argv):
+            raise SystemExit("--promotion-metrics-shadow requires an explicit path")
+        promotion_shadow_path = argv[option_index + 1]
+        del argv[option_index:option_index + 2]
+    if len(argv) < 1:
         print(__doc__)
         sys.exit(1)
 
-    md_path = sys.argv[1]
-    do_commit = '--commit' in sys.argv
+    md_path = argv[0]
+    do_commit = '--commit' in argv
 
     # Convert
-    date_str, html_path = convert_md_to_html(md_path)
+    date_str, html_path = convert_md_to_html(
+        md_path,
+        reading_sidecar_path=sidecar_path,
+        promotion_metrics_shadow_path=promotion_shadow_path,
+    )
 
     # Re-parse for index updates
-    _content, fm, _bundle_backed = read_review_input(md_path)
+    _content, fm, _bundle_backed = read_review_input(
+        md_path, reading_sidecar_path=sidecar_path
+    )
 
     # Update indexes
     update_review_notes_index(date_str, fm)

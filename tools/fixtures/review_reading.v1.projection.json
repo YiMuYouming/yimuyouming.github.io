@@ -1,0 +1,14 @@
+{
+  "schema": "review_reading.v1",
+  "market": {
+    "market_state": { "value": "震荡偏弱", "status": "available", "source_refs": ["source://daily-close"] },
+    "profit_effect": { "value": "差", "status": "available", "source_refs": ["source://daily-close"] },
+    "emotion": { "value": 24.5, "status": "available", "source_refs": ["source://daily-close"] },
+    "sh_index_pct": { "value": -0.75, "status": "available", "source_refs": ["source://daily-close"] },
+    "limit_up_count": { "value": 42, "status": "available", "source_refs": ["source://daily-close"] },
+    "limit_down_count": { "value": 9, "status": "available", "source_refs": ["source://daily-close"] }
+  },
+  "account": {
+    "post_close_positions": { "value": "秘密股份 1200@7.10", "status": "available", "source_refs": ["source://daily-close"] }
+  }
+}

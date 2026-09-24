@@ -9,6 +9,21 @@ import sync_pnl_data
 
 
 class BridgeAPITest(unittest.TestCase):
+    def test_cloud_fetch_retries_transient_ssh_timeout(self):
+        api = sync_pnl_data.BridgeAPI()
+        timeout = sync_pnl_data.subprocess.TimeoutExpired(cmd=["ssh"], timeout=15)
+        success = mock.Mock(returncode=0, stderr="", stdout='{"ok": true}')
+
+        with (
+            mock.patch.object(sync_pnl_data.subprocess, "run", side_effect=[timeout, success]) as run,
+            mock.patch.object(sync_pnl_data.time, "sleep") as sleep,
+        ):
+            result = api.fetch("/api/health")
+
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(run.call_count, 2)
+        sleep.assert_called_once_with(1)
+
     def test_cloud_fetch_retries_transient_ssh_disconnect(self):
         api = sync_pnl_data.BridgeAPI()
         disconnected = mock.Mock(

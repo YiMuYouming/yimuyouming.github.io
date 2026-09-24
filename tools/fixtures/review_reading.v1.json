@@ -1,0 +1,93 @@
+{
+  "schema": "review_reading.v1",
+  "source_id": "review-2026-09-11",
+  "source_revision": "9c4fba820f74f240be8618a5226ee57590f13dffdc9417da3b9eabe30864f8a3",
+  "market": {
+    "market_state": {
+      "value": "震荡偏强",
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "review-2026-09-11",
+          "revision": "9c4fba820f74f240be8618a5226ee57590f13dffdc9417da3b9eabe30864f8a3",
+          "locator": "frontmatter:市场状态",
+          "line": 3
+        }
+      ]
+    },
+    "profit_effect": {
+      "value": "一般",
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "market-close",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "locator": "profit_effect"
+        }
+      ]
+    },
+    "emotion": {
+      "value": 0,
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "market-close",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "emotion"
+        }
+      ]
+    },
+    "sh_index_pct": {
+      "value": -0.25,
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "market-close",
+          "revision": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "locator": "sh_index_pct"
+        }
+      ]
+    },
+    "limit_up_count": {
+      "value": 0,
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "limit-facts",
+          "revision": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "locator": "limit_up_count"
+        }
+      ]
+    },
+    "limit_down_count": {
+      "value": 0,
+      "status": "available",
+      "source_refs": [
+        {
+          "source_id": "limit-facts",
+          "revision": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "locator": "limit_down_count"
+        }
+      ]
+    }
+  },
+  "account": {
+    "post_close_positions": {
+      "value": "空仓",
+      "status": "explicit_empty",
+      "source_refs": [
+        {
+          "source_id": "hermes-close",
+          "revision": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "locator": "positions"
+        }
+      ]
+    }
+  },
+  "sections": {
+    "today_happened": "### 一句话结论\n\n市场缩量分化，保持观察。",
+    "judgment_and_actions": "### 预期差与盘感\n\n盘前预期：观察宽度。\n实际盘面：板块分化。",
+    "looking_back": "### 今日认知\n\n\n\n### 独立审阅结论\n\n**最终结论**：沿用原候选，不新增角色。\n**仍存分歧**：无。",
+    "next_step": "**总基调**：先观察，等待条件确认。\n\n### 明日观察与处理\n\n等待板块宽度改善后再复核。"
+  }
+}
