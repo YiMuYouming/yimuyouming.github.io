@@ -150,10 +150,10 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
   <div class="title">2026-09-22 周二 复盘笔记</div>
   <div class="meta">
     <span class="chip green">情绪 待核</span>
-    <span class="chip red">上证 3952.13 +0.06%</span>
-    <span class="chip blue">63涨停 / 3跌停</span>
+    <span class="chip green">上证 3952.13 待核</span>
+    <span class="chip blue">--涨停 / --跌停</span>
     <span class="chip purple">持仓已记录</span>
-    <span class="chip amber">待签（红方对抗未完成）</span>
+    <span class="chip amber">待签（存在未确认事项）</span>
   </div>
 </div>
 
@@ -161,13 +161,14 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <div class="sidebar" id="sidebar">
   <div class="label">导航</div>
   <a href="#review-reading-1">1. 今天发生了什么</a>
-<a href="#review-reading-2">2. 哪些交易或遗漏值得讨论</a>
-<a href="#review-reading-3">3. 明天准备怎么做</a>
-<a href="#review-reading-4">4. 需要保留的一条经验</a>
+<a href="#review-reading-2">2. 我的判断和动作</a>
+<a href="#review-reading-3">3. 回头看</a>
+<a href="#review-reading-4">4. 下一步</a>
 </div>
 
 <div class="content">
 
+<p class="projection-notice">事后修订：本页包含补录或重新核对的内容，不代表交易当时已经可见。</p>
 <div class="section" id="review-reading-1">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
   <span class="tog">▼</span> 1. 今天发生了什么
@@ -176,21 +177,42 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 <div class="section" id="review-reading-2">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 2. 哪些交易或遗漏值得讨论
+  <span class="tog">▼</span> 2. 我的判断和动作
 </div>
-<div class="sb"><div class="para">风险处理动作、新增风险暴露均只按正式成交留痕；其中买入时规则容量与 W1 买入许可为关闭状态，不能用事后笔记补授权。</div></div>
+<div class="sb"><div class="sh2">预期差与盘感</div>
+<div class="para"><strong>盘前基准</strong>：见本笔记第〇部分；沿用 9/21 终稿所记“无新增买入授权”。本段不补写事后判断。</div>
+<div class="para"><strong>实际竞价</strong>：盘中 auction 快照记录上证 3963.81（+0.35%）、深证 13858.62（+0.94%）、创业板 3446.33（+1.37%），涨停/跌停 12/0；指数源为 tencent_index_fallback，竞价成交额 209.92 亿且标记“未定格”，情绪值缺失。此处仅记竞价时点事实。</div>
+<div class="para"><strong>盘面定性</strong>：未提供；个人定性待确认。收盘指数、涨跌停数及数据口径差异见下方一句话结论。</div>
+<div class="para"><strong>弈沐盘感</strong>：未提供。</div>
+<div class="para"><strong>数据口径</strong>：五个节点快照齐全；close 快照的涨停计数为 64/3（Eastmoney、iwencai、hot_list 三口径同值），同时收盘指数源为 eastmoney_fallback、个股源为 tencent_fallback。YM-data-pipeline 3.0 的 market_limit_board 公共 查询 对 2026-09-22 返回 63/3（provider stocktoday、status success、fresh）；因此 frontmatter 暂记公共 查询 的 63/3，64/63 冲突保留未裁决。market_facts 查询 对同日返回涨停/跌停/炸板 63/3/18，但报告为 degraded/partial/数据状态—；前一交易日连板收益 +2.255429（21 行）、炸板收益 -0.524352（25 行），前一日涨停收益因 cohort incomplete 缺失；晋级率与情绪相关字段仍缺源。close 快照的情绪值为 null、连板明细为空，未沿用早盘值；<code>赚钱效应</code> 收盘口径虽记“好”，但 iwencai 延迟且 facts_status=unknown，保留待核。</div>
+<div class="para"><strong>缺失样本核验（9/25 补充）</strong>：9/21 涨停池 103 只中，002860 星帅尔是唯一未出现在 9/22 日线中的标的。公司在 9/21 公告其股票自 9/22 开市起停牌，见[巨潮资讯公告原文](https://static.cninfo.com.cn/finalpage/2026-关键区间/1225575586.PDF)。因此缺日线有正式停牌原因；当日没有可核收盘收益，不填 0，也不把原 103 只队列擅自缩成 102 只。yesterday_limit_up_return_cohort_incomplete 继续保留，待收益指标合同明确停牌样本处理口径。</div>
+<div class="sh2">持仓与交易</div>
+<div class="para"><strong>板块维度：</strong></div>
+<div class="tw"><table><thead><tr><th>板块</th><th>操作</th><th>标的</th><th>仓位</th><th>盈亏</th><th>原因</th></tr></thead><tbody><tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div>
+<div class="para"><strong>当前持仓：持仓数量— 只</strong></div>
+<div class="tw"><table><thead><tr><th>标的</th><th>成本</th><th>现价</th><th>浮盈/股</th><th>浮盈率</th><th>仓位</th><th>T+1可卖</th><th>评价</th></tr></thead><tbody><tr><td>楚天龙 —</td><td>—</td><td>—</td><td>—</td><td>-18.82%</td><td>—</td><td>—</td><td>盘后事实；个人评价未提供</td></tr><tr><td>润泽科技 —</td><td>—</td><td>—</td><td>—</td><td>+3.06%</td><td>—</td><td>—</td><td>盘后事实；个人评价未提供</td></tr></tbody></table></div>
+<div class="para"><strong>当日正式成交（ReviewNote packet 与只读成交回读共 若干笔；原因及窗口未提供）：</strong></div>
+<div class="tw"><table><thead><tr><th>时间</th><th>动作</th><th>标的</th><th>数量</th><th>价格</th><th>已实现盈亏</th><th>原因</th></tr></thead><tbody><tr><td>盘中</td><td>买入</td><td>润泽科技 —</td><td>—</td><td>—</td><td>—</td><td>未提供</td></tr><tr><td>盘中</td><td>卖出</td><td>大金重工 002487</td><td>—</td><td>—</td><td>—</td><td>未提供</td></tr><tr><td>盘中</td><td>卖出</td><td>大金重工 002487</td><td>—</td><td>—</td><td>—</td><td>未提供</td></tr></tbody></table></div>
+<div class="para"><strong>执行条件与成交记录分层</strong>：盘中 润泽科技买入 部分仓位是已确认的事后回补事实（<code>成交事实核对</code>）；开工时 <code>—</code> 且 <code>新增仓位条件—</code>，不能由事后补录倒推为当时已获授权。该笔买入原因未提供，待后续核对；本稿不作交易对错判断。</div></div>
 </div>
 <div class="section" id="review-reading-3">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 3. 明天准备怎么做
+  <span class="tog">▼</span> 3. 回头看
 </div>
-<div class="sb"><div class="para">次日判断和个人操作计划未提供；只保留待核的市场口径与交易执行条件缺口，不形成新的买入指令。</div></div>
+<div class="sb"><div class="sh2">今日认知</div>
+<div class="para">未提供（用户未提供额外个人认知）；本项仍待人工确认。</div>
+<hr class="divider">
+<div class="sh2">独立审阅结论</div>
+<div class="para"><strong>最终结论</strong>：待红方对抗阶段填写。</div>
+<div class="para"><strong>仍存分歧</strong>：待红方对抗阶段填写。</div></div>
 </div>
 <div class="section" id="review-reading-4">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 4. 需要保留的一条经验
+  <span class="tog">▼</span> 4. 下一步
 </div>
-<div class="sb"><div class="para">事实、缺口与个人判断分开记录；个人认知未提供，不代写为可复用原则。</div></div>
+<div class="sb"><div class="para"><strong>总基调</strong>：事实草稿；个人市场定性与次日处理判断未提供，预案仍待确认阶段。</div>
+<div class="sh2">明日观察与处理</div>
+<div class="para">未提供；次日观察与处理方案仍待确认，D 阶段保持 pending。</div></div>
 </div>
 
 </div>

@@ -59,6 +59,24 @@ class PortalBundleTests(unittest.TestCase):
                 self.assertNotIn(secret, html)
                 self.assertNotIn(secret, str(daily))
 
+    def test_bundle_keeps_note_side_human_unconfirmed_as_publication_blocker(self):
+        unconfirmed_reading = READING.replace(
+            'stage_final: done',
+            'stage_final: done\nhuman_unconfirmed: D2 待确认',
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            note = root / '2026_9_2_Wednesday_ReviewNote.md'
+            note.write_text(unconfirmed_reading)
+            with patch('daily_bundle_input.resolve_bundle_reading', return_value={
+                    'reading_text': unconfirmed_reading, 'machine_text': MACHINE}), \
+                    patch.object(convert_review, 'REVIEW_NOTES', root):
+                daily = convert_daily_note.build_daily_note(note)
+                page = convert_daily_note.render_daily_note_page(daily)
+
+        self.assertEqual(['次日观察与处理尚未确认。'], daily.watch_items)
+        self.assertNotIn('关注强板块能否延续', page)
+
     def test_invalid_explicit_bundle_does_not_publish_as_legacy(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

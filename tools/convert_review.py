@@ -1653,10 +1653,22 @@ def sanitize_public_review_cell(header, value, position_row=False):
 
 # ── HTML generators ──
 
+def review_has_unconfirmed_state(fm):
+    """Return whether note-side confirmation forbids publishing next-day actions."""
+    values = fm or {}
+    final = str(values.get('stage_final', '')).strip().lower()
+    human = str(values.get('human_unconfirmed', '')).strip().lower()
+    human_pending = human not in ('', 'null', '~', 'none')
+    return final != 'done' or human_pending
+
+
 def public_review_status(fm):
     """Expose a conservative public review status from the source stages."""
     red_team = str((fm or {}).get('stage_red_team', '')).strip().lower()
     final = str((fm or {}).get('stage_final', '')).strip().lower()
+    human = str((fm or {}).get('human_unconfirmed', '')).strip().lower()
+    if human not in ('', 'null', '~', 'none'):
+        return 'amber', '待签（存在未确认事项）'
     if red_team == 'done' and final == 'done':
         return 'green', '终稿 (红蓝对抗完成)'
     if red_team != 'done':
@@ -2903,7 +2915,7 @@ def convert_md_to_html(md_path, *, reading_sidecar_path=None, promotion_metrics_
     )
     # P2.3：按 note_schema 显式分派；未知版本拒绝，不凭标题相似猜版本。
     note_schema = detect_note_schema(fm)
-    if note_schema == NOTE_SCHEMA_V2 and not bundle_backed:
+    if note_schema == NOTE_SCHEMA_V2 and not bundle_backed and reading_sidecar_path is None:
         parts = split_v2_body_and_appendix(content)
         if not parts["appendix_marker_found"]:
             raise UnsupportedNoteSchema(
@@ -2987,6 +2999,9 @@ def convert_md_to_html(md_path, *, reading_sidecar_path=None, promotion_metrics_
             promotion_metrics_shadow.render(promotion_metrics_shadow_path, date_str)
         )
 
+    if fm.get('_projection_notice'):
+        sections_html.insert(0, '<p class="projection-notice">' + html_escape(fm['_projection_notice']) + '</p>')
+
     # Assemble full HTML
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -3064,6 +3079,8 @@ def _apply_review_reading_sidecar(content, fm, md_path, sidecar_path):
     for key in ("review_reading", "_review_reading_v1", "_review_reading_source_gaps"):
         merged.pop(key, None)
     merged.update(projected)
+    merged['_projection_notice'] = review_reading.projection_notice(
+        sidecar_path, payload['source_revision'], _review_note_date(md_path, fm))
     return review_reading.render_sidecar_sections(payload["sections"]), merged
 
 
@@ -3087,10 +3104,16 @@ def read_review_input(md_path, *, reading_sidecar_path=None):
     # full JSON, receipt hashes or raw accounts into a public document.
     facts = parse_frontmatter(source['machine_text'])
     facts['note_schema'] = fm.get('note_schema')
+    for confirmation_key in ('stage_final', 'human_unconfirmed'):
+        if confirmation_key in fm:
+            facts[confirmation_key] = fm[confirmation_key]
     body = re.sub(r'\A---\s*\n.*?\n---\s*(?:\n|$)', '', source['reading_text'], count=1, flags=re.S)
     if reading_sidecar_path is not None:
         body, facts = _apply_review_reading_sidecar(
-            body, facts, md_path, reading_sidecar_path
+            body,
+            facts,
+            source.get('review_path') or md_path,
+            reading_sidecar_path,
         )
     else:
         facts = review_reading.adapt_frontmatter(facts)

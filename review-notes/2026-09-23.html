@@ -151,9 +151,9 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
   <div class="meta">
     <span class="chip green">情绪 待核</span>
     <span class="chip green">上证 3936.52 -0.39%</span>
-    <span class="chip blue">51涨停 / 13跌停</span>
-    <span class="chip purple">持仓已记录</span>
-    <span class="chip amber">待签（红方对抗未完成）</span>
+    <span class="chip blue">--涨停 / --跌停</span>
+    <span class="chip purple">持仓 待核验</span>
+    <span class="chip amber">待签（存在未确认事项）</span>
   </div>
 </div>
 
@@ -161,13 +161,14 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <div class="sidebar" id="sidebar">
   <div class="label">导航</div>
   <a href="#review-reading-1">1. 今天发生了什么</a>
-<a href="#review-reading-2">2. 哪些交易或遗漏值得讨论</a>
-<a href="#review-reading-3">3. 明天准备怎么做</a>
-<a href="#review-reading-4">4. 需要保留的一条经验</a>
+<a href="#review-reading-2">2. 我的判断和动作</a>
+<a href="#review-reading-3">3. 回头看</a>
+<a href="#review-reading-4">4. 下一步</a>
 </div>
 
 <div class="content">
 
+<p class="projection-notice">事后修订：本页包含补录或重新核对的内容，不代表交易当时已经可见。</p>
 <div class="section" id="review-reading-1">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
   <span class="tog">▼</span> 1. 今天发生了什么
@@ -176,21 +177,30 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 <div class="section" id="review-reading-2">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 2. 哪些交易或遗漏值得讨论
+  <span class="tog">▼</span> 2. 我的判断和动作
 </div>
-<div class="sb"><div class="para">个人盘感、预期差和若干笔成交原因均未提供。本文只记录正式成交时间与结果，不补写理由。</div></div>
+<div class="sb"><div class="sh2">预期差与盘感</div>
+<div class="para"><strong>今天发生了什么：</strong> 收盘快照记录三大指数下跌，成交额约1.76万亿元。盯盘笔记收盘记录东财涨停/跌停51/12、宽度82/23；统一数据通道日包记录涨/跌/炸板51/13/26。</div>
+<div class="para"><strong>我的判断和动作：</strong> 个人盘感、预期差和判断未提供。正式成交 GET 按交易日记录 若干笔：润泽科技买入 部分仓位；中粮糖业买入 部分仓位若干笔；楚天龙卖出 部分仓位。每笔原因字段为空，行情上下文状态为 unavailable；不补写操作原因。</div>
+<div class="para"><strong>回看与锚点：</strong> 盯盘收盘快照记录锡华科技21.49（-10.01%）、天顺风能7.16（-2.45%）、中科飞测381.32（+0.65%）、中晶科技36.00（+0.95%）。名称和当时价格可作观察事实；旧 盘前基准 角色及其对持仓的影响未经当日确认。</div>
+<div class="para"><strong>下一步：</strong> 次日预案、筛选、风格检测和红方均未完成；本稿不设方向、候选或交易触发条件。收盘包与晚间正式补录的持仓、资产差异已用后续账户基线回放核对，原因仍未提供。</div>
+<div class="sh2">持仓与交易</div>
+<div class="para">正式账本按 9 月 23 日成交日列出 若干笔晚间补录成交，详见文末“今日操作”表；个人操作原因未提供。盘中 收盘包的两只持仓是补录前快照，不能代表补录后的最终仓位。</div></div>
 </div>
 <div class="section" id="review-reading-3">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 3. 明天准备怎么做
+  <span class="tog">▼</span> 3. 回头看
 </div>
-<div class="sb"><div class="para">次日预案、筛选、风格检测和红方未完成；没有确认的观察对象、触发条件或持仓处理意见。</div></div>
+<div class="sb"><div class="sh2">今日认知</div>
+<div class="para">未提供个人复盘判断或认知。客观资料存在收盘涨跌停计数差异，且日包池证据没有可用 source_time；故计数按来源并列展示，不据此形成市场结论。</div></div>
 </div>
 <div class="section" id="review-reading-4">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 4. 需要保留的一条经验
+  <span class="tog">▼</span> 4. 下一步
 </div>
-<div class="sb"><div class="para">收盘包生成时间与正式成交记录入账时间必须分开说明；较早快照不能代表补录后的最终持仓。后续账户基线的回放结果应与原快照并列留痕。</div></div>
+<div class="sb"><div class="para"><strong>总基调</strong>：未确认；次日预案尚未完成，明日观察/处理对象与触发条件均未核实。</div>
+<div class="sh2">明日观察与处理</div>
+<div class="para">当前未确认明日观察对象、触发/失效条件或持仓处理方式。这里只记录收盘包（盘中，补录前）所载数量及晚间补录事实；不据此构成次日持有或调整建议。</div></div>
 </div>
 
 </div>

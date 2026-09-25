@@ -485,11 +485,13 @@ def build_daily_note(
         s2_text, _ = convert_review.extract_section(content, "二、心得与教训")
         s3_text, _ = convert_review.extract_section(content, "三、次日预案")
 
+    unconfirmed = convert_review.review_has_unconfirmed_state(fm)
     one_line = extract_one_line(s1_text, fm)
     cog_title, cog_body, cog_action = extract_first_cognition(
-        s2_text, allow_empty=reading_sections is not None or fm.get("stage_final") == "pending"
+        s2_text,
+        allow_empty=reading_sections is not None or fm.get("stage_final") == "pending",
     )
-    if fm.get("stage_final") == "pending" and (
+    if unconfirmed and (
         "未提供" in cog_title or "不足以提炼" in cog_body
     ):
         cog_title, cog_body, cog_action = "", "", ""
@@ -506,11 +508,14 @@ def build_daily_note(
         public_position_summary(fm.get("盘后持仓", "")),
     ]
 
+    if fm.get('_projection_notice'):
+        market_facts.append(fm['_projection_notice'])
+
     feeling = sanitize_public_text(user_feeling)
     if feeling:
         system_voice = f"{feeling} 系统的价值不是给出更激进的解释，而是把交易动作压回到门禁、风险和复盘证据上。"
-    elif fm.get("stage_final") == "pending":
-        system_voice = "系统汇集收盘事实与来源差异；个人判断和操作原因未提供。"
+    elif unconfirmed:
+        system_voice = "系统汇集收盘事实与来源差异；个人判断和操作原因未提供或尚未确认，终稿状态未闭合，未确认内容不作为明日动作公开。"
     else:
         system_voice = "系统今天的作用，是把主观解释压回到市场状态、风险门禁和复盘证据上，帮助人少做情绪化动作。"
 
@@ -527,7 +532,7 @@ def build_daily_note(
         system_voice=system_voice,
         watch_items=(
             ["次日观察与处理尚未确认。"]
-            if fm.get("stage_final") == "pending" else extract_watch_items(s3_text)
+            if unconfirmed else extract_watch_items(s3_text)
         ),
         tag=sanitize_public_text(tag),
     )

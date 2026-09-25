@@ -150,10 +150,10 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
   <div class="title">2026-09-24 周四 复盘笔记</div>
   <div class="meta">
     <span class="chip green">情绪 待核</span>
-    <span class="chip green">上证 3888.37 -1.22%</span>
-    <span class="chip blue">52涨停 / 13跌停</span>
+    <span class="chip green">上证 3888.37 待核</span>
+    <span class="chip blue">--涨停 / --跌停</span>
     <span class="chip purple">持仓已记录</span>
-    <span class="chip amber">待签（红方对抗未完成）</span>
+    <span class="chip amber">待签（存在未确认事项）</span>
   </div>
 </div>
 
@@ -161,13 +161,14 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <div class="sidebar" id="sidebar">
   <div class="label">导航</div>
   <a href="#review-reading-1">1. 今天发生了什么</a>
-<a href="#review-reading-2">2. 哪些交易或遗漏值得讨论</a>
-<a href="#review-reading-3">3. 明天准备怎么做</a>
-<a href="#review-reading-4">4. 需要保留的一条经验</a>
+<a href="#review-reading-2">2. 我的判断和动作</a>
+<a href="#review-reading-3">3. 回头看</a>
+<a href="#review-reading-4">4. 下一步</a>
 </div>
 
 <div class="content">
 
+<p class="projection-notice">事后修订：本页包含补录或重新核对的内容，不代表交易当时已经可见。</p>
 <div class="section" id="review-reading-1">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
   <span class="tog">▼</span> 1. 今天发生了什么
@@ -176,21 +177,36 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 </div>
 <div class="section" id="review-reading-2">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 2. 哪些交易或遗漏值得讨论
+  <span class="tog">▼</span> 2. 我的判断和动作
 </div>
-<div class="sb"><div class="para">收盘账户和次日可卖限制按正式回读留痕；这笔买入对应的规则容量与 W1 买入许可为关闭状态，不能由本稿事后追认。</div></div>
+<div class="sb"><div class="sh2">预期差与盘感</div>
+<div class="para"><strong>盘前基准</strong>：未提供。</div>
+<div class="para"><strong>实际竞价</strong>：快照见节点说明；个别来源覆盖不全。</div>
+<div class="para"><strong>盘面定性</strong>：未提供人工判断。</div>
+<div class="para"><strong>弈沐盘感</strong>：未提供。</div>
+<div class="sh2">持仓与交易</div>
+<div class="tw"><table><thead><tr><th>标的</th><th>代码</th><th>数量</th><th>成本</th><th>收盘价</th><th>当日盈亏</th><th>持仓盈亏</th><th>可卖/锁定</th><th>备注</th></tr></thead><tbody><tr><td>楚天龙</td><td>—</td><td>—</td><td>—</td><td>已脱敏</td><td>—</td><td>—</td><td>—</td><td>review source packet；记录— 成交事实核对 ok</td></tr><tr><td>润泽科技</td><td>—</td><td>—</td><td>—</td><td>已脱敏</td><td>—</td><td>—</td><td>—</td><td>account return 与 live quote 日涨幅口径不同</td></tr><tr><td>中粮糖业</td><td>—</td><td>—</td><td>—</td><td>已脱敏</td><td>—</td><td>—</td><td>—</td><td>review source packet；记录— 成交事实核对 ok</td></tr></tbody></table></div>
+<div class="para">9/23 盘中 的 live-dashboard 正式 <code>—</code> readback 补录了若干笔成交：买入润泽科技部分仓位、买入中粮糖业若干笔各部分仓位、卖出楚天龙部分仓位；这解释了9/—收盘持仓数量相对9/23 盘中 source packet 的变化。9/24 source packet 本日记录若干笔成交：盘中 买入润泽科技（—）部分仓位，成交价—；记录手续费0.00，来源为 成交事实核对，确认人 yimu。成交原因未提供，保持未确认。收盘总资产—元，日盈亏—（-1.08%），现金—，持仓市值—；账户估值与持仓批次核对标记均为完整/通过。</div>
+<div class="para">正式成交回读同时附有 盘中 的规则快照：<code>新增仓位条件—</code>、<code>新增仓位条件—</code>、W1 buy_allowed=false，阻断项含 <code>—</code>。这笔买入是已入账的事后回补事实，不能据此倒推当时已有新增买入授权；操作原因未提供，待后续核对。</div></div>
 </div>
 <div class="section" id="review-reading-3">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 3. 明天准备怎么做
+  <span class="tog">▼</span> 3. 回头看
 </div>
-<div class="sb"><div class="para">次日处理判断未提供；本周最后交易日后先做周事实回顾，保留数据口径和执行条件缺口，不生成交易授权。</div></div>
+<div class="sb"><div class="sh2">今日认知</div>
+<ol class="tight-list">
+<li>未提供弈沐的个人认知；现有材料不足以提炼可复用原则，留待确认。</li>
+</ol>
+<div class="sh2">独立审阅结论</div>
+<div class="para"><strong>最终结论</strong>：红方阶段未启动，暂无可确认的质疑、回应或采纳结论。</div>
+<div class="para"><strong>仍存分歧</strong>：情绪与宽度来源差异、交易原因和次日观察池待确认。</div></div>
 </div>
 <div class="section" id="review-reading-4">
 <div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> 4. 需要保留的一条经验
+  <span class="tog">▼</span> 4. 下一步
 </div>
-<div class="sb"><div class="para">收盘事实、数据质量和未提供的个人认知分开呈现；不从盈亏推导操作理由。</div></div>
+<div class="sb"><div class="sh2">明日观察与处理</div>
+<div class="para">未提供；待弈沐确认，不能从本事实稿推导持仓动作。</div></div>
 </div>
 
 </div>

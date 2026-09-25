@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import math
 import re
 from collections.abc import Mapping
 from datetime import date
@@ -18,7 +19,23 @@ from typing import Any
 
 SCHEMA = "review_reading.v1"
 POSITION_UNKNOWN = "__review_reading_position_unknown__"
-STATUS_VALUES = frozenset({"available", "missing", "explicit_empty", "conflict"})
+STATUS_VALUES = frozenset({
+    "available", "missing", "explicit_empty", "conflict", "quality_unknown", "malformed",
+})
+NON_VALUE_STATUSES = frozenset({
+    "missing", "conflict", "quality_unknown", "malformed",
+})
+MARKET_STATE_VALUES = frozenset({"冰点", "低迷", "主升", "强势", "高潮", "退潮"})
+PROFIT_EFFECT_VALUES = frozenset({"好", "一般", "差"})
+PROFIT_EFFECT_MISSING_VALUES = frozenset({"", "N", "n", "-", "未知", "未提供"})
+INDEPENDENT_SOURCE_FIELDS = frozenset({
+    "market.profit_effect",
+    "market.emotion",
+    "market.sh_index_pct",
+    "market.limit_up_count",
+    "market.limit_down_count",
+    "account.post_close_positions",
+})
 SOURCE_ID_RE = re.compile(r"^[A-Za-z0-9._:-]{1,160}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -48,24 +65,23 @@ class UnsupportedReviewReading(ValueError):
 
 
 def _valid_source_ref(ref: Any) -> bool:
-    if isinstance(ref, str):
-        return bool(ref.strip())
     if not isinstance(ref, Mapping):
+        return False
+    if not {"source_id", "revision", "locator"}.issubset(ref):
+        return False
+    if not set(ref).issubset({"source_id", "revision", "locator", "line"}):
         return False
     source_id = ref.get("source_id")
     if not isinstance(source_id, str) or not SOURCE_ID_RE.fullmatch(source_id):
         return False
     revision = ref.get("revision")
-    if revision is not None and (
-        not isinstance(revision, str) or not SHA256_RE.fullmatch(revision)
-    ):
+    if not isinstance(revision, str) or not SHA256_RE.fullmatch(revision):
         return False
-    section_id = ref.get("section_id")
-    if section_id is not None and (
-        not isinstance(section_id, str) or not section_id.strip() or len(section_id) > 180
-    ):
+    locator = ref.get("locator")
+    if not isinstance(locator, str) or not locator.strip() or len(locator) > 180:
         return False
-    return True
+    line = ref.get("line")
+    return line is None or (isinstance(line, int) and not isinstance(line, bool) and line > 0)
 
 
 def read_sidecar(
@@ -93,16 +109,24 @@ def read_sidecar(
         raise UnsupportedReviewReading("review_reading_source_date_invalid")
 
     source_revision = hashlib.sha256(source_bytes).hexdigest()
-    expected_name = f"{source_revision}.{SCHEMA}.json"
+    # Contract §6: a projection file is
+    #   <source_revision>[.<generator_version>.<evidence_fingerprint>].<schema>.json
+    # The versioned form is authoritative; the bare form is the legacy product.
+    versioned = re.fullmatch(
+        rf"{re.escape(source_revision)}\.[0-9A-Za-z._-]+\.{re.escape(SCHEMA)}\.json",
+        sidecar_path.name,
+    )
+    legacy = sidecar_path.name == f"{source_revision}.{SCHEMA}.json"
+    if not (versioned or legacy):
+        raise UnsupportedReviewReading("review_reading_sidecar_path_mismatch")
     expected_suffix = (
         "Market_Watch",
         "artifacts",
         "review-reading",
         str(parsed_date.year),
         source_date,
-        expected_name,
     )
-    if tuple(sidecar_path.parts[-len(expected_suffix):]) != expected_suffix:
+    if tuple(sidecar_path.parts[-(len(expected_suffix) + 1):-1]) != expected_suffix:
         raise UnsupportedReviewReading("review_reading_sidecar_path_mismatch")
     try:
         payload = json.loads(sidecar_path.read_text(encoding="utf-8"))
@@ -145,6 +169,31 @@ def read_sidecar(
     return payload
 
 
+def projection_notice(path: str | Path, source_revision: str, day: str) -> str:
+    """Expose timing uncertainty without leaking private index paths or hashes."""
+    import importlib.util
+    path = Path(path).resolve()
+    index_path = path.parent / '_index.json'
+    if not index_path.exists() and not index_path.is_symlink():
+        return '历史阅读投影；当时可见时点未核实。'
+    try:
+        module_path = Path(__file__).resolve().parents[2] / 'Market_Watch/scripts/review_reading_index.py'
+        spec = importlib.util.spec_from_file_location('_portal_projection_index', module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        market_root = path.parents[4]
+        index = module.load_index(market_root, day)
+        record = next(v for v in index['days'][day]['by_source_revision'][source_revision]['versions']
+                      if (market_root / v['path']).resolve() == path)
+    except Exception as exc:
+        raise UnsupportedReviewReading('review_reading_provenance_invalid') from exc
+    if record['post_hoc']:
+        return '事后修订：本页包含补录或重新核对的内容，不代表交易当时已经可见。'
+    if record.get('revision_reason') == 'generator_upgrade':
+        return '阅读格式升级；源笔记和事实文件版本未变。'
+    return '阅读投影；当时可见时点未核实。' if record.get('event_at') == 'unknown' else '阅读投影已记录事实时点。'
+
+
 def render_sidecar_sections(sections: Mapping[str, str]) -> str:
     """Adapt stable sidecar section keys to the existing Portal Markdown parser."""
     blocks = []
@@ -176,51 +225,128 @@ def _parse_projection(raw: Any) -> dict[str, Any] | None:
     return projection
 
 
-def _normalize_field(entry: Any, path: str) -> dict[str, Any]:
-    if entry is None:
-        return {"value": None, "status": "missing", "source_refs": [], "_source_gap_reason": "source_gap"}
-    if not isinstance(entry, Mapping):
-        raise UnsupportedReviewReading(f"invalid_review_reading_field:{path}")
-    if not {"value", "status", "source_refs"}.issubset(entry):
-        raise UnsupportedReviewReading(f"incomplete_review_reading_field:{path}")
-    status = str(entry.get("status") or "").strip()
-    if status not in STATUS_VALUES:
-        raise UnsupportedReviewReading(f"invalid_review_reading_status:{path}:{status}")
-    source_refs = entry.get("source_refs")
-    if not isinstance(source_refs, list) or any(not _valid_source_ref(ref) for ref in source_refs):
-        raise UnsupportedReviewReading(f"invalid_review_reading_source_refs:{path}")
-    refs = [dict(ref) if isinstance(ref, Mapping) else ref for ref in source_refs]
-    group, field = path.split(".", 1)
-    value = entry.get("value")
-    if status == "available" and not _has_confirmed_value(group, field, value):
-        return {"value": None, "status": "missing", "source_refs": refs, "_source_gap_reason": "unconfirmed_value_semantics"}
-    if status == "explicit_empty" and path == "account.post_close_positions":
-        if value not in (None, "", [], {}, "空仓"):
-            return {"value": None, "status": "conflict", "source_refs": refs, "_source_gap_reason": "explicit_empty_conflict"}
-    if status in {"available", "explicit_empty"} and not any(refs):
-        return {"value": None, "status": "missing", "source_refs": refs, "_source_gap_reason": "source_refs_missing"}
-    if status == "missing":
-        return {"value": None, "status": status, "source_refs": refs, "_source_gap_reason": "source_gap"}
-    if status == "conflict":
-        return {"value": None, "status": status, "source_refs": refs, "_source_gap_reason": "source_conflict"}
+def _degraded_field(
+    status: str,
+    refs: list[dict[str, Any]],
+    reason: str,
+) -> dict[str, Any]:
     return {
-        "value": value,
+        "value": None,
         "status": status,
         "source_refs": refs,
+        "_source_gap_reason": reason,
     }
 
 
-def _has_confirmed_value(group: str, field: str, value: Any) -> bool:
-    """Accept only types that match current Portal field semantics."""
-    if group == "account" and field == "post_close_positions":
-        return isinstance(value, str) and bool(value.strip()) and value.strip() != "空仓"
-    if field in {"market_state", "profit_effect"}:
-        return isinstance(value, str) and bool(value.strip())
-    if field in {"emotion", "sh_index_pct"}:
-        return isinstance(value, (int, float)) and not isinstance(value, bool)
-    if field in {"limit_up_count", "limit_down_count"}:
-        return isinstance(value, int) and not isinstance(value, bool) and value >= 0
-    return False
+def _normalize_value(path: str, value: Any) -> tuple[str, Any]:
+    """Return (status, normalized value) for the shared v1.2 field contract."""
+    if path == "market.market_state":
+        if isinstance(value, str) and value.strip() in MARKET_STATE_VALUES:
+            return "available", value.strip()
+        return "malformed", None
+    if path == "market.profit_effect":
+        if not isinstance(value, str):
+            return "malformed", None
+        text = value.strip()
+        if text in PROFIT_EFFECT_MISSING_VALUES:
+            return "missing", None
+        if text == "待核":
+            return "quality_unknown", None
+        match = re.fullmatch(r"(好|一般|差)\s*(?:[\(（].*[\)）])?", text)
+        if match:
+            return "available", match.group(1)
+        return "malformed", None
+    if path in {"market.emotion", "market.sh_index_pct"}:
+        normalized: int | float = value
+        if isinstance(value, str):
+            match = re.fullmatch(r"([-+]?(?:\d+\.?\d*|\.\d+))\s*%", value.strip())
+            if not match:
+                return "malformed", None
+            normalized = float(match.group(1))
+        if (
+            not isinstance(normalized, (int, float))
+            or isinstance(normalized, bool)
+            or not math.isfinite(float(normalized))
+        ):
+            return "malformed", None
+        if path == "market.emotion" and not 0 <= float(normalized) <= 100:
+            return "malformed", None
+        return "available", float(normalized)
+    if path in {"market.limit_up_count", "market.limit_down_count"}:
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+            return "available", value
+        return "malformed", None
+    if path == "account.post_close_positions":
+        if not isinstance(value, list) or not value:
+            return "malformed", None
+        for position in value:
+            if (
+                not isinstance(position, Mapping)
+                or not {"name", "qty", "cost"}.issubset(position)
+                or not set(position).issubset({"name", "qty", "cost"})
+                or not isinstance(position.get("name"), str)
+                or not position["name"].strip()
+                or not isinstance(position.get("qty"), (int, float))
+                or isinstance(position.get("qty"), bool)
+                or not math.isfinite(float(position["qty"]))
+                or float(position["qty"]) < 0
+                or not isinstance(position.get("cost"), (int, float))
+                or isinstance(position.get("cost"), bool)
+                or not math.isfinite(float(position["cost"]))
+                or float(position["cost"]) < 0
+            ):
+                return "malformed", None
+        return "available", [dict(position) for position in value]
+    return "malformed", None
+
+
+def _normalize_field(
+    entry: Any,
+    path: str,
+    *,
+    source_id: Any = None,
+    source_revision: Any = None,
+) -> dict[str, Any]:
+    if entry is None:
+        return _degraded_field("missing", [], "source_gap")
+    if not isinstance(entry, Mapping) or set(entry) != {"value", "status", "source_refs"}:
+        return _degraded_field("malformed", [], "field_envelope_invalid")
+    raw_status = entry.get("status")
+    status = str(raw_status or "").strip()
+    source_refs = entry.get("source_refs")
+    if status not in STATUS_VALUES:
+        return _degraded_field("quality_unknown", [], "unknown_status")
+    if not isinstance(source_refs, list) or any(not _valid_source_ref(ref) for ref in source_refs):
+        return _degraded_field("quality_unknown", [], "source_refs_invalid")
+    refs = [dict(ref) for ref in source_refs]
+    if status in NON_VALUE_STATUSES:
+        reason = "source_gap" if status == "missing" else f"{status}_value_hidden"
+        return _degraded_field(status, refs, reason)
+    if status == "explicit_empty":
+        if path == "account.post_close_positions" and entry.get("value") == [] and refs:
+            return {"value": [], "status": status, "source_refs": refs}
+        return _degraded_field("malformed", refs, "explicit_empty_invalid")
+    if not refs:
+        return _degraded_field("quality_unknown", refs, "source_refs_missing")
+    if path in INDEPENDENT_SOURCE_FIELDS and isinstance(source_id, str) and isinstance(source_revision, str):
+        independent = any(
+            ref["source_id"] != source_id or ref["revision"] != source_revision
+            for ref in refs
+        )
+        if not independent:
+            return _degraded_field("quality_unknown", refs, "independent_source_ref_missing")
+    value_status, value = _normalize_value(path, entry.get("value"))
+    if value_status != "available":
+        return _degraded_field(value_status, refs, "value_invalid")
+    return {"value": value, "status": "available", "source_refs": refs}
+
+
+def _position_summary(positions: list[dict[str, Any]]) -> str:
+    """Build the private adapter input consumed by existing Portal redaction."""
+    return "；".join(
+        f"{position['name']} {position['qty']}@{position['cost']}"
+        for position in positions
+    )
 
 
 def adapt_frontmatter(frontmatter: Mapping[str, Any]) -> dict[str, Any]:
@@ -230,9 +356,7 @@ def adapt_frontmatter(frontmatter: Mapping[str, Any]) -> dict[str, Any]:
     fields become ``--`` and never fall back to legacy values; an omitted or
     conflicted position is marked for review instead of being called empty.
     Raw position data stays in the internal field used by the existing
-    anonymizer and is only rendered through the existing public summary. The
-    proposed contract does not define position-item fields, so only the current
-    ReviewNote string form is considered available; other shapes become gaps.
+    anonymizer and is only rendered through the existing public summary.
     """
     result = dict(frontmatter or {})
     projection = _parse_projection(result.get("review_reading"))
@@ -244,19 +368,30 @@ def adapt_frontmatter(frontmatter: Mapping[str, Any]) -> dict[str, Any]:
         if metadata in projection:
             normalized[metadata] = projection[metadata]
     source_gaps: list[dict[str, Any]] = []
+    source_id = projection.get("source_id")
+    source_revision = projection.get("source_revision")
     for group, field, legacy_key in FIELD_MAP:
         path = f"{group}.{field}"
-        entry = _normalize_field(projection[group].get(field), path)
+        entry = _normalize_field(
+            projection[group].get(field),
+            path,
+            source_id=source_id,
+            source_revision=source_revision,
+        )
         normalized[group][field] = entry
-        if entry["status"] in {"missing", "conflict"}:
+        if entry["status"] not in {"available", "explicit_empty"}:
             source_gaps.append({
                 "field": path,
-                "status": "unknown",
+                "status": "quality_unknown",
                 "reason": entry.pop("_source_gap_reason", "source_gap"),
                 "source_refs": list(entry["source_refs"]),
             })
         if entry["status"] == "available":
-            mapped_value = entry["value"]
+            mapped_value = (
+                _position_summary(entry["value"])
+                if path == "account.post_close_positions"
+                else entry["value"]
+            )
         elif field == "post_close_positions":
             mapped_value = "空仓" if entry["status"] == "explicit_empty" else POSITION_UNKNOWN
         else:

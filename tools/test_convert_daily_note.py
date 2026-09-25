@@ -12,6 +12,7 @@ import convert_daily_note
 SAMPLE_REVIEW_NOTE = """---
 date: 2026-06-26
 weekday: 周五
+stage_final: done
 市场状态: 冰点
 赚钱效应: 差
 情绪值: 14.7
@@ -115,7 +116,7 @@ class ConvertDailyNoteTest(unittest.TestCase):
 
     def test_pending_note_does_not_publish_missing_cognition_as_a_lesson(self):
         source = SAMPLE_REVIEW_NOTE.replace(
-            "date: 2026-06-26", "date: 2026-06-26\nstage_final: pending"
+            "stage_final: done", "stage_final: pending"
         )
         source = source.replace(
             "**1. 冰点日先看系统门禁，再看观点**\n\n"

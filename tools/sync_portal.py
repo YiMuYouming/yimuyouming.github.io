@@ -31,7 +31,9 @@ Portal 有三条互不相干的生成链，顺序固定：
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -43,6 +45,9 @@ PORTAL = TOOLS.parent
 REVIEW_ROOT = Path(
     "/Users/yimu/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/复盘笔记"
 )
+MARKET_WATCH_ROOT = Path(
+    os.environ.get("MARKET_WATCH_ROOT") or PORTAL.parent / "Market_Watch"
+)
 
 
 def find_review_note(day: str) -> Path | None:
@@ -51,6 +56,61 @@ def find_review_note(day: str) -> Path | None:
     stamp = f"{year}_{month}_{daynum}_"
     matches = sorted(REVIEW_ROOT.glob(f"W*_第*周/{stamp}*ReviewNote.md"))
     return matches[0] if matches else None
+
+
+class ReadingDiscoveryError(ValueError):
+    """An indexed projection cannot be safely consumed."""
+
+
+def find_reading_sidecar(note: Path, day: str) -> Path | None:
+    """Return the optional sidecar bound to the resolved ReviewNote bytes."""
+    try:
+        note_bytes = note.read_bytes()
+        source_path = note
+        if re.search(rb"(?m)^daily_bundle_ref\s*:\s*\S", note_bytes):
+            try:
+                from daily_bundle_input import resolve_bundle_reading
+            except ImportError:
+                return None
+            try:
+                source = resolve_bundle_reading(note)
+            except (OSError, UnicodeError, ValueError):
+                return None
+            source_path = Path(source.get("review_path") or note)
+        revision = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    except OSError:
+        return None
+    # Contract §6: version selection is explicit (via the index), never by
+    # guessing the legacy file name.  Fall back to the bare legacy product only
+    # when no index exists yet.
+    folder = (
+        MARKET_WATCH_ROOT / "artifacts" / "review-reading" / day[:4] / day
+    )
+    legacy = folder / f"{revision}.review_reading.v1.json"
+    index_file = folder / "_index.json"
+    if not index_file.exists() and not index_file.is_symlink():
+        return legacy if legacy.is_file() else None
+    try:
+        import importlib.util
+        import pathlib as _pl
+        module_path = (
+            _pl.Path(__file__).resolve().parents[2] / "Market_Watch"
+            / "scripts" / "review_reading_index.py"
+        )
+        spec = importlib.util.spec_from_file_location("_sidecar_index", module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        version = module.resolve_current_version(MARKET_WATCH_ROOT, day, revision)
+    except Exception as exc:
+        raise ReadingDiscoveryError('review_reading_index_unavailable') from exc
+    candidate = MARKET_WATCH_ROOT / version["path"]
+    if candidate.is_symlink() or not candidate.is_file():
+        raise ReadingDiscoveryError('review_reading_index_target_missing')
+    try:
+        candidate.resolve(strict=True).relative_to(folder.resolve())
+    except ValueError as exc:
+        raise ReadingDiscoveryError('review_reading_index_target_outside_day') from exc
+    return candidate
 
 
 def read_pnl_last_date() -> str | None:
@@ -176,11 +236,18 @@ def main(argv: list[str] | None = None) -> int:
         print("完成: " + " → ".join(done))
         return 0 if args.allow_missing_reading else 3
 
+    try:
+        reading_sidecar = find_reading_sidecar(note, target_day)
+    except ReadingDiscoveryError as exc:
+        print(f"FAIL 阅读投影不可用: {exc}", flush=True)
+        return 4
+    reading_args = ["--reading-sidecar", str(reading_sidecar)] if reading_sidecar else []
+
     if not args.skip_review:
         page = review_page(target_day)
         if not run_step(
             f"② 复盘详情页（{note.name}）",
-            [str(TOOLS / "convert_review.py"), str(note)],
+            [str(TOOLS / "convert_review.py"), str(note), *reading_args],
             args.dry_run,
             supports_dry_run=False,
             dry_run_note=(
@@ -199,7 +266,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not run_step(
         f"③ 每日市场手记（{note.name}）",
-        [str(TOOLS / "convert_daily_note.py"), str(note)],
+        [str(TOOLS / "convert_daily_note.py"), str(note), *reading_args],
         args.dry_run,
     ):
         print("已完成: " + " → ".join(done))

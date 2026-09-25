@@ -5,11 +5,25 @@
   "$comment": "Strict on-disk sidecar contract emitted by the P3 sidecar_payload function. Producer-only date/body/content_status fields are not serialized. Inline ReviewNote frontmatter remains a transition-only compatibility path.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema", "source_id", "source_revision", "market", "account", "sections"],
+  "required": [
+    "schema",
+    "source_id",
+    "source_revision",
+    "market",
+    "account",
+    "sections"
+  ],
   "properties": {
-    "schema": { "const": "review_reading.v1" },
-    "source_id": { "$ref": "#/$defs/sourceId" },
-    "source_revision": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "schema": {
+      "const": "review_reading.v1"
+    },
+    "source_id": {
+      "$ref": "#/$defs/sourceId"
+    },
+    "source_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "market": {
       "type": "object",
       "additionalProperties": false,
@@ -22,23 +36,41 @@
         "limit_down_count"
       ],
       "properties": {
-        "market_state": { "$ref": "#/$defs/sourceBoundValue", "description": "Current effective market-state conclusion and source references." },
-        "profit_effect": { "$ref": "#/$defs/sourceBoundValue", "description": "Approved profit-effect term and source references." },
-        "emotion": { "$ref": "#/$defs/sourceBoundValue", "description": "Current-day emotion value and source references." },
-        "sh_index_pct": { "$ref": "#/$defs/sourceBoundValue", "description": "Shanghai Composite percentage change, preserving source unit semantics." },
-        "limit_up_count": { "$ref": "#/$defs/sourceBoundValue", "description": "Limit-up count under the existing statistics scope; missing is not zero." },
-        "limit_down_count": { "$ref": "#/$defs/sourceBoundValue", "description": "Limit-down count under the existing statistics scope; missing is not zero." }
+        "market_state": {
+          "$ref": "#/$defs/marketStateValue"
+        },
+        "profit_effect": {
+          "$ref": "#/$defs/profitEffectValue"
+        },
+        "emotion": {
+          "$ref": "#/$defs/emotionValue"
+        },
+        "sh_index_pct": {
+          "$ref": "#/$defs/shIndexPctValue"
+        },
+        "limit_up_count": {
+          "$ref": "#/$defs/countValue"
+        },
+        "limit_down_count": {
+          "$ref": "#/$defs/countValue"
+        }
       }
     },
     "account": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["post_close_positions"],
+      "required": [
+        "post_close_positions"
+      ],
       "properties": {
-        "post_close_positions": { "$ref": "#/$defs/sourceBoundValue", "description": "Private-only post-close positions. Public conversion must use the existing redacted summary." }
+        "post_close_positions": {
+          "$ref": "#/$defs/postClosePositionsValue"
+        }
       }
     },
-    "sections": { "$ref": "#/$defs/readingSections" }
+    "sections": {
+      "$ref": "#/$defs/readingSections"
+    }
   },
   "$defs": {
     "sourceId": {
@@ -48,53 +80,193 @@
       "pattern": "^[A-Za-z0-9._:-]{1,160}$"
     },
     "sourceRef": {
-      "oneOf": [
-        { "type": "string", "minLength": 1, "pattern": "\\S" },
-        {
-          "type": "object",
-          "required": ["source_id"],
-          "properties": {
-            "source_id": { "$ref": "#/$defs/sourceId" },
-            "revision": {
-              "oneOf": [
-                { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-                { "type": "null" }
-              ]
-            },
-            "section_id": { "type": "string", "minLength": 1, "maxLength": 180, "pattern": "\\S" }
-          },
-          "additionalProperties": true
+      "$comment": "v1.2: strings and partial refs are no longer acceptable evidence.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "revision",
+        "locator"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/sourceId"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
         }
-      ]
+      }
     },
     "sourceBoundValue": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["value", "status", "source_refs"],
+      "required": [
+        "value",
+        "status",
+        "source_refs"
+      ],
       "properties": {
         "value": {
           "description": "Producer value. Its concrete type is intentionally open until the producer contract is confirmed."
         },
         "status": {
-          "type": "string",
-          "enum": ["available", "missing", "explicit_empty", "conflict"]
+          "$ref": "#/$defs/status"
         },
         "source_refs": {
           "type": "array",
-          "items": { "$ref": "#/$defs/sourceRef" }
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
         }
       }
     },
     "readingSections": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["today_happened", "judgment_and_actions", "looking_back", "next_step"],
+      "required": [
+        "today_happened",
+        "judgment_and_actions",
+        "looking_back",
+        "next_step"
+      ],
       "properties": {
-        "today_happened": { "type": "string" },
-        "judgment_and_actions": { "type": "string" },
-        "looking_back": { "type": "string", "description": "May be empty when there is no new cognition." },
-        "next_step": { "type": "string" }
+        "today_happened": {
+          "type": "string"
+        },
+        "judgment_and_actions": {
+          "type": "string"
+        },
+        "looking_back": {
+          "type": "string",
+          "description": "May be empty when there is no new cognition."
+        },
+        "next_step": {
+          "type": "string"
+        }
       }
+    },
+    "status": {
+      "$comment": "Contract v1.2: six statuses. Unknown statuses must degrade to quality_unknown at read time; malformed means present but illegal (bad vocabulary / bad field shape).",
+      "type": "string",
+      "enum": [
+        "available",
+        "missing",
+        "explicit_empty",
+        "conflict",
+        "quality_unknown",
+        "malformed"
+      ]
+    },
+    "marketState": {
+      "type": "string",
+      "enum": [
+        "冰点",
+        "低迷",
+        "主升",
+        "强势",
+        "高潮",
+        "退潮"
+      ]
+    },
+    "profitEffect": {
+      "type": "string",
+      "enum": [
+        "好",
+        "一般",
+        "差"
+      ]
+    },
+    "emotion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "shIndexPct": {
+      "type": "number"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "qty",
+        "cost"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "qty": {
+          "type": "integer"
+        },
+        "cost": {
+          "type": "number"
+        }
+      }
+    },
+    "postClosePositions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "marketStateValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
+    },
+    "profitEffectValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
+    },
+    "emotionValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
+    },
+    "shIndexPctValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
+    },
+    "countValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
+    },
+    "postClosePositionsValue": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/status"
+        }
+      ]
     }
   }
 }
