@@ -3290,6 +3290,8 @@ def build_period_review_card(path):
     kind_cls = "review-kind-weekly" if info["kind"] == "weekly" else "review-kind-monthly"
     metric_period = "周期" if info["kind"] == "weekly" else "区间"
     metric_return = extract_period_metric(html, ["周度收益", "月度收益", "收益"])
+    weekly_summary = re.search(r'<meta name="weekly-summary" content="([^"]+)">', html)
+    metric_return_label = "收益参考" if weekly_summary and "收益待复核" in weekly_summary.group(1) else "收益"
     metric_days = extract_period_metric(html, ["交易日"], "阶段")
     metric_focus = extract_period_metric(html, ["风控事件", "月末仓位", "周末仓位"], kind_label)
     card_id = f"recent-review-{info['kind']}-{start_id}-{end_id}"
@@ -3300,7 +3302,7 @@ def build_period_review_card(path):
         "html": f'''          <a id="{card_id}" href="review-notes/{path.name}?from={card_id}" class="recent-review-card period-review-card {info["kind"]}-review-card">
             <div class="recent-review-top"><span class="recent-date">{label}</span><span class="review-kind {kind_cls}">{kind_label}</span><span class="review-read">阅读 →</span></div>
             <div class="recent-review-title">{html_escape(title)}</div>
-            <div class="review-metric-row"><span class="metric-structure"><em>{metric_period}</em><strong>{html_escape(metric_label)}</strong></span><span class="metric-strong"><em>收益</em><strong>{html_escape(metric_return)}</strong></span><span class="metric-warn"><em>交易日</em><strong>{html_escape(metric_days)}</strong></span><span class="metric-risk"><em>重点</em><strong>{html_escape(metric_focus)}</strong></span></div>
+            <div class="review-metric-row"><span class="metric-structure"><em>{metric_period}</em><strong>{html_escape(metric_label)}</strong></span><span class="metric-strong"><em>{metric_return_label}</em><strong>{html_escape(metric_return)}</strong></span><span class="metric-warn"><em>交易日</em><strong>{html_escape(metric_days)}</strong></span><span class="metric-risk"><em>重点</em><strong>{html_escape(metric_focus)}</strong></span></div>
     </a>
 ''',
     }
@@ -3392,7 +3394,7 @@ def rebuild_recent_review_timeline(content, current_date, current_daily_card):
     if not bounds:
         return content
     inner_start, inner_end = bounds
-    timeline_html = "\n" + "".join(card["html"] for card in cards) + "        "
+    timeline_html = "\n" + "".join(card["html"].strip() + "\n" for card in cards) + "        "
     return content[:inner_start] + timeline_html + content[inner_end:]
 
 

@@ -9,6 +9,8 @@
 
 ### Step 0: 日常收盘只跑统一入口
 
+周复盘不在以下三条日常生成链中。Vault 有周复盘时，先按现有周报页面样式制作经过公开信息筛选的 `review-notes/weekly-YYYY-MM-DD_MM-DD.html`，再运行 `python3 tools/sync_weekly_review.py review-notes/weekly-YYYY-MM-DD_MM-DD.html`。该脚本更新首页近期卡片、周报入口和首页/归档计数；完成后仍须按 Step 4.5 验证并发布。周复盘草稿不得直接投入日复盘转换器，页面应明确标明未确认的收益及个人判断。
+
 Portal 有**三条互不相干的生成链**，且**顺序不能颠倒**：
 
 | 顺序 | 链 | 脚本 | 写入 |
