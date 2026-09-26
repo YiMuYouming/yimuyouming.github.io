@@ -1008,7 +1008,9 @@ weekday: 周五
 
         for secret in ("1900", "54.30", "55.00", "53.96"):
             self.assertNotIn(secret, html)
-        self.assertIn("+1.29%", html)
+        # 2.0 公开口径（2026-09-27）：个股浮盈亏百分比不公开，只保留「浮盈」字样。
+        self.assertNotIn("+1.29%", html)
+        self.assertIn("浮盈", html)
 
     def test_public_review_cells_redact_bare_position_quantities(self):
         self.assertEqual(
@@ -1514,7 +1516,9 @@ weekday: 周五
         ):
             self.assertNotIn(secret.lower(), text.lower())
         self.assertIn("+2.90%", text)
-        self.assertIn("-3.81%", text)
+        # 2.0 公开口径（2026-09-27）：个股浮盈亏百分比不公开。
+        self.assertNotIn("-3.81%", text)
+        self.assertIn("最大浮亏", text)
         self.assertIn("风险约束", text)
 
     def test_public_review_text_redacts_post_action_and_pressure_prices(self):

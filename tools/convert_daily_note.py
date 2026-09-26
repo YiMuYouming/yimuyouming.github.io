@@ -142,6 +142,8 @@ def sanitize_public_text(text: str) -> str:
         line = raw.strip()
         if not line:
             continue
+        line = re.sub(r"[（(]\s*浮[亏盈]\s*[-+−]?\d+(?:\.\d+)?%\s*[）)]", "", line)
+        line = re.sub(r"浮([亏盈])\s*[-+−]?\d+(?:\.\d+)?%\s?", r"浮\1", line)
         line = re.sub(r"\s*`?WEEK_STOP`?", "周回撤门禁", line, flags=re.I)
         line = re.sub(r"\s*`?LOSS_STREAK`?", "连亏门禁", line, flags=re.I)
         line = re.sub(r"\s*`?W1_PROMOTION`?", "窗口门禁", line, flags=re.I)

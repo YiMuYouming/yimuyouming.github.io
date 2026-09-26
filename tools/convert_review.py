@@ -412,6 +412,9 @@ def _finalize_public_readability(text):
 def sanitize_public_review_text(text, redact_internal_labels=True):
     """Redact account-specific execution details from the public review layer."""
     cleaned = str(text or '')
+    # 2.0 公开口径（2026-09-27 弈沐确认）：只公开组合层面的收益，个股浮盈亏百分比不上公开页。
+    cleaned = re.sub(r'[（(]\s*浮[亏盈]\s*[-+−]?\d+(?:\.\d+)?%\s*[）)]', '', cleaned)
+    cleaned = re.sub(r'浮([亏盈])\s*[-+−]?\d+(?:\.\d+)?%\s?', r'浮\1', cleaned)
     # 先保护 Markdown 表头行（含分隔行）：表头是结构契约，脱敏不得改写
     # （2026-09-21，此前 `T+1可卖` 会被改写成「可卖状态—」）。末尾原样还原。
     head_guard: dict[str, str] = {}
