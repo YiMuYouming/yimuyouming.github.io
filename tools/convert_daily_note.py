@@ -476,7 +476,7 @@ def public_market_facts(fm: dict) -> list[str]:
     家数、市场量能。 持仓状态、市场状态叙述等一律不取——公开层不暴露持仓。
     """
     facts: list[str] = []
-    emotion = convert_review.pct_text(fm.get("情绪值", "--"))
+    emotion = convert_review.public_emotion_text(fm.get("情绪值", "--"))
     facts.append(f"情绪值：{emotion} {convert_review.public_emotion_tier(fm.get('情绪值', '--'))}")
     facts.append(f"上证涨幅：{convert_review.pct_text(fm.get('上证涨幅', '--'), signed=True)}")
     facts.append(f"涨跌停：{fm.get('涨停家数', '--')} / {fm.get('跌停家数', '--')}")

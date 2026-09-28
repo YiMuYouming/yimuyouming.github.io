@@ -2934,6 +2934,21 @@ def public_draft_effective(date_str: str) -> bool:
     return bool(date_str) and date_str >= PUBLIC_DRAFT_EFFECTIVE_DATE
 
 
+def public_emotion_text(value) -> str:
+    """Indicator-row emotion: one decimal place (公开稿正文保持作者原写法).
+
+    9-28 的指标行原样输出 ``16.471%``，与公开稿里的「16.5」不一致；指标行统一
+    收敛到 1 位小数（HANDOFF_3 第 2 项）。非数字（N / — / --）沿用待核。
+    """
+    raw = str(value).strip()
+    if raw in ("", "N", "--", "—", "None", "null"):
+        return "待核"
+    number = numeric_value(raw)
+    if number is None:
+        return pct_text(raw)
+    return f"{round(number, 1):.1f}%"
+
+
 def public_emotion_tier(value) -> str:
     """Emotion band text used next to the raw value (e.g. ``16.5 冰点``)."""
     number = numeric_value(value)
@@ -2991,7 +3006,7 @@ def html_public_v2_topbar(fm: dict) -> str:
     whitelist path must not publish (E7 / E3).
     """
     emo_raw = fm.get("情绪值", "--")
-    emo = pct_text(emo_raw)
+    emo = public_emotion_text(emo_raw)
     sh_idx = fm.get("上证指数", "--")
     sh_pct = pct_text(fm.get("上证涨幅", "--"), signed=True)
     zt = fm.get("涨停家数", "--")
@@ -3019,7 +3034,7 @@ def html_public_v2_topbar(fm: dict) -> str:
 
 
 def _public_v2_metric_row(fm: dict) -> str:
-    emo = pct_text(fm.get("情绪值", "--"))
+    emo = public_emotion_text(fm.get("情绪值", "--"))
     sh_pct = pct_text(fm.get("上证涨幅", "--"), signed=True)
     zt = fm.get("涨停家数", "--")
     dt = fm.get("跌停家数", "--")
@@ -3809,7 +3824,7 @@ def update_main_index(date_str, fm, public_draft=None):
     zt = fm.get('涨停家数', '--')
     dt = fm.get('跌停家数', '--')
     emo_raw = fm.get('情绪值', '--')
-    emo = pct_text(emo_raw)
+    emo = public_emotion_text(emo_raw)
     desc = desc_from_fm(fm)
 
     emo_num = numeric_value(emo_raw)

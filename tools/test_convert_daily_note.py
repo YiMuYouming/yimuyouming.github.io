@@ -841,7 +841,7 @@ class PublicDraftDailyNoteTests(unittest.TestCase):
             note_path = self._write(tmp, PUBLIC_NOTE)
             note = convert_daily_note.build_daily_note(note_path)
             joined = " ".join(note.market_facts)
-            self.assertIn("情绪值：16.471%", joined)
+            self.assertIn("情绪值：16.5%", joined)
             self.assertIn("冰点", joined)
             self.assertIn("上证涨幅：-1.67%", joined)
             self.assertIn("涨跌停：33 / 56", joined)
