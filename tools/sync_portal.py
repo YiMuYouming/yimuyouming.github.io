@@ -25,7 +25,8 @@ Portal 有三条互不相干的生成链，顺序固定：
     python3 tools/sync_portal.py --skip-reading       # 只到复盘详情页
 
 退出码：0 成功；1 参数错；2 首页数据失败；3 缺 ReviewNote 且未加
-``--allow-missing-reading``；4 复盘详情页失败；5 手记失败。
+``--allow-missing-reading``；4 复盘详情页失败；5 手记失败；6 隐私红线命中
+（不推送，本次生成的页面不进入发布）。
 """
 
 from __future__ import annotations
@@ -278,6 +279,33 @@ def main(argv: list[str] | None = None) -> int:
         print("已完成: " + " → ".join(done))
         return 5
     done.append("③ 每日市场手记")
+
+    # ④ 隐私红线门禁（2026-09-28）：只检查本次生成/修改的文件。
+    redline_files = [
+        PORTAL / "index.html",
+        review_page(target_day),
+        PORTAL / "review-notes" / "index.html",
+        daily_note_page(target_day),
+        PORTAL / "daily-notes" / "index.html",
+    ]
+    existing = [path for path in redline_files if path.is_file()]
+    if not run_step(
+        "④ 隐私红线检查（本次生成/修改的页面）",
+        [str(TOOLS / "portal_check.py"), "--redline",
+         *([] if args.source is None else ["--redline-source", args.source]),
+         "--review-note", str(note),
+         *[str(path) for path in existing]],
+        args.dry_run,
+        supports_dry_run=False,
+        dry_run_note=(
+            f"将对 {len(existing)} 个本次页面跑隐私红线门禁"
+            "（portal_check.py 无 --dry-run）"
+        ),
+    ):
+        print("已完成: " + " → ".join(done))
+        print("FAIL 隐私红线命中：本次页面不推送", flush=True)
+        return 6
+    done.append("④ 隐私红线")
 
     print("完成: " + " → ".join(done))
     return 0

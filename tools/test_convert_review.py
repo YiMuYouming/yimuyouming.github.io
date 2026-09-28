@@ -1880,3 +1880,154 @@ weekday: 周五
 
 if __name__ == "__main__":
     unittest.main()
+
+
+PUBLIC_REVIEW_NOTE = """---
+date: 2026-09-28
+weekday: 周一
+note_schema: yimu.review.v2
+stage_final: done
+情绪值: 16.471
+上证指数: 3823.62
+上证涨幅: -1.67%
+涨停家数: 33
+跌停家数: 56
+市场量能: 1.70万亿
+盘后持仓: "润泽科技 1000@66.22"
+---
+
+## 1. 今天发生了什么
+
+市场事实。
+
+<!-- guanchao-generated:proposal:start -->
+## 机器附录（自动生成）
+
+| 规则 | 值 |
+| --- | --- |
+| sha256 | deadbeef |
+
+### 公开稿
+
+- 标题：冰点里的减法
+- 今天：情绪 16.5 冰点，指数放量下跌，37 个行业只有 6 个净流入、33 只涨停里 26 只首板；把风险敞口从 46.66% 降到 10.41%。
+- 一句认知：问题不在胜率，在单笔尾部——一次不肯认错的持仓，就能吃掉几十笔盈利。
+
+### 持仓与交易
+
+| 时间 | 操作 | 标的 |
+| --- | --- | --- |
+| 10:33 | 卖出 | 润泽科技 1000 股 |
+"""
+
+
+class PublicV2ReviewTests(unittest.TestCase):
+    def test_extract_public_draft_reads_only_whitelisted_bullets(self):
+        draft = convert_review.extract_public_draft(PUBLIC_REVIEW_NOTE)
+        self.assertEqual("冰点里的减法", draft["title"])
+        self.assertIn("16.5 冰点", draft["today"])
+        self.assertIn("46.66% 降到 10.41%", draft["today"])
+        self.assertIn("单笔尾部", draft["cognition"])
+        self.assertNotIn("明天看什么", draft)
+
+    def test_extract_public_draft_returns_none_without_section(self):
+        self.assertIsNone(convert_review.extract_public_draft("# no section here\n"))
+
+    def test_public_draft_effective_date_boundary(self):
+        self.assertTrue(convert_review.public_draft_effective("2026-09-28"))
+        self.assertTrue(convert_review.public_draft_effective("2026-10-09"))
+        self.assertFalse(convert_review.public_draft_effective("2026-09-27"))
+        self.assertFalse(convert_review.public_draft_effective(""))
+
+    def test_emotion_tier_text(self):
+        self.assertEqual("冰点", convert_review.public_emotion_tier("16.471"))
+        self.assertEqual("低迷", convert_review.public_emotion_tier("30"))
+        self.assertEqual("中性", convert_review.public_emotion_tier("40"))
+        self.assertEqual("高涨", convert_review.public_emotion_tier("60"))
+        self.assertEqual("待核", convert_review.public_emotion_tier("N"))
+
+    def test_public_page_contains_only_whitelisted_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            original = convert_review.REVIEW_NOTES
+            convert_review.REVIEW_NOTES = Path(tmp)
+            try:
+                note = Path(tmp) / "2026_9_28_Monday_ReviewNote.md"
+                note.write_text(PUBLIC_REVIEW_NOTE, encoding="utf-8")
+                date_str, path = convert_review.convert_md_to_html(note)
+            finally:
+                convert_review.REVIEW_NOTES = original
+            self.assertEqual("2026-09-28", date_str)
+            html = path.read_text(encoding="utf-8")
+            self.assertIn("冰点里的减法", html)
+            self.assertIn("46.66% 降到 10.41%", html)
+            self.assertIn("一句认知", html)
+            self.assertIn("33涨停", html)
+            # 不出现：持仓、个股、机器附录、阶段徽标、脱敏残渣
+            self.assertNotIn("润泽科技", html)
+            self.assertNotIn("sha256", html)
+            self.assertNotIn("deadbeef", html)
+            self.assertNotIn("终稿", html)
+            self.assertNotIn("红蓝对抗完成", html)
+            self.assertNotIn("阅读投影", html)
+            # 持仓数据不出现（边界声明文案里的「持仓」二字除外）
+            self.assertNotIn("润泽科技", html)
+            self.assertNotIn("1000@", html)
+            self.assertNotIn("盘后持仓", html)
+            self.assertIn("不构成投资建议", html)
+
+    def test_indicators_only_page_has_no_body(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            original = convert_review.REVIEW_NOTES
+            convert_review.REVIEW_NOTES = Path(tmp)
+            try:
+                note = Path(tmp) / "2026_9_24_Thursday_ReviewNote.md"
+                note.write_text(
+                    PUBLIC_REVIEW_NOTE.replace("date: 2026-09-28", "date: 2026-09-24"),
+                    encoding="utf-8",
+                )
+                _date, path = convert_review.convert_md_to_html(note, indicators_only=True)
+            finally:
+                convert_review.REVIEW_NOTES = original
+            html = path.read_text(encoding="utf-8")
+            self.assertNotIn("冰点里的减法", html)
+            self.assertNotIn("润泽科技", html)
+            self.assertNotIn("机器附录", html)
+            self.assertIn("33涨停", html)
+            self.assertIn("不构成投资建议", html)
+
+    def test_legacy_date_keeps_old_path(self):
+        legacy = """---
+date: 2026-09-24
+weekday: 周四
+note_schema: yimu.review.v1
+stage_final: done
+---
+## 一、当日复盘
+正文
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            original = convert_review.REVIEW_NOTES
+            convert_review.REVIEW_NOTES = Path(tmp)
+            try:
+                note = Path(tmp) / "2026_9_24_Thursday_ReviewNote.md"
+                note.write_text(legacy, encoding="utf-8")
+            finally:
+                convert_review.REVIEW_NOTES = original
+            date_str, path = convert_review.convert_md_to_html(note)
+            self.assertEqual("2026-09-24", date_str)
+            html = path.read_text(encoding="utf-8")
+            self.assertNotIn("public-v2-title", html)
+
+    def test_normalize_archive_position_tags_removes_names_and_duplicates(self):
+        content = (
+            '<a href="2026-08-24.html" class="day-card"><span class="tag tag-a">持仓 深信+通宇+中大</span></a>'
+            '<a href="2026-09-22.html" class="day-card"><span class="tag tag-a">持仓 持仓</span></a>'
+            '<a href="2026-09-21.html" class="day-card"><span class="tag tag-g">持仓 空仓</span></a>'
+        )
+        out = convert_review.normalize_archive_position_tags(content)
+        self.assertIn("持仓</span>", out)
+        self.assertNotIn("深信", out)
+        self.assertNotIn("持仓 持仓", out)
+        self.assertIn("空仓", out)
+        # 日期与链接不受影响
+        self.assertIn('href="2026-08-24.html"', out)

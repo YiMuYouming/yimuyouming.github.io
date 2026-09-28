@@ -1,5 +1,6 @@
 import contextlib
 import io
+import re
 import sys
 import tempfile
 import unittest
@@ -732,9 +733,190 @@ class ConvertDailyNoteTest(unittest.TestCase):
 
         home = (self.root / "index.html").read_text(encoding="utf-8")
         self.assertIn('class="daily-note-mini daily-note-secondary"', home)
-        self.assertIn("冰点日更重要的是确认系统有没有帮人少犯错", home)
         self.assertIn("daily-note-mini-tag", home)
+        # 2026-06-26 早于公开稿白名单生效日（2026-09-28）：活聚合页只显示日期，
+        # 标题与摘要留给历史页本身（国庆全量红线清单再处理）。
+        card = re.search(
+            r'<a class="daily-note-mini daily-note-secondary"[^>]*>.*?</a>', home, re.S
+        )
+        self.assertIsNotNone(card)
+        self.assertIn("2026-06-26", card.group(0))
+        self.assertNotIn("冰点日更重要的是确认系统有没有帮人少犯错", card.group(0))
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+PUBLIC_NOTE = """---
+date: 2026-09-28
+weekday: 周一
+stage_final: done
+情绪值: 16.471
+上证指数: 3823.62
+上证涨幅: -1.67%
+涨停家数: 33
+跌停家数: 56
+市场量能: 1.70万亿
+盘后持仓: "润泽科技 1000@66.22"
+---
+
+## 二、心得与教训
+
+### 今日认知
+
+1. **问题不在胜率**：一次不肯认错的持仓，就能吃掉几十笔盈利。
+
+## 三、次日预案初稿
+
+**总基调**：节前收缩、只处置不加仓。
+
+### 公开稿
+
+- 标题：冰点里的减法
+- 今天：情绪 16.5 冰点，指数放量下跌，37 个行业只有 6 个净流入、33 只涨停里 26 只首板；把风险敞口从 46.66% 降到 10.41%。
+- 一句认知：问题不在胜率，在单笔尾部——一次不肯认错的持仓，就能吃掉几十笔盈利。
+
+### 持仓与交易
+
+| 时间 | 操作 | 标的 |
+| --- | --- | --- |
+| 10:33 | 卖出 | 润泽科技 1000 股 |
+"""
+
+INDICATOR_ONLY_NOTE = """---
+date: 2026-09-24
+weekday: 周四
+stage_final: done
+情绪值: 20.6414
+上证指数: 3865.33
+上证涨幅: -0.39%
+涨停家数: 45
+跌停家数: 12
+市场量能: 2.10万亿
+---
+
+## 一、当日复盘
+
+### 一句话结论
+
+先确认系统约束，再处理主观判断。
+
+### 持仓与交易
+
+| 时间 | 操作 | 标的 |
+| --- | --- | --- |
+| 14:05 | 卖出 | 兴森科技 7000 股 |
+"""
+
+
+class PublicDraftDailyNoteTests(unittest.TestCase):
+    def _write(self, tmp, content, name="note.md"):
+        path = Path(tmp) / name
+        path.write_text(content, encoding="utf-8")
+        return path
+
+    def test_public_draft_becomes_title_summary_and_cognition(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, PUBLIC_NOTE)
+            note = convert_daily_note.build_daily_note(note_path)
+            self.assertTrue(note.public_mode)
+            self.assertEqual("冰点里的减法", note.title)
+            self.assertIn("16.5 冰点", note.summary)
+            self.assertIn("46.66% 降到 10.41%", note.summary)
+            self.assertEqual(
+                "问题不在胜率，在单笔尾部——一次不肯认错的持仓，就能吃掉几十笔盈利。",
+                note.card_summary,
+            )
+
+    def test_legacy_sections_are_not_read_on_public_dates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, PUBLIC_NOTE)
+            note = convert_daily_note.build_daily_note(note_path)
+            self.assertNotIn("节前收缩", note.summary + note.card_summary)
+            self.assertEqual([], note.watch_items)
+
+    def test_market_facts_are_frontmatter_only_four_items(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, PUBLIC_NOTE)
+            note = convert_daily_note.build_daily_note(note_path)
+            joined = " ".join(note.market_facts)
+            self.assertIn("情绪值：16.471%", joined)
+            self.assertIn("冰点", joined)
+            self.assertIn("上证涨幅：-1.67%", joined)
+            self.assertIn("涨跌停：33 / 56", joined)
+            self.assertIn("市场量能：1.70万亿", joined)
+            self.assertNotIn("持仓", joined)
+            self.assertNotIn("润泽科技", joined)
+            self.assertEqual(4, len(note.market_facts))
+
+    def test_missing_public_draft_yields_indicators_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, INDICATOR_ONLY_NOTE)
+            note = convert_daily_note.build_daily_note(note_path, indicators_only=True)
+            self.assertTrue(note.public_mode)
+            self.assertIsNone(note.public_draft)
+            self.assertEqual("", note.summary)
+            self.assertEqual("", note.card_summary)
+            self.assertEqual(4, len(note.market_facts))
+
+    def test_public_page_omits_legacy_panels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, PUBLIC_NOTE)
+            note = convert_daily_note.build_daily_note(note_path)
+            html = convert_daily_note.render_daily_note_page(note)
+            self.assertIn("冰点里的减法", html)
+            self.assertIn("一句认知", html)
+            self.assertIn("46.66% 降到 10.41%", html)
+            self.assertNotIn("今日一个认知", html)
+            self.assertNotIn("系统今天做了什么", html)
+            self.assertNotIn("明日只看什么", html)
+            self.assertNotIn("润泽科技", html)
+
+    def test_indicators_only_page_has_no_prose(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, INDICATOR_ONLY_NOTE)
+            note = convert_daily_note.build_daily_note(note_path, indicators_only=True)
+            html = convert_daily_note.render_daily_note_page(note)
+            self.assertNotIn("先确认系统约束", html)
+            self.assertNotIn("兴森科技", html)
+            self.assertIn("涨跌停：45 / 12", html)
+
+    def test_legacy_dates_keep_the_old_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            note_path = self._write(tmp, INDICATOR_ONLY_NOTE.replace("date: 2026-09-24", "date: 2026-09-21"))
+            note = convert_daily_note.build_daily_note(note_path)
+            self.assertFalse(note.public_mode)
+            self.assertIn("先确认系统约束", note.summary)
+
+
+class LegacyArchiveCardTests(unittest.TestCase):
+    """白名单生效日之前的手记归档卡只显示日期（PORTAL_FIX_NOW §1 / §4）。"""
+
+    def test_legacy_cards_drop_title_and_summary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            original = convert_daily_note.DAILY_NOTES
+            convert_daily_note.DAILY_NOTES = Path(tmp)
+            try:
+                (Path(tmp)).mkdir(parents=True, exist_ok=True)
+                html = convert_daily_note.note_card_html(
+                    {"date": "2026-08-14", "title": "执行卡硬动作必须机械执行",
+                     "summary": "利通电子涨停兑现部分利润，通宇通讯逆势提高仓位"}
+                )
+            finally:
+                convert_daily_note.DAILY_NOTES = original
+        self.assertIn("2026-08-14", html)
+        self.assertNotIn("执行卡", html)
+        self.assertNotIn("通宇通讯", html)
+
+    def test_whitelist_cards_keep_public_draft_text(self):
+        html = convert_daily_note.note_card_html(
+            {"date": "2026-09-28", "title": "冰点里的减法",
+             "summary": "问题不在胜率，在单笔尾部。"}
+        )
+        self.assertIn("冰点里的减法", html)
+        self.assertIn("单笔尾部", html)
+
+    def test_legacy_boundary_is_the_effective_date(self):
+        self.assertTrue(convert_daily_note._is_legacy_card_date("2026-09-27"))
+        self.assertFalse(convert_daily_note._is_legacy_card_date("2026-09-28"))

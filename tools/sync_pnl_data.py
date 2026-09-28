@@ -113,7 +113,12 @@ def build_market_html(baseline, live):
             return True
         return abs(live_sh - baseline_sh) < 0.05
 
-    def review_limit_counts():
+    def review_note_market():
+        """当日复盘页里的 SSOT 市场事实（涨跌停、情绪值）。
+
+        腾讯 live_index 的涨跌家数不刷新（A1），首页快照不再从它派生任何
+        公开数字；涨跌停与情绪改取当日公开复盘页，与复盘页同源。
+        """
         updated = str(li.get("_updated") or "")
         date = updated[:10] if re.match(r"\d{4}-\d{2}-\d{2}", updated) else ""
         if not date:
@@ -122,10 +127,15 @@ def build_market_html(baseline, live):
         if not path.exists():
             return {}
         text = path.read_text(encoding="utf-8", errors="ignore")
+        counts: dict = {}
         match = re.search(r"(\d+)涨停\s*/\s*(\d+)跌停", text)
-        if not match:
-            return {}
-        return {"涨停家数": int(match.group(1)), "跌停家数": int(match.group(2))}
+        if match:
+            counts["涨停家数"] = int(match.group(1))
+            counts["跌停家数"] = int(match.group(2))
+        emotion = re.search(r"情绪\s*([\d.]+)\s*%", text)
+        if emotion:
+            counts["情绪值"] = float(emotion.group(1))
+        return counts
 
     def index_card(name, price_key, change_key):
         price = li.get(price_key, "—")
@@ -136,7 +146,7 @@ def build_market_html(baseline, live):
             f'<span>{name}</span><strong>{price}</strong><em>{chg}</em></div>'
         )
 
-    review_counts = review_limit_counts()
+    review_counts = review_note_market()
     use_baseline_counts = baseline_matches_live()
 
     def live_or_fallback_count(key):
@@ -151,10 +161,6 @@ def build_market_html(baseline, live):
         return None
 
     up_cnt, dn_cnt = li.get("上涨家数"), li.get("下跌家数")
-    if up_cnt is not None and dn_cnt is not None:
-        ratio_html = f"<b>{up_cnt}</b><small>/</small><b>{dn_cnt}</b>"
-    else:
-        ratio_html = str(m.get("涨跌比") or "—")
 
     zt = live_or_fallback_count("涨停家数")
     dt = live_or_fallback_count("跌停家数")
@@ -163,7 +169,9 @@ def build_market_html(baseline, live):
         if present(iw.get("涨停家数")) or present(iw.get("跌停家数"))
         else "涨停 / 跌停"
     )
-    emotion_val = round(up_cnt / (up_cnt + dn_cnt) * 100) if (up_cnt and dn_cnt and up_cnt + dn_cnt > 0) else None
+    # 情绪只来自复盘页的 SSOT 值；腾讯 live_index 的涨跌家数不刷新（A1），
+    # 不再派生任何公开数字。
+    emotion_val = review_counts.get("情绪值")
 
     cards = [
         index_card("上证", "上证指数", "上证指数涨幅"),
@@ -172,10 +180,6 @@ def build_market_html(baseline, live):
         (
             '<div class="market-card neutral">'
             f'<span>成交额</span><strong>{li.get("上证指数成交额", "—")}</strong><em>上证口径</em></div>'
-        ),
-        (
-            '<div class="market-card ratio">'
-            f'<span>涨跌比</span><strong>{ratio_html}</strong><em>上涨 / 下跌</em></div>'
         ),
         (
             '<div class="market-card limit">'

@@ -48,6 +48,9 @@ class DailyNote:
     system_voice: str
     watch_items: list[str]
     tag: str
+    public_mode: bool = False
+    public_draft: dict | None = None
+    card_summary: str = ""
 
     def as_dict(self) -> dict:
         return {
@@ -63,6 +66,8 @@ class DailyNote:
             "system_voice": self.system_voice,
             "watch_items": self.watch_items,
             "tag": self.tag,
+            "public_mode": self.public_mode,
+            "card_summary": self.card_summary,
         }
 
 
@@ -464,16 +469,87 @@ def public_position_summary(position: str) -> str:
     return "持仓状态以公开摘要呈现，不展开标的、数量和成本。"
 
 
+def public_market_facts(fm: dict) -> list[str]:
+    """Frontmatter-only public indicators; empty fields drop the whole line.
+
+    Whitelist (PORTAL_FIX_NOW §1): 情绪值（带档位文字）、上证涨幅、涨停/跌停
+    家数、市场量能。 持仓状态、市场状态叙述等一律不取——公开层不暴露持仓。
+    """
+    facts: list[str] = []
+    emotion = convert_review.pct_text(fm.get("情绪值", "--"))
+    facts.append(f"情绪值：{emotion} {convert_review.public_emotion_tier(fm.get('情绪值', '--'))}")
+    facts.append(f"上证涨幅：{convert_review.pct_text(fm.get('上证涨幅', '--'), signed=True)}")
+    facts.append(f"涨跌停：{fm.get('涨停家数', '--')} / {fm.get('跌停家数', '--')}")
+    volume = str(fm.get("市场量能", "") or "").strip()
+    if volume:
+        facts.append(f"市场量能：{volume}")
+    return facts
+
+
+def build_public_note(
+    md_path: Path, content: str, fm: dict, *, indicators_only: bool = False
+) -> DailyNote:
+    """Whitelist daily note: 公开稿 + four indicators, no legacy sections."""
+    draft = None if indicators_only else convert_review.extract_public_draft(content)
+    date = extract_date(md_path, fm)
+    weekday = fm.get("weekday", "")
+    if draft is None:
+        # 没有公开稿：只留日期与指标，不补写正文（9-22/23/24 回归形态）。
+        return DailyNote(
+            date=date,
+            weekday=weekday,
+            title=date,
+            summary="",
+            market_status="",
+            market_facts=public_market_facts(fm),
+            cognition_title="",
+            cognition_evidence="",
+            cognition_action="",
+            system_voice="",
+            watch_items=[],
+            tag="市场手记",
+            public_mode=True,
+            public_draft=None,
+            card_summary="",
+        )
+    return DailyNote(
+        date=date,
+        weekday=weekday,
+        title=sanitize_public_text(draft.get("title", "")) or date,
+        summary=sanitize_public_text(draft.get("today", "")),
+        market_status="",
+        market_facts=public_market_facts(fm),
+        cognition_title="",
+        cognition_evidence="",
+        cognition_action="",
+        system_voice="",
+        watch_items=(
+            [sanitize_public_text(draft["tomorrow"])] if draft.get("tomorrow") else []
+        ),
+        tag="市场手记",
+        public_mode=True,
+        public_draft={key: sanitize_public_text(value) for key, value in draft.items()},
+        card_summary=sanitize_public_text(draft.get("cognition", "")),
+    )
+
+
 def build_daily_note(
     md_path: str | Path,
     user_feeling: str = "",
     *,
     reading_sidecar_path: str | Path | None = None,
+    indicators_only: bool = False,
 ) -> DailyNote:
     md_path = Path(md_path)
     content, fm, _bundle_backed = convert_review.read_review_input(
         md_path, reading_sidecar_path=reading_sidecar_path
     )
+    # 白名单路径（2026-09-28 起）：只取公开稿 + 四项指标，不走逐词脱敏。
+    draft_date = str(fm.get("date", "") or "")
+    if not draft_date:
+        draft_date = extract_date(md_path, fm)
+    if convert_review.public_draft_effective(draft_date) or indicators_only:
+        return build_public_note(md_path, content, fm, indicators_only=indicators_only)
     content = convert_review.anonymize_current_holdings(content, fm)
     date = extract_date(md_path, fm)
     weekday = fm.get("weekday", "")
@@ -554,18 +630,86 @@ def render_list(items: list[str]) -> str:
     return "\n".join(f"<li>{rich_text(item)}</li>" for item in items if item)
 
 
+def render_public_note_body(note: DailyNote) -> str:
+    """Whitelist body: 公开稿（标题/今天/一句认知/明天看什么）+ 四项指标。"""
+    draft = note.public_draft or {}
+    blocks: list[str] = []
+    if draft.get("today"):
+        blocks.append(
+            f'<p class="note-thesis">{rich_text(draft["today"])}</p>'
+        )
+    if draft.get("cognition"):
+        blocks.append(
+            '<section class="note-cognition-card note-public-cognition">\n'
+            '        <div class="note-label">一句认知</div>\n'
+            f'        <div class="note-principle">{rich_text(draft["cognition"])}</div>\n'
+            "      </section>"
+        )
+    if draft.get("tomorrow"):
+        blocks.append(
+            '<section class="note-panel">\n'
+            "        <h2>明天看什么</h2>\n"
+            f"        <p>{rich_text(draft['tomorrow'])}</p>\n"
+            "      </section>"
+        )
+    blocks.append(
+        '<section class="note-panel">\n'
+        "        <h2>边界声明</h2>\n"
+        f"        <p>{DISCLAIMER}</p>\n"
+        "      </section>"
+    )
+    return "\n".join(blocks)
+
+
 def render_daily_note_page(note: DailyNote) -> str:
     date_label = note.date
-    cognition_html = ""
-    if note.cognition_title or note.cognition_evidence or note.cognition_action:
-        cognition_html = f"""<section class="note-cognition-card">
-        <div class="note-label">今日一个认知</div>
-        <div class="note-principle">{esc(note.cognition_title)}</div>
-        <div class="note-label">当日证据</div>
-        <div class="note-evidence">{rich_text(note.cognition_evidence)}</div>
-        <div class="note-label">下次动作</div>
-        <div class="note-action">{rich_text(note.cognition_action)}</div>
-      </section>"""
+    if note.public_mode:
+        hero_thesis = ""
+        body_html = render_public_note_body(note)
+        status_chip = ""
+    else:
+        hero_thesis = (
+            '<p class="note-thesis"><strong>今日一句话：</strong>'
+            + rich_text(note.summary)
+            + "</p>"
+        )
+        cognition_html = ""
+        if note.cognition_title or note.cognition_evidence or note.cognition_action:
+            cognition_html = (
+                '<section class="note-cognition-card">\n'
+                '        <div class="note-label">今日一个认知</div>\n'
+                '        <div class="note-principle">' + esc(note.cognition_title) + "</div>\n"
+                '        <div class="note-label">当日证据</div>\n'
+                '        <div class="note-evidence">' + rich_text(note.cognition_evidence) + "</div>\n"
+                '        <div class="note-label">下次动作</div>\n'
+                '        <div class="note-action">' + rich_text(note.cognition_action) + "</div>\n"
+                "      </section>"
+            )
+        legacy_panels = (
+            "\n      <section class=\"note-panel note-system-voice\">\n"
+            "        <h2>系统今天做了什么</h2>\n"
+            "        <p>" + rich_text(note.system_voice) + "</p>\n"
+            "      </section>\n"
+            "\n"
+            "      <section class=\"note-panel\">\n"
+            "        <h2>明日只看什么</h2>\n"
+            "        <ol class=\"note-watch-list\">\n"
+            "          " + render_list(note.watch_items) + "\n"
+            "        </ol>\n"
+            "      </section>\n"
+            "\n"
+            "      <section class=\"note-panel\">\n"
+            "        <h2>边界声明</h2>\n"
+            "        <p>" + DISCLAIMER + "</p>\n"
+            "      </section>"
+        )
+        body_html = cognition_html + "\n" + legacy_panels
+        status_chip = (
+            '      <span class="note-seal">' + esc(note.market_status) + "</span>\n"
+            if note.market_status
+            else ""
+        )
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -588,32 +732,14 @@ def render_daily_note_page(note: DailyNote) -> str:
     <h1>{esc(note.title)}</h1>
     <div class="note-meta">
       <span class="note-seal">{esc(date_label)} {esc(note.weekday)}</span>
-      <span class="note-seal">{esc(note.market_status)}</span>
-      <span class="note-seal">{esc(note.tag)}</span>
+{status_chip}      <span class="note-seal">{esc(note.tag)}</span>
     </div>
-    <p class="note-thesis"><strong>今日一句话：</strong>{rich_text(note.summary)}</p>
+{hero_thesis}
   </section>
 
   <div class="note-grid">
     <article class="note-main">
-{cognition_html}
-
-      <section class="note-panel note-system-voice">
-        <h2>系统今天做了什么</h2>
-        <p>{rich_text(note.system_voice)}</p>
-      </section>
-
-      <section class="note-panel">
-        <h2>明日只看什么</h2>
-        <ol class="note-watch-list">
-          {render_list(note.watch_items)}
-        </ol>
-      </section>
-
-      <section class="note-panel">
-        <h2>边界声明</h2>
-        <p>{DISCLAIMER}</p>
-      </section>
+{body_html}
     </article>
 
     <aside class="note-market-aside">
@@ -631,8 +757,7 @@ def render_daily_note_page(note: DailyNote) -> str:
   var from = new URLSearchParams(location.search).get('from');
   if (from && /^[A-Za-z0-9_-]+$/.test(from)) {{
     document.getElementById('back-home').href = '../index.html#' + from;
-  }}
-}})();
+  }})();
 </script>
 </body>
 </html>"""
@@ -646,25 +771,55 @@ def read_existing_notes() -> list[dict]:
         html = path.read_text(encoding="utf-8")
         title_match = re.search(r"<h1>(.*?)</h1>", html, re.S)
         summary_match = re.search(r'<p class="note-thesis"><strong>今日一句话：</strong>(.*?)</p>', html, re.S)
+        cognition_match = re.search(
+            r'<div class="note-public-cognition">.*?<p>(.*?)</p>', html, re.S
+        )
         tag_match = re.findall(r'<span class="note-seal">(.*?)</span>', html, re.S)
+        # 卡片摘要优先用公开稿的一句认知（PORTAL_FIX_NOW §1）；历史页没有则
+        # 退回今日一句话；再没有（只有指标的回归页）留空。
+        summary = ""
+        if cognition_match:
+            summary = convert_review.strip_html_tags(cognition_match.group(1))
+        elif summary_match:
+            summary = convert_review.strip_html_tags(summary_match.group(1))
         notes.append(
             {
                 "date": path.stem,
                 "title": convert_review.strip_html_tags(title_match.group(1)) if title_match else path.stem,
-                "summary": convert_review.strip_html_tags(summary_match.group(1)) if summary_match else "",
+                "summary": summary,
                 "tag": convert_review.strip_html_tags(tag_match[-1]) if tag_match else "市场手记",
             }
         )
     return notes
 
 
+def _is_legacy_card_date(date_str: str) -> bool:
+    """Whether a daily archive card predates the public-draft whitelist.
+
+    Legacy cards (before 2026-09-28) are projections of pages written by
+    pre-fix generators: their titles and summaries can carry stock names,
+    amounts or machine-speak that the whitelist path now forbids.  The
+    historical pages themselves stay untouched until the National Day pass
+    (PORTAL_FIX_NOW §4), but this live aggregate shows such cards by date
+    only — exactly the treatment the handoff prescribes ("只显示日期和指标，
+    摘要留空").  Doing it by date keeps generation offline and deterministic:
+    no per-account name list is needed to guarantee the card is clean.
+    """
+    return bool(date_str) and date_str < convert_review.PUBLIC_DRAFT_EFFECTIVE_DATE
+
+
 def note_card_html(note: dict, prefix: str = "") -> str:
     href = f'{prefix}{note["date"]}.html'
+    summary = note.get("summary", "")
+    title = note.get("title", "")
+    if _is_legacy_card_date(note.get("date", "")):
+        title = ""
+        summary = ""
     return (
         f'<a class="daily-archive-card" href="{href}">'
         f'<time>{esc(note["date"])}</time>'
-        f'<strong>{esc(note["title"])}</strong>'
-        f'<span>{esc(note.get("summary", ""))}</span>'
+        f'<strong>{esc(title)}</strong>'
+        f'<span>{esc(summary)}</span>'
         "</a>"
     )
 
@@ -675,7 +830,7 @@ def update_daily_notes_index(note: DailyNote) -> None:
     notes_by_date[note.date] = {
         "date": note.date,
         "title": note.title,
-        "summary": note.summary,
+        "summary": note.card_summary or note.summary,
         "tag": note.tag,
     }
     notes = sorted(notes_by_date.values(), key=lambda n: n["date"], reverse=True)
@@ -729,15 +884,23 @@ def inject_home_css(content: str) -> str:
 
 def home_section_html(notes: list[dict]) -> str:
     latest = notes[0]
-    mini_cards = "\n".join(
-        f'''          <a class="daily-note-mini daily-note-secondary" href="daily-notes/{esc(n["date"])}.html?from=daily-notes">
-            <time>{esc(n["date"])}</time>
-            <strong>{esc(n["title"])}</strong>
-            <span class="daily-note-mini-summary">{esc(n.get("summary", ""))}</span>
-            <em class="daily-note-mini-tag">{esc(n.get("tag", "市场手记"))}</em>
-          </a>'''
-        for n in notes[1:5]
-    )
+
+    def _mini_card(n: dict) -> str:
+        title = n.get("title", "")
+        summary = n.get("summary", "")
+        if _is_legacy_card_date(n.get("date", "")):
+            title = ""
+            summary = ""
+        return (
+            f'          <a class="daily-note-mini daily-note-secondary" href="daily-notes/{esc(n["date"])}.html?from=daily-notes">\n'
+            f'            <time>{esc(n["date"])}</time>\n'
+            f'            <strong>{esc(title)}</strong>\n'
+            f'            <span class="daily-note-mini-summary">{esc(summary)}</span>\n'
+            f'            <em class="daily-note-mini-tag">{esc(n.get("tag", "市场手记"))}</em>\n'
+            f"          </a>"
+        )
+
+    mini_cards = "\n".join(_mini_card(n) for n in notes[1:5])
     if not mini_cards:
         mini_cards = f'''          <a class="daily-note-mini daily-note-secondary" href="daily-notes/index.html">
             <time>Archive</time>
@@ -793,7 +956,7 @@ def update_home_daily_notes(note: DailyNote) -> None:
     notes_by_date[note.date] = {
         "date": note.date,
         "title": note.title,
-        "summary": note.summary,
+        "summary": note.card_summary or note.summary,
         "tag": note.tag,
     }
     notes = sorted(notes_by_date.values(), key=lambda n: n["date"], reverse=True)
@@ -821,11 +984,13 @@ def convert_review_to_daily_note(
     dry_run: bool = False,
     *,
     reading_sidecar_path: str | Path | None = None,
+    indicators_only: bool = False,
 ) -> dict:
     note = build_daily_note(
         md_path,
         user_feeling=user_feeling,
         reading_sidecar_path=reading_sidecar_path,
+        indicators_only=indicators_only,
     )
     target = DAILY_NOTES / f"{note.date}.html"
     if dry_run:
@@ -858,6 +1023,8 @@ def main() -> None:
             "[user feeling] [--dry-run] [--reading-sidecar <path>]"
         )
         sys.exit(1)
+    indicators_only = "--indicators-only" in argv
+    argv = [item for item in argv if item != "--indicators-only"]
     md_path = argv[0]
     feeling = " ".join(argv[1:]).strip()
     convert_review_to_daily_note(
@@ -865,6 +1032,7 @@ def main() -> None:
         user_feeling=feeling,
         dry_run=dry_run,
         reading_sidecar_path=reading_sidecar_path,
+        indicators_only=indicators_only,
     )
 
 

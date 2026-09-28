@@ -67,11 +67,18 @@ class PortalSyncOrderTests(unittest.TestCase):
 
         self.assertEqual(0, code, out)
         self.assertEqual(
-            ["sync_pnl_data.py", "convert_review.py", "convert_daily_note.py"],
+            [
+                "sync_pnl_data.py",
+                "convert_review.py",
+                "convert_daily_note.py",
+                "portal_check.py",
+            ],
             stub.scripts(),
-            "复盘详情页曾经整条链漏跑，顺序与完整性都要盯住",
+            "复盘详情页曾经整条链漏跑，顺序与完整性都要盯住；"
+            "④ 隐私红线门禁是 2026-09-28 新增的固定最后一步",
         )
         self.assertNotIn("--dry-run", " ".join(stub.calls[1]))
+        self.assertIn("--redline", " ".join(stub.calls[-1]))
 
     def test_dry_run_covers_all_three_steps_without_running_convert_review(self):
         """convert_review.py 没有 --dry-run：预演时只能不执行，绝不能写盘。"""
@@ -99,9 +106,12 @@ class PortalSyncOrderTests(unittest.TestCase):
 
         self.assertEqual(0, code, out)
         self.assertEqual(
-            ["sync_pnl_data.py", "convert_daily_note.py"], stub.scripts()
+            ["sync_pnl_data.py", "convert_daily_note.py", "portal_check.py"],
+            stub.scripts(),
+            "跳过复盘详情页后，手记与红线门禁仍须执行",
         )
         self.assertNotIn("② 复盘详情页", out)
+        self.assertIn("④ 隐私红线", out)
 
     def test_skip_reading_stops_before_both_note_chains(self):
         stub = _StubRun()
@@ -144,3 +154,21 @@ class PortalSyncOrderTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RedLineGateTests(unittest.TestCase):
+    """红线命中必须让整个同步失败，未生成的页面不得进入发布。"""
+
+    def test_redline_hit_stops_sync_with_code_6(self):
+        stub = _StubRun(fail_on="portal_check.py")
+        code, out = _run_main(["--date", "2026-09-15"], stub)
+        self.assertEqual(6, code, out)
+        self.assertIn("隐私红线命中", out)
+        self.assertIn("portal_check.py", " ".join(stub.calls[-1]))
+
+    def test_gate_is_last_step(self):
+        stub = _StubRun()
+        code, out = _run_main(["--date", "2026-09-15"], stub)
+        self.assertEqual(0, code, out)
+        self.assertEqual("portal_check.py", stub.scripts()[-1])
+        self.assertIn("--redline", " ".join(stub.calls[-1]))

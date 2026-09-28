@@ -520,6 +520,301 @@ def fix_missing_back_link(filepath: Path, html: str) -> tuple[str, bool]:
 
 # ── 主流程 ────────────────────────────────────────────────────────────────
 
+
+# ── 隐私红线检查（发布门禁，2026-09-28） ──────────────────────────────────
+#
+# 对「本次生成或修改」的 HTML 纯文本做检查，任一命中即阻断发布（sync_portal
+# 收到非 0 退出码后停止推送）。历史页不在此范围（统一留到国庆按 PLAN §8.3
+# 跑全量红线清单），由调用方用文件参数限定。
+#
+# 个股名单两个来源：
+#   1. 8088 `/api/trades`：近 60 个交易日成交过的股票名称与 6 位代码
+#      （该接口 `date=` 参数不生效，按 trade_date 客户端过滤）；
+#   2. Vault ReviewNote frontmatter 的 `盘后持仓` 标的。
+# 名单取不到时 fail closed：不验证就等于放行。
+REDLINE_MACHINE_PATTERNS = [
+    (re.compile(p), label)
+    for p, label in [
+        # 规则编号：`XXX-YYY-999`，也覆盖 `WIN-ICE-W1-001` 这类中间段含数字的形态
+        (r"\b[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-\d{3}\b", "规则编号"),
+        (r"lesson_\d+", "lesson 编号"),
+        (r"rules/", "rules/ 路径"),
+        (r"§", "章节符号 §"),
+        (r"\bR\d{1,2}\b", "红方编号 R#"),
+        (r"红方", "红方"),
+        (r"回执", "回执"),
+        (r"sha256", "sha256"),
+        (r"阅读投影", "阅读投影"),
+        (r"可见时点", "可见时点"),
+        (r"执行卡", "执行卡"),
+        (r"门禁", "门禁"),
+    ]
+]
+REDLINE_AMOUNT_PATTERNS = [
+    (re.compile(r"\d+\s*股"), "股数"),
+    (re.compile(r"[+\-−]?\d{1,3}(?:,\d{3})+(\.\d+)?"), "千分位金额"),
+]
+REDLINE_DIALOGUE_PATTERNS = [
+    (re.compile(p), label)
+    for p, label in [
+        (r"与你", "对话体「与你」"),
+        (r"你说", "对话体「你说」"),
+        (r"弈沐原话", "对话体「弈沐原话」"),
+    ]
+]
+REDLINE_RESIDUE_PATTERNS = [
+    (re.compile(p), label)
+    for p, label in [
+        (r"若干笔", "脱敏残渣"),
+        (r"内部集中度上限", "脱敏残渣"),
+        (r"关键确认位", "脱敏残渣"),
+        (r"风险处理动作", "脱敏残渣"),
+        (r"可卖状态", "脱敏残渣"),
+    ]
+]
+# 允许清单：账户层面的仓位百分比（首页实盘面板本来就公开仓位），例如
+# 公开稿里的「46.66% 降到 10.41%」。只有完整「数字%」形态且不带千分位，
+# 不会被金额模式命中；这里显式登记，避免以后加宽模式时误伤。
+REDLINE_ALLOWED_CONTEXT = re.compile(r"\d+(?:\.\d+)?%")
+
+REDLINE_TRADE_WINDOW_DATES = 60
+
+# 本次同步链（sync_portal：首页数据 → 复盘详情页 → 手记）不生成的区块：
+# 周/月复盘卡由 sync_weekly_review.py 单独产出，PORTAL_FIX_NOW §4 明确把
+# 9-27 以前的历史页留给国庆全量红线清单、由弈沐决定。落在这些区块里的命中
+# 记入 deferred 清单并打印，不阻断今晚发布；其余命中一律阻断。
+REDLINE_DEFERRED_BLOCKS = [
+    (re.compile(r'review-notes/index\.html$'),
+     re.compile(r'<a href="(?:weekly|monthly)-[^"]*"[^>]*>.*?</a>', re.S | re.I)),
+    (re.compile(r'index\.html$'),
+     re.compile(r'<a[^>]*class="recent-review-card period-review-card[^"]*"[^>]*>.*?</a>', re.S | re.I)),
+]
+
+
+def _deferred_redline_spans(text: str, rel_path: str) -> list[tuple[int, int]]:
+    spans: list[tuple[int, int]] = []
+    for path_re, block_re in REDLINE_DEFERRED_BLOCKS:
+        if not path_re.search(rel_path):
+            continue
+        for match in block_re.finditer(text):
+            spans.append((match.start(), match.end()))
+    return spans
+
+
+def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
+    """纯文本 + 每个字符在原始 HTML 中的位置。
+
+    命中定位必须能映射回原始 HTML，才能判断它是否落在「本次同步链不生成」
+    的历史区块里；只在纯文本上定位会在标签边界处丢失。 ``script`` / ``style``
+    与注释整块跳过（内部不是可见文字），被跳过的区间不留字符。
+    """
+    kept: list[str] = []
+    positions: list[int] = []
+    index = 0
+    length = len(html)
+    block_pattern = re.compile(r"\s*/?>", re.I)
+    while index < length:
+        if html.startswith("<!--", index):
+            close = html.find("-->", index)
+            index = length if close < 0 else close + 3
+            continue
+        if html.startswith("<", index):
+            tag_end = html.find(">", index)
+            if tag_end < 0:
+                break
+            tag_name_match = re.match(r"<\s*([a-zA-Z]+)", html[index:tag_end + 1])
+            tag_name = (tag_name_match.group(1).lower() if tag_name_match else "")
+            if tag_name in {"script", "style"}:
+                close = re.search(
+                    rf"</\s*{tag_name}\s*>", html[tag_end:], flags=re.I
+                )
+                index = (
+                    length
+                    if close is None
+                    else tag_end + close.end()
+                )
+                continue
+            index = tag_end + 1
+            continue
+        kept.append(html[index])
+        positions.append(index)
+        index += 1
+    return "".join(kept), positions
+
+
+def load_traded_symbols(source: str = "cloud", remote: str | None = None):
+    """Return ``(names, codes)`` traded in the most recent 60 trading dates."""
+    try:
+        from sync_pnl_data import BridgeAPI, DEFAULT_REMOTE
+    except Exception as exc:  # pragma: no cover - import wiring
+        raise RuntimeError(f"redline_trade_source_unavailable:{type(exc).__name__}") from exc
+    api = BridgeAPI(source=source, remote=remote or DEFAULT_REMOTE)
+    try:
+        rows = api.fetch("/api/trades")
+    except Exception as exc:
+        raise RuntimeError(f"redline_trade_source_unavailable:{type(exc).__name__}") from exc
+    if not isinstance(rows, list):
+        raise RuntimeError("redline_trade_source_unavailable:not_a_list")
+    dates = sorted({str(row.get("trade_date") or "") for row in rows if row.get("trade_date")})
+    window = set(dates[-REDLINE_TRADE_WINDOW_DATES:])
+    names, codes = set(), set()
+    for row in rows:
+        if str(row.get("trade_date") or "") not in window:
+            continue
+        name = str(row.get("name") or "").strip()
+        code = str(row.get("code") or "").strip()
+        if name:
+            names.add(name)
+        if re.fullmatch(r"\d{6}", code):
+            codes.add(code)
+    if not names and not codes:
+        raise RuntimeError("redline_trade_source_empty")
+    return sorted(names), sorted(codes)
+
+
+def load_position_symbols(note_path: Path | None):
+    """Frontmatter `盘后持仓` 标的（名称与代码），取自 Vault ReviewNote。"""
+    if note_path is None or not Path(note_path).is_file():
+        return [], []
+    try:
+        text = Path(note_path).read_text(encoding="utf-8")
+    except OSError:
+        return [], []
+    match = re.search(r"(?m)^盘后持仓\s*[:：]\s*(.+)$", text)
+    if not match:
+        return [], []
+    raw = match.group(1).strip().strip('"').strip("'")
+    names = re.findall(r"[\u4e00-\u9fffA-Za-z]{2,}", raw)
+    codes = re.findall(r"\b\d{6}\b", raw)
+    return names, codes
+
+
+def check_redlines_static(text: str) -> list[str]:
+    """Static red lines only (no per-account name/code lists).
+
+    Used by generators to decide whether a scraped legacy summary may stay in
+    a live aggregate index.
+    """
+    return check_redlines(text, [], [])
+
+
+def _scan_redline_hits(text: str, names, codes) -> list[tuple[int, int, str]]:
+    """Return ``(start, end, description)`` for each red-line hit."""
+    hits: list[tuple[int, int, str]] = []
+    allowed_spans = [
+        (m.start(), m.end())
+        for m in REDLINE_ALLOWED_CONTEXT.finditer(text)
+    ]
+
+    def _covered(start: int, end: int) -> bool:
+        return any(a <= start and end <= b for a, b in allowed_spans)
+
+    def _scan(patterns, prefix):
+        for pattern, label in patterns:
+            for m in pattern.finditer(text):
+                if _covered(m.start(), m.end()):
+                    continue
+                hits.append((m.start(), m.end(),
+                             f"{prefix}:{label}: …{text[max(0, m.start() - 12):m.end() + 12]}…"))
+
+    _scan(REDLINE_MACHINE_PATTERNS, "机器话")
+    _scan(REDLINE_AMOUNT_PATTERNS, "金额股数")
+    _scan(REDLINE_DIALOGUE_PATTERNS, "对话体")
+    _scan(REDLINE_RESIDUE_PATTERNS, "脱敏残渣")
+    for name in names:
+        for m in re.finditer(re.escape(name), text):
+            hits.append((m.start(), m.end(),
+                         f"个股名称:{name}: …{text[max(0, m.start() - 12):m.end() + 12]}…"))
+    for code in codes:
+        for m in re.finditer(rf"(?<!\d){re.escape(code)}(?!\d)", text):
+            hits.append((m.start(), m.end(),
+                         f"个股代码:{code}: …{text[max(0, m.start() - 12):m.end() + 12]}…"))
+    return hits
+
+
+def check_redlines(text: str, names, codes) -> list[str]:
+    """Return red-line hit descriptions for one page's visible text."""
+    return [hit for _start, _end, hit in _scan_redline_hits(text, names, codes)]
+
+
+
+def run_redline(files: list[Path], args) -> int:
+    """Privacy red-line gate: any hit blocks the publish."""
+    print(f"\n{'='*60}")
+    print("Portal 隐私红线检查（发布门禁）")
+    print(f"根目录: {PORTAL}")
+    print(f"检查文件: {len(files)} 个")
+    print(f"个股名单来源: 8088 /api/trades（近 {REDLINE_TRADE_WINDOW_DATES} 个交易日）"
+          " + ReviewNote frontmatter 盘后持仓")
+    print(f"{'='*60}\n")
+
+    try:
+        names, codes = load_traded_symbols(
+            source=getattr(args, "redline_source", "cloud"),
+            remote=getattr(args, "redline_remote", None),
+        )
+    except RuntimeError as exc:
+        print(f"  ERROR 个股名单不可用（fail closed）: {exc}")
+        return 2
+    note_names, note_codes = load_position_symbols(
+        Path(args.review_note) if getattr(args, "review_note", None) else None
+    )
+    names = sorted(set(names) | set(note_names))
+    codes = sorted(set(codes) | set(note_codes))
+    print(f"  个股名单: {len(names)} 个名称 / {len(codes)} 个代码")
+
+    all_hits: dict[Path, list[str]] = {}
+    deferred: dict[Path, list[str]] = {}
+    for fp in sorted(files):
+        try:
+            html = fp.read_text(encoding="utf-8")
+        except OSError as exc:
+            all_hits[fp] = [f"无法读取: {exc}"]
+            continue
+        text, positions = _strip_tags_for_redline(html)
+        rel = str(fp.relative_to(PORTAL)) if PORTAL in fp.parents else str(fp)
+        located_hits = _scan_redline_hits(text, names, codes)
+        if not located_hits:
+            continue
+        spans = _deferred_redline_spans(html, rel)
+        keep, defer = [], []
+        for start, end, description in located_hits:
+            raw_start = positions[start] if start < len(positions) else 0
+            raw_end = positions[end - 1] + 1 if 0 < end <= len(positions) else raw_start
+            if any(a <= raw_start and raw_end <= b for a, b in spans):
+                defer.append(description)
+            else:
+                keep.append(description)
+        if defer:
+            deferred[fp] = defer
+        if keep:
+            all_hits[fp] = keep
+
+    if deferred:
+        print(f"\n  注: {sum(len(v) for v in deferred.values())} 条命中落在本次同步链不生成的"
+              "历史区块（周/月复盘卡，由 sync_weekly_review.py 产出，PORTAL_FIX_NOW §4 "
+              "留待国庆全量红线清单），不阻断本次发布：")
+        for fp, hits in deferred.items():
+            rel = fp.relative_to(PORTAL) if PORTAL in fp.parents else fp
+            print(f"    {rel}: {len(hits)} 条")
+
+    if not all_hits:
+        print("\n  红线检查零命中，可以发布。")
+        return 0
+
+    print(f"\n{'─'*60}")
+    print(f"  RED LINE — {len(all_hits)} 个文件命中（阻断发布）")
+    print(f"{'─'*60}")
+    for fp, hits in all_hits.items():
+        rel = fp.relative_to(PORTAL) if PORTAL in fp.parents or fp == PORTAL else fp
+        print(f"\n  {rel}")
+        for hit in hits[:20]:
+            print(f"    {hit}")
+        if len(hits) > 20:
+            print(f"    …另有 {len(hits) - 20} 条")
+    return 1
+
+
 def get_files(sections_only: bool) -> list[Path]:
     if sections_only:
         bases = ["index.html", "review-notes/index.html", "report/index.html",
@@ -529,6 +824,17 @@ def get_files(sections_only: bool) -> list[Path]:
 
 
 def run(args) -> int:
+    redline_files: list[Path] = []
+    if args.redline:
+        candidates = [Path(item) for item in (args.files or [])]
+        if candidates:
+            redline_files = [
+                path if path.is_absolute() else PORTAL / path for path in candidates
+            ]
+        else:
+            redline_files = get_files(args.sections)
+    if args.redline:
+        return run_redline(redline_files, args)
     files = get_files(args.sections)
     print(f"\n{'='*60}")
     print(f"Portal 发布前检查  {datetime.now():%Y-%m-%d %H:%M}")
@@ -791,6 +1097,31 @@ def main():
     p.add_argument("--sections", action="store_true", help="只检查入口页面")
     p.add_argument("--verbose", action="store_true", help="显示被白名单抑制的条目详情")
     p.add_argument("--self-test", action="store_true", help="运行占位文案检测自检")
+    p.add_argument(
+        "--redline",
+        action="store_true",
+        help="隐私红线门禁：命中即阻断（个股名/代码、金额股数、机器话、对话体、脱敏残渣）",
+    )
+    p.add_argument(
+        "files",
+        nargs="*",
+        help="限定红线检查的文件（相对 portal 根或绝对路径）；不给则检查全部 HTML",
+    )
+    p.add_argument(
+        "--redline-source",
+        choices=["cloud", "local"],
+        default=os.environ.get("PORTAL_DATA_SOURCE", "cloud"),
+        help="个股名单数据源：cloud=Hermes；local=本地 bridge",
+    )
+    p.add_argument(
+        "--redline-remote",
+        default=os.environ.get("PORTAL_REMOTE"),
+        help="cloud 模式 SSH 目标",
+    )
+    p.add_argument(
+        "--review-note",
+        help="附带其 frontmatter 盘后持仓标的的 Vault ReviewNote 路径",
+    )
     args = p.parse_args()
 
     if args.dry and not args.fix:

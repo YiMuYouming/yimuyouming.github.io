@@ -2911,11 +2911,245 @@ def extract_public_v2_sections(content: str):
     return {heading: extract_section(content, heading)[0] for heading in PUBLIC_V2_SECTION_MARKERS}
 
 
-def convert_md_to_html(md_path, *, reading_sidecar_path=None, promotion_metrics_shadow_path=None):
+# ── 公开稿白名单路径（2026-09-28 起） ───────────────────────────────────────
+#
+# 自 2026-09-28 起，复盘页与手记页的正文只取 Vault ReviewNote 的 `### 公开稿`
+# 小节（标题 / 今天 / 一句认知，有「明天看什么」小标题时也取），加上四项盘后
+# 指标（情绪、上证、涨跌停、量能）。这条路径不经过逐词替换脱敏：公开稿是弈沐
+# 自己写的可公开文本，旧路径的机器话改写正是 E2/E3/E4 投诉的来源。
+#
+# 更早的日期保留旧路径（历史页不在本次范围内重做，统一留到国庆按 PLAN §8.3
+# 处理）。没有公开稿的日期（9-22/23/24 等）按「只有指标、没有正文」生成，
+# 不替它们补写公开稿。
+PUBLIC_DRAFT_EFFECTIVE_DATE = "2026-09-28"
+PUBLIC_DRAFT_HEADING = "公开稿"
+PUBLIC_BOUNDARY_NOTE = (
+    "本页只公开当日复盘公开稿与四项盘后指标；持仓、个股与交易明细不进入公开层。"
+    "内容以 Vault 复盘笔记为准，不构成投资建议。"
+)
+
+
+def public_draft_effective(date_str: str) -> bool:
+    """Whether the whitelist path governs this date (YYYY-MM-DD)."""
+    return bool(date_str) and date_str >= PUBLIC_DRAFT_EFFECTIVE_DATE
+
+
+def public_emotion_tier(value) -> str:
+    """Emotion band text used next to the raw value (e.g. ``16.5 冰点``)."""
+    number = numeric_value(value)
+    if number is None:
+        return "待核"
+    if number < 20:
+        return "冰点"
+    if number < 35:
+        return "低迷"
+    if number < 50:
+        return "中性"
+    return "高涨"
+
+
+def extract_public_draft(content: str) -> dict | None:
+    """Read the whitelisted ``### 公开稿`` block from a ReviewNote.
+
+    Returns ``None`` when the section is absent, so callers can fall back to
+    an indicators-only page instead of inventing prose.  Only the four known
+    bullets are taken; anything else inside the section is ignored.
+    """
+    match = re.search(
+        r"(?ms)^###\s*公开稿\s*$(.*?)(?=^#{2,3}\s|\n---\s*$|\Z)",
+        content,
+    )
+    if not match:
+        return None
+    body = match.group(1)
+    draft: dict[str, str] = {}
+    for key, label in (
+        ("title", "标题"),
+        ("today", "今天"),
+        ("cognition", "一句认知"),
+        ("tomorrow", "明天看什么"),
+    ):
+        item = re.search(
+            rf"(?m)^\s*[-*]\s*{re.escape(label)}\s*[：:]\s*(?P<value>.+?)\s*$",
+            body,
+        )
+        if item:
+            draft[key] = item.group("value").strip()
+    if not draft.get("title") and not draft.get("today"):
+        return None
+    return draft
+
+
+def _public_v2_chip(kind: str, text: str) -> str:
+    return f'<span class="chip {kind}">{html_escape(text)}</span>'
+
+
+def html_public_v2_topbar(fm: dict) -> str:
+    """Topbar chips: the four public indicators only.
+
+    No position chip and no stage badge: both are internal state that the
+    whitelist path must not publish (E7 / E3).
+    """
+    emo_raw = fm.get("情绪值", "--")
+    emo = pct_text(emo_raw)
+    sh_idx = fm.get("上证指数", "--")
+    sh_pct = pct_text(fm.get("上证涨幅", "--"), signed=True)
+    zt = fm.get("涨停家数", "--")
+    dt = fm.get("跌停家数", "--")
+    volume = fm.get("市场量能", "--")
+
+    emo_num = numeric_value(emo_raw)
+    emo_chip = "red" if emo_num is not None and emo_num < 25 else (
+        "amber" if emo_num is not None and emo_num < 45 else "green"
+    )
+    sh_chip = "red" if sh_pct.startswith("-") else "green"
+    chips = [
+        _public_v2_chip(emo_chip, f"情绪 {emo} {public_emotion_tier(emo_raw)}"),
+        _public_v2_chip(sh_chip, f"上证 {sh_idx} {sh_pct}"),
+        _public_v2_chip("blue", f"{zt}涨停 / {dt}跌停"),
+        _public_v2_chip("purple", f"量能 {volume}"),
+    ]
+    return (
+        '<div class="topbar">\n'
+        '  <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>\n'
+        f'  <div class="title">{html_escape(str(fm.get("date", "")))} '
+        f'{html_escape(str(fm.get("weekday", "")))} 复盘</div>\n'
+        '  <div class="meta">\n    ' + "\n    ".join(chips) + "\n  </div>\n</div>"
+    )
+
+
+def _public_v2_metric_row(fm: dict) -> str:
+    emo = pct_text(fm.get("情绪值", "--"))
+    sh_pct = pct_text(fm.get("上证涨幅", "--"), signed=True)
+    zt = fm.get("涨停家数", "--")
+    dt = fm.get("跌停家数", "--")
+    volume = fm.get("市场量能", "--")
+    cells = [
+        f'<div class="metric"><span>情绪</span><strong>{html_escape(emo)}'
+        f" {html_escape(public_emotion_tier(fm.get('情绪值', '--')))}</strong></div>",
+        f'<div class="metric"><span>上证</span><strong>{html_escape(sh_pct)}</strong></div>',
+        f'<div class="metric"><span>涨跌停</span><strong>{html_escape(str(zt))} / '
+        f"{html_escape(str(dt))}</strong></div>",
+        f'<div class="metric"><span>量能</span><strong>{html_escape(str(volume))}</strong></div>',
+    ]
+    return '<div class="public-v2-metrics">' + "".join(cells) + "</div>"
+
+
+PUBLIC_V2_CSS = """.public-v2-metrics{display:flex;flex-wrap:wrap;gap:10px;padding:18px 32px 0}
+.public-v2-metrics .metric{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:120px}
+.public-v2-metrics .metric span{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
+.public-v2-metrics .metric strong{font-size:16px}
+.public-v2-body{padding:6px 4px 10px}
+.public-v2-title{font-family:"Noto Serif SC","Noto Serif",serif;font-size:30px;line-height:1.35;margin:6px 0 14px}
+.public-v2-today{font-size:16px;line-height:1.9;color:var(--text)}
+.public-v2-cognition{margin-top:18px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.public-v2-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--accent);margin-bottom:6px}
+.public-v2-cognition p{font-family:"Noto Serif SC","Noto Serif",serif;font-size:17px;line-height:1.75}
+.public-v2-tomorrow{margin-top:14px}
+.public-v2-tomorrow p{line-height:1.85}
+.public-v2-boundary{font-size:12px;color:var(--text2);line-height:1.8}
+@media(max-width:768px){.public-v2-metrics{padding:14px 16px 0}.public-v2-title{font-size:25px}}"""
+
+
+def render_public_v2_page(date_str: str, fm: dict, draft: dict | None) -> str:
+    """Render the whitelist review page: indicators + public draft + boundary."""
+    sections: list[str] = []
+    if draft and draft.get("title"):
+        sections.append(
+            '<div class="section" id="public-draft">\n'
+            '  <div class="sh"><span class="tog">▼</span> 当日公开稿</div>\n'
+            '  <div class="sb public-v2-body">\n'
+            f'    <h1 class="public-v2-title">{html_escape(draft["title"])}</h1>\n'
+        )
+        if draft.get("today"):
+            sections.append(
+                f'    <p class="public-v2-today">{html_escape(draft["today"])}</p>\n'
+            )
+        if draft.get("cognition"):
+            sections.append(
+                '    <div class="public-v2-cognition">\n'
+                '      <div class="public-v2-label">一句认知</div>\n'
+                f'      <p>{html_escape(draft["cognition"])}</p>\n'
+                "    </div>\n"
+            )
+        if draft.get("tomorrow"):
+            sections.append(
+                '    <div class="public-v2-tomorrow">\n'
+                '      <div class="public-v2-label">明天看什么</div>\n'
+                f'      <p>{html_escape(draft["tomorrow"])}</p>\n'
+                "    </div>\n"
+            )
+        sections.append("  </div>\n</div>\n")
+    sections.append(
+        '<div class="section" id="public-boundary">\n'
+        '  <div class="sb public-v2-boundary">'
+        f"{html_escape(PUBLIC_BOUNDARY_NOTE)}</div>\n</div>\n"
+    )
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{html_escape(date_str)} 复盘</title>
+<style>
+{CSS}
+{PUBLIC_V2_CSS}
+</style>
+</head>
+<body>
+
+{html_public_v2_topbar(fm)}
+
+<div class="layout">
+<div class="content">
+
+{_public_v2_metric_row(fm)}
+
+{chr(10).join(sections)}
+
+</div>
+</div>
+
+{JS_FOOTER}
+</body>
+</html>"""
+
+
+def _convert_public_v2(
+    date_str: str, fm: dict, content: str, *, indicators_only: bool = False
+):
+    """Write the whitelist page for one date and return ``(date, path)``."""
+    draft = None if indicators_only else extract_public_draft(content)
+    html = render_public_v2_page(date_str, fm, draft)
+    output_path = REVIEW_NOTES / f"{date_str}.html"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"✅ 已生成(公开稿白名单): {output_path}")
+    return date_str, output_path
+
+
+def convert_md_to_html(
+    md_path,
+    *,
+    reading_sidecar_path=None,
+    promotion_metrics_shadow_path=None,
+    indicators_only: bool = False,
+):
     """Main conversion function."""
     content, fm, bundle_backed = read_review_input(
         md_path, reading_sidecar_path=reading_sidecar_path
     )
+    # 公开稿白名单路径（2026-09-28 起）：正文只取 `### 公开稿`，不经过逐词
+    # 替换脱敏。放在脱敏之前分派，旧路径保持不变。
+    draft_date = str(fm.get('date', '') or '')
+    if not draft_date:
+        basename = os.path.basename(md_path)
+        m = re.match(r'(\d{4})_(\d{1,2})_(\d{1,2})', basename)
+        if m:
+            draft_date = f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    if public_draft_effective(draft_date) or indicators_only:
+        return _convert_public_v2(draft_date, fm, content, indicators_only=indicators_only)
     # P2.3：按 note_schema 显式分派；未知版本拒绝，不凭标题相似猜版本。
     note_schema = detect_note_schema(fm)
     if note_schema == NOTE_SCHEMA_V2 and not bundle_backed and reading_sidecar_path is None:
@@ -3144,6 +3378,63 @@ def desc_from_fm(fm):
 
 # ── Index updaters ──
 
+def extract_close_ratio(date_str):
+    """Extract close up/down ratio from the generated review table when available."""
+    html_path = REVIEW_NOTES / f"{date_str}.html"
+    if not html_path.exists():
+        return "--"
+    html = html_path.read_text(encoding="utf-8")
+    rows = re.findall(r"<tr><td>收盘</td>.*?</tr>", html, flags=re.S)
+    if not rows:
+        return "--"
+    cells = re.findall(r"<td.*?>(.*?)</td>", rows[-1], flags=re.S)
+    if len(cells) < 6:
+        return "--"
+    plain_cells = [re.sub(r"<.*?>", "", cell).strip() for cell in cells]
+
+    # Newer review tables may fold the ratio into the sentiment/width cell
+    # and append source-gap columns after the market facts.
+    for cell in plain_cells:
+        labeled = re.search(
+            r"(?:涨跌比|涨跌|上涨\s*/\s*下跌)\s*[:：]?\s*(\d+)\s*/\s*(\d+)",
+            cell,
+        )
+        if labeled:
+            return f'<b class="upnum">{labeled.group(1)}</b>/<b class="dnnum">{labeled.group(2)}</b>'
+
+    # Preserve the established six-column layout, where the ratio is cell 6.
+    legacy_ratio = re.fullmatch(r"(\d+)\s*/\s*(\d+)", plain_cells[5])
+    if legacy_ratio:
+        return f'<b class="upnum">{legacy_ratio.group(1)}</b>/<b class="dnnum">{legacy_ratio.group(2)}</b>'
+
+    return "--"
+
+
+def normalize_archive_position_tags(content: str) -> str:
+    """Collapse every archive-card position tag to the safe public form.
+
+    The archive index is a live page regenerated on every sync, but its older
+    day cards were written by earlier generators that published abbreviated
+    holding names (E1).  Nightly sync only refreshes the current day's card,
+    so the leak survived in the aggregate page.  Rewriting the tag text here
+    keeps the fix in the generator (no hand-maintained second copy) while
+    leaving the historical day pages themselves untouched; those get the full
+    red-line pass later (PORTAL_FIX_NOW §4).
+
+    Only the tag label changes: dates, metrics and links are preserved.
+    """
+    def repl(match):
+        classes, label = match.group(1), match.group(2)
+        safe = "空仓" if "空仓" in label else "持仓"
+        return f'<span class="tag {classes}">{safe}</span>'
+
+    return re.sub(
+        r'<span class="tag ([a-z-]*)">([^<]*持仓[^<"]*)</span>',
+        repl,
+        content,
+    )
+
+
 def update_review_notes_index(date_str, fm):
     """Add entry to review-notes/index.html."""
     idx_path = REVIEW_NOTES / "index.html"
@@ -3168,9 +3459,11 @@ def update_review_notes_index(date_str, fm):
     emo_cls = 'up' if emo_v is not None and emo_v < 25 else ('dn' if emo_v is not None and emo_v >= 50 else '')
     sh_cls = 'up' if sh_pct.startswith('+') else 'dn'
     pos_tag = 'tag-a' if '空仓' not in pos else 'tag-g'
+    # E7：pos 本身已含「持仓」字样时不再重复前缀（旧结果「持仓 持仓」）。
+    position_tag_text = pos if pos.startswith('持仓') else f'持仓 {pos}'
     desc = desc_from_fm(fm)
 
-    new_entry = f'''    <a href="{date_str}.html" class="day-card"><div class="dt">{day}<span class="wd"> {weekday}</span></div><div class="mm"><span>上证 <strong class="{sh_cls}">{sh_pct}</strong></span><span>涨停 {zt}</span><span>情绪 <strong class="{emo_cls}">{emo}</strong></span><span>{desc}</span><span class="tag {pos_tag}">持仓 {pos}</span></div><div class="ar">→</div></a>
+    new_entry = f'''    <a href="{date_str}.html" class="day-card"><div class="dt">{day}<span class="wd"> {weekday}</span></div><div class="mm"><span>上证 <strong class="{sh_cls}">{sh_pct}</strong></span><span>涨停 {zt}</span><span>情绪 <strong class="{emo_cls}">{emo}</strong></span><span>{desc}</span><span class="tag {pos_tag}">{position_tag_text}</span></div><div class="ar">→</div></a>
 '''
 
     if existing_entry:
@@ -3218,41 +3511,10 @@ def update_review_notes_index(date_str, fm):
 
     content = re.sub(r'<!-- \d{4}年\d+月 -->\s*<div class="month-group">.*?</div>\s*</div>', refresh_month_count, content, flags=re.S)
 
+    content = normalize_archive_position_tags(content)
     with open(idx_path, 'w', encoding='utf-8') as f:
         f.write(content)
     print(f"✅ 已更新: {idx_path}")
-
-
-def extract_close_ratio(date_str):
-    """Extract close up/down ratio from the generated review table when available."""
-    html_path = REVIEW_NOTES / f"{date_str}.html"
-    if not html_path.exists():
-        return "--"
-    html = html_path.read_text(encoding="utf-8")
-    rows = re.findall(r"<tr><td>收盘</td>.*?</tr>", html, flags=re.S)
-    if not rows:
-        return "--"
-    cells = re.findall(r"<td.*?>(.*?)</td>", rows[-1], flags=re.S)
-    if len(cells) < 6:
-        return "--"
-    plain_cells = [re.sub(r"<.*?>", "", cell).strip() for cell in cells]
-
-    # Newer review tables may fold the ratio into the sentiment/width cell
-    # and append source-gap columns after the market facts.
-    for cell in plain_cells:
-        labeled = re.search(
-            r"(?:涨跌比|涨跌|上涨\s*/\s*下跌)\s*[:：]?\s*(\d+)\s*/\s*(\d+)",
-            cell,
-        )
-        if labeled:
-            return f'<b class="upnum">{labeled.group(1)}</b>/<b class="dnnum">{labeled.group(2)}</b>'
-
-    # Preserve the established six-column layout, where the ratio is cell 6.
-    legacy_ratio = re.fullmatch(r"(\d+)\s*/\s*(\d+)", plain_cells[5])
-    if legacy_ratio:
-        return f'<b class="upnum">{legacy_ratio.group(1)}</b>/<b class="dnnum">{legacy_ratio.group(2)}</b>'
-
-    return "--"
 
 
 def strip_html_tags(value):
@@ -3415,6 +3677,15 @@ def rebuild_recent_review_timeline(content, current_date, current_daily_card):
         key=lambda c: (datetime.strptime(c["date"], "%Y-%m-%d"), kind_priority.get(c["kind"], 0)),
         reverse=True,
     )[:6]
+    for card in cards:
+        # 涨跌比不再展示：接入 SSOT 计数之前，旧卡里的占位/错值一并剥掉
+        # （PORTAL_FIX_NOW §1）。
+        card["html"] = re.sub(
+            r'<span class="metric-structure metric-pair"><em>涨跌比</em>.*?</span>',
+            "",
+            card["html"],
+            flags=re.S,
+        )
 
     bounds = recent_review_grid_bounds(content)
     if not bounds:
@@ -3424,8 +3695,12 @@ def rebuild_recent_review_timeline(content, current_date, current_daily_card):
     return content[:inner_start] + timeline_html + content[inner_end:]
 
 
-def update_main_index(date_str, fm):
-    """Update portal/index.html with latest 6 review cards."""
+def update_main_index(date_str, fm, public_draft=None):
+    """Update portal/index.html with latest 6 review cards.
+
+    ``public_draft`` (2026-09-28 起) makes the card title the public draft's
+    own title instead of an indicator-derived label.
+    """
     idx_path = PORTAL / "index.html"
     with open(idx_path, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -3536,7 +3811,6 @@ def update_main_index(date_str, fm):
     emo_raw = fm.get('情绪值', '--')
     emo = pct_text(emo_raw)
     desc = desc_from_fm(fm)
-    close_ratio = extract_close_ratio(date_str)
 
     emo_num = numeric_value(emo_raw)
     sh_metric_cls = 'metric-up' if sh_pct.startswith('+') else 'metric-down'
@@ -3544,11 +3818,14 @@ def update_main_index(date_str, fm):
     zt_metric_cls = 'metric-heat' if str(zt).isdigit() and int(zt) >= 80 else 'metric-warn'
 
     card_id = f"recent-review-{date_str[5:7]}{date_str[8:10]}"
-    title = desc or '交易复盘'
+    if public_draft and public_draft.get("title"):
+        title = public_draft["title"]
+    else:
+        title = desc or '交易复盘'
     new_entry = f'''          <a id="{card_id}" href="review-notes/{date_str}.html?from={card_id}" class="recent-review-card">
             <div class="recent-review-top"><span class="recent-date">{month}月{day}日</span><span class="review-kind">日复盘</span><span class="review-read">阅读 →</span></div>
             <div class="recent-review-title">{title}</div>
-            <div class="review-metric-row"><span class="{sh_metric_cls}"><em>上证</em><strong>{sh_pct}</strong></span><span class="metric-structure metric-pair"><em>涨跌比</em><strong>{close_ratio}</strong></span><span class="{zt_metric_cls} metric-pair"><em>涨跌停</em><strong><b class="upnum">{zt}</b>/<b class="dnnum">{dt}</b></strong></span><span class="{emo_metric_cls}"><em>情绪值</em><strong>{emo}</strong></span></div>
+            <div class="review-metric-row"><span class="{sh_metric_cls}"><em>上证</em><strong>{sh_pct}</strong></span><span class="{zt_metric_cls} metric-pair"><em>涨跌停</em><strong><b class="upnum">{zt}</b>/<b class="dnnum">{dt}</b></strong></span><span class="{emo_metric_cls}"><em>情绪值</em><strong>{emo}</strong></span></div>
     </a>
 '''
 
@@ -3577,6 +3854,8 @@ def main():
             raise SystemExit("--promotion-metrics-shadow requires an explicit path")
         promotion_shadow_path = argv[option_index + 1]
         del argv[option_index:option_index + 2]
+    indicators_only = "--indicators-only" in argv
+    argv = [item for item in argv if item != "--indicators-only"]
     if len(argv) < 1:
         print(__doc__)
         sys.exit(1)
@@ -3589,6 +3868,7 @@ def main():
         md_path,
         reading_sidecar_path=sidecar_path,
         promotion_metrics_shadow_path=promotion_shadow_path,
+        indicators_only=indicators_only,
     )
 
     # Re-parse for index updates
@@ -3597,8 +3877,12 @@ def main():
     )
 
     # Update indexes
+    public_draft = None
+    if public_draft_effective(date_str):
+        _raw, raw_fm, _ = read_review_input(md_path, reading_sidecar_path=sidecar_path)
+        public_draft = extract_public_draft(_raw)
     update_review_notes_index(date_str, fm)
-    update_main_index(date_str, fm)
+    update_main_index(date_str, fm, public_draft)
 
     # Optionally commit
     if do_commit:
