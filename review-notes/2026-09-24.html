@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026-09-24 周四 复盘笔记</title>
+<title>2026-09-24 复盘</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#F7F5F3;--bg2:#FFFFFF;--bg3:#FAFAF9;--bg4:#F5F2EE;--border:#E5E2DE;--text:#2D2926;--text2:#5C5652;--text3:#8A8480;--accent:#D97706;--accent-hover:#B45309;--red:#DC2626;--green:#059669;--blue:#2563EB;--purple:#7C3AED;--amber:#D97706}
@@ -141,54 +141,44 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 .emotion-thresholds .threshold-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
 .emotion-thresholds .threshold-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:12px;line-height:1.45}
 .emotion-thresholds .threshold-item strong{color:var(--text);margin-right:6px}
+.public-v2-metrics{display:flex;flex-wrap:wrap;gap:10px;padding:18px 32px 0}
+.public-v2-metrics .metric{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:120px}
+.public-v2-metrics .metric span{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
+.public-v2-metrics .metric strong{font-size:16px}
+.public-v2-body{padding:6px 4px 10px}
+.public-v2-title{font-family:"Noto Serif SC","Noto Serif",serif;font-size:30px;line-height:1.35;margin:6px 0 14px}
+.public-v2-today{font-size:16px;line-height:1.9;color:var(--text)}
+.public-v2-cognition{margin-top:18px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.public-v2-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--accent);margin-bottom:6px}
+.public-v2-cognition p{font-family:"Noto Serif SC","Noto Serif",serif;font-size:17px;line-height:1.75}
+.public-v2-tomorrow{margin-top:14px}
+.public-v2-tomorrow p{line-height:1.85}
+.public-v2-boundary{font-size:12px;color:var(--text2);line-height:1.8}
+@media(max-width:768px){.public-v2-metrics{padding:14px 16px 0}.public-v2-title{font-size:25px}}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <a id="back-home" class="back" href="../index.html#reviews">← 返回首页</a>
-  <div class="title">2026-09-24 周四 复盘笔记</div>
+  <div class="title">2026-09-24 周四 复盘</div>
   <div class="meta">
-    <span class="chip green">情绪 待核</span>
-    <span class="chip green">上证 -- 待核</span>
-    <span class="chip blue">--涨停 / --跌停</span>
-    <span class="chip purple">持仓 空仓</span>
-    <span class="chip amber">待签（红方对抗未完成）</span>
+    <span class="chip red">情绪 20.6414% 低迷</span>
+    <span class="chip red">上证 3888.37 -1.22%</span>
+    <span class="chip blue">52涨停 / 13跌停</span>
+    <span class="chip purple">量能 1.65万亿</span>
   </div>
 </div>
 
 <div class="layout">
-<div class="sidebar" id="sidebar">
-  <div class="label">导航</div>
-  <a href="#s0">第〇部分 当日操作指引</a>
-  <a href="#s1">§一 当日复盘</a>
-  <a href="#s1a" class="s2">大盘全景</a>
-  <a href="#s1b" class="s2">情绪高标</a>
-  <a href="#s1c" class="s2">节点说明</a>
-  <a href="#s1d" class="s2">涨停结构</a>
-  <a href="#s1e" class="s2">自选池表现</a>
-  <a href="#s1f" class="s2">持仓与交易</a>
-  <a href="#s1g" class="s2">风格检测</a>
-  <a href="#s1h" class="s2">趋势持仓复盘</a>
-  <a href="#s1i" class="s2">窗口操作</a>
-  <a href="#s1j" class="s2">结论</a>
-  <a href="#s2">§二 心得与教训</a>
-  <a href="#s3">§三 次日预案</a>
-  <a href="#s3a" class="s2">连板自选池</a>
-  <a href="#s3b" class="s2">趋势自选池</a>
-  <a href="#s4">§四 红方对抗</a>
-  <a href="#sa">附录A 盘前速查</a>
-  <a href="#sd">数据附录</a>
-</div>
-
 <div class="content">
 
-<div class="section" id="s1">
-<div class="sh" onclick="this.classList.toggle('collapsed');this.nextElementSibling.classList.toggle('hide')">
-  <span class="tog">▼</span> §一 · 当日复盘
+<div class="public-v2-metrics"><div class="metric"><span>情绪</span><strong>20.6414% 低迷</strong></div><div class="metric"><span>上证</span><strong>-1.22%</strong></div><div class="metric"><span>涨跌停</span><strong>52 / 13</strong></div><div class="metric"><span>量能</span><strong>1.65万亿</strong></div></div>
+
+<div class="section" id="public-boundary">
+  <div class="sb public-v2-boundary">本页只公开当日复盘公开稿与四项盘后指标；持仓、个股与交易明细不进入公开层。内容以 Vault 复盘笔记为准，不构成投资建议。</div>
 </div>
-<div class="sb"></div>
-</div>
+
 
 </div>
 </div>
@@ -196,14 +186,6 @@ body{font:16px/1.7 system-ui,-apple-system,'Noto Sans SC',sans-serif;background:
 <script>
 const io=new IntersectionObserver(e=>{e.forEach(e=>{const l=document.querySelector(`a[href="#${e.target.id}"]`);if(l&&e.isIntersecting){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}})},{rootMargin:'-100px 0px -70% 0px'});
 document.querySelectorAll('.section[id]').forEach(s=>io.observe(s));
-</script>
-<script>
-(function(){
-  var from = new URLSearchParams(location.search).get('from');
-  if (from && /^[A-Za-z0-9_-]+$/.test(from)) {
-    document.getElementById('back-home').href = '../index.html#' + from;
-  }
-})();
 </script>
 </body>
 </html>

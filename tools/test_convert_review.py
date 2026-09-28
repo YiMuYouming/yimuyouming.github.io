@@ -2011,12 +2011,12 @@ stage_final: done
             try:
                 note = Path(tmp) / "2026_9_24_Thursday_ReviewNote.md"
                 note.write_text(legacy, encoding="utf-8")
+                date_str, path = convert_review.convert_md_to_html(note)
+                self.assertEqual("2026-09-24", date_str)
+                html = path.read_text(encoding="utf-8")
+                self.assertNotIn("public-v2-title", html)
             finally:
                 convert_review.REVIEW_NOTES = original
-            date_str, path = convert_review.convert_md_to_html(note)
-            self.assertEqual("2026-09-24", date_str)
-            html = path.read_text(encoding="utf-8")
-            self.assertNotIn("public-v2-title", html)
 
     def test_normalize_archive_position_tags_removes_names_and_duplicates(self):
         content = (
