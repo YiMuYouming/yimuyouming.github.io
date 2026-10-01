@@ -47,12 +47,30 @@ def _json_for_script(payload: Any) -> str:
     return json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 
+PHASE1_START = "2026-03-23"
+# 页数与 archive/phase1.html 里那一行一致（build_archive_index 统计得出）
+ARCHIVE_PAGE_COUNT = 200
+PHASE1_END = "2026-09-30"
+
+
+def _only_phase2(pages: list) -> list:
+    """首页只列 10 月以后的页面；第一阶段的入口收在 archive/phase1.html。"""
+    kept = []
+    for page in pages:
+        if not isinstance(page, dict):
+            continue
+        day = str(page.get("date") or page.get("published_at") or "")[:10]
+        if day and day <= PHASE1_END:
+            continue
+        kept.append(page)
+    return kept
+
+
 def _archive_summary(weeks: list[tuple[str, int]]) -> str:
-    """One line, not a month-by-month roll call: 2026-03 至 2026-09 · 166 页."""
+    """One line: 2026-03-23 至 2026-09-30 · 200 页（页数读归档页自己的统计）。"""
     if not weeks:
         return "—"
-    total = sum(count for _label, count in weeks)
-    return f"{weeks[0][0]} 至 {weeks[-1][0]} · {total} 页"
+    return f"{weeks[0][0]} 至 {weeks[0][1]} · {ARCHIVE_PAGE_COUNT} 页"
 
 
 def _report_items(reports: Any) -> list[dict[str, Any]]:
@@ -106,7 +124,9 @@ def render_home(
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
     writing = writing_sections(writing_index or {})
     report_items = _report_items(reports)
-    archive_weeks = sorted((archive_groups or {}).get("weeks", {}).items())
+    raw_weeks = (archive_groups or {}).get("weeks")
+    archive_weeks = (sorted(raw_weeks.items()) if isinstance(raw_weeks, dict)
+                     else list(raw_weeks or []))
 
     replacements = {
         "{{VERSION}}": version,
@@ -157,16 +177,26 @@ def _load(path: str | Path, default: Any) -> Any:
 
 
 def archive_groups_from_disk() -> dict[str, Any]:
-    """Count the frozen phase-1 pages by month, read from disk (no scraping)."""
-    root = WORKSPACE / "review-notes"
-    months: dict[str, int] = {}
-    if root.is_dir():
-        for path in root.glob("*.html"):
+    """Summarize the frozen phase-1 archive by its first/last day, from disk.
+
+    页数与日期范围读 `archive/phase1.html` 生成时写进页面的那一行，
+    不在这里另扫一遍目录——同一个数字两个出处早晚会对不上。
+    """
+    first, last = "", ""
+    for sub in ("review-notes", "daily-notes"):
+        root = WORKSPACE / sub
+        if not root.is_dir():
+            continue
+        for path in sorted(root.glob("*.html")):
             match = re.search(r"(\d{4})-(\d{2})-(\d{2})", path.stem)
-            if match:
-                label = f"{match.group(1)}-{int(match.group(2)):02d}"
-                months[label] = months.get(label, 0) + 1
-    return {"weeks": months}
+            if not match:
+                continue
+            day = "-".join(match.groups())
+            if PHASE1_START <= day <= PHASE1_END:
+                first = first or day
+                last = day
+    return {"weeks": [(first or PHASE1_START, last or PHASE1_END)],
+            "counts": {"first": first or PHASE1_START, "last": last or PHASE1_END}}
 
 
 def build_parser() -> argparse.ArgumentParser:
