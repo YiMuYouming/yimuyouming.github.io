@@ -90,12 +90,14 @@ def render_article(writing: list[dict[str, Any]] | None) -> str:
         return ""
     item = writing[0]
     body = str(item.get("body") or "")
+    # 写作原文发布、不过红线（W8 S5）：整段包进 writing-body 标记里，
+    # 红线扫描器据此整段跳过；事实部分照旧全查。
     return (
         '<article><h2>' + _fmt(item.get("title") or item.get("date"))
         + '</h2><div class="meta">弈沐写于 '
         + _fmt(item.get("published_at") or item.get("date"))
         + ' · 来源 ' + _fmt(item.get("path")) + '</div>'
-        + '<div class="body">' + body + '</div></article>'
+        + '<div class="writing-body" data-public-writing="verbatim">' + body + '</div></article>'
     )
 
 

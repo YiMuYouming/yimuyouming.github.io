@@ -577,6 +577,13 @@ REDLINE_RESIDUE_PATTERNS = [
 # 不会被金额模式命中；这里显式登记，避免以后加宽模式时误伤。
 REDLINE_ALLOWED_CONTEXT = re.compile(r"\d+(?:\.\d+)?%")
 
+# 写作原文豁免（W8 S5，开工单第二节第 6 点）：正文原样发布，不过红线。
+# 生成器把写作区包进 `<div class="writing-body" data-public-writing="verbatim">`，
+# 扫描器整段跳过——业绩区、每日公开页指标、周报事实区、研究报告照旧全查。
+WRITING_SPAN_OPEN = re.compile(
+    r'<div class="writing-body" data-public-writing="verbatim"[^>]*>', re.IGNORECASE
+)
+
 REDLINE_TRADE_WINDOW_DATES = 60
 
 # 本次同步链（sync_portal：首页数据 → 复盘详情页 → 手记）不生成的区块：
@@ -601,6 +608,16 @@ def _deferred_redline_spans(text: str, rel_path: str) -> list[tuple[int, int]]:
     return spans
 
 
+def _matching_div_close(html: str, start: int) -> int:
+    """写作区结束的位置：按 div 嵌套配对找，别被写作正文里的内层 div 提前骗到。"""
+    depth = 1
+    for match in re.finditer(r"<\s*/?\s*div\b[^>]*>", html[start:], flags=re.I):
+        depth += -1 if match.group(0).lstrip().startswith("</") else 1
+        if depth == 0:
+            return start + match.start()
+    return -1
+
+
 def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
     """纯文本 + 每个字符在原始 HTML 中的位置。
 
@@ -614,6 +631,18 @@ def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
     length = len(html)
     block_pattern = re.compile(r"\s*/?>", re.I)
     while index < length:
+        # 写作原文的标记要活过去标签这道关：整段豁免靠它定位，标签被剥掉就找不到了。
+        opening = WRITING_SPAN_OPEN.match(html, index)
+        if opening:
+            closer = _matching_div_close(html, opening.end())
+            # 收尾的 </div> 也要留在文本里：_scan_redline_hits 靠它判断豁免段到哪儿结束，
+            # 少一个字符就会把后面的事实区一起吞掉。
+            segment_end = (closer + len("</div>")) if closer != -1 else length
+            for offset in range(index, segment_end):
+                kept.append(html[offset])
+                positions.append(offset)
+            index = segment_end
+            continue
         if html.startswith("<!--", index):
             close = html.find("-->", index)
             index = length if close < 0 else close + 3
@@ -705,6 +734,12 @@ def _scan_redline_hits(text: str, names, codes) -> list[tuple[int, int, str]]:
         (m.start(), m.end())
         for m in REDLINE_ALLOWED_CONTEXT.finditer(text)
     ]
+    for opener in WRITING_SPAN_OPEN.finditer(text):
+        closer = _matching_div_close(text, opener.end())
+        allowed_spans.append(
+            (opener.start(),
+             (closer + len("</div>")) if closer != -1 else len(text))
+        )
 
     def _covered(start: int, end: int) -> bool:
         return any(a <= start and end <= b for a, b in allowed_spans)

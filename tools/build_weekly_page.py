@@ -106,10 +106,12 @@ def narrative_section(writing: list[dict[str, Any]], week: str) -> str:
     if not picked:
         return ""
     item = picked[0]
+    # 写作原文发布、不过红线（W8 S5）：整段包进 writing-body 标记里。
     return (
         '<section id="narrative"><h2>' + str(item.get("title") or label)
         + '</h2><div class="meta">弈沐写于 ' + str(item.get("published_at") or "") + '</div>'
-        + '<div class="body">' + str(item.get("body") or "") + '</div></section>'
+        + '<div class="writing-body" data-public-writing="verbatim">'
+        + str(item.get("body") or "") + '</div></section>'
     )
 
 
