@@ -128,7 +128,8 @@ def _load_index(path: str | Path) -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def _load_writing(path: str | Path | None, day: str) -> list[dict[str, Any]]:
+def _load_writing(path: str | Path | None, day: str,
+                  writing_root: Path | str | None = None) -> list[dict[str, Any]]:
     if not path:
         return []
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -139,7 +140,8 @@ def _load_writing(path: str | Path | None, day: str) -> list[dict[str, Any]]:
             continue
         if str(entry.get("date") or entry.get("published_at") or "")[:10] != day:
             continue
-        source = PROJECT_ROOT / "vault-writing" / entry["path"]
+        base = Path(writing_root) if writing_root else PROJECT_ROOT / "vault-writing"
+        source = base / entry["path"]
         body = ""
         if source.is_file():
             body = _markdown_to_html(source.read_text(encoding="utf-8"))
@@ -188,6 +190,8 @@ def build_parser() -> argparse.ArgumentParser:
     build.add_argument("--day", required=True)
     build.add_argument("--index", required=True, help="review_index_fields 的 JSON 输出")
     build.add_argument("--writing-index", default=None)
+    build.add_argument("--writing-root", default=None,
+                       help="公开写作所在目录；缺省用 vault-writing/")
     build.add_argument("--out", default=str(PROJECT_ROOT / "daily"))
     build.add_argument("--version", default="")
     build.add_argument("--check", action="store_true")
@@ -200,7 +204,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         index = _load_index(args.index)
         page = build_daily_page(
-            index, day=args.day, writing=_load_writing(args.writing_index, args.day),
+            index, day=args.day, writing=_load_writing(args.writing_index, args.day, args.writing_root),
             out_dir=args.out, version=args.version,
         )
     except (OSError, ValueError) as exc:

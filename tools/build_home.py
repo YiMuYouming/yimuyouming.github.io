@@ -115,6 +115,7 @@ def render_home(
     pnl_data: dict[str, Any],
     *,
     writing_index: dict[str, Any] | None = None,
+    sample_writing: bool = False,
     reports: dict[str, Any] | None = None,
     archive_groups: dict[str, Any] | None = None,
     version: str = "",
@@ -123,6 +124,9 @@ def render_home(
     """Render the complete home page. Pure: same inputs, same bytes."""
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
     writing = writing_sections(writing_index or {})
+    # 预览时用夹具里的示例文章演示，页面上必须能看出这是示例，不能让人以为是真发布
+    sample_badge = ('<span class="sample-badge">示例（预演数据，未发布）</span>'
+                    if sample_writing else "")
     report_items = _report_items(reports)
     raw_weeks = (archive_groups or {}).get("weeks")
     archive_weeks = (sorted(raw_weeks.items()) if isinstance(raw_weeks, dict)
@@ -143,6 +147,7 @@ def render_home(
             f'data-p="{key}">{label}</button>'
             for key, label in PERIOD_BUTTONS
         ),
+        "{{SAMPLE_BADGE}}": sample_badge,
         "{{ESSAYS}}": _render_entries(writing["essay"]),
         "{{DAILIES}}": _render_entries(writing["daily"][:12]),
         "{{WEEKLIES}}": _render_entries(writing["weekly"]),
@@ -209,6 +214,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help="第一阶段归档分组 JSON；缺省时按现有页面数推断")
     parser.add_argument("--version", default="", help="数据版本（提交号短哈希）")
     parser.add_argument("--out", default=str(WORKSPACE / "index.html"))
+    parser.add_argument("--sample-writing", action="store_true",
+                        help="写作区用夹具示例文章演示，页面上标「示例」")
     parser.add_argument("--check", action="store_true")
     return parser
 
@@ -219,6 +226,7 @@ def main(argv: list[str] | None = None) -> int:
     page = render_home(
         pnl_data,
         writing_index=_load(args.writing_index, {"schema": "writing_index.v1", "entries": [], "issues": []}),
+        sample_writing=args.sample_writing,
         reports=_load(args.reports, {}),
         archive_groups=(
             _load(args.archive_groups, None) if args.archive_groups else archive_groups_from_disk()
