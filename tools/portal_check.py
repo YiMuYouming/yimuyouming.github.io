@@ -792,6 +792,47 @@ def check_redlines(text: str, names, codes) -> list[str]:
 
 
 
+SITE_HREF = re.compile(r"""<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+BASE_HREF = re.compile(r"""<base\b[^>]*\bhref\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+
+
+def check_site_links(files: list[Path]) -> list[str]:
+    """站内 href 必须指到一个真实存在的文件，否则报死链（审计回复 10 第二节第 11 条）。
+
+    只查站内相对链接：外部 http(s)、`#锚点`、`mailto:` 一律跳过。
+    目录链接按"该目录下必须有 index.html"判断——线上 GitHub Pages 上
+    `/weekly/` 只有在 `weekly/index.html` 存在时才打得开。
+    """
+    problems: list[str] = []
+    for path in files:
+        if not path.is_file() or path.suffix != ".html":
+            continue
+        # 模板不是发布页：它的链接按站点根写，相对路径当然解析不到
+        if "templates" in path.parts:
+            continue
+        html = path.read_text(encoding="utf-8", errors="replace")
+        # <base href> 会改变所有相对链接的解析基准。1.0 版首页被搬到 v1/ 之后
+        # 就靠这一行让 `review-notes/…` 仍然指向站点根——检查器必须跟浏览器
+        # 一样认出它，否则会把 51 条本该正常的链接全报成死链。
+        base = BASE_HREF.search(html)
+        base_dir = (path.parent / base.group(1)).resolve() if base else path.parent.resolve()
+        for href in SITE_HREF.findall(html):
+            target = href.strip()
+            if not target or target.startswith(("#", "http://", "https://",
+                                                "mailto:", "javascript:", "data:")):
+                continue
+            target = target.split("#", 1)[0].split("?", 1)[0]
+            if not target:
+                continue
+            resolved = (base_dir / target).resolve()
+            if resolved.is_dir():
+                resolved = resolved / "index.html"
+            if not resolved.exists():
+                rel = str(path.relative_to(PORTAL)) if PORTAL in path.parents else str(path)
+                problems.append(f"{rel} → {href}")
+    return problems
+
+
 def run_redline(files: list[Path], args) -> int:
     """Privacy red-line gate: any hit blocks the publish."""
     print(f"\n{'='*60}")
@@ -852,9 +893,23 @@ def run_redline(files: list[Path], args) -> int:
             rel = fp.relative_to(PORTAL) if PORTAL in fp.parents else fp
             print(f"    {rel}: {len(hits)} 条")
 
-    if not all_hits:
-        print("\n  红线检查零命中，可以发布。")
+    # 站内死链与红线一样阻断发布（审计回复 10 第二节第 11 条）：
+    # 页脚挂一个 404 的链接，读者点进去才发现，比不挂更糟。
+    dead_links = check_site_links([fp for fp in files if fp.suffix == ".html"])
+    if dead_links:
+        print(f"\n{'─'*60}")
+        print(f"  DEAD LINK — {len(dead_links)} 处站内链接指向不存在的文件（阻断发布）")
+        print(f"{'─'*60}")
+        for item in dead_links[:40]:
+            print(f"    {item}")
+        if len(dead_links) > 40:
+            print(f"    …另有 {len(dead_links) - 40} 处")
+
+    if not all_hits and not dead_links:
+        print("\n  红线检查零命中，站内链接全部可达，可以发布。")
         return 0
+    if not all_hits:
+        return 1
 
     print(f"\n{'─'*60}")
     print(f"  RED LINE — {len(all_hits)} 个文件命中（阻断发布）")

@@ -35,7 +35,7 @@ class WeekGroupingTest(unittest.TestCase):
             root = Path(tmp)
             _pages(root, ["2026-03-23", "2026-03-24", "2026-03-25",
                           "2026-04-07", "2026-04-08"])
-            groups = mod.group_by_week(sorted(root.glob("*.html")))
+            groups = mod.group_by_week(sorted(root.glob("*.html")), root=root)
             self.assertEqual([g["label"] for g in groups], ["2026-W13", "2026-W15"])
             self.assertEqual(groups[0]["count"], 3)
             self.assertEqual(groups[1]["count"], 2)
@@ -78,3 +78,34 @@ class RenderTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ArchiveHrefTests(unittest.TestCase):
+    """归档页的 href 必须是站内相对路径（审计回复 10 第 11 条）。
+
+    原来直接写 `path.as_posix()`——那是文件系统绝对路径，公开页里会露出
+    本机目录结构，线上每个链接也都打不开。
+    """
+
+    def test_hrefs_are_site_relative(self):
+        groups = [{
+            "label": "2026-W15", "count": 2,
+            "pages": [
+                ("2026-03-23", "03-23", "review-notes/2026-03-23.html"),
+                ("2026-03-24", "03-24", "review-notes/2026-03-24.html"),
+            ],
+        }]
+        html = mod.render(groups)
+        self.assertIn('href="../review-notes/2026-03-23.html"', html)
+        self.assertNotIn("/Users/", html)
+        self.assertNotIn("Path(", html)
+
+    def test_absolute_paths_never_reach_the_page(self):
+        """即便有人把绝对路径喂进来，渲染层也不再照原样发出。"""
+        groups = [{
+            "label": "2026-W15", "count": 1,
+            "pages": [("2026-03-23", "03-23",
+                       "/Users/someone/YM_Capital/portal/review-notes/2026-03-23.html")],
+        }]
+        html = mod.render(groups)
+        self.assertNotIn("/Users/someone", html)
