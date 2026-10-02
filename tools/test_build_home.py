@@ -205,4 +205,6 @@ class HomeDuplicationTests(unittest.TestCase):
         engine = ENGINE.read_text(encoding="utf-8")
         block = engine[engine.index("var ddLabel = "):engine.index("canvas._chartData")]
         self.assertIn("labY", block, "回撤标签需要单独的纵向偏移")
-        self.assertIn("textBaseline = 'bottom'", block)
+        # 谷底上方是曲线本身、下方是空白，所以默认放下方，放不下才翻上去
+        self.assertIn("fitsBelow", block)
+        self.assertIn("below + 12 <= PAD.t + ch", block)

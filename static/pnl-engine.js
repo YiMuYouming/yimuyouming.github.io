@@ -372,13 +372,16 @@
       ctx.beginPath(); ctx.moveTo(pkX, pkY); ctx.lineTo(trX, pkY); ctx.lineTo(trX, trY); ctx.stroke();
       ctx.setLineDash([]);
       var ddLabel = '最大回撤 ' + ddInfo.dd.toFixed(2) + '%';
-ctx.font = '11px system-ui'; ctx.fillStyle = '#D97706';
+      ctx.font = '11px system-ui'; ctx.fillStyle = '#D97706';
       var tw = ctx.measureText(ddLabel).width;
-      // 谷底常常就在曲线末端，而末端已经写了一个数值标签；把回撤标签放到
-      // 点的正上方并水平居中，两边就不会叠在一起。
-      var labX = Math.max(PAD.l, Math.min(W - PAD.r - tw, trX - tw / 2));
-      var labY = trY - 12;
-      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      // 谷底常常就在曲线末端，而末端已经写了一个数值标签；谷底上方又是曲线本身。
+      // 放到谷底**下方**（那里是空白），水平方向优先靠左，放不下才靠右。
+      var labX = trX - tw - 12;
+      if (labX < PAD.l) labX = trX + 12;
+      if (labX + tw > W - 8) labX = Math.max(PAD.l, W - 8 - tw);
+      var below = trY + 16, fitsBelow = below + 12 <= PAD.t + ch;
+      var labY = fitsBelow ? below : trY - 12;
+      ctx.textAlign = 'left'; ctx.textBaseline = fitsBelow ? 'top' : 'bottom';
       ctx.fillText(ddLabel, labX, labY);
     }
 
