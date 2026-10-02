@@ -79,3 +79,21 @@ class SyncPnlDataWritesOnlyDataTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WeeklyFooterLinkTests(unittest.TestCase):
+    """页脚「周报」不能是 404 的目录链接（审计回复 10 第二节第 11 条）。
+
+    `weekly/index.html` 要等 build_weekly_page 生成第一份新周报（W41 起）才有；
+    在那之前指向第一阶段归档入口——W40 及以前的周报都在那里。
+    """
+
+    def test_template_has_the_slot_not_a_hardcoded_directory(self):
+        template = (PORTAL / "templates" / "home.html").read_text(encoding="utf-8")
+        self.assertIn("{{WEEKLY_LINK}}", template)
+        self.assertNotIn('href="weekly/"', template)
+
+    def test_build_home_fills_the_slot(self):
+        source = _source("build_home.py")
+        self.assertIn('"{{WEEKLY_LINK}}"', source,
+                      "模板有槽但渲染层没填，首页会留下未替换的占位")

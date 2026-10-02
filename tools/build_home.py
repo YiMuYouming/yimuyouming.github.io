@@ -22,6 +22,9 @@ WORKSPACE = Path(__file__).resolve().parents[1]
 TEMPLATE_PATH = WORKSPACE / "templates" / "home.html"
 CURRENT_HOME = WORKSPACE / "index.html"
 WRITING_INDEX_PATH = WORKSPACE / "data" / "writing-index.json"
+# 审计回复 10 第 12 条：① sync_pnl_data 只写这个数据文件，③ 从它读——
+# 取数与渲染分开，两个写入者就不会互相覆盖 index.html。
+PNL_DATA_FILE = WORKSPACE / "data" / "pnl.json"
 REPORTS_PATH = WORKSPACE / "report" / "reports.json"
 
 # 与 static/pnl-engine.js 的 MET / PER 一一对应；这里只用来生成按钮，不参与计算。
@@ -154,6 +157,14 @@ def render_home(
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),
         "{{REPORT_COUNT}}": str(len(report_items)),
         "{{ARCHIVE_GROUPS}}": _archive_summary(archive_weeks),
+        # 审计回复 10 第二节第 11 条：weekly/index.html 由 build_weekly_page 在
+        # 生成第一份新周报（W41 起）时产出。在那之前页脚指向第一阶段归档入口——
+        # W40 及以前的周报都在那里，不给一个 404 的目录链接。
+        "{{WEEKLY_LINK}}": (
+            '<a href="weekly/">周报</a>'
+            if (WORKSPACE / "weekly" / "index.html").is_file()
+            else '<a href="archive/phase1.html">周报</a>'
+        ),
         "{{PNL_DATA_JSON}}": _json_for_script(pnl_data),
         "{{WRITING_JSON}}": _json_for_script(writing_index or {}),
     }
@@ -167,7 +178,18 @@ def render_home(
 
 
 def read_pnl_data(source: Path) -> dict[str, Any]:
-    html = Path(source).read_text(encoding="utf-8")
+    """读业绩数据。优先是 sync_pnl_data.py 写下的 data/pnl.json。
+
+    仍兼容从 HTML 抠 `var PNL_DATA` 的老形状——1.0 版首页 `v1/index.html`
+    与 2026-10-02 之前的历史页面走那条路，新链不再生成这种形状。
+    """
+    path = Path(source)
+    if not path.is_file():
+        raise SystemExit(f"pnl_data_missing:{path}")
+    if path.suffix == ".json":
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload["data"] if isinstance(payload.get("data"), dict) else payload
+    html = path.read_text(encoding="utf-8")
     match = re.search(r"var PNL_DATA = (\{.*?\});\s*</script>", html, flags=re.DOTALL)
     if not match:
         raise SystemExit(f"pnl_data_missing:{source}")
@@ -206,8 +228,8 @@ def archive_groups_from_disk() -> dict[str, Any]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="整页渲染门户首页（W8 S2）")
-    parser.add_argument("--pnl-from", default=str(CURRENT_HOME),
-                        help="从现网首页读 PNL_DATA（默认 index.html）")
+    parser.add_argument("--pnl-from", default=str(PNL_DATA_FILE),
+                        help="业绩数据：默认 data/pnl.json；也可给 .html 从旧形状里抠")
     parser.add_argument("--writing-index", default=str(WRITING_INDEX_PATH))
     parser.add_argument("--reports", default=str(REPORTS_PATH))
     parser.add_argument("--archive-groups", default=None,
