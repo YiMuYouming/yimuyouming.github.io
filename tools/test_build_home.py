@@ -134,9 +134,11 @@ class RenderTest(unittest.TestCase):
     def test_pnl_data_is_embedded_verbatim(self):
         html = self._render()
         blob = re.search(r"var PNL_DATA = (\{.*?\});", html, flags=re.DOTALL).group(1)
-        self.assertEqual(
-            json.loads(blob.replace("<\\/", "</"))["summary"]["last_date"], "2026-10-01"
-        )
+        payload = json.loads(blob.replace("<\\/", "</"))
+        # 守的是「首页内嵌的那份与数据源逐字一致」。日期由 ① 每天刷新，
+        # 写死某一天只会让明天再红一次——比这条断言要守的东西更脆。
+        source = current_pnl_data()
+        self.assertEqual(source, payload)
 
     def test_no_writing_means_no_placeholder_text(self):
         html = self._render()
