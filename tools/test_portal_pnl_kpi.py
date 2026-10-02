@@ -11,6 +11,7 @@ PORTAL = Path(__file__).resolve().parent.parent
 # 这组用例守的是**引擎那份唯一实现**（审计回复 1 第一节：业绩只算一处），
 # 所以直接读引擎文件，不再从首页 HTML 里抠出来。
 ENGINE_JS = PORTAL / "static" / "pnl-engine.js"
+ENGINE_JS = PORTAL / "static" / "pnl-engine.js"
 INDEX_HTML = PORTAL / "index.html"
 
 
