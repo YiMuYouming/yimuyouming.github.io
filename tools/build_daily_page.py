@@ -76,12 +76,25 @@ def _fmt(value: Any) -> str:
     return str(value)
 
 
+# 指标的小数位：封存原件里情绪值是四位小数（47.6164），直接印在公开页上
+# 像没写完。**只改展示，JSON 里的原值不动**——精度是数据的事，页面只负责
+# 让人读得懂。与审计回复 3 第三节要求的「累计入金改两位小数」是同一类问题。
+DECIMALS = {"情绪值": 1}
+
+
+def _fmt_metric(key: str, value: Any) -> str:
+    digits = DECIMALS.get(key)
+    if digits is not None and isinstance(value, (int, float)) and not isinstance(value, bool):
+        return f"{float(value):.{digits}f}"
+    return _fmt(value)
+
+
 def render_facts(index: dict[str, Any]) -> str:
     cells = []
     for key, label in INDEX_FIELDS:
         cells.append(
             f'<div class="fact"><span class="lbl">{label}</span>'
-            f'<b>{_fmt((index or {}).get(key))}</b></div>'
+            f'<b>{_fmt_metric(key, (index or {}).get(key))}</b></div>'
         )
     return "".join(cells)
 

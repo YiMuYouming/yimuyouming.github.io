@@ -250,3 +250,21 @@ class CliDataDateTests(unittest.TestCase):
         )
         self.assertEqual(_re.findall(r"<h1>(.*?)</h1>", page), ["2026-10-08"],
                          "正文开头那个重复的 H1 应当被去掉，页首留一个")
+
+
+class MetricPrecisionTests(unittest.TestCase):
+    """情绪值在封存原件里是四位小数（47.6164），直接印在公开页上像没写完。"""
+
+    def test_emotion_is_shown_with_one_decimal(self):
+        page = build_daily_page(_index(情绪值=47.6164), day="2026-10-08", data_date="2026-10-08")
+        self.assertIn("47.6", page)
+        self.assertNotIn("47.6164", page)
+
+    def test_counts_stay_integers(self):
+        page = build_daily_page(_index(涨停家数=52, 最高板=7), day="2026-10-08", data_date="2026-10-08")
+        self.assertIn(">52<", page)
+        self.assertIn(">7<", page)
+
+    def test_string_metrics_are_untouched(self):
+        page = build_daily_page(_index(上证涨幅="+0.31%"), day="2026-10-08", data_date="2026-10-08")
+        self.assertIn("+0.31%", page)
