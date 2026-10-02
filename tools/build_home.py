@@ -154,6 +154,14 @@ def render_home(
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),
         "{{REPORT_COUNT}}": str(len(report_items)),
         "{{ARCHIVE_GROUPS}}": _archive_summary(archive_weeks),
+        # 审计回复 10 第二节第 11 条：weekly/index.html 由 build_weekly_page 在
+        # 生成第一份新周报（W41 起）时产出。在那之前页脚指向第一阶段归档入口——
+        # W40 及以前的周报都在那里，不给一个 404 的目录链接。
+        "{{WEEKLY_LINK}}": (
+            '<a href="weekly/">周报</a>'
+            if (WORKSPACE / "weekly" / "index.html").is_file()
+            else '<a href="archive/phase1.html">周报</a>'
+        ),
         "{{PNL_DATA_JSON}}": _json_for_script(pnl_data),
         "{{WRITING_JSON}}": _json_for_script(writing_index or {}),
     }
