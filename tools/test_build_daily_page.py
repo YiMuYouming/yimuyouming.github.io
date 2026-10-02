@@ -234,3 +234,19 @@ class CliDataDateTests(unittest.TestCase):
             ["build", "--day", "2026-10-08", "--index", "x.json", "--sample"]
         )
         self.assertTrue(args.sample)
+
+    def test_leading_h1_matching_the_page_date_is_dropped(self):
+        """正文常以 `# 日期` 起头，而页首已经写过一次这个日期——这才是真正重复的那一对。"""
+        import re as _re
+        writing = [{
+            "title": "10-08 手记",
+            "date": "2026-10-08",
+            "status": "published",
+            "path": "每日/2026-10-08.md",
+            "body": "<h1>2026-10-08</h1><p>正文</p>",
+        }]
+        page = build_daily_page(
+            _index(), day="2026-10-08", data_date="2026-10-08", writing=writing
+        )
+        self.assertEqual(_re.findall(r"<h1>(.*?)</h1>", page), ["2026-10-08"],
+                         "正文开头那个重复的 H1 应当被去掉，页首留一个")

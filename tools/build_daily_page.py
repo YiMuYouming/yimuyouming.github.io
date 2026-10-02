@@ -86,13 +86,14 @@ def render_facts(index: dict[str, Any]) -> str:
     return "".join(cells)
 
 
-def render_article(writing: list[dict[str, Any]] | None) -> str:
+def render_article(writing: list[dict[str, Any]] | None, *, day: str = "") -> str:
     """有已发布写作才出正文；正文原样渲染，不改写、不删敏。"""
     if not writing:
         return ""
     item = writing[0]
     title = _fmt(item.get("title") or item.get("date"))
-    body = _drop_leading_h1(str(item.get("body") or ""), title)
+    # 去重的两个候选：文章标题，以及页面自己写过的页首标题（{day}）
+    body = _drop_leading_h1(str(item.get("body") or ""), title, day)
     # 写作原文发布、不过红线（W8 S5）：整段包进 writing-body 标记里，
     # 红线扫描器据此整段跳过；事实部分照旧全查。
     return (
@@ -104,18 +105,21 @@ def render_article(writing: list[dict[str, Any]] | None) -> str:
     )
 
 
-def _drop_leading_h1(body: str, title: str) -> str:
-    """正文第一行的 H1 与文章标题重复，页面标题已经写过一次，去掉。
+def _drop_leading_h1(body: str, *titles: str) -> str:
+    """正文第一行的 H1 与页面已有的标题重复，去掉。
 
-    只去**开头那一个**且文字与标题相同的 H1；正文里别的标题照旧保留
-    （写作原文发布，只做排版层面的去重，不改内容）。
+    页面自己已经写过两处标题：页首的 `<h1>{day}</h1>` 和文章的 `<h2>标题</h2>`。
+    写作正文习惯以 `# 标题` 或 `# 日期` 起头，三选一命中就去掉**开头那一个**——
+    只去开头，正文里别的标题照旧保留（写作原文发布，只做排版层面的去重，
+    不改内容）。
     """
+    wanted = {str(t).strip() for t in titles if str(t or "").strip()}
     stripped = body.lstrip()
     match = re.match(r"^<h1>(.*?)</h1>\s*", stripped, re.DOTALL)
     if not match:
         return body
     inner = re.sub(r"<[^>]+>", "", match.group(1)).strip()
-    if inner != title:
+    if inner not in wanted:
         return body
     return stripped[match.end():]
 
@@ -154,7 +158,7 @@ def build_daily_page(
             if sample else ""
         ),
         facts=render_facts(index),
-        article=render_article(writing),
+        article=render_article(writing, day=day),
     )
 
 
