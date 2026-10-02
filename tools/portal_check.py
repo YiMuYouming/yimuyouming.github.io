@@ -584,6 +584,18 @@ WRITING_SPAN_OPEN = re.compile(
     r'<div class="writing-body" data-public-writing="verbatim"[^>]*>', re.IGNORECASE
 )
 
+# 账户层面总额的白名单（审计回复 8 第二节第 8 条）：账户总额本来就是公开口径
+# ——现网首页一直在公开，弈沐看过的预览里也有。真正要拦的是正文里的个股金额
+# 与股数。所以白名单**不给"页面上的一切金额"**，只给这一个固定标记：
+# 元素带上 data-public="account-total" 才跳过它的正文。
+# 同样的数字出现在任何没有这个标记的地方（正文、表格、图表说明）照拦不误。
+# 扫描时直接把这类元素的正文丢掉，所以它根本不会进入被扫的纯文本。
+ACCOUNT_TOTAL_ELEMENT = re.compile(
+    r"<\s*([a-zA-Z][\w-]*)([^>]*\bdata-public\s*=\s*[\"']account-total[\"'][^>]*)>"
+    r"(.*?)<\s*/\s*\1\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+
 REDLINE_TRADE_WINDOW_DATES = 60
 
 # 本次同步链（sync_portal：首页数据 → 复盘详情页 → 手记）不生成的区块：
@@ -646,6 +658,13 @@ def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
         if html.startswith("<!--", index):
             close = html.find("-->", index)
             index = length if close < 0 else close + 3
+            continue
+        # 账户总额的标记元素必须在通用标签分支**之前**判：不然开标签先被
+        # 通用分支吃掉，轮到正文时已经不知道它属于哪个元素。命中就把整段
+        # （含标签与正文）跳过，它的正文因此不会进入被扫的纯文本。
+        marked = ACCOUNT_TOTAL_ELEMENT.match(html, index)
+        if marked:
+            index = marked.end()
             continue
         if html.startswith("<", index):
             tag_end = html.find(">", index)

@@ -44,10 +44,19 @@ def days_of_week(year: int, iso: int) -> list[dict[str, Any]]:
 
 
 def _money(value: Any) -> str:
+    """四舍五入到两位。
+
+    Python 的格式化用的是「银行家舍入」——711059.225 会变成 711,059.22，
+    而首页的浏览器端 ``toLocaleString`` 给的是 711,059.23。同一笔账户总额在
+    两个页面上读数不同，看的人会以为其中一处算错了。所以这里显式按四舍五入。
+    """
+    from decimal import Decimal, ROUND_HALF_UP
+
     try:
-        return f"{float(value):,.2f}"
-    except (TypeError, ValueError):
+        amount = Decimal(str(float(value))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    except (TypeError, ValueError, ArithmeticError):
         return "—"
+    return f"{amount:,.2f}"
 
 
 def fact_section(days: list[dict[str, Any]], pnl: dict[str, Any]) -> str:
@@ -77,10 +86,12 @@ def fact_section(days: list[dict[str, Any]], pnl: dict[str, Any]) -> str:
     summary = (pnl or {}).get("summary") or {}
     meta = (pnl or {}).get("meta") or {}
     kpis = (
+        # 账户层面总额是公开口径（现网首页一直在公开），按审计回复 8 第二节
+        # 第 8 条加固定标记，让红线只跳过这两个元素——正文里的金额照拦。
         '<div class="kpi"><span class="lbl">当前资产</span>'
-        f"<b>{_money(meta.get('total_asset'))}</b></div>"
+        f'<b data-public="account-total">{_money(meta.get("total_asset"))}</b></div>'
         '<div class="kpi"><span class="lbl">累计入金</span>'
-        f"<b>{_money(meta.get('total_deposit'))}</b></div>"
+        f'<b data-public="account-total">{_money(meta.get("total_deposit"))}</b></div>'
         '<div class="kpi"><span class="lbl">本周 TWR</span>'
         f"<b>{summary.get('pnl_pct', '—')}</b></div>"
         '<div class="kpi"><span class="lbl">数据截至</span>'
