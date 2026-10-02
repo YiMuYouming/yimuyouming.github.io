@@ -61,9 +61,6 @@ WRITING_ROOT = Path(
     or "/Users/yimu/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/公开写作"
 )
 WRITING_INDEX = PORTAL / "data" / "writing-index.json"
-# ① sync_pnl_data 只写这个数据文件，③ build_home 从它读——取数与渲染分开，
-# 两个写入者就不会互相覆盖 index.html（审计回复 10 第二节第 12 条）。
-PNL_DATA_FILE = PORTAL / "data" / "pnl.json"
 # 第一阶段（2026-03-23 至 09-30）冻结：老的复盘页/手记页不再重新生成，
 # 与 build_daily_page.PHASE2_START 用同一个日子。
 PHASE2_START = "2026-10-01"
@@ -369,7 +366,6 @@ def main(argv: list[str] | None = None) -> int:
     # 都行」的默契——整页只有一个渲染器（public约定：业绩只算一处）。
     home_argv = [
         str(TOOLS / "build_home.py"),
-        "--pnl-from", str(PNL_DATA_FILE),
         "--writing-index", str(WRITING_INDEX),
         "--out", str(home_page()),
     ]

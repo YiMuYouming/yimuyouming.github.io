@@ -135,7 +135,7 @@ class RenderTest(unittest.TestCase):
         html = self._render()
         blob = re.search(r"var PNL_DATA = (\{.*?\});", html, flags=re.DOTALL).group(1)
         self.assertEqual(
-            json.loads(blob.replace("<\\/", "</"))["summary"]["last_date"], "2026-09-30"
+            json.loads(blob.replace("<\\/", "</"))["summary"]["last_date"], "2026-10-01"
         )
 
     def test_no_writing_means_no_placeholder_text(self):
