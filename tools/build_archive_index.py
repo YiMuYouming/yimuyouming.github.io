@@ -70,8 +70,11 @@ def in_phase1(name: str) -> bool:
     return PHASE1_START <= day <= PHASE1_END
 
 
-def group_by_week(pages) -> list[dict]:
-    """按 ISO 周分组；组内按日期排序，最早的周在前。"""
+def group_by_week(pages, *, root=PROJECT_ROOT) -> list[dict]:
+    """按 ISO 周分组；组内按日期排序，最早的周在前。
+
+    ``root`` 是站点根（默认本仓库），用来把页面路径换算成**站内相对路径**。
+    """
     buckets: dict[str, list[tuple[str, str]]] = {}
     for path in pages:
         match = DAY_RE.match(path.name)
@@ -82,8 +85,16 @@ def group_by_week(pages) -> list[dict]:
         day = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         if day.isoformat() < PHASE1_START or day.isoformat() > PHASE1_END:
             continue
+        # 必须是**站内相对路径**。原来直接写 `path.as_posix()`，那是文件系统
+        # 绝对路径——公开页里会露出本机目录结构（还把我当时所在的 worktree 路径
+        # 一起发布出去了），而且线上每个链接都打不开。
+        try:
+            rel = path.resolve().relative_to(Path(root).resolve()).as_posix()
+        except ValueError:
+            # 不在站点根内就不列——宁可少列，也不把绝对路径发到公开页
+            continue
         buckets.setdefault(week_label(day), []).append(
-            (day.isoformat(), day.strftime("%m-%d"), path.as_posix())
+            (day.isoformat(), day.strftime("%m-%d"), rel)
         )
     groups = []
     for label in sorted(buckets):
@@ -97,8 +108,13 @@ def render(groups) -> str:
     weeks = "".join(
         f'<div class="week"><h2>{group["label"]}'
         f'<span>{group["count"]} 篇</span></h2><ul>'
-        + "".join(f'<li><a href="../{rel}">{title}</a></li>'
-                  for day, title, rel in group["pages"])
+        + "".join(
+            f'<li><a href="../{rel}">{title}</a></li>'
+            for day, title, rel in group["pages"]
+            # 这是公开页：绝对路径或逃出站点根的链接一律不发。
+            # 上游已经过滤过一道，这里再挡一道——发出去就收不回来了。
+            if not rel.startswith("/") and ".." not in rel.split("/")
+        )
         + "</ul></div>"
         for group in groups
     )

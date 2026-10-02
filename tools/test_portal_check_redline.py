@@ -179,3 +179,72 @@ class DeferredHistoryTests(unittest.TestCase):
             "<html><body><p>交易门禁未放行</p></body></html>", "daily-notes/2026-09-28.html"
         )
         self.assertEqual([], spans)
+
+
+class SiteLinkCheckTests(unittest.TestCase):
+    """站内死链必须阻断发布（审计回复 10 第二节第 11 条）。
+
+    页脚挂一个 404 的链接，读者点进去才发现——比不挂更糟。
+    """
+
+    def setUp(self):
+        import tempfile
+
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+        (self.root / "archive").mkdir()
+        (self.root / "archive" / "phase1.html").write_text("x", encoding="utf-8")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _check(self, name: str, html: str):
+        page = self.root / name
+        page.write_text(html, encoding="utf-8")
+        return portal_check.check_site_links([page])
+
+    def test_resolvable_link_passes(self):
+        self.assertEqual([], self._check(
+            "index.html", '<a href="archive/phase1.html">归档</a>'))
+
+    def test_missing_target_is_reported(self):
+        problems = self._check("index.html", '<a href="weekly/">周报</a>')
+        self.assertEqual(1, len(problems))
+        self.assertIn("weekly/", problems[0])
+
+    def test_directory_link_needs_an_index_html(self):
+        """线上 GitHub Pages 上 `/weekly/` 只有目录里有 index.html 才打得开。"""
+        problems = self._check("index.html", '<a href="archive/">归档目录</a>')
+        self.assertEqual(1, len(problems), "目录里没有 index.html 就是死链")
+        (self.root / "archive" / "index.html").write_text("x", encoding="utf-8")
+        self.assertEqual([], self._check(
+            "index.html", '<a href="archive/">归档目录</a>'))
+
+    def test_external_and_anchor_links_are_skipped(self):
+        self.assertEqual([], self._check(
+            "index.html",
+            '<a href="https://example.com/x">外链</a>'
+            '<a href="#pnl">锚点</a><a href="mailto:a@b.c">邮件</a>'
+            '<a href="archive/phase1.html#x">带锚点的站内</a>'))
+
+    def test_relative_parent_path_resolves(self):
+        sub = self.root / "daily"
+        sub.mkdir()
+        (self.root / "index.html").write_text("x", encoding="utf-8")
+        page = sub / "2026-10-08.html"
+        page.write_text('<a href="../index.html">回首页</a>', encoding="utf-8")
+        self.assertEqual([], portal_check.check_site_links([page]))
+
+    def test_base_href_is_honoured(self):
+        """1.0 版首页搬到 v1/ 后靠 <base href="../"> 让相对链接仍指向站点根。
+
+        检查器必须跟浏览器一样认出它——不然会把 51 条本该正常的链接全报成死链。
+        """
+        (self.root / "v1").mkdir()
+        (self.root / "review-notes").mkdir()
+        (self.root / "review-notes" / "2026-09-30.html").write_text("x", encoding="utf-8")
+        page = self.root / "v1" / "index.html"
+        page.write_text('<head><base href="../"></head>'
+                        '<body><a href="review-notes/2026-09-30.html">复盘</a></body>',
+                        encoding="utf-8")
+        self.assertEqual([], portal_check.check_site_links([page]))
