@@ -4,8 +4,12 @@
 Portal 有三条互不相干的生成链，顺序固定：
 
 1. ``sync_pnl_data.py``   首页 ``PNL_DATA`` + ``MARKET_SNAPSHOT``（收益曲线、市场卡片）
-2. ``convert_review.py``  ``review-notes/<date>.html`` + 复盘索引 + 首页复盘区块
-3. ``convert_daily_note.py`` ``daily-notes/<date>.html`` + 手记索引 + 首页手记卡片
+2. ``build_daily_page.py`` ``daily/<date>.html``（10 月起每个交易日一张公开页）
+3. ``build_home.py``       整页渲染 ``index.html``（不再用正则就地改首页）
+
+W8 S7a 起 ②③ 走上面这两个生成器。``convert_review.py`` / ``convert_daily_note.py``
+仍在仓库里但**不再被发布链调用**——先切链、观察两个交易日，S7b 才删。
+≤2026-09-30 的第一阶段页面已冻结，不再重新生成。
 
 顺序理由：首页数据承载「当日账户事实」，后面两条的正文与卡片都引用它，先刷事实
 再出阅读层，同一次同步内才不会出现两套事实。2 与 3 都写 ``index.html``，用固定
@@ -49,6 +53,12 @@ REVIEW_ROOT = Path(
 MARKET_WATCH_ROOT = Path(
     os.environ.get("MARKET_WATCH_ROOT") or PORTAL.parent / "Market_Watch"
 )
+# Vault 公开写作目录（W8 弈沐 10-01 定）：写作发布源，门户只读它的索引。
+WRITING_ROOT = Path(
+    os.environ.get("PORTAL_WRITING_ROOT")
+    or "/Users/yimu/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/公开写作"
+)
+WRITING_INDEX = PORTAL / "data" / "writing-index.json"
 
 
 def find_review_note(day: str) -> Path | None:
@@ -139,6 +149,28 @@ def daily_note_page(day: str) -> Path:
     return PORTAL / "daily-notes" / f"{day}.html"
 
 
+def daily_public_page(day: str) -> Path:
+    """10 月起每个交易日一张公开页（复盘页与手记页合并成这一种）。"""
+    return PORTAL / "daily" / f"{day}.html"
+
+
+def home_page() -> Path:
+    return PORTAL / "index.html"
+
+
+def review_index_json(day: str, out_path: Path) -> list[str]:
+    """取该交易日的封存市场指标（review_index_fields），落到 out_path。
+
+    门户**不解析复盘笔记正文**——它只要那四个数和它们是哪天的。指标自带 date
+    （审计回复 8 第 9 条），门户那侧还有 `--data-date` 作第二道校验。
+    """
+    # run_step 会自己在前面补 sys.executable，这里不要再补一次。
+    return [
+        str(MARKET_WATCH_ROOT / "scripts" / "export_daily_bundle.py"),
+        "--print-review-index", day,
+    ]
+
+
 def display(path: Path) -> str:
     """日志里优先用仓库内相对路径，落在仓库外时退回绝对路径。"""
     try:
@@ -154,19 +186,31 @@ def run_step(
     *,
     supports_dry_run: bool = True,
     dry_run_note: str | None = None,
+    capture_stdout: bool = False,
 ) -> bool:
     """跑一个子步骤。
 
-    ``supports_dry_run=False`` 的步骤（``convert_review.py`` 没有 ``--dry-run``）
-    在预演时只打印它将做什么，不执行——预演绝不能写盘。
+    ``supports_dry_run=False`` 的步骤在预演时只打印它将做什么，不执行——
+    预演绝不能写盘。``capture_stdout=True`` 时不返回 bool，而是返回子进程的
+    stdout 文本（供下一步把它落成 JSON）；失败返回空串。
     """
     print(f"── {label} ──", flush=True)
     if dry_run and not supports_dry_run:
         print(f"[dry-run] {dry_run_note or ' '.join(argv)}", flush=True)
-        return True
+        return "" if capture_stdout else True
     command = [sys.executable, *argv]
     if dry_run and "--dry-run" not in command:
         command.append("--dry-run")
+    if capture_stdout:
+        completed = subprocess.run(
+            command, cwd=str(PORTAL), capture_output=True, text=True
+        )
+        if completed.returncode != 0:
+            print(f"FAIL {label}（退出码 {completed.returncode}）", flush=True)
+            if completed.stderr:
+                print(completed.stderr.strip()[-400:], flush=True)
+            return ""
+        return completed.stdout
     completed = subprocess.run(command, cwd=str(PORTAL))
     if completed.returncode != 0:
         print(f"FAIL {label}（退出码 {completed.returncode}）", flush=True)
@@ -176,7 +220,7 @@ def run_step(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Portal 同步：首页数据 → 复盘详情页 → 每日市场手记"
+        description="Portal 同步：首页数据 → 每日公开页 → 整页首页"
     )
     parser.add_argument("--date", help="目标交易日 YYYY-MM-DD，默认今天")
     parser.add_argument(
@@ -237,57 +281,70 @@ def main(argv: list[str] | None = None) -> int:
         print("完成: " + " → ".join(done))
         return 0 if args.allow_missing_reading else 3
 
+    # 阅读投影的可用性仍然要查（复盘终稿没封存就不能出页），但新链不消费它——
+    # 指标走封存原件、正文走已发布写作。老脚本用 --reading-sidecar，S7b 才删。
     try:
-        reading_sidecar = find_reading_sidecar(note, target_day)
+        find_reading_sidecar(note, target_day)
     except ReadingDiscoveryError as exc:
         print(f"FAIL 阅读投影不可用: {exc}", flush=True)
         return 4
-    reading_args = ["--reading-sidecar", str(reading_sidecar)] if reading_sidecar else []
 
+    # ② 每日公开页（W8 S7a）：四个指标取自封存原件，正文只取已发布的「每日/」写作。
+    # 不再解析复盘笔记、不再逐词脱敏——那是 S7b 要删的老路径，现在只是不再被调用。
+    public_page = daily_public_page(target_day)
+    index_json = PORTAL / "out" / f"review-index-{target_day}.json"
+    if not args.dry_run:
+        index_json.parent.mkdir(parents=True, exist_ok=True)
+    fetch_index = run_step(
+        "②a 取封存市场指标（review_index_fields）",
+        review_index_json(target_day, index_json),
+        args.dry_run,
+        supports_dry_run=False,
+        dry_run_note=(
+            f"将从 {display(MARKET_WATCH_ROOT / 'scripts' / 'export_daily_bundle.py')} "
+            f"读取 {target_day} 的封存指标到 {display(index_json)}"
+        ),
+        capture_stdout=True,
+    )
+    if fetch_index:
+        if not args.dry_run:
+            index_json.write_text(fetch_index, encoding="utf-8")
     if not args.skip_review:
-        page = review_page(target_day)
+        daily_argv = [
+            str(TOOLS / "build_daily_page.py"), "build",
+            "--day", target_day,
+            "--data-date", target_day,
+            "--index", str(index_json),
+            "--writing-index", str(WRITING_INDEX),
+            "--writing-root", str(WRITING_ROOT),
+            "--out", str(public_page.parent),
+        ]
         if not run_step(
-            f"② 复盘详情页（{note.name}）",
-            [str(TOOLS / "convert_review.py"), str(note), *reading_args],
-            args.dry_run,
-            supports_dry_run=False,
-            dry_run_note=(
-                f"将生成 {display(page)}，并更新 review-notes/index.html "
-                "与首页复盘区块（该脚本无 --dry-run）"
-            ),
+            f"②b 每日公开页（{target_day}）", daily_argv, args.dry_run,
         ):
             print("已完成: " + " → ".join(done))
             return 4
-        # 子进程退出码不够：页面没落盘就等于这一步没做。
-        if not args.dry_run and not page.is_file():
-            print(f"FAIL 复盘详情页未生成: {display(page)}", flush=True)
+        if not args.dry_run and not public_page.is_file():
+            print(f"FAIL 每日公开页未生成: {display(public_page)}", flush=True)
             print("已完成: " + " → ".join(done))
             return 4
-        done.append("② 复盘详情页")
+        done.append("② 每日公开页")
 
-    if not run_step(
-        f"③ 每日市场手记（{note.name}）",
-        [str(TOOLS / "convert_daily_note.py"), str(note), *reading_args],
-        args.dry_run,
-    ):
+    # ③ 首页整页渲染（W8 S2/S7a）：不再用正则就地改首页，也就没有「谁先谁后
+    # 都行」的默契——整页只有一个渲染器（public约定：业绩只算一处）。
+    home_argv = [
+        str(TOOLS / "build_home.py"),
+        "--writing-index", str(WRITING_INDEX),
+        "--out", str(home_page()),
+    ]
+    if not run_step("③ 首页整页渲染（build_home）", home_argv, args.dry_run):
         print("已完成: " + " → ".join(done))
         return 5
-    if not args.dry_run and not daily_note_page(target_day).is_file():
-        print(
-            f"FAIL 手记未生成: {display(daily_note_page(target_day))}", flush=True
-        )
-        print("已完成: " + " → ".join(done))
-        return 5
-    done.append("③ 每日市场手记")
+    done.append("③ 首页")
 
     # ④ 隐私红线门禁（2026-09-28）：只检查本次生成/修改的文件。
-    redline_files = [
-        PORTAL / "index.html",
-        review_page(target_day),
-        PORTAL / "review-notes" / "index.html",
-        daily_note_page(target_day),
-        PORTAL / "daily-notes" / "index.html",
-    ]
+    # 只查本次真正改动的页面：第一阶段（≤09-30）的页面已冻结，不再重新生成。
+    redline_files = [home_page(), public_page]
     existing = [path for path in redline_files if path.is_file()]
     if not run_step(
         "④ 隐私红线检查（本次生成/修改的页面）",
