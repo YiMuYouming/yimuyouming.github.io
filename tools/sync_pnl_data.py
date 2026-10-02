@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync PnL + market data from bridge API → portal/index.html
+"""Sync PnL from bridge API → portal/data/pnl.json（**不碰 index.html**）
 
 Usage: python3 tools/sync_pnl_data.py
 Default source is cloud Hermes via SSH, so local bridge is not required.
@@ -11,12 +11,16 @@ from datetime import datetime
 from pathlib import Path
 
 PORTAL = Path(__file__).resolve().parent.parent
+# 审计回复 10 第二节第 12 条：本脚本只写这个数据文件，不再碰 index.html。
+DATA_OUT = PORTAL / "data" / "pnl.json"
+# 上一版的首页（1.0）只作为"旧入金本金/历史净值"的兜底来源读取，不再写入。
+HISTORICAL_HOME = PORTAL / "v1" / "index.html"
 DEFAULT_REMOTE = "agentuser@43.132.146.234"
 DEFAULT_LOCAL_BASE = "http://127.0.0.1:8088"
 
 
 def parse_args(argv=None):
-    p = argparse.ArgumentParser(description="同步 PnL + 市场快照到 portal/index.html")
+    p = argparse.ArgumentParser(description="同步 PnL 到 portal/data/pnl.json（不碰 index.html）")
     p.add_argument(
         "--source",
         choices=["cloud", "local"],
@@ -341,49 +345,36 @@ def main(argv=None):
         print(f"FAIL market: {e}")
         market_html = '<span style="color:var(--text3);font-size:12px">云端 bridge 不可用</span>'
 
-    # ── Embed into index.html ──
-    target = PORTAL / "index.html"
-    with open(target) as f:
-        html = f.read()
-
-    # ── Meta: 云端 production summary 优先；估值缺失时用旧入金本金 × 最新净值估算，避免空值覆盖首页资产。 ──
-    data["meta"] = resolve_meta(data, [extract_existing_pnl_data(html), extract_git_pnl_data()])
+    # ── 只写数据文件，不碰 index.html（审计回复 10 第二节第 12 条）──
+    # 首页整页由 build_home.py 渲染（sync_portal 的 ③）。这里如果再就地改
+    # index.html，两个写入者会互相覆盖——2026-10-01 的定时同步就是这么
+    # 在工作树里留下一份没人认领的改动。**取数与渲染分开**：本脚本只落
+    # data/pnl.json，build_home 读它。
+    data["meta"] = resolve_meta(data, [extract_existing_pnl_data(HISTORICAL_HOME),
+                                       extract_git_pnl_data()])
     data = sanitize_public_pnl_data(data)
-
-    # PNL_DATA
-    js_blob = f"<script>\nvar PNL_DATA = {json.dumps(data, ensure_ascii=False)};\n</script>"
-    html = re.sub(r"(<!-- PNL_DATA_START -->).*?(<!-- PNL_DATA_END -->)", f"\\1\n{js_blob}\n  \\2", html, flags=re.DOTALL)
-
-    # Market snapshot section: marker-based so homepage layout can change safely.
-    new_snap = (
-        f'<div id="market-snap">\n'
-        f'  <div class="review-chips" style="margin-bottom:10px">'
-        f'<span class="chip">更新于 {datetime.now():%m/%d %H:%M}</span>'
-        f'<span class="chip">数据源 {source_label}</span></div>\n'
-        f'  {market_html}\n'
-        f'</div>'
-    )
-    html = replace_marker_block(
-        html,
-        "<!-- MARKET_SNAPSHOT_START -->",
-        "<!-- MARKET_SNAPSHOT_END -->",
-        new_snap,
-    )
 
     n = len(data.get("all_sh", {}).get("dates", []))
     summary = data.get("summary") or {}
+    payload = {
+        "schema": "portal.pnl_data.v1",
+        "source": source_label,
+        "fetched_at": f"{datetime.now():%Y-%m-%d %H:%M}",
+        "data": data,
+    }
+
     if args.dry_run:
         print(
-            f"[dry-run] 将写入 {target}：PNL_DATA {n} 天"
+            f"[dry-run] 将写入 {DATA_OUT}：PNL_DATA {n} 天"
             f"（last_date={summary.get('last_date')}，last_nav={summary.get('last_nav')}）"
-            f" + 市场快照（{source_label}）"
+            f"，数据源 {source_label}"
         )
         return
 
-    with open(target, "w") as f:
-        f.write(html)
-
-    print(f"[{datetime.now():%Y-%m-%d %H:%M}] synced {n} PnL days + market snapshot from {source_label} → index.html")
+    DATA_OUT.parent.mkdir(parents=True, exist_ok=True)
+    DATA_OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
+                        encoding="utf-8")
+    print(f"[{datetime.now():%Y-%m-%d %H:%M}] synced {n} PnL days from {source_label} → {DATA_OUT.relative_to(PORTAL)}")
 
 
 if __name__ == "__main__":

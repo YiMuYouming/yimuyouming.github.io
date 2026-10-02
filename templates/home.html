@@ -167,7 +167,11 @@ footer li span{color:var(--sub);font-size:12px}
   <ul>
     <li><a href="report/">研究报告库</a><br><span>{{REPORT_COUNT}} 篇</span></li>
     <li><a href="archive/phase1.html">第一阶段归档</a><br><span>{{ARCHIVE_GROUPS}}</span></li>
-    <li><a href="weekly/">周报</a></li>
+    <!-- 审计回复 10 第二节第 11 条：weekly/index.html 要等第一份新周报（W41）
+         出来才有。在那之前指向第一阶段归档入口——W40 及以前的周报都在那里，
+         不给一个 404 的目录链接。build_weekly_page 生成第一份新周报时会把
+         WEEKLY_INDEX_READY 置 1，这里自动切回 weekly/。 -->
+    <li>{{WEEKLY_LINK}}</li>
     <li><a href="methodology/">交易体系</a></li>
   </ul>
   <p class="disclaimer">本页展示的实盘记录来自自有资金账户，口径为 TWR，全部历史连续展示，不构成任何收益承诺或投资建议。
