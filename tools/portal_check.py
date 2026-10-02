@@ -577,6 +577,25 @@ REDLINE_RESIDUE_PATTERNS = [
 # 不会被金额模式命中；这里显式登记，避免以后加宽模式时误伤。
 REDLINE_ALLOWED_CONTEXT = re.compile(r"\d+(?:\.\d+)?%")
 
+# 写作原文豁免（W8 S5，开工单第二节第 6 点）：正文原样发布，不过红线。
+# 生成器把写作区包进 `<div class="writing-body" data-public-writing="verbatim">`，
+# 扫描器整段跳过——业绩区、每日公开页指标、周报事实区、研究报告照旧全查。
+WRITING_SPAN_OPEN = re.compile(
+    r'<div class="writing-body" data-public-writing="verbatim"[^>]*>', re.IGNORECASE
+)
+
+# 账户层面总额的白名单（审计回复 8 第二节第 8 条）：账户总额本来就是公开口径
+# ——现网首页一直在公开，弈沐看过的预览里也有。真正要拦的是正文里的个股金额
+# 与股数。所以白名单**不给"页面上的一切金额"**，只给这一个固定标记：
+# 元素带上 data-public="account-total" 才跳过它的正文。
+# 同样的数字出现在任何没有这个标记的地方（正文、表格、图表说明）照拦不误。
+# 扫描时直接把这类元素的正文丢掉，所以它根本不会进入被扫的纯文本。
+ACCOUNT_TOTAL_ELEMENT = re.compile(
+    r"<\s*([a-zA-Z][\w-]*)([^>]*\bdata-public\s*=\s*[\"']account-total[\"'][^>]*)>"
+    r"(.*?)<\s*/\s*\1\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+
 REDLINE_TRADE_WINDOW_DATES = 60
 
 # 本次同步链（sync_portal：首页数据 → 复盘详情页 → 手记）不生成的区块：
@@ -601,6 +620,16 @@ def _deferred_redline_spans(text: str, rel_path: str) -> list[tuple[int, int]]:
     return spans
 
 
+def _matching_div_close(html: str, start: int) -> int:
+    """写作区结束的位置：按 div 嵌套配对找，别被写作正文里的内层 div 提前骗到。"""
+    depth = 1
+    for match in re.finditer(r"<\s*/?\s*div\b[^>]*>", html[start:], flags=re.I):
+        depth += -1 if match.group(0).lstrip().startswith("</") else 1
+        if depth == 0:
+            return start + match.start()
+    return -1
+
+
 def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
     """纯文本 + 每个字符在原始 HTML 中的位置。
 
@@ -614,9 +643,28 @@ def _strip_tags_for_redline(html: str) -> tuple[str, list[int]]:
     length = len(html)
     block_pattern = re.compile(r"\s*/?>", re.I)
     while index < length:
+        # 写作原文的标记要活过去标签这道关：整段豁免靠它定位，标签被剥掉就找不到了。
+        opening = WRITING_SPAN_OPEN.match(html, index)
+        if opening:
+            closer = _matching_div_close(html, opening.end())
+            # 收尾的 </div> 也要留在文本里：_scan_redline_hits 靠它判断豁免段到哪儿结束，
+            # 少一个字符就会把后面的事实区一起吞掉。
+            segment_end = (closer + len("</div>")) if closer != -1 else length
+            for offset in range(index, segment_end):
+                kept.append(html[offset])
+                positions.append(offset)
+            index = segment_end
+            continue
         if html.startswith("<!--", index):
             close = html.find("-->", index)
             index = length if close < 0 else close + 3
+            continue
+        # 账户总额的标记元素必须在通用标签分支**之前**判：不然开标签先被
+        # 通用分支吃掉，轮到正文时已经不知道它属于哪个元素。命中就把整段
+        # （含标签与正文）跳过，它的正文因此不会进入被扫的纯文本。
+        marked = ACCOUNT_TOTAL_ELEMENT.match(html, index)
+        if marked:
+            index = marked.end()
             continue
         if html.startswith("<", index):
             tag_end = html.find(">", index)
@@ -705,6 +753,12 @@ def _scan_redline_hits(text: str, names, codes) -> list[tuple[int, int, str]]:
         (m.start(), m.end())
         for m in REDLINE_ALLOWED_CONTEXT.finditer(text)
     ]
+    for opener in WRITING_SPAN_OPEN.finditer(text):
+        closer = _matching_div_close(text, opener.end())
+        allowed_spans.append(
+            (opener.start(),
+             (closer + len("</div>")) if closer != -1 else len(text))
+        )
 
     def _covered(start: int, end: int) -> bool:
         return any(a <= start and end <= b for a, b in allowed_spans)

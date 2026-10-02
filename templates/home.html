@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>弈沐资本 · 实盘与写作</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2328;--sub:#6b7280;--line:#e5e7eb;--up:#dc2626;--down:#059669;--paper:#faf9f7;--card:rgba(255,255,255,.9)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Serif SC",serif;line-height:1.7}
+.mono{font-family:"JetBrains Mono",monospace}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.masthead{padding:34px 0 18px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark img{width:34px;height:34px;display:block}
+.brand h1{margin:0;font-size:24px;letter-spacing:.04em}
+.brand .tagline{margin:4px 0 0;color:var(--sub);font-size:14px}
+nav.site{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:14px}
+nav.site a{color:var(--sub);text-decoration:none;border-bottom:1px solid transparent}
+nav.site a:hover{color:var(--ink);border-bottom-color:var(--line)}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+.sec-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sec-head .num{font-family:"JetBrains Mono",monospace;color:var(--sub);font-size:13px}
+.sec-head h2{margin:0;font-size:21px}
+.sec-head .seal{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--sub)}
+.sec-head .aside{margin-left:auto;color:var(--sub);font-size:13px}
+.pnl-note{color:var(--sub);font-size:13px;margin:10px 0 22px}
+.glabel{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px;font-size:14px}
+.glabel span{color:var(--sub);font-size:12px}
+.kpis{display:grid;gap:12px}
+.kpis.k4{grid-template-columns:repeat(4,1fr)}
+.kpis.k5{grid-template-columns:repeat(5,1fr)}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .kl{display:block;color:var(--sub);font-size:12px}
+.kpi b{display:block;font-family:"JetBrains Mono",monospace;font-size:22px;margin:4px 0 2px}
+.kpi .ks{color:var(--sub);font-size:12px}
+.up{color:var(--up)} .down{color:var(--down)}
+.controls{display:flex;gap:22px;flex-wrap:wrap;margin:18px 0 6px}
+.ctl{display:flex;align-items:center;gap:8px;font-size:13px}
+.ctl .cl{color:var(--sub)}
+.ctl button{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 11px;cursor:pointer;font-size:13px;color:var(--ink)}
+.ctl button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ctl button.active[data-p="all"],.ctl button.active[data-idx="sh"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pnl-chart-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:hidden}
+canvas#pnl_canvas{width:100%;height:auto;display:block}
+.pnl-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.pnl-sum-cell{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}
+.pnl-sum-lbl{color:var(--sub);font-size:12px}
+.pnl-sum-val{font-family:"JetBrains Mono",monospace;font-size:18px;margin-top:2px}
+details.drawer{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+details.drawer summary{cursor:pointer;font-size:14px}
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table.pnl-table{width:100%;border-collapse:collapse;font-size:13px}
+table.pnl-table th,table.pnl-table td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.pnl-table th:first-child,table.pnl-table td:first-child{text-align:left}
+.foot-note{color:var(--sub);font-size:12px;margin-top:10px}
+.writing-group{margin:20px 0}
+.writing-group h3{margin:0 0 8px;font-size:16px}
+.writing-list{list-style:none;margin:0;padding:0}
+.writing-list li{display:grid;grid-template-columns:110px 1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.writing-date{font-family:"JetBrains Mono",monospace;color:var(--sub);font-size:13px}
+.writing-series{color:var(--sub);font-size:12px}
+.sample-badge{font-size:12px;border:1px dashed #b45309;color:#b45309;border-radius:999px;padding:1px 9px}
+footer{padding:28px 0 44px;color:var(--sub);font-size:13px}
+footer ul{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+footer li a{color:var(--ink);text-decoration:none}
+footer li span{color:var(--sub);font-size:12px}
+.disclaimer{margin-top:22px;font-size:12px;line-height:1.8}
+@media (max-width:720px){
+  .kpis.k4,.kpis.k5{grid-template-columns:repeat(2,1fr)}
+  .pnl-summary{grid-template-columns:1fr}
+  footer ul{grid-template-columns:repeat(2,1fr)}
+  .writing-list li{grid-template-columns:1fr;gap:2px}
+  .sec-head .aside{margin-left:0}
+  .ctl{gap:6px}
+  .ctl button{padding:4px 9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="brand">
+    <span class="brand-mark"><img src="logo-yi.png" alt=""></span>
+    <div>
+      <h1>弈沐资本</h1>
+      <p class="tagline">实盘记录与公开写作 · 数据可核验，观点来自本人</p>
+    </div>
+  </div>
+  <nav class="site">
+    <a href="#pnl">实盘收益</a>
+    <a href="#writing">成长与思想</a>
+    <a href="archive/phase1.html">第一阶段归档</a>
+    <a href="v1/index.html">1.0 版首页</a>
+  </nav>
+</header>
+
+<section id="pnl" aria-labelledby="pnl-h">
+  <div class="sec-head">
+    <span class="num">壹</span>
+    <h2 id="pnl-h">实盘收益</h2>
+    <span class="seal">实盘</span>
+    <span class="aside">数据截止 {{AS_OF}} · 版本 {{VERSION}}</span>
+  </div>
+  <p class="pnl-note">记录来自自有资金账户，口径为 TWR（时间加权）；全部历史连续展示，不挑时间段；回撤与亏损期同样显示。不构成收益承诺。</p>
+
+  <div class="glabel"><b>总体记录</b><span>累计口径 · 共 {{DAILY_COUNT}} 个交易日 · {{POINTS}} 个数据点</span></div>
+  <div class="kpis k4">
+    <div class="kpi"><span class="kl">当前资产</span><b class="mono" id="pnl_asset">—</b><span class="ks" id="pnl_asset_sub">—</span></div>
+    <div class="kpi"><span class="kl">TWR 累计</span><b class="mono" id="pnl_twr">—</b><span class="ks">累计时间加权收益</span></div>
+    <div class="kpi"><span class="kl">相对<span id="pnl_idx_label">上证</span></span><b class="mono" id="pnl_alpha">—</b><span class="ks">TWR − 指数参考</span></div>
+    <div class="kpi"><span class="kl">历史最大回撤</span><b class="mono" id="pnl_maxdd">—</b><span class="ks">自 2026-03-23 起</span></div>
+  </div>
+
+  <div class="glabel"><b>周期状态</b><span id="pnl_period_label">随曲线周期联动</span></div>
+  <div class="kpis k5">
+    <div class="kpi"><span class="kl" id="pnl_pnl_label">账户收益</span><b class="mono" id="pnl_pnl">—</b><span class="ks" id="pnl_pnl_sub">—</span></div>
+    <div class="kpi"><span class="kl" id="pnl_pos_label">期末仓位</span><b class="mono" id="pnl_pos">—</b><span class="ks" id="pnl_pos_sub">—</span></div>
+    <div class="kpi"><span class="kl">周期累计</span><b class="mono" id="pnl_period_val">—</b><span class="ks" id="pnl_period_sub">随周期联动</span></div>
+    <div class="kpi"><span class="kl">超额</span><b class="mono" id="pnl_today_alpha">—</b><span class="ks" id="pnl_today_alpha_label">TWR − 指数参考</span></div>
+    <div class="kpi"><span class="kl">回撤</span><b class="mono" id="pnl_dd_val">—</b><span class="ks" id="pnl_dd_label">区间峰谷</span></div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl pnl-idxs" role="group" aria-label="对比指数"><span class="cl">对比</span>{{INDEX_BUTTONS}}</div>
+    <div class="ctl pnl-periods" role="group" aria-label="周期"><span class="cl">周期</span>{{PERIOD_BUTTONS}}</div>
+  </div>
+
+  <div class="pnl-chart-wrap"><canvas id="pnl_canvas"></canvas></div>
+
+  <details class="drawer">
+    <summary>损益明细</summary>
+    <div class="pnl-summary" id="pnl_summary"></div>
+    <div class="tbl-wrap"><table class="pnl-table" id="pnl_table">
+      <thead><tr><th class="pnl-td-period">周期</th><th class="pnl-td-num">账户收益</th><th class="pnl-td-num">指数参考</th><th class="pnl-td-num">超额</th><th class="pnl-td-num">期末仓位</th><th class="pnl-td-num">数据日</th></tr></thead>
+      <tbody id="pnl_tbody"></tbody>
+    </table></div>
+  </details>
+
+  <p class="foot-note">数据版本 {{VERSION}}。个股与交易明细不公开；本页为公开口径，不含仓位建议。</p>
+</section>
+
+<section id="writing" aria-labelledby="writing-h">
+  <div class="sec-head">
+    <span class="num">贰</span>
+    <h2 id="writing-h">成长与思想</h2>
+    <span class="aside">来源：Vault 公开写作 · 弈沐本人写</span>{{SAMPLE_BADGE}}
+  </div>
+
+  <div class="writing-group">
+    <h3>长文</h3>
+    {{ESSAYS}}
+  </div>
+  <div class="writing-group">
+    <h3>每日手记</h3>
+    {{DAILIES}}
+  </div>
+  <div class="writing-group">
+    <h3>周记</h3>
+    {{WEEKLIES}}
+  </div>
+</section>
+
+<footer>
+  <ul>
+    <li><a href="report/">研究报告库</a><br><span>{{REPORT_COUNT}} 篇</span></li>
+    <li><a href="archive/phase1.html">第一阶段归档</a><br><span>{{ARCHIVE_GROUPS}}</span></li>
+    <li><a href="weekly/">周报</a></li>
+    <li><a href="methodology/">交易体系</a></li>
+  </ul>
+  <p class="disclaimer">本页展示的实盘记录来自自有资金账户，口径为 TWR，全部历史连续展示，不构成任何收益承诺或投资建议。
+  个股与交易明细不公开。写作部分为弈沐本人的观点，助手只做组织与查证，不代表其当前持仓或任何操作建议。
+  过往表现不代表未来结果。</p>
+</footer>
+
+</div>
+
+<script>var PNL_DATA = {{PNL_DATA_JSON}};</script>
+<script>var WRITING_INDEX = {{WRITING_JSON}};</script>
+<script src="static/pnl-engine.js"></script>
+</body>
+</html>

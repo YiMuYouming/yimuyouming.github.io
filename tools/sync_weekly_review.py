@@ -106,7 +106,68 @@ def sync_weekly(page_path):
     print(f"weekly published locally: {page_path.name}; archive count {count}")
 
 
+def sync_weekly_dry(page_path) -> int:
+    """只报告会改什么，不写盘（W8 S4）。
+
+    以前这个脚本只能直接写盘；跑之前看不出它会动 index.html 的哪几行。现在
+    dry-run 把改动逐条列出来，确认后再真跑。
+    """
+    import argparse
+
+    page_path = Path(page_path).resolve()
+    try:
+        if page_path.parent != REVIEW_NOTES.resolve() or not re.fullmatch(
+            r"weekly-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}\.html", page_path.name
+        ):
+            raise ValueError("expected a weekly HTML file in review-notes/")
+        if not page_path.is_file():
+            raise FileNotFoundError(page_path)
+        card = build_period_review_card(page_path)
+        if not card:
+            raise ValueError("weekly page cannot form a homepage card")
+    except (OSError, ValueError) as exc:
+        print(f"[dry-run] 不会执行：{exc}")
+        return 1
+
+    weekly_pages = sorted(REVIEW_NOTES.glob("weekly-*.html"))
+    home_path = PORTAL / "index.html"
+    archive_path = REVIEW_NOTES / "index.html"
+    print(f"[dry-run] 周报页：{page_path.name}")
+    print(f"[dry-run] 会写入：{home_path}（替换周榜卡片 {card['id']}，重建近期时间线）")
+    print(f"[dry-run] 会写入：{archive_path}（归档计数 {len(weekly_pages)} → "
+          f"{len(weekly_pages) + 1}）")
+    print("[dry-run] 未写盘；去掉 --dry-run 后执行")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="把周报页发布进门户索引")
+    parser.add_argument("page", nargs="?", help="review-notes/weekly-*.html")
+    parser.add_argument("--page", dest="page_opt", default=None,
+                        help="同上，写成参数形式")
+    parser.add_argument("--root", default=str(PORTAL),
+                        help="门户根目录（测试用）")
+    parser.add_argument("--dry-run", action="store_true")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    global PORTAL, REVIEW_NOTES
+    if args.root and args.root != str(PORTAL):
+        PORTAL = Path(args.root)
+        REVIEW_NOTES = PORTAL / "review-notes"
+    page = args.page_opt or args.page
+    if not page:
+        print("usage: sync_weekly_review.py review-notes/weekly-YYYY-MM-DD_MM-DD.html")
+        return 2
+    if args.dry_run:
+        return sync_weekly_dry(page)
+    sync_weekly(page)
+    return 0
+
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: sync_weekly_review.py review-notes/weekly-YYYY-MM-DD_MM-DD.html")
-    sync_weekly(sys.argv[1])
+    raise SystemExit(main())

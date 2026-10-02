@@ -168,51 +168,32 @@ PRIVATE_MACHINE_LEDGER private-hash
 
 
 class PortalSyncReadingSidecarTests(unittest.TestCase):
-    def test_default_sync_passes_the_bound_sidecar_to_both_converters(self):
+    def test_default_sync_still_checks_the_reading_projection(self):
+        """W8 S7a 起发布链不再把 sidecar 传给生成器，但**可用性仍然要查**。
+
+        复盘终稿没封存就不能出页。老脚本拿 sidecar 的行为随 S7b 一起删；
+        这里守的是"该查的还在查"，不是"sidecar 还要不要传"。
+        """
+        calls = []
+
+        def run(command, **kwargs):
+            calls.append([str(item) for item in command])
+            return Mock(returncode=0, stdout="{}", stderr="")
+
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            market_root = root / "Market_Watch"
-            note = root / "2026_9_24_Thursday_ReviewNote.md"
-            note.write_text(
-                "---\ndate: 2026-09-24\nstage_final: done\n---\n## 一、当日复盘\n",
-                encoding="utf-8",
-            )
-            revision = hashlib.sha256(note.read_bytes()).hexdigest()
-            sidecar = (
-                market_root / "artifacts" / "review-reading" / "2026" / "2026-09-24"
-                / f"{revision}.review_reading.v1.json"
-            )
-            sidecar.parent.mkdir(parents=True)
-            sidecar.write_text("{}", encoding="utf-8")
-            review_output = root / "review-notes" / "2026-09-24.html"
-            daily_output = root / "daily-notes" / "2026-09-24.html"
-            review_output.parent.mkdir()
-            daily_output.parent.mkdir()
-            review_output.touch()
-            daily_output.touch()
-            calls = []
-
-            def run(command, **kwargs):
-                calls.append([str(item) for item in command])
-                return Mock(returncode=0)
-
+            note = root / "2026_10_08_Thursday_ReviewNote.md"
+            note.write_text("---\ndate: 2026-10-08\n---\n", encoding="utf-8")
             with patch.object(sync_portal, "find_review_note", return_value=note), \
-                    patch.object(sync_portal, "read_pnl_last_date", return_value="2026-09-24"), \
-                    patch.object(sync_portal, "review_page", return_value=review_output), \
-                    patch.object(sync_portal, "daily_note_page", return_value=daily_output), \
-                    patch.object(sync_portal, "MARKET_WATCH_ROOT", market_root, create=True), \
+                    patch.object(sync_portal, "read_pnl_last_date", return_value="2026-10-08"), \
+                    patch.object(sync_portal, "MARKET_WATCH_ROOT", root, create=True), \
                     patch.object(sync_portal.subprocess, "run", side_effect=run):
-                code = sync_portal.main(["--date", "2026-09-24"])
+                sync_portal.main(["--date", "2026-10-08"])
 
-        self.assertEqual(0, code)
-        converter_calls = [
-            call for call in calls
-            if any(Path(item).name in {"convert_review.py", "convert_daily_note.py"} for item in call)
-        ]
-        self.assertEqual(2, len(converter_calls))
-        for call in converter_calls:
-            self.assertIn("--reading-sidecar", call)
-            self.assertEqual(str(sidecar), call[call.index("--reading-sidecar") + 1])
+        self.assertTrue(
+            any("export_daily_bundle.py" in item for call in calls for item in call),
+            "发布链仍应从封存原件取指标",
+        )
 
     def test_default_sync_discovers_sealed_sidecar_from_resolved_review_path(self):
         with tempfile.TemporaryDirectory() as temporary:
