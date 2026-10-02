@@ -67,7 +67,7 @@ class GeneratorMarkingTest(unittest.TestCase):
     def test_daily_page_wraps_writing_in_the_verbatim_marker(self):
         daily = _load("build_daily_page")
         page = daily.build_daily_page(
-            {"情绪值": 62}, day="2026-10-08",
+            {"情绪值": 62}, day="2026-10-08", data_date="2026-10-08",
             writing=[{
                 "path": "每日/2026-10-08.md", "kind": "daily", "date": "2026-10-08",
                 "title": "10-08 手记", "status": "published", "published_at": "2026-10-08",

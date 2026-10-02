@@ -171,3 +171,38 @@ class RenderTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HomeDuplicationTests(unittest.TestCase):
+    """审计回复 3 第三节第 3 条：首页同一个数重复太多。"""
+
+    def _render(self):
+        return build_home.render_home(
+            current_pnl_data(),
+            writing_index={"schema": "writing_index.v1", "entries": [], "issues": []},
+            reports={}, archive_groups={"weeks": {}},
+            version="abc1234", as_of="2026-09-30",
+        )
+
+    def test_summary_cards_live_inside_the_pnl_drawer(self):
+        """曲线下方那组汇总卡与「总体记录」四格重复，收进「损益明细」抽屉。"""
+        page = self._render()
+        drawer = page[page.index("<details class=\"drawer\">"):page.index("</details>")]
+        self.assertIn('id="pnl_summary"', drawer,
+                      "pnl_summary 应当在损益明细抽屉里")
+        self.assertNotIn('id="pnl_summary"', page[:page.index("<details class=\"drawer\">")],
+                         "pnl_summary 不该再留在抽屉外面")
+
+    def test_total_deposit_is_two_decimals(self):
+        """累计入金原来是 711,059.225，三位小数看着像没写完。"""
+        engine = ENGINE.read_text(encoding="utf-8")
+        self.assertIn("minimumFractionDigits: 2", engine)
+        self.assertNotIn("'累计入金 ' + ((m.total_deposit || 200000).toLocaleString())",
+                        engine)
+
+    def test_drawdown_label_sits_above_the_trough_not_on_the_end_label(self):
+        """最大回撤的谷底常常就是曲线末端，标签要错开。"""
+        engine = ENGINE.read_text(encoding="utf-8")
+        block = engine[engine.index("var ddLabel = "):engine.index("canvas._chartData")]
+        self.assertIn("labY", block, "回撤标签需要单独的纵向偏移")
+        self.assertIn("textBaseline = 'bottom'", block)

@@ -94,7 +94,7 @@
 
     // Current asset
     $('pnl_asset').textContent = m.total_asset ? m.total_asset.toLocaleString() : '—';
-    $('pnl_asset_sub').textContent = '累计入金 ' + ((m.total_deposit || 200000).toLocaleString());
+    $('pnl_asset_sub').textContent = '累计入金 ' + ((m.total_deposit || 200000).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
     setKPI('pnl_twr', fmt(allTWR), allTWR >= 0, '累计时间加权收益');
     setKPI('pnl_alpha', fmt(allTWR - allBM), (allTWR - allBM) >= 0, 'TWR − 指数参考');
@@ -372,11 +372,14 @@
       ctx.beginPath(); ctx.moveTo(pkX, pkY); ctx.lineTo(trX, pkY); ctx.lineTo(trX, trY); ctx.stroke();
       ctx.setLineDash([]);
       var ddLabel = '最大回撤 ' + ddInfo.dd.toFixed(2) + '%';
-      ctx.font = '11px system-ui'; ctx.fillStyle = '#D97706';
-      var labX = trX + 8, tw = ctx.measureText(ddLabel).width;
-      if (labX + tw > W - 10) labX = trX - tw - 8;
-      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      ctx.fillText(ddLabel, labX, trY);
+ctx.font = '11px system-ui'; ctx.fillStyle = '#D97706';
+      var tw = ctx.measureText(ddLabel).width;
+      // 谷底常常就在曲线末端，而末端已经写了一个数值标签；把回撤标签放到
+      // 点的正上方并水平居中，两边就不会叠在一起。
+      var labX = Math.max(PAD.l, Math.min(W - PAD.r - tw, trX - tw / 2));
+      var labY = trY - 12;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText(ddLabel, labX, labY);
     }
 
     canvas._chartData = { portfolio: p, benchmark: b, labels: labels, xV: xV, yV: yV, n: n, PAD: PAD, W: W, H: H, hasBM: hasBM };

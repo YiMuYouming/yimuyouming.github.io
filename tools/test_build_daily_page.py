@@ -46,13 +46,13 @@ class IndexFieldsTest(unittest.TestCase):
         )
 
     def test_missing_metric_is_dash_not_zero(self):
-        page = build_daily_page({}, day="2026-10-08")
+        page = build_daily_page({}, day="2026-10-08", data_date="2026-10-08")
         # 缺值一律破折号：不能补 0，也不能让"0%"这种形状出现在指标格里
         self.assertIn("—", page)
         self.assertNotIn("<b>0</b>", page)
 
     def test_unknown_extra_fields_are_not_leaked(self):
-        page = build_daily_page({"内部备注": "不该出现"}, day="2026-10-08")
+        page = build_daily_page({"内部备注": "不该出现"}, day="2026-10-08", data_date="2026-10-08")
         self.assertNotIn("内部备注", page)
 
 
@@ -66,6 +66,7 @@ class RenderTest(unittest.TestCase):
         return build_daily_page(
             index or _index(),
             day="2026-10-08",
+            data_date="2026-10-08",
             writing=writing or [],
             out_dir=self.root / "daily",
         )
@@ -104,7 +105,7 @@ class CliTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             payload = tmp + "/index.json"
             Path(payload).write_text(json.dumps(_index(), ensure_ascii=False), encoding="utf-8")
-            code = main(["build", "--day", "2026-10-08", "--index", payload,
+            code = main(["build", "--day", "2026-10-08", "--index", payload, "--data-date", "2026-10-08",
                          "--out", tmp + "/daily", "--dry-run"])
             self.assertEqual(code, 0)
             self.assertEqual(list(Path(tmp).glob("daily/*.html")), [])
@@ -114,7 +115,7 @@ class CliTest(unittest.TestCase):
             payload = tmp + "/index.json"
             Path(payload).write_text(json.dumps(_index(), ensure_ascii=False), encoding="utf-8")
             out = Path(tmp) / "daily"
-            self.assertEqual(main(["build", "--day", "2026-10-08", "--index", payload,
+            self.assertEqual(main(["build", "--day", "2026-10-08", "--index", payload, "--data-date", "2026-10-08",
                                    "--out", str(out)]), 0)
             self.assertTrue((out / "2026-10-08.html").is_file())
 
@@ -123,18 +124,113 @@ class CliTest(unittest.TestCase):
             payload = tmp + "/index.json"
             Path(payload).write_text(json.dumps(_index(), ensure_ascii=False), encoding="utf-8")
             out = Path(tmp) / "daily"
-            main(["build", "--day", "2026-10-08", "--index", payload, "--out", str(out)])
-            self.assertEqual(0, main(["build", "--day", "2026-10-08", "--index", payload,
+            main(["build", "--day", "2026-10-08", "--index", payload, "--data-date", "2026-10-08", "--out", str(out)])
+            self.assertEqual(0, main(["build", "--day", "2026-10-08", "--index", payload, "--data-date", "2026-10-08",
                                       "--out", str(out), "--check"]))
             payload2 = tmp + "/index2.json"
             Path(payload2).write_text(json.dumps(_index(情绪值=77), ensure_ascii=False), encoding="utf-8")
-            self.assertEqual(1, main(["build", "--day", "2026-10-08", "--index", payload2,
+            self.assertEqual(1, main(["build", "--day", "2026-10-08", "--index", payload2, "--data-date", "2026-10-08",
                                       "--out", str(out), "--check"]))
 
     def test_bad_day_format_is_refused(self):
-        self.assertEqual(1, main(["build", "--day", "20261008", "--index", "/dev/null",
+        self.assertEqual(1, main(["build", "--day", "20261008", "--index", "/dev/null", "--data-date", "2026-10-08",
                                   "--out", "/tmp/x"]))
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DataDateGuardTests(unittest.TestCase):
+    """审计回复 3 第三节第 1 条：页面日期和指标日期不一致就不出页。
+
+    根因在源头：`review_index_fields()` 只回 MARKET_INDEX_FIELDS 里的键，
+    而 `date` 不在其中，所以指标 JSON 本身不自带日期——页面写哪天和
+    指标是哪天的可以悄悄对不上。门户这一层必须显式收口。
+    """
+
+    def test_mismatched_data_date_is_refused(self):
+        with self.assertRaises(ValueError) as ctx:
+            build_daily_page(_index(), day="2026-10-08", data_date="2026-09-30")
+        self.assertIn("data_date_mismatch", str(ctx.exception))
+
+    def test_matching_data_date_renders(self):
+        page = build_daily_page(_index(), day="2026-10-08", data_date="2026-10-08")
+        self.assertIn("2026-10-08", page)
+
+    def test_missing_data_date_is_refused_unless_sample(self):
+        with self.assertRaises(ValueError) as ctx:
+            build_daily_page(_index(), day="2026-10-08")
+        self.assertIn("data_date_required", str(ctx.exception))
+
+    def test_sample_mode_marks_the_page_and_keeps_going(self):
+        """预演数据照样出页，但页面上必须带「示例」徽标，不能让人误读成真数据。"""
+        page = build_daily_page(
+            _index(), day="2026-10-08", data_date="2026-09-30", sample=True
+        )
+        self.assertIn("示例", page)
+        self.assertIn("预演数据", page)
+        self.assertIn("2026-09-30", page)   # 数据日期如实标出来
+
+    def test_no_sample_badge_when_dates_agree(self):
+        page = build_daily_page(_index(), day="2026-10-08", data_date="2026-10-08")
+        self.assertNotIn("data-sample", page)
+
+
+class MarkdownRenderTests(unittest.TestCase):
+    """审计回复 3 第三节第 2 条：写作正文的 Markdown 没渲染，正文首行标题还重复一次。"""
+
+    def _render(self, md):
+        return build_daily_page_module._markdown_to_html(md)
+
+    def test_bold_and_italic_and_inline_code(self):
+        out = self._render("先写下**当时的理由**，再看 *事后* 的 `KPI`。")
+        self.assertIn("<strong>当时的理由</strong>", out)
+        self.assertIn("<em>事后</em>", out)
+        self.assertIn("<code>KPI</code>", out)
+        self.assertNotIn("**", out)
+
+    def test_escapes_html_in_body(self):
+        out = self._render("a < b & c > d")
+        self.assertNotIn("<b>", out)
+        self.assertIn("&lt;", out)
+        self.assertIn("&amp;", out)
+
+    def test_leading_h1_matching_title_is_dropped(self):
+        writing = [{
+            "title": "9 月 30 日手记",
+            "date": "2026-10-08",
+            "status": "published",
+            "path": "每日/2026-10-08.md",
+            "body": "<h1>9 月 30 日手记</h1><p>正文</p>",
+        }]
+        page = build_daily_page(
+            _index(), day="2026-10-08", data_date="2026-10-08", writing=writing
+        )
+        self.assertEqual(page.count("9 月 30 日手记"), 1)
+
+    def test_non_matching_h1_is_kept(self):
+        writing = [{
+            "title": "9 月 30 日手记",
+            "date": "2026-10-08",
+            "status": "published",
+            "path": "每日/2026-10-08.md",
+            "body": "<h1>另一篇的标题</h1><p>正文</p>",
+        }]
+        page = build_daily_page(
+            _index(), day="2026-10-08", data_date="2026-10-08", writing=writing
+        )
+        self.assertIn("另一篇的标题", page)
+
+
+class CliDataDateTests(unittest.TestCase):
+    def test_cli_requires_data_date(self):
+        args = build_parser().parse_args(["build", "--day", "2026-10-08", "--index", "x.json"])
+        self.assertFalse(args.sample)
+        self.assertIsNone(getattr(args, "data_date", None))
+
+    def test_cli_accepts_sample_flag(self):
+        args = build_parser().parse_args(
+            ["build", "--day", "2026-10-08", "--index", "x.json", "--sample"]
+        )
+        self.assertTrue(args.sample)
