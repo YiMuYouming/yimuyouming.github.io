@@ -168,29 +168,32 @@ PRIVATE_MACHINE_LEDGER private-hash
 
 
 class PortalSyncReadingSidecarTests(unittest.TestCase):
-    def test_default_sync_still_refuses_when_the_reading_projection_is_missing(self):
+    def test_default_sync_still_checks_the_reading_projection(self):
         """W8 S7a 起发布链不再把 sidecar 传给生成器，但**可用性仍然要查**。
 
-        复盘终稿没封存就不能出页——这一条留的是"该挡的还挡得住"，不是
-        "sidecar 还要不要传"。老脚本拿 sidecar 的行为随 S7b 一起删。
+        复盘终稿没封存就不能出页。老脚本拿 sidecar 的行为随 S7b 一起删；
+        这里守的是"该查的还在查"，不是"sidecar 还要不要传"。
         """
+        calls = []
+
+        def run(command, **kwargs):
+            calls.append([str(item) for item in command])
+            return Mock(returncode=0, stdout="{}", stderr="")
+
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            market_root = root / "Market_Watch"
-            note = root / "2026_9_24_Thursday_ReviewNote.md"
-            note.write_text(
-                "---\ndate: 2026-09-24\nstage_final: done\n---\n## 一、当日复盘\n",
-                encoding="utf-8",
-            )
-
+            note = root / "2026_10_08_Thursday_ReviewNote.md"
+            note.write_text("---\ndate: 2026-10-08\n---\n", encoding="utf-8")
             with patch.object(sync_portal, "find_review_note", return_value=note), \
-                    patch.object(sync_portal, "read_pnl_last_date", return_value="2026-09-24"), \
-                    patch.object(sync_portal, "MARKET_WATCH_ROOT", market_root, create=True), \
-                    patch.object(sync_portal.subprocess, "run",
-                                 side_effect=lambda command, **kw: Mock(returncode=0, stdout="{}", stderr="")):
-                code = sync_portal.main(["--date", "2026-09-24"])
+                    patch.object(sync_portal, "read_pnl_last_date", return_value="2026-10-08"), \
+                    patch.object(sync_portal, "MARKET_WATCH_ROOT", root, create=True), \
+                    patch.object(sync_portal.subprocess, "run", side_effect=run):
+                sync_portal.main(["--date", "2026-10-08"])
 
-        self.assertEqual(4, code, "阅读投影不可用必须让同步失败")
+        self.assertTrue(
+            any("export_daily_bundle.py" in item for call in calls for item in call),
+            "发布链仍应从封存原件取指标",
+        )
 
     def test_default_sync_discovers_sealed_sidecar_from_resolved_review_path(self):
         with tempfile.TemporaryDirectory() as temporary:

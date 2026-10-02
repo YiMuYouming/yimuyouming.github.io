@@ -40,8 +40,10 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import date, datetime
 from pathlib import Path
 
@@ -59,14 +61,30 @@ WRITING_ROOT = Path(
     or "/Users/yimu/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/公开写作"
 )
 WRITING_INDEX = PORTAL / "data" / "writing-index.json"
+# 第一阶段（2026-03-23 至 09-30）冻结：老的复盘页/手记页不再重新生成，
+# 与 build_daily_page.PHASE2_START 用同一个日子。
+PHASE2_START = "2026-10-01"
 
 
 def find_review_note(day: str) -> Path | None:
-    """按交易日定位 Vault 里的 ReviewNote（文件名形如 2026_9_15_Tuesday_...）。"""
+    """按交易日定位 Vault 里的 ReviewNote。
+
+    Vault 里有**两种**命名写法：W40 之前是 ``2026_9_30_Wednesday_…``（不补零），
+    W41 起是 ``2026_10_08_Thursday_…``（补零）。以前只按不补零拼 glob，
+    于是 10-08 这天根本找不到笔记、发布链会静默跳过——单看"同步成功"发现不了。
+    两种都试，按修改时间取最新的那份。
+    """
     year, month, daynum = (int(part) for part in day.split("-"))
-    stamp = f"{year}_{month}_{daynum}_"
-    matches = sorted(REVIEW_ROOT.glob(f"W*_第*周/{stamp}*ReviewNote.md"))
-    return matches[0] if matches else None
+    patterns = [
+        f"W*_第*周/{year}_{month}_{daynum}_*ReviewNote.md",
+        f"W*_第*周/{year}_{month:02d}_{daynum:02d}_*ReviewNote.md",
+    ]
+    matches: list[Path] = []
+    for pattern in patterns:
+        matches.extend(p for p in REVIEW_ROOT.glob(pattern) if p not in matches)
+    if not matches:
+        return None
+    return max(matches, key=lambda path: path.stat().st_mtime)
 
 
 class ReadingDiscoveryError(ValueError):
@@ -187,6 +205,7 @@ def run_step(
     supports_dry_run: bool = True,
     dry_run_note: str | None = None,
     capture_stdout: bool = False,
+    no_dry_run_flag: bool = False,
 ) -> bool:
     """跑一个子步骤。
 
@@ -199,7 +218,7 @@ def run_step(
         print(f"[dry-run] {dry_run_note or ' '.join(argv)}", flush=True)
         return "" if capture_stdout else True
     command = [sys.executable, *argv]
-    if dry_run and "--dry-run" not in command:
+    if dry_run and "--dry-run" not in command and not no_dry_run_flag:
         command.append("--dry-run")
     if capture_stdout:
         completed = subprocess.run(
@@ -293,23 +312,34 @@ def main(argv: list[str] | None = None) -> int:
     # 不再解析复盘笔记、不再逐词脱敏——那是 S7b 要删的老路径，现在只是不再被调用。
     public_page = daily_public_page(target_day)
     index_json = PORTAL / "out" / f"review-index-{target_day}.json"
-    if not args.dry_run:
-        index_json.parent.mkdir(parents=True, exist_ok=True)
     fetch_index = run_step(
         "②a 取封存市场指标（review_index_fields）",
         review_index_json(target_day, index_json),
         args.dry_run,
-        supports_dry_run=False,
-        dry_run_note=(
-            f"将从 {display(MARKET_WATCH_ROOT / 'scripts' / 'export_daily_bundle.py')} "
-            f"读取 {target_day} 的封存指标到 {display(index_json)}"
-        ),
+        # 这一步只读封存库、往 stdout 打印，不写任何东西——预演也照跑，
+        # 下面的 ②b 才有指标可读（写到仓库外的临时文件）。
+        # 它没有 --dry-run 参数，所以不能靠 run_step 补一个。
+        no_dry_run_flag=True,
         capture_stdout=True,
     )
+    # 预演不往仓库里写盘，但 ②b 要读这份指标，所以落到**仓库外的临时文件**，
+    # 用完即删——预演不能留下任何痕迹，也不能因为"没写"就让下一步失败。
+    scratch: Path | None = None
     if fetch_index:
-        if not args.dry_run:
+        if args.dry_run:
+            scratch = Path(tempfile.mkdtemp(prefix="portal-sync-dry-")) / "review-index.json"
+            scratch.write_text(fetch_index, encoding="utf-8")
+            index_json = scratch
+        else:
+            index_json.parent.mkdir(parents=True, exist_ok=True)
             index_json.write_text(fetch_index, encoding="utf-8")
-    if not args.skip_review:
+    # 第一阶段（≤2026-09-30）的页面已冻结，不再重新生成——对冻结日期来说
+    # "不出页" 是正确行为，不是失败。跳过要说清楚，不能让人以为漏跑了。
+    phase1_frozen = target_day < PHASE2_START
+    if phase1_frozen:
+        print(f"[skip] {target_day} 属第一阶段，页面已冻结，不重新生成"
+              "（W8 弈沐 10-01 决定）")
+    if not args.skip_review and not phase1_frozen:
         daily_argv = [
             str(TOOLS / "build_daily_page.py"), "build",
             "--day", target_day,
@@ -329,6 +359,8 @@ def main(argv: list[str] | None = None) -> int:
             print("已完成: " + " → ".join(done))
             return 4
         done.append("② 每日公开页")
+    if scratch is not None:
+        shutil.rmtree(scratch.parent, ignore_errors=True)
 
     # ③ 首页整页渲染（W8 S2/S7a）：不再用正则就地改首页，也就没有「谁先谁后
     # 都行」的默契——整页只有一个渲染器（public约定：业绩只算一处）。
@@ -337,7 +369,11 @@ def main(argv: list[str] | None = None) -> int:
         "--writing-index", str(WRITING_INDEX),
         "--out", str(home_page()),
     ]
-    if not run_step("③ 首页整页渲染（build_home）", home_argv, args.dry_run):
+    # build_home 没有 --dry-run（它只做渲染，没有 --check 之外的预演模式），
+    # 预演时只打印它将做什么。
+    if not run_step("③ 首页整页渲染（build_home）", home_argv, args.dry_run,
+                    supports_dry_run=False,
+                    dry_run_note=f"将整页渲染 {display(home_page())}（build_home 无 --dry-run）"):
         print("已完成: " + " → ".join(done))
         return 5
     done.append("③ 首页")

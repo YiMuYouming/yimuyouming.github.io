@@ -72,3 +72,32 @@ class PublishChainSwitchedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class ReviewNoteLookupTests(unittest.TestCase):
+    """Vault 里 ReviewNote 有补零和不补零两种写法，两种都要能找到。"""
+
+    def _lookup(self, files):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "W41_第41周").mkdir()
+            for name in files:
+                (root / "W41_第41周" / name).write_text("x", encoding="utf-8")
+            original = sync_portal.REVIEW_ROOT
+            sync_portal.REVIEW_ROOT = root
+            try:
+                return sync_portal.find_review_note("2026-10-08")
+            finally:
+                sync_portal.REVIEW_ROOT = original
+
+    def test_padded_date_is_found(self):
+        found = self._lookup(["2026_10_08_Thursday_ReviewNote.md"])
+        self.assertIsNotNone(found, "10-08 的笔记是补零写法，必须能找到")
+
+    def test_unpadded_date_is_still_found(self):
+        found = self._lookup(["2026_10_8_Thursday_ReviewNote.md"])
+        self.assertIsNotNone(found)
+
+    def test_absent_day_returns_none(self):
+        self.assertIsNone(self._lookup(["2026_10_09_Friday_ReviewNote.md"]))

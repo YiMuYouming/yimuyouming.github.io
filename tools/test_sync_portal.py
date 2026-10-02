@@ -121,7 +121,7 @@ class PortalSyncOrderTests(unittest.TestCase):
         self.assertNotIn("--dry-run", " ".join(stub.calls[1]))
         self.assertIn("--redline", " ".join(stub.calls[-1]))
 
-    def test_dry_run_writes_nothing(self):
+    def test_dry_run_does_not_render_the_home_or_write_pages(self):
         """预演绝不能写盘：不执行没有 --dry-run 的取指标那一步。"""
         stub = _StubRun()
 
@@ -134,8 +134,14 @@ class PortalSyncOrderTests(unittest.TestCase):
         self.assertIn("③ 首页整页渲染", out)
         self.assertLess(out.index("②a"), out.index("②b"))
         self.assertLess(out.index("②b"), out.index("③ 首页整页渲染"))
-        self.assertNotIn("export_daily_bundle.py", stub.scripts(),
-                         "预演不得真的去取封存指标")
+        # ②a 只读封存库、往 stdout 打印，不写任何东西——所以预演也照跑，
+        # ②b 才有指标可读（落在仓库外的临时文件）。真正不许写的是 ②b 和 ③。
+        self.assertIn("export_daily_bundle.py", stub.scripts())
+        self.assertIn("build_daily_page.py", stub.scripts())
+        self.assertNotIn("build_home.py", stub.scripts(),
+                         "预演不得真的整页渲染首页")
+        # 真正不许写盘的是 ②b（build_daily_page 自己支持 --dry-run）
+        self.assertIn("--dry-run", " ".join(stub.calls[-1]))
         self.assertIn("[dry-run]", out)
 
     def test_skip_review_leaves_the_home_chain_running(self):
