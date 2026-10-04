@@ -2,3 +2,8 @@
 __pycache__/
 out/
 output/
+
+# 业绩数据的构建中间物（审计回复 17 丙-8）：sync_pnl_data.py 写它，build_home.py
+# 读它并把数据内嵌进 index.html。线上页面读的是已提交的 index.html，运行时不读这个
+# 文件，所以它不进 git（进 git 只会让 91KB 的旧快照被误提交）。
+data/pnl.json
