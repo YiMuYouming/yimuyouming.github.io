@@ -27,48 +27,42 @@ Portal 2.0 的定位不是内部工作台，而是“AI 增强的人机协同短
 
 ## 自动同步
 
-数据同步分三条链路：
-
-```bash
-# 收益曲线 + 今日市场状态
-python3 tools/sync_pnl_data.py
-
-# 单篇复盘 Markdown 转 HTML，并更新首页和复盘索引
-python3 tools/convert_review.py <vault_md_path>
-
-# 单篇复盘 Markdown 转每日市场手记，并更新首页手记卡片
-python3 tools/convert_daily_note.py <vault_md_path>
-```
-
-收盘后的日常同步用统一入口一次跑完三条链「首页数据 → 复盘详情页 → 每日市场手记」，顺序由脚本固定：
+日常收盘用统一入口跑完整条链（顺序固定：首页数据 → 每日公开页 → 首页整页渲染）：
 
 ```bash
 python3 tools/sync_portal.py --date YYYY-MM-DD --dry-run   # 预演
 python3 tools/sync_portal.py --date YYYY-MM-DD             # 执行
 ```
 
-`sync_portal.py` 依次调用 `sync_pnl_data.py`、`convert_review.py`、`convert_daily_note.py`；任一步失败会立即中断（退出码 2/4/5），不会留下「手记已更新、首页还停在昨日」或「手记已上线、最新复盘还在前一天」的半同步状态。
+`sync_portal.py` 依次调用 `sync_pnl_data.py`、`build_daily_page.py`、`build_home.py`；任一步失败会立即中断（退出码 2/4/5），不会留下「手记已更新、首页还停在昨日」的半同步状态。
 
-`sync_pnl_data.py` 通过 Hermes 云端 bridge 同步 PnL 和市场快照，替换 `index.html` 中的 `PNL_DATA` 与 `MARKET_SNAPSHOT` 标记区。
+单条链也可以单独跑：
 
-`convert_review.py` 会生成 `review-notes/YYYY-MM-DD.html`，并更新：
+```bash
+# 收益曲线 + 今日市场状态（只写数据文件，不再就地改 index.html）
+python3 tools/sync_pnl_data.py
 
-- 首页“阅读最新复盘”按钮
-- 常用入口“最新复盘”
-- 可审计交易链路最新日期和记录跨度
-- AI 复盘闭环的日报数量与最新复盘日期
-- 首页近期 6 篇复盘卡片
-- `review-notes/index.html` 归档页日卡与统计
+# 某个交易日的公开页（四项指标来自封存原件；第一阶段 09-30 及以前不出页）
+python3 tools/build_daily_page.py build --date YYYY-MM-DD
 
-同一天重复同步时会刷新详情页、首页卡片和归档日卡，但不会重复增加统计数量。
+# 首页整页渲染（数据来自 PnL、writing-index.json、reports.json）
+python3 tools/build_home.py
+```
+
+`sync_pnl_data.py` 通过 Hermes 云端 bridge 同步 PnL 和市场快照，只写数据文件（`data/pnl.json` 等），不碰 `index.html`。
+
+**W8 S7b（2026-10-05）删掉了两条老转换路径**：`tools/convert_review.py`、
+`tools/convert_daily_note.py`（连同逐词替换脱敏、读复盘笔记 `### 公开稿` 的代码、
+正则就地改首页的代码、复盘页/手记页两套重复模板与守着它们的测试）。第一阶段
+（2026-03-23 至 09-30）已生成的页面冻结不动，URL 不变。
 
 ## 验证
 
 常用验证命令：
 
 ```bash
-python3 -m py_compile tools/sync_pnl_data.py tools/convert_review.py
-python3 tools/sync_pnl_data.py
+python3 -m py_compile tools/sync_pnl_data.py tools/build_daily_page.py tools/build_home.py
+python3 -m unittest discover -s tools -t tools -p "test_*.py"
 git diff --check
 python3 -m http.server 8765
 ```

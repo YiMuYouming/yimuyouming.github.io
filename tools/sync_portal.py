@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Portal 同步唯一入口：首页数据 → 复盘详情页 → 每日市场手记。
+"""Portal 同步唯一入口：首页数据 → 每日公开页 → 首页整页渲染。
 
 Portal 有三条互不相干的生成链，顺序固定：
 
-1. ``sync_pnl_data.py``   首页 ``PNL_DATA`` + ``MARKET_SNAPSHOT``（收益曲线、市场卡片）
+1. ``sync_pnl_data.py``    ``data/pnl.json`` 等数据文件（收益曲线、市场卡片；只写数据）
 2. ``build_daily_page.py`` ``daily/<date>.html``（10 月起每个交易日一张公开页）
 3. ``build_home.py``       整页渲染 ``index.html``（不再用正则就地改首页）
 
-W8 S7a 起 ②③ 走上面这两个生成器。``convert_review.py`` / ``convert_daily_note.py``
-仍在仓库里但**不再被发布链调用**——先切链、观察两个交易日，S7b 才删。
+W8 S7a 起 ②③ 走上面这两个生成器；S7b（2026-10-05）把
+``convert_review.py`` / ``convert_daily_note.py``（逐词替换脱敏、读复盘笔记
+``### 公开稿``、正则就地改首页、两套重复模板）连同守着它们的测试一起删掉了。
 ≤2026-09-30 的第一阶段页面已冻结，不再重新生成。
 
 顺序理由：首页数据承载「当日账户事实」，后面两条的正文与卡片都引用它，先刷事实
@@ -310,7 +311,7 @@ def main(argv: list[str] | None = None) -> int:
         return 4
 
     # ② 每日公开页（W8 S7a）：四个指标取自封存原件，正文只取已发布的「每日/」写作。
-    # 不再解析复盘笔记、不再逐词脱敏——那是 S7b 要删的老路径，现在只是不再被调用。
+    # 不解析复盘笔记、不逐词脱敏——S7b 已把那条老路径连同它的函数与测试删掉。
     public_page = daily_public_page(target_day)
     index_json = PORTAL / "out" / f"review-index-{target_day}.json"
     fetch_index = run_step(

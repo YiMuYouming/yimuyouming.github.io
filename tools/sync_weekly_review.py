@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
-"""Publish a curated weekly HTML page into the Portal home and archive indexes.
+"""Publish a curated weekly HTML page into the Portal archive index.
 
 The weekly page is editorially reviewed before this script runs. Daily Markdown
 converters cannot safely infer its public narrative or privacy boundary.
+
+W8 S7b（审计回复 9 第二节、审计回复 10 第三节第 13 条）：本脚本**不再改首页**。
+首页由 `build_home.py` 整页渲染（数据来自 `data/writing-index.json` 等），周报入口
+由它按 `weekly/index.html` 是否存在决定指向 `weekly/` 还是第一阶段归档；这里只把
+周报页登记进 `review-notes/index.html`（第一阶段归档索引）并同步计数，删掉了原来
+"正则就地改首页 + 重建近期时间线"的那一段。
 """
 
-from pathlib import Path
 from html import escape
+from pathlib import Path
+import argparse
 import re
-import sys
 
-from convert_review import (
-    PORTAL,
-    REVIEW_NOTES,
-    build_period_review_card,
-    extract_recent_daily_cards,
-    rebuild_recent_review_timeline,
-)
+PORTAL = Path(__file__).resolve().parent.parent
+REVIEW_NOTES = PORTAL / "review-notes"
+
+WEEKLY_NAME_RE = re.compile(r"weekly-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}\.html")
 
 
 def replace_exact_once(content, old, new, label):
@@ -26,26 +29,15 @@ def replace_exact_once(content, old, new, label):
     return content.replace(old, new, 1)
 
 
-def sync_weekly(page_path):
+def read_weekly_page(page_path):
+    """校验并抽出归档卡需要的字段；缺一项就报错，不猜。"""
     page_path = Path(page_path).resolve()
-    if page_path.parent != REVIEW_NOTES.resolve() or not re.fullmatch(
-        r"weekly-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}\.html", page_path.name
+    if page_path.parent != REVIEW_NOTES.resolve() or not WEEKLY_NAME_RE.fullmatch(
+        page_path.name
     ):
         raise ValueError("expected a weekly HTML file in review-notes/")
     if not page_path.is_file():
         raise FileNotFoundError(page_path)
-    card = build_period_review_card(page_path)
-    if not card:
-        raise ValueError("weekly page cannot form a homepage card")
-
-    home_path = PORTAL / "index.html"
-    archive_path = REVIEW_NOTES / "index.html"
-    home = home_path.read_text(encoding="utf-8")
-    archive = archive_path.read_text(encoding="utf-8")
-
-    # Both counters derive from the same archive listing, avoiding drift.
-    weekly_pages = sorted(REVIEW_NOTES.glob("weekly-*.html"))
-    count = len(weekly_pages)
     label = page_path.read_text(encoding="utf-8")
     summary = re.search(r'<meta name="weekly-summary" content="([^"]+)">', label)
     if not summary:
@@ -59,15 +51,33 @@ def sync_weekly(page_path):
         raise ValueError("weekly page needs a week number and trading-day KPI")
     start = re.search(r"weekly-(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})", page_path.name)
     _, sm, sd, em, ed = start.groups()
+    return {
+        "page": page_path,
+        "summary": summary.group(1),
+        "week": int(week.group(1)),
+        "days": days.group(1),
+        "range": f"{int(sm)}/{int(sd)} – {int(em)}/{int(ed)}",
+    }
+
+
+def sync_weekly(page_path):
+    info = read_weekly_page(page_path)
+    archive_path = REVIEW_NOTES / "index.html"
+    archive = archive_path.read_text(encoding="utf-8")
+
+    # 计数只从归档列表本身推，避免两处漂移。
+    weekly_pages = sorted(REVIEW_NOTES.glob("weekly-*.html"))
+    count = len(weekly_pages)
     archive_card = (
-        f'  <a href="{page_path.name}" class="wk-card"><div class="wr">'
-        f'{int(sm)}/{int(sd)} – {int(em)}/{int(ed)}</div>'
-        f'<div class="wm">第{int(week.group(1))}周 · {days.group(1)}天</div>'
-        f'<div class="wt">{escape(summary.group(1))}</div></a>\n'
+        f'  <a href="{info["page"].name}" class="wk-card"><div class="wr">'
+        f'{info["range"]}</div>'
+        f'<div class="wm">第{info["week"]}周 · {info["days"]}天</div>'
+        f'<div class="wt">{escape(info["summary"])}</div></a>\n'
     )
-    if f'href="{page_path.name}"' not in archive:
+    if f'href="{info["page"].name}"' not in archive:
         archive = replace_exact_once(archive, '<div class="weekly-grid">\n',
-                                     '<div class="weekly-grid">\n' + archive_card, "weekly archive grid")
+                                     '<div class="weekly-grid">\n' + archive_card,
+                                     "weekly archive grid")
     archive, n = re.subn(r'(<span><strong>)\d+(</strong> 份周度总结</span>)',
                          rf'\g<1>{count}\2', archive, count=1)
     if n != 1:
@@ -75,75 +85,32 @@ def sync_weekly(page_path):
     archive = re.sub(r'(<span><strong>)\d+(</strong> 周覆盖</span>)',
                      rf'\g<1>{count}\2', archive, count=1)
 
-    home, n = re.subn(r'(<div class="archive-item"><span>周报归档</span><strong>)\d+(</strong><em>篇</em></div>)',
-                      rf'\g<1>{count}\2', home, count=1)
-    if n != 1:
-        raise ValueError("home archive weekly count missing")
-    home, n = re.subn(r'(<div class="review-stat"><span>周报归档</span><strong>)\d+(</strong><em>篇</em></div>)',
-                      rf'\g<1>{count}\2', home, count=1)
-    if n != 1:
-        raise ValueError("home review weekly count missing")
-    home, n = re.subn(r'(<a class="workspace-card" id="workspace-weekly-review" href="review-notes/)weekly-[^"]+("?)',
-                      rf'\g<1>{page_path.name}\2', home, count=1)
-    if n != 1:
-        raise ValueError("home latest weekly link missing")
-    daily_cards = extract_recent_daily_cards(home)
-    if not daily_cards:
-        raise ValueError("home recent daily cards missing")
-    newest_daily = max(daily_cards, key=lambda c: c["date"])
-    # Refresh this week's card from its source while preserving hand-edited
-    # titles on other existing period cards.
-    home = re.sub(
-        rf'<a id="{re.escape(card["id"])}".*?</a>\s*',
-        '', home, count=1, flags=re.S,
-    )
-    home = rebuild_recent_review_timeline(home, newest_daily["date"], newest_daily["html"])
-    if card["id"] not in home:
-        raise ValueError("new weekly card missing from recent timeline")
-
     archive_path.write_text(archive, encoding="utf-8")
-    home_path.write_text(home, encoding="utf-8")
-    print(f"weekly published locally: {page_path.name}; archive count {count}")
+    print(f"weekly published locally: {info['page'].name}; archive count {count}")
 
 
 def sync_weekly_dry(page_path) -> int:
     """只报告会改什么，不写盘（W8 S4）。
 
-    以前这个脚本只能直接写盘；跑之前看不出它会动 index.html 的哪几行。现在
-    dry-run 把改动逐条列出来，确认后再真跑。
+    S7b 起只写归档索引一个文件；首页由 `build_home.py` 渲染，本脚本不再碰。
     """
-    import argparse
-
-    page_path = Path(page_path).resolve()
     try:
-        if page_path.parent != REVIEW_NOTES.resolve() or not re.fullmatch(
-            r"weekly-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}\.html", page_path.name
-        ):
-            raise ValueError("expected a weekly HTML file in review-notes/")
-        if not page_path.is_file():
-            raise FileNotFoundError(page_path)
-        card = build_period_review_card(page_path)
-        if not card:
-            raise ValueError("weekly page cannot form a homepage card")
+        info = read_weekly_page(page_path)
     except (OSError, ValueError) as exc:
         print(f"[dry-run] 不会执行：{exc}")
         return 1
 
     weekly_pages = sorted(REVIEW_NOTES.glob("weekly-*.html"))
-    home_path = PORTAL / "index.html"
     archive_path = REVIEW_NOTES / "index.html"
-    print(f"[dry-run] 周报页：{page_path.name}")
-    print(f"[dry-run] 会写入：{home_path}（替换周榜卡片 {card['id']}，重建近期时间线）")
+    print(f"[dry-run] 周报页：{info['page'].name}")
     print(f"[dry-run] 会写入：{archive_path}（归档计数 {len(weekly_pages)} → "
-          f"{len(weekly_pages) + 1}）")
+          f"{len(weekly_pages) + 1}；不动 index.html）")
     print("[dry-run] 未写盘；去掉 --dry-run 后执行")
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
-    import argparse
-
-    parser = argparse.ArgumentParser(description="把周报页发布进门户索引")
+    parser = argparse.ArgumentParser(description="把周报页登记进门户归档索引")
     parser.add_argument("page", nargs="?", help="review-notes/weekly-*.html")
     parser.add_argument("--page", dest="page_opt", default=None,
                         help="同上，写成参数形式")

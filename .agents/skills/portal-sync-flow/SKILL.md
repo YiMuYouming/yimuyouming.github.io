@@ -27,13 +27,13 @@ Use these as checklist items, adapting the order when there is a concrete reason
 
 - Refresh the cloud data module with `python3 tools/sync_pnl_data.py`. Default to cloud Hermes; use `--source local` only for explicit local debugging.
 - Verify the sync did not hide failure with old data: inspect command output and `index.html` for `FAIL`, `cloud bridge fetch failed`, or visible `云端 bridge 不可用` placeholders before proceeding.
-- Convert the Vault ReviewNote with `python3 tools/convert_review.py <vault_md_path>`. This updates `review-notes/YYYY-MM-DD.html`, `review-notes/index.html`, and homepage review surfaces.
-- Generate or refresh the Daily Note with `python3 tools/convert_daily_note.py <vault_md_path> [optional user feeling]`. Daily Note content must come from the Vault ReviewNote, not from Market Watch watch notes or existing Portal HTML.
+- Build the day's public page with `python3 tools/build_daily_page.py build --date YYYY-MM-DD` (four indicators come from the sealed machine snapshot; no narrative parsing, no word-by-word redaction), then render the home page with `python3 tools/build_home.py`. The old `tools/convert_review.py` / `tools/convert_daily_note.py` were removed in W8 S7b (2026-10-05).
+- Daily public pages and home-page facts must come from the sealed bundle, not from Market Watch watch notes or existing Portal HTML.
 - Extract §二 / 今日认知 into `insights/index.html`, assign each item to the existing insights themes, and keep homepage insight counts aligned with detail-card counts. Ask before creating a new theme.
 - Run validation and browser QA at the level of risk introduced by the changes. Full publishes need the full release gate.
 - Show `git diff --stat` and a concise diff summary. Commit and push only after user confirmation; if the user already said "推送吧", validate first, then commit and push directly.
 
-Do not use `python3 tools/convert_review.py <vault_md_path> --commit` in the normal publish flow. Commit only after validation, browser QA, and the diff summary gate.
+Do not hand-edit generated pages in the normal publish flow. Commit only after validation, browser QA, and the diff summary gate.
 
 ## Public-Layer Red Lines
 
@@ -48,8 +48,7 @@ Do not use `python3 tools/convert_review.py <vault_md_path> --commit` in the nor
 For a full Portal publish, run these commands before reporting completion:
 
 ```bash
-python3 tools/test_convert_review.py
-python3 tools/test_convert_daily_note.py
+python3 -m unittest discover -s tools -t tools -p "test_*.py"
 python3 tools/test_sync_pnl_data.py
 python3 tools/test_portal_pnl_kpi.py
 python3 tools/portal_check.py --self-test
