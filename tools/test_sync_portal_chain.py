@@ -1,14 +1,17 @@
-"""S7a：发布链已经改走新生成器，老脚本不再被调用（审计回复 9 第二节第 2 点）。
+"""S7a/S7b：发布链改走新生成器，老脚本已删（审计回复 9 第二节第 2 点、
+审计回复 10 第三节第 13 条）。
 
-老脚本这一轮**不删**——先换链、观察两个交易日，S7b 才删。这里守的是
-「发布链不再提到它们」，这样谁把老路径悄悄接回去，测试当场红。
+S7a 时老脚本还在，这里守「发布链不再提到它们」；S7b 把它们**删掉**了，
+所以断言翻过来：文件必须不在，且全仓不再有任何 `import convert_review` /
+`import convert_daily_note`，`sync_weekly_review` 也不许再正则改首页。
 
-为什么要有这条：`convert_review.py` / `convert_daily_note.py` 还在仓库里，
-文件还在就容易被当成「还能用」——本轮就差点让每日公开页又走一遍逐词脱敏。
+为什么要有这条：文件还在就容易被当成「还能用」——S7a 前就差点让每日公开页
+又走一遍逐词脱敏。
 """
 
 import ast
 import importlib.util
+import re
 import unittest
 from pathlib import Path
 
@@ -20,6 +23,7 @@ sync_portal = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(sync_portal)
 
 LEGACY_SCRIPTS = ("convert_review.py", "convert_daily_note.py")
+LEGACY_MODULES = ("convert_review", "convert_daily_note")
 
 
 def _referenced_filenames() -> set[str]:
@@ -31,6 +35,17 @@ def _referenced_filenames() -> set[str]:
             if node.value.endswith(".py"):
                 names.add(node.value.rsplit("/", 1)[-1])
     return names
+
+
+def _imports_legacy(path: Path) -> bool:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            if any(alias.name in LEGACY_MODULES for alias in node.names):
+                return True
+        if isinstance(node, ast.ImportFrom) and (node.module or "").split(".")[-1] in LEGACY_MODULES:
+            return True
+    return False
 
 
 class PublishChainSwitchedTests(unittest.TestCase):
@@ -47,10 +62,24 @@ class PublishChainSwitchedTests(unittest.TestCase):
         self.assertIn("build_daily_page.py", referenced)
         self.assertIn("build_home.py", referenced)
 
-    def test_legacy_scripts_are_still_on_disk(self):
-        """老脚本这一轮不删，S7b 才删。留着是为了出问题能直接退回老链。"""
+    def test_legacy_scripts_are_gone(self):
+        """S7b：老转换路径连同守着它的测试一起删掉。"""
         for legacy in LEGACY_SCRIPTS:
-            self.assertTrue((TOOLS / legacy).is_file(), f"{legacy} 不该在 S7a 被删掉")
+            self.assertFalse((TOOLS / legacy).exists(), f"{legacy} 应在 S7b 被删掉")
+
+    def test_no_module_imports_the_legacy_converters(self):
+        offenders = [
+            path.name for path in sorted(TOOLS.glob("*.py"))
+            if _imports_legacy(path)
+        ]
+        self.assertEqual([], offenders, f"还在 import 老转换器：{offenders}")
+
+    def test_weekly_sync_no_longer_patches_the_home_page(self):
+        source = (TOOLS / "sync_weekly_review.py").read_text(encoding="utf-8")
+        for banned in ("rebuild_recent_review_timeline", "extract_recent_daily_cards"):
+            self.assertNotIn(banned, source, f"周报同步不该再重建首页时间线（{banned}）")
+        self.assertNotIn("convert_review", source, "周报同步不该再依赖老转换器")
+        self.assertNotIn('PORTAL / "index.html"', source, "周报同步不该再写首页")
 
     def test_home_is_rendered_whole_not_patched_with_regex(self):
         source = (TOOLS / "sync_portal.py").read_text(encoding="utf-8")

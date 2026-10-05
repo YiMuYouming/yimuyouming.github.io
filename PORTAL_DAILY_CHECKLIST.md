@@ -4,17 +4,23 @@
 
 ## 每次必做（3步）
 
-### Step 1：生成 HTML
+### Step 1：生成页面
+
+**W8 S7b（2026-10-05）起走新链**（老的 `tools/convert_review.py` /
+`tools/convert_daily_note.py` 已删除，含逐词替换脱敏与正则就地改首页）：
 
 ```bash
-python3 ~/Documents/YM_Capital/portal/tools/convert_review.py \
-  ~/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/复盘笔记/Wxx_第x周/YYYY_M_D_Weekday_ReviewNote.md
+cd ~/Projects/YM_Capital/portal
+python3 tools/sync_portal.py --date YYYY-MM-DD --dry-run   # 预演三步
+python3 tools/sync_portal.py --date YYYY-MM-DD             # 首页数据 → 每日公开页 → 首页整页渲染
 ```
 
 脚本自动做三件事：
-- 生成 `review-notes/YYYY-MM-DD.html`
-- 更新首页 `index.html`（最新 5 篇列表 + hero 日期）
-- 更新全部列表 `review-notes/index.html`（添加新条目 + 篇数 +1）
+- 写 `data/pnl.json` 等数据文件（不再就地改 `index.html`）
+- 生成 `daily/YYYY-MM-DD.html`（四项指标来自封存原件，10-01 起出页）
+- 整页渲染 `index.html`（数据 + 模板，不再正则改写）
+
+第一阶段（2026-03-23 至 09-30）的老页面已冻结，URL 不变，不再重新生成。
 
 ### Step 2：手工微调 HTML（2分钟）
 
@@ -53,13 +59,14 @@ git push
 
 ```
 portal/
-├── index.html                          ← 首页（hero日期 + 最新5篇列表）
-├── review-notes/
+├── index.html                          ← 首页（整页渲染：业绩 + 成长与思想）
+├── daily/YYYY-MM-DD.html               ← 每日公开页（10-01 起）
+├── review-notes/                       ← 第一阶段归档（冻结，URL 不变）
 │   ├── index.html                      ← 全部列表（总篇数/周覆盖/日期范围/周总结数）
-│   ├── YYYY-MM-DD.html                 ← 每日复盘 HTML
+│   ├── YYYY-MM-DD.html                 ← 第一阶段每日复盘 HTML
 │   └── weekly-YYYY-MM-DD_MM-DD.html    ← 周度复盘 HTML
 ├── insights/index.html                 ← 交易认知（有[认知]条目时更新）
-└── tools/convert_review.py            ← 自动转换脚本
+└── tools/sync_portal.py                ← 日常统一入口（W8 S7b 起）
 ```
 
 ## 每次更新涉及的具体位置

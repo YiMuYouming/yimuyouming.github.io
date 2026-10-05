@@ -111,33 +111,25 @@ python3 tools/sync_pnl_data.py
 python3 tools/sync_pnl_data.py --source local
 ```
 
-### `tools/convert_review.py`
+### ~~`tools/convert_review.py`~~（W8 S7b 已删除）
 
-职责：
+原职责：把 Vault 复盘 Markdown 转为 `review-notes/YYYY-MM-DD.html` 并就地改首页。
+2026-10-05（W8 S7b）连同 `tools/convert_daily_note.py`、逐词替换脱敏、读复盘笔记
+`### 公开稿` 的代码与正则就地改首页的代码一起删除；第一阶段页面冻结不动。
 
-- 把 Vault 复盘 Markdown 转为 `review-notes/YYYY-MM-DD.html`
-- 更新首页最新复盘入口
-- 更新 AI 复盘闭环统计
-- 更新近期 6 篇复盘卡片
-- 更新可审计交易链路日期和记录跨度
-- 更新 `review-notes/index.html`
+现在的生成入口：
 
-命令：
-
-```bash
-python3 tools/convert_review.py <vault_md_path>
-```
-
-同一天重复同步时必须刷新内容，但不能重复增加统计数量。
+- `tools/build_daily_page.py` —— 每日公开页（四项指标来自封存原件，10-01 起出页）
+- `tools/build_home.py` —— 首页整页渲染（数据 + 模板）
+- `tools/sync_portal.py` —— 日常统一入口（首页数据 → 每日公开页 → 首页整页渲染）
 
 ## 验收标准
 
 - 首页模块顺序符合 Portal 2.0 架构。
 - 市场快照无截断，数字居中显示。
 - 收益曲线日、周、月和指数对照可用。
-- 近期复盘保持 6 条，卡片指标不截断。
-- 复盘详情页可返回主页原进入位置。
-- 同步脚本可刷新首页、详情页和归档页。
+- 首页的成长与思想区只出 `公开写作/` 里 `status: published` 的内容。
+- 同步脚本可刷新首页数据、每日公开页并整页渲染首页。
 - 重复同步同一日期不会重复计数。
 - `git diff --check` 无空白错误。
 
@@ -145,9 +137,9 @@ python3 tools/convert_review.py <vault_md_path>
 
 已执行的关键验证：
 
-- Python 编译检查：`tools/sync_pnl_data.py`、`tools/convert_review.py`
-- Hermes 云端同步：PnL 曲线和市场快照成功写入首页
-- 合成新复盘测试：详情页、首页卡片、归档页、统计字段同步正确
+- Python 编译检查：`tools/sync_pnl_data.py`、`tools/build_daily_page.py`、`tools/build_home.py`
+- Hermes 云端同步：PnL 曲线和市场快照成功写入数据文件并渲染进首页
+- 合成新复盘测试：每日公开页、首页区块、统计字段同步正确
 - 同日重复同步测试：内容刷新且不重复计数
 - 最终清理检查：无合成测试文件残留
 

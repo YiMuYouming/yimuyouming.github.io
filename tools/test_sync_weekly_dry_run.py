@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 
 _tool = Path(__file__).resolve().parent
-sys.path.insert(0, str(_tool))                   # convert_review 与之一同目录
+sys.path.insert(0, str(_tool))                   # sync_weekly_review 与本文件同目录
 _spec = importlib.util.spec_from_file_location("srw", _tool / "sync_weekly_review.py")
 srw = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(srw)
