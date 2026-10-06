@@ -185,19 +185,32 @@ def load_review_index_fields(day: str) -> dict:
     门户**不解析复盘笔记正文**——它只要那四个数和它们是哪天的。指标自带 date
     （审计回复 8 第 9 条），门户那侧还有 ``--data-date`` 作第二道校验。
 
-    这里刻意**不 shell 调 CLI**：``export_daily_bundle.py --print-review-index``
+    这里刻意**不shell 调 CLI**：``export_daily_bundle.py --print-review-index``
     在 W3 改成 daily bundle 导出时已被删（现在只收
     ``--review/--market-watch-root/--dashboard-root/--out-root``），
     留着调法会让 ``sync_portal`` 在②a 直接退出码 2（W9 S9 实测）。
+
+    ★ 用**普通 import** 而不是 ``spec_from_file_location``：该模块顶层
+    ``from scripts.export_decision_plan import ...``，别名加载时它所在仓的
+    ``scripts`` 包没被注册，import 失败报 ``No module named
+    'scripts.export_decision_plan'``（W9 S9 确认跑实测）。仓根必须在
+    ``sys.path`` 且``scripts`` 解析到那个仓——所以先插路径再 import。
     """
-    entry = MARKET_WATCH_ROOT / "scripts"
-    if str(entry) not in sys.path:
-        sys.path.insert(0, str(entry.parent))
-    spec = importlib.util.spec_from_file_location(
-        "_mw_export_daily_bundle", entry / "export_daily_bundle.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    root = str(MARKET_WATCH_ROOT)
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    scripts_pkg = sys.modules.get("scripts")
+    if scripts_pkg is not None:
+        paths = list(getattr(scripts_pkg, "__path__", []) or [])
+        want = str(MARKET_WATCH_ROOT / "scripts")
+        if want not in paths:
+            # 命名空间包已缓存：把目标仓的 scripts 目录补进去，别动已有项
+            try:
+                scripts_pkg.__path__.append(want)
+            except AttributeError:
+                pass
+    from scripts import export_daily_bundle as module
+
     return module.review_index_fields(day)
 
 

@@ -114,6 +114,32 @@ class PublishChainSwitchedTests(unittest.TestCase):
         )
         self.assertIn("def review_index_fields", source, "函数入口必须还在")
 
+    def test_index_loader_uses_a_real_import_not_a_file_alias(self):
+        """``load_review_index_fields`` 必须用普通 import，不能用别名加载。
+
+        ``export_daily_bundle.py`` 顶层有
+        ``from scripts.export_decision_plan import ...``。用
+        ``spec_from_file_location`` 别名加载时，它所在仓的 ``scripts`` 包没被
+        注册进 ``sys.modules``，那个 import 直接失败 →
+        ``No module named 'scripts.export_decision_plan'``，
+        ``sync_portal`` 在②a 挂掉（W9 S9 确认跑实测）。
+
+        ★ 只约束**这一个函数**：``find_reading_sidecar`` 里的别名加载是另一回事
+        （``review_reading_index.py`` 没有 ``scripts.*`` 顶层 import），别连坐。
+        """
+        import inspect
+
+        source = inspect.getsource(sync_portal.load_review_index_fields)
+        code = "\n".join(
+            line for line in source.splitlines() if not line.strip().startswith("#")
+        )
+        code = code.split('"""', 2)[0] + code.split('"""', 2)[-1]  # 去掉 docstring
+        self.assertNotIn(
+            "spec_from_file_location", code,
+            "别名加载会让 export_daily_bundle 顶层的 scripts.* import 失败",
+        )
+        self.assertIn("from scripts import export_daily_bundle", code)
+
 
 if __name__ == "__main__":
     unittest.main()
