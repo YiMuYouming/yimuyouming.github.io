@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -178,17 +179,31 @@ def home_page() -> Path:
     return PORTAL / "index.html"
 
 
-def review_index_json(day: str, out_path: Path) -> list[str]:
-    """取该交易日的封存市场指标（review_index_fields），落到 out_path。
+def load_review_index_fields(day: str) -> dict:
+    """进程内调 Market_Watch 的 ``review_index_fields`` 取封存市场指标。
 
     门户**不解析复盘笔记正文**——它只要那四个数和它们是哪天的。指标自带 date
-    （审计回复 8 第 9 条），门户那侧还有 `--data-date` 作第二道校验。
+    （审计回复 8 第 9 条），门户那侧还有 ``--data-date`` 作第二道校验。
+
+    这里刻意**不 shell 调 CLI**：``export_daily_bundle.py --print-review-index``
+    在 W3 改成 daily bundle 导出时已被删（现在只收
+    ``--review/--market-watch-root/--dashboard-root/--out-root``），
+    留着调法会让 ``sync_portal`` 在②a 直接退出码 2（W9 S9 实测）。
     """
-    # run_step 会自己在前面补 sys.executable，这里不要再补一次。
-    return [
-        str(MARKET_WATCH_ROOT / "scripts" / "export_daily_bundle.py"),
-        "--print-review-index", day,
-    ]
+    entry = MARKET_WATCH_ROOT / "scripts"
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry.parent))
+    spec = importlib.util.spec_from_file_location(
+        "_mw_export_daily_bundle", entry / "export_daily_bundle.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.review_index_fields(day)
+
+
+def review_index_json(day: str, out_path: Path) -> list[str]:
+    """取该交易日的封存市场指标（review_index_fields），落到 out_path。"""
+    return []
 
 
 def display(path: Path) -> str:
@@ -314,27 +329,25 @@ def main(argv: list[str] | None = None) -> int:
     # 不解析复盘笔记、不逐词脱敏——S7b 已把那条老路径连同它的函数与测试删掉。
     public_page = daily_public_page(target_day)
     index_json = PORTAL / "out" / f"review-index-{target_day}.json"
-    fetch_index = run_step(
-        "②a 取封存市场指标（review_index_fields）",
-        review_index_json(target_day, index_json),
-        args.dry_run,
-        # 这一步只读封存库、往 stdout 打印，不写任何东西——预演也照跑，
-        # 下面的 ②b 才有指标可读（写到仓库外的临时文件）。
-        # 它没有 --dry-run 参数，所以不能靠 run_step 补一个。
-        no_dry_run_flag=True,
-        capture_stdout=True,
-    )
+    # 进程内调函数而非 shell 调 CLI：旧的 `--print-review-index` 已被删。
+    try:
+        fetch_index = json.dumps(
+            load_review_index_fields(target_day), ensure_ascii=False, indent=2
+        )
+        print("②a 取封存市场指标（review_index_fields）[ok]")
+    except Exception as exc:
+        print(f"FAIL ②a 取封存市场指标（review_index_fields）：{exc}", flush=True)
+        return 2
     # 预演不往仓库里写盘，但 ②b 要读这份指标，所以落到**仓库外的临时文件**，
     # 用完即删——预演不能留下任何痕迹，也不能因为"没写"就让下一步失败。
     scratch: Path | None = None
-    if fetch_index:
-        if args.dry_run:
-            scratch = Path(tempfile.mkdtemp(prefix="portal-sync-dry-")) / "review-index.json"
-            scratch.write_text(fetch_index, encoding="utf-8")
-            index_json = scratch
-        else:
-            index_json.parent.mkdir(parents=True, exist_ok=True)
-            index_json.write_text(fetch_index, encoding="utf-8")
+    if args.dry_run:
+        scratch = Path(tempfile.mkdtemp(prefix="portal-sync-dry-")) / "review-index.json"
+        scratch.write_text(fetch_index, encoding="utf-8")
+        index_json = scratch
+    else:
+        index_json.parent.mkdir(parents=True, exist_ok=True)
+        index_json.write_text(fetch_index, encoding="utf-8")
     # 第一阶段（≤2026-09-30）的页面已冻结，不再重新生成——对冻结日期来说
     # "不出页" 是正确行为，不是失败。跳过要说清楚，不能让人以为漏跑了。
     phase1_frozen = target_day < PHASE2_START

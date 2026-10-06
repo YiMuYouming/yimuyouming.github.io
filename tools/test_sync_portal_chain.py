@@ -92,11 +92,27 @@ class PublishChainSwitchedTests(unittest.TestCase):
             sync_portal.daily_public_page("2026-10-08"),
         )
 
-    def test_review_index_comes_from_the_sealed_bundle_cli(self):
+    def test_review_index_comes_from_the_live_sealed_bundle_reader(self):
+        """门户取指标必须走**还活着**的入口。
+
+        旧断言锁的是 `export_daily_bundle.py --print-review-index`，而那个
+        CLI 分支在 W3 改成 daily bundle 导出时被删了（现在只收
+        ``--review/--market-watch-root/--dashboard-root/--out-root``）。
+        断言一条死命令等于把「门户跑不起来」固化成契约——W9 S9 实测
+        ``sync_portal --dry-run`` 就在②a 直接退出码 2。
+
+        ``review_index_fields(date)`` 这个函数还在，门户改为进程内调它。
+        """
         argv = sync_portal.review_index_json("2026-09-30", REPO / "out" / "x.json")
-        self.assertTrue(argv[0].endswith("export_daily_bundle.py"))
-        self.assertIn("--print-review-index", argv)
-        self.assertIn("2026-09-30", argv)
+        self.assertEqual(argv, [], "取指标不该再 shell 调一个已删的 CLI")
+
+        entry = sync_portal.MARKET_WATCH_ROOT / "scripts" / "export_daily_bundle.py"
+        source = entry.read_text(encoding="utf-8")
+        self.assertNotIn(
+            "--print-review-index", source,
+            "被调方不该把已删的 CLI 名字留着当契约",
+        )
+        self.assertIn("def review_index_fields", source, "函数入口必须还在")
 
 
 if __name__ == "__main__":
