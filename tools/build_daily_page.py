@@ -162,6 +162,23 @@ def build_daily_page(
         raise ValueError(f"invalid data_date: {data_date!r}")
     elif str(data_date) != str(day) and not sample:
         raise ValueError(f"data_date_mismatch:{data_date}!={day}（页面日期与指标日期不一致）")
+    # 第二道防线：指标 JSON **自己**报它是谁的日期（MW 侧 v6 路径输出
+    # ``date = review_facts.trading_date``，见 Market_Watch 7fdd120）。
+    #
+    # 上面那道 ``data_date_mismatch`` 是**同义反复**：``sync_portal.py:374``
+    # 传的就是 ``--data-date target_day``，与 ``day`` 同一个变量，
+    # 两个值永远相等 —— 「拿 9-30 的指标出 10-08 的页」照常出页。
+    # 这里读的是**指标自己的日期**，与调用方传什么无关。
+    #
+    # 没有 ``date`` 就维持现状、不新增阻断：v5 路径的指标 JSON 不带日期，
+    # 堵死它等于把 v5 的页面全打死。格式非法同样不当不一致（沿用现状）。
+    index_date = str((index or {}).get("date") or "").strip()
+    if index_date and ISO_DAY_RE.match(index_date):
+        if index_date != str(day) and not sample:
+            raise ValueError(
+                f"index_date_mismatch:{index_date}!={day}"
+                "（指标 JSON 自带的日期与页面日期不一致，拒绝出页）"
+            )
     return PAGE.format(
         day=day,
         data_date=data_date,
