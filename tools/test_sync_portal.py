@@ -32,6 +32,10 @@ class _StubRun:
     def scripts(self) -> list[str]:
         return [Path(call[1]).name for call in self.calls]
 
+    def review_index_fields(self, day: str) -> dict:
+        self.calls.append([sys.executable, "review_index_fields", day])
+        return {"date": day, "情绪值": 47.6}
+
 
 _TEMP_ROOT: Path | None = None
 
@@ -62,6 +66,7 @@ def _run_main(argv: list[str], stub: _StubRun, *, public_page: Path | None = Non
         public_page.write_text("<html></html>", encoding="utf-8")
     home.write_text("<html></html>", encoding="utf-8")
     with mock.patch.object(sync_portal.subprocess, "run", stub), \
+         mock.patch.object(sync_portal, "load_review_index_fields", stub.review_index_fields), \
          mock.patch.object(sync_portal, "find_review_note",
                            lambda day: Path("/tmp/fake-ReviewNote.md")), \
          mock.patch.object(sync_portal, "find_reading_sidecar",
@@ -109,7 +114,7 @@ class PortalSyncOrderTests(unittest.TestCase):
         self.assertEqual(
             [
                 "sync_pnl_data.py",
-                "export_daily_bundle.py",
+                "review_index_fields",
                 "build_daily_page.py",
                 "build_home.py",
                 "portal_check.py",
@@ -136,7 +141,7 @@ class PortalSyncOrderTests(unittest.TestCase):
         self.assertLess(out.index("②b"), out.index("③ 首页整页渲染"))
         # ②a 只读封存库、往 stdout 打印，不写任何东西——所以预演也照跑，
         # ②b 才有指标可读（落在仓库外的临时文件）。真正不许写的是 ②b 和 ③。
-        self.assertIn("export_daily_bundle.py", stub.scripts())
+        self.assertIn("review_index_fields", stub.scripts())
         self.assertIn("build_daily_page.py", stub.scripts())
         self.assertNotIn("build_home.py", stub.scripts(),
                          "预演不得真的整页渲染首页")

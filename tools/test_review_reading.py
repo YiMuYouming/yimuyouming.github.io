@@ -183,15 +183,16 @@ class PortalSyncReadingSidecarTests(unittest.TestCase):
             note = root / "2026_10_08_Thursday_ReviewNote.md"
             note.write_text("---\ndate: 2026-10-08\n---\n", encoding="utf-8")
             with patch.object(sync_portal, "find_review_note", return_value=note), \
+                    patch.object(sync_portal, "load_review_index_fields",
+                                 return_value={"date": "2026-10-08", "情绪值": 47.6}) as index_fields, \
+                    patch.object(sync_portal, "find_reading_sidecar", return_value=None) as reading, \
                     patch.object(sync_portal, "read_pnl_last_date", return_value="2026-10-08"), \
                     patch.object(sync_portal, "MARKET_WATCH_ROOT", root, create=True), \
                     patch.object(sync_portal.subprocess, "run", side_effect=run):
                 sync_portal.main(["--date", "2026-10-08"])
 
-        self.assertTrue(
-            any("export_daily_bundle.py" in item for call in calls for item in call),
-            "发布链仍应从封存原件取指标",
-        )
+        index_fields.assert_called_once_with("2026-10-08")
+        reading.assert_called_once_with(note, "2026-10-08")
 
     def test_default_sync_discovers_sealed_sidecar_from_resolved_review_path(self):
         with tempfile.TemporaryDirectory() as temporary:
