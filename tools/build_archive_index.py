@@ -80,8 +80,6 @@ def group_by_week(pages, *, root=PROJECT_ROOT) -> list[dict]:
         match = DAY_RE.match(path.name)
         if not match:
             continue
-        if not match:
-            continue
         day = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         if day.isoformat() < PHASE1_START or day.isoformat() > PHASE1_END:
             continue
@@ -127,7 +125,7 @@ def build(archive_root: Path | str | None = None) -> tuple[str, list[dict]]:
     pages: list[Path] = []
     for sub in ("review-notes", "daily-notes"):
         pages.extend(sorted((root / sub).glob("*.html")))
-    groups = group_by_week(pages)
+    groups = group_by_week(pages, root=root)
     return render(groups), groups
 
 
