@@ -63,6 +63,7 @@ WRITING_ROOT = Path(
     or "/Users/yimu/Documents/YouMingVault/10_⚡Now/01_💰弈沐资本/公开写作"
 )
 WRITING_INDEX = PORTAL / "data" / "writing-index.json"
+ESSAYS_MANIFEST = PORTAL / "data" / "essays.json"
 PNL_DATA_FILE = PORTAL / "data" / "pnl.json"
 # 第一阶段（2026-03-23 至 09-30）冻结：老的复盘页/手记页不再重新生成，
 # 与 build_daily_page.PHASE2_START 用同一个日子。
@@ -390,12 +391,29 @@ def main(argv: list[str] | None = None) -> int:
     if scratch is not None:
         shutil.rmtree(scratch.parent, ignore_errors=True)
 
+    # ②c 长文页：已发布的长文（公开写作/文章）渲染成 essays/<slug>.html，
+    # 同时写 data/essays.json（标题、首段、封面）给首页的长文卡片用。
+    essay_argv = [
+        str(TOOLS / "build_essay_page.py"),
+        "--writing-index", str(WRITING_INDEX),
+        "--writing-root", str(WRITING_ROOT),
+        "--out", str(PORTAL / "essays"),
+        "--manifest", str(ESSAYS_MANIFEST),
+    ]
+    if not run_step("②c 长文页（build_essay_page）", essay_argv, args.dry_run,
+                    supports_dry_run=False,
+                    dry_run_note="将按写作索引生成已发布长文页与 data/essays.json"):
+        print("已完成: " + " → ".join(done))
+        return 4
+    done.append("② 长文页")
+
     # ③ 首页整页渲染（W8 S2/S7a）：不再用正则就地改首页，也就没有「谁先谁后
     # 都行」的默契——整页只有一个渲染器（public约定：业绩只算一处）。
     home_argv = [
         str(TOOLS / "build_home.py"),
         "--pnl-from", str(PNL_DATA_FILE),
         "--writing-index", str(WRITING_INDEX),
+        "--essays", str(ESSAYS_MANIFEST),
         "--out", str(home_page()),
     ]
     # build_home 没有 --dry-run（它只做渲染，没有 --check 之外的预演模式），
@@ -409,7 +427,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ④ 隐私红线门禁（2026-09-28）：只检查本次生成/修改的文件。
     # 只查本次真正改动的页面：第一阶段（≤09-30）的页面已冻结，不再重新生成。
-    redline_files = [home_page(), public_page]
+    redline_files = [home_page(), public_page, *sorted((PORTAL / "essays").glob("*.html"))]
     existing = [path for path in redline_files if path.is_file()]
     if not run_step(
         "④ 隐私红线检查（本次生成/修改的页面）",

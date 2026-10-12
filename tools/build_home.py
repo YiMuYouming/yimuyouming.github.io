@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import sys
@@ -22,6 +23,8 @@ WORKSPACE = Path(__file__).resolve().parents[1]
 TEMPLATE_PATH = WORKSPACE / "templates" / "home.html"
 CURRENT_HOME = WORKSPACE / "index.html"
 WRITING_INDEX_PATH = WORKSPACE / "data" / "writing-index.json"
+# 长文清单：build_essay_page.py 生成，带首段与封面，首页据此出「最新长文」卡片
+ESSAYS_PATH = WORKSPACE / "data" / "essays.json"
 # 审计回复 10 第 12 条：① sync_pnl_data 只写这个数据文件，③ 从它读——
 # 取数与渲染分开，两个写入者就不会互相覆盖 index.html。
 PNL_DATA_FILE = WORKSPACE / "data" / "pnl.json"
@@ -103,15 +106,69 @@ def _render_entries(entries: list[dict[str, Any]]) -> str:
     """Empty list renders an empty string, not a placeholder section."""
     if not entries:
         return ""
-    rows = "".join(
-        "<li>"
-        f'<span class="writing-date">{_entry_date(item)}</span>'
-        f'<span class="writing-title">{item.get("title") or _entry_date(item)}</span>'
-        f'<span class="writing-series">{item.get("series", "")}</span>'
-        "</li>"
-        for item in entries
-    )
-    return f'<ul class="writing-list">{rows}</ul>'
+    rows = []
+    for item in entries:
+        cells = (
+            f'<span class="writing-date">{_entry_date(item)}</span>'
+            f'<span class="writing-title">{html.escape(str(item.get("title") or _entry_date(item)))}</span>'
+            f'<span class="writing-series">{html.escape(str(item.get("series", "")))}</span>'
+        )
+        href = item.get("href")
+        rows.append(f'<li><a href="{href}">{cells}</a></li>' if href else f"<li>{cells}</li>")
+    return f'<ul class="writing-list">{"".join(rows)}</ul>'
+
+
+def _essay_records(writing: dict[str, list[dict[str, Any]]],
+                   essays: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """Published essays (from the writing index), enriched by the essays manifest."""
+    manifest = {(str(r.get("title")), str(r.get("date"))[:10]): r
+                for r in (essays or {}).get("essays") or [] if isinstance(r, dict)}
+    by_title = {str(r.get("title")): r for r in manifest.values()}
+    out = []
+    for item in writing["essay"]:
+        rec = manifest.get((str(item.get("title")), _entry_date(item)[:10])) \
+            or by_title.get(str(item.get("title")))
+        out.append({**item, **({k: rec[k] for k in ("href", "cover", "lede", "summary", "slug") if rec.get(k)}
+                                if rec else {})})
+    out.sort(key=lambda r: _entry_date(r), reverse=True)
+    return out
+
+
+def _render_feature(item: dict[str, Any]) -> str:
+    """The newest essay as a card: kicker, title, opening lines, summary, cover."""
+    title = html.escape(str(item.get("title") or ""))
+    date = _entry_date(item).replace("-", ".")
+    lede = "<br>".join(html.escape(line) for line in str(item.get("lede") or "").splitlines() if line.strip())
+    summary = html.escape(str(item.get("summary") or ""))
+    cover = item.get("cover")
+    cover_html = (f'<figure class="cover"><img src="{cover}" alt="" loading="lazy"></figure>'
+                  if cover else "")
+    body = (f'<div><div class="k">长文 · {date}</div><h3>{title}</h3>'
+            + (f'<p class="lede">{lede}</p>' if lede else "")
+            + (f'<p class="sum">{summary}</p>' if summary else "")
+            + '<span class="more">阅读全文 →</span></div>')
+    href = item.get("href")
+    if href:
+        return f'<a class="feature" href="{href}">{body}{cover_html}</a>'
+    return f'<div class="feature">{body}{cover_html}</div>'
+
+
+def render_writing(writing: dict[str, list[dict[str, Any]]], essays: dict[str, Any] | None) -> str:
+    """成长与思想：最新一篇长文做卡片，其余长文、手记、周记按列表；空组不出。"""
+    parts = []
+    essay_items = _essay_records(writing, essays)
+    if essay_items:
+        parts.append(_render_feature(essay_items[0]))
+        if essay_items[1:]:
+            parts.append('<div class="writing-group"><h3>更多长文</h3>'
+                         + _render_entries(essay_items[1:]) + "</div>")
+    dailies = [{**d, "href": f"daily/{_entry_date(d)[:10]}.html"}
+               if (WORKSPACE / "daily" / f"{_entry_date(d)[:10]}.html").is_file() else d
+               for d in writing["daily"][:12]]
+    for label, items in (("每日手记", dailies), ("周记", writing["weekly"])):
+        if items:
+            parts.append(f'<div class="writing-group"><h3>{label}</h3>{_render_entries(items)}</div>')
+    return "\n".join(parts)
 
 
 def render_home(
@@ -119,6 +176,7 @@ def render_home(
     *,
     writing_index: dict[str, Any] | None = None,
     sample_writing: bool = False,
+    essays: dict[str, Any] | None = None,
     reports: dict[str, Any] | None = None,
     archive_groups: dict[str, Any] | None = None,
     version: str = "",
@@ -154,6 +212,7 @@ def render_home(
         "{{ESSAYS}}": _render_entries(writing["essay"]),
         "{{DAILIES}}": _render_entries(writing["daily"][:12]),
         "{{WEEKLIES}}": _render_entries(writing["weekly"]),
+        "{{WRITING_BODY}}": render_writing(writing, essays),
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),
         "{{REPORT_COUNT}}": str(len(report_items)),
         "{{ARCHIVE_GROUPS}}": _archive_summary(archive_weeks),
@@ -231,6 +290,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pnl-from", default=str(PNL_DATA_FILE),
                         help="业绩数据：默认 data/pnl.json；也可给 .html 从旧形状里抠")
     parser.add_argument("--writing-index", default=str(WRITING_INDEX_PATH))
+    parser.add_argument("--essays", default=str(ESSAYS_PATH), help="长文清单 data/essays.json")
     parser.add_argument("--reports", default=str(REPORTS_PATH))
     parser.add_argument("--archive-groups", default=None,
                         help="第一阶段归档分组 JSON；缺省时按现有页面数推断")
@@ -249,6 +309,7 @@ def main(argv: list[str] | None = None) -> int:
         pnl_data,
         writing_index=_load(args.writing_index, {"schema": "writing_index.v1", "entries": [], "issues": []}),
         sample_writing=args.sample_writing,
+        essays=_load(args.essays, {"schema": "essays.v1", "essays": []}),
         reports=_load(args.reports, {}),
         archive_groups=(
             _load(args.archive_groups, None) if args.archive_groups else archive_groups_from_disk()

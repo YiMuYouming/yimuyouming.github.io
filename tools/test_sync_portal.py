@@ -116,6 +116,7 @@ class PortalSyncOrderTests(unittest.TestCase):
                 "sync_pnl_data.py",
                 "review_index_fields",
                 "build_daily_page.py",
+                "build_essay_page.py",
                 "build_home.py",
                 "portal_check.py",
             ],

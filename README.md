@@ -47,9 +47,16 @@ python3 tools/sync_pnl_data.py
 # 某个交易日的公开页（四项指标来自封存原件；第一阶段 09-30 及以前不出页）
 python3 tools/build_daily_page.py build --date YYYY-MM-DD
 
-# 首页整页渲染（数据来自 PnL、writing-index.json、reports.json）
+# 已发布长文 → essays/<日期>.html，并写 data/essays.json（首页「最新长文」卡片读它）
+python3 tools/build_essay_page.py --writing-index data/writing-index.json --writing-root <Vault 公开写作>
+
+# 首页整页渲染（数据来自 PnL、writing-index.json、essays.json、reports.json）
 python3 tools/build_home.py
 ```
+
+发布一篇长文：Vault 里把 `status` 改成 `published` 并填 `published_at`，然后
+`python3 tools/writing_index.py --root <Vault 公开写作>` → `build_essay_page.py` → `build_home.py`；
+日常 `sync_portal.py` 会在首页渲染前自动重建长文页（②c）。
 
 `sync_pnl_data.py` 通过 Hermes 云端 bridge 同步 PnL 和市场快照，只写数据文件（`data/pnl.json` 等），不碰 `index.html`。
 

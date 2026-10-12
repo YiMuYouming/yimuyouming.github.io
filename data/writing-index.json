@@ -1,5 +1,17 @@
 {
-  "entries": [],
+  "entries": [
+    {
+      "date": "2026-10-12",
+      "kind": "essay",
+      "path": "文章/2026-10-12-两百天，我和AI怎么分工做短线.md",
+      "published_at": "2026-10-12",
+      "series": "",
+      "sha256": "90e6d650a90e8b53ca84ee7e4c79e7e89751afae60114ebe085f39a4a305253f",
+      "status": "published",
+      "title": "两百天，我和 AI 怎么分工做短线",
+      "week": ""
+    }
+  ],
   "issues": [],
   "schema": "writing_index.v1"
 }

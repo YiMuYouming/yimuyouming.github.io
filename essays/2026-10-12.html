@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>两百天，我和 AI 怎么分工做短线 · 弈沐资本</title>
+<meta name="description" content="第一篇：一个回撤过八成的散户，两百天里和 AI 磨出来的短线分工架构。">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2328;--sub:#6b7280;--faint:#9ca3af;--line:#e5e7eb;--paper:#faf9f7;--accent:#b45309;--mark:rgba(217,119,6,.16)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Serif SC","Songti SC",serif;line-height:1.7;font-feature-settings:"palt" 0}
+a{color:inherit}
+.bar{max-width:1040px;margin:0 auto;padding:22px 16px 0;display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:14px}
+.bar a{text-decoration:none;color:var(--ink);letter-spacing:.06em;font-weight:600}
+.bar span{color:var(--sub);font-size:13px}
+.preview{display:inline-block;margin-left:10px;font-size:12px;font-weight:400;letter-spacing:0;border:1px dashed var(--accent);color:var(--accent);border-radius:999px;padding:1px 9px}
+.col{max-width:680px;margin:0 auto;padding:0 16px}
+header.head{padding:72px 0 34px;border-bottom:1px solid var(--line);margin-bottom:44px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+h1.title{font-size:clamp(28px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:.02em;margin:14px 0 16px;text-wrap:balance}
+.deck{font-size:17px;color:var(--sub);line-height:1.8;margin:0 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--sub)}
+.meta b{color:var(--ink);font-weight:600}
+.writing-body{font-size:17.5px;line-height:2;counter-reset:sec;text-align:justify}
+.writing-body p{margin:0 0 1.3em}
+.writing-body > p:first-child{font-size:21px;line-height:1.85;font-weight:600;text-align:left;margin-bottom:1.6em}
+.writing-body h2{font-size:23px;line-height:1.4;margin:2.8em 0 1em;font-weight:700;letter-spacing:.02em;counter-increment:sec}
+.writing-body h2::before{content:counter(sec,decimal-leading-zero);display:block;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.14em;color:var(--accent);margin-bottom:6px}
+.writing-body h3{font-size:19px;margin:2em 0 .8em}
+.writing-body h3.sub{font-size:18.5px;line-height:1.6;margin:2.2em 0 .9em;padding-left:14px;border-left:3px solid var(--accent)}
+.writing-body strong{font-weight:700;background:linear-gradient(transparent 62%,var(--mark) 0)}
+.writing-body code{font-family:"JetBrains Mono",monospace;font-size:.86em;background:#f1efeb;border-radius:4px;padding:1px 5px}
+.writing-body hr{border:0;width:56px;height:1px;background:var(--faint);margin:3.2em 0 2.4em}
+.writing-body blockquote{margin:1.6em 0;padding:2px 0 2px 20px;border-left:2px solid var(--accent);color:var(--sub)}
+.writing-body blockquote p{margin:0}
+.writing-body ul,.writing-body ol{margin:0 0 1.3em;padding-left:1.4em}
+.writing-body li{margin:.3em 0}
+.writing-body figure{margin:2.6em 0 2.8em;width:min(920px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}
+.writing-body figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#f7f5f3}
+.writing-body figcaption{margin-top:12px;text-align:center;font-size:13px;color:var(--sub);letter-spacing:.04em}
+.writing-body > p:last-child::after{content:"";display:inline-block;width:.55em;height:.55em;background:var(--accent);margin-left:.5em;vertical-align:.08em}
+footer{margin-top:72px;padding:26px 0 64px;border-top:1px solid var(--line);font-size:13px;color:var(--faint);display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+footer a.home{color:var(--ink);text-decoration:none;font-weight:600;letter-spacing:.04em}
+footer p{margin:0}
+@media(max-width:600px){
+  header.head{padding:44px 0 26px;margin-bottom:32px}
+  .writing-body{font-size:16.5px;line-height:1.95;text-align:left}
+  .writing-body > p:first-child{font-size:19px}
+  .writing-body h2{font-size:21px}
+  .writing-body figure img{border-radius:8px}
+}
+</style>
+</head>
+<body>
+<div class="bar"><a href="../index.html">弈沐资本</a><span>成长与思想 · 长文</span></div>
+<main class="col">
+<header class="head">
+  <div class="kicker">Essay · 2026.10.12</div>
+  <h1 class="title">两百天，我和 AI 怎么分工做短线</h1>
+  <p class="deck">第一篇：一个回撤过八成的散户，两百天里和 AI 磨出来的短线分工架构。</p>
+  <div class="meta"><span><b>弈沐</b></span><span>约 1522 字 · 读完约 4 分钟</span><span>数据截至 2026-10-09 收盘</span></div>
+</header>
+<article>
+<div class="writing-body" data-public-writing="verbatim">
+<p>现在让 AI 写一篇研报，要三十秒。按下买入，要一秒。<br>中间那一步，也就是想清楚，我用了两百天，还没学会。</p>
+<p>两百天前，我是一个散户：炒股不到一年，就回撤过八成。<br>现在，我借 AI 的力，想从一个韭菜，变成一个短线选手。</p>
+<p>用曲线说话，是我给自己定的规矩。账户从 3 月 23 日开始公开记录，每天都在这个网站上，谁都能查。</p>
+<p>到 10 月 9 日，净值 0.874（起点记为 1）。重新开始以后，最大回撤没超过两成，但曲线也没起来，最近还创了新低。</p>
+<p>从今天起，我在这里不定期写一点，算督促，也算警醒。</p>
+<p>这篇先不讲股票，讲这两百天磨出来的东西：人和 AI 怎么分工做短线。</p>
+<h2>判断在人</h2>
+<p>讲 AI 的人已经太多了。为了讲 AI 而讲 AI，这件事 AI 自己就能做。</p>
+<p>少的是另一种：把 AI 放进一个具体的行当，我选的是短线，真金白银地用，用出结果，也用出问题。</p>
+<p>所以我不单讲 AI，也不单讲短线。我首先是一个交易员，AI 是我搭起来的团队。顺序不能反：团队搭得再漂亮，曲线不涨，就不算数。</p>
+<p>一说 AI 做股票，很多人第一反应是量化。我做的正好是它的反面。</p>
+<p>量化让机器下判断：数据进去，模型计算，信号出来，机器执行。<br>我这里，判断在人。AI 不替我下单，它替我看、替我记、替我唱反调。</p>
+<h2>三个阶段</h2>
+<p>这两百天，正好赶上 AI Agent 变化最快的一段。我的系统也跟着走了三步。</p>
+<p><strong>第一阶段，聊天。</strong> 主力是豆包。每天按时间点在同花顺上截屏，贴给豆包，让它把情绪数据认出来，再问它：我这只票现在什么情况，能不能买？有了票，再让它上网查资料。晚上手写，或者让豆包帮着写 Obsidian 笔记。</p>
+<p>那时候最多的时间，花在截屏和贴图上。它没有记忆，每天从头再来。</p>
+<p><strong>第二阶段，工作 Agent。</strong> 先用刚出来的 WorkBuddy，让它批量管理 Obsidian 里的复盘笔记，每天和它一起磨写法：开盘笔记怎么写，复盘笔记怎么写。后来嫌它的架构太绕，换成了 Codex 和 Claude Code，模型更强，也更好用。</p>
+<p>这一阶段真正做的事是打底：把数据源统一成一个，把规则、笔记、看板一点点搭起来，能自动化的都自动化。开始有了样子。但本质上，还是一个线程一个线程地聊。</p>
+<p><strong>第三阶段，Personal Agent。</strong> 最近两个月的事。它常驻在云端的虚拟机上，有记忆，其实就是我最早养过的那只「龙虾」的进阶版。</p>
+<p>把它和第二阶段打下的底座接在一起，才有了现在这套相对完整的东西。</p>
+<p>三个阶段没有互相替换，一层层叠了上来：<br>最底下是数据。截屏贴图的日子过去了，行情、账户、开仓条件只有一个来源。<br>中间是工作 Agent，负责干活、记账、守规矩；规则也只有一份，人和机器读同一份。<br>最上面是 Personal Agent 和它的团队，负责和我对话。</p>
+<h2>架构</h2>
+<figure><a href="2026-10-12/fig1.png" target="_blank" rel="noopener"><img src="2026-10-12/fig1.png" alt="图 1 · 三层架构" loading="lazy"></a><figcaption>图 1 · 三层架构</figcaption></figure>
+<p>上层跑在云端，是我的 Personal Agent 和它的团队。我叫它紫米。盘中，紫米是我唯一的对话入口，负责派活、汇总；五个专职各管一摊，只交证据，不写记录；哨在后台盯着提醒。</p>
+<p>中层在我自己的电脑上。上层要读事实、写记录，只能经过这里的两道入口。开工、成交补录、复盘，我在 Codex 里做。</p>
+<figure><a href="2026-10-12/fig2.png" target="_blank" rel="noopener"><img src="2026-10-12/fig2.png" alt="图 2 · 盘中一个问题怎么走" loading="lazy"></a><figcaption>图 2 · 盘中一个问题怎么走</figcaption></figure>
+<p>盘中一个问题，从问出去到记下来，大致就是这几步。读数据只走一条路，临下单前再读一次。下单只有我。</p>
+<figure><a href="2026-10-12/fig3.png" target="_blank" rel="noopener"><img src="2026-10-12/fig3.png" alt="图 3 · 一天怎么闭环" loading="lazy"></a><figcaption>图 3 · 一天怎么闭环</figcaption></figure>
+<p>一天从开工到复盘，落到第二天的执行卡；最后一步，是把当天的净值推到这个网站上。</p>
+<p>中间还有很多细节，比如数据怎么统一成一个来源，反方怎么拿到独立的数据，几个 Agent 怎么读同一份事实、不各说各话。每一个都能单写一篇，以后慢慢写。</p>
+<h2>两点体会</h2>
+<h3 class="sub">一、短线是情绪的游戏。AI 管的是「看」和「停」。</h3>
+<p>散户的根，是跟着情绪和账户盈亏走。</p>
+<p>我自己就是。去年 11 月，我在笔记里写过：「太乐观，永远觉得会涨，跌了补仓，跌得不行了受不了，割掉——典型的散户心态。」<br>今年 9 月，我把亏钱归成两条：怕高，启动时不敢上；贪婪，舍不得走。靠临场感觉做判断，恐惧和贪婪就一定会接管。</p>
+<p>专业的根，是跟着规则和信号走。一锤子买卖，每笔交易独立对待。炒股养家说，散户的通病是「亏损时死拿，稍有盈利就卖出」；专业反过来：盈利死拿，小亏即割。</p>
+<p>AI 帮的就是这一段。一个人盯不过来的消息、板块、个股，它们并联着看，让我看得更全；规则核对和反方质疑，在我想凭感觉下手的时候拦一下。</p>
+<p>但我还没做到，曲线就是证据。这些道理我早就懂，写下来的东西一直在反复确认同一件事：<strong>真正要解决的，是把规则磨对、守住，不是跟自己的情绪较劲。</strong></p>
+<h3 class="sub">二、AI 一直在变，这套架构也一直在变。</h3>
+<p>两百天里，模型换了好几轮。所以我不押哪一个模型：数据和规则各只有一份，哪个模型好用就换哪个。这套架构是最近才搭出来的，小改随时有；等到大版本，我再重写一篇。</p>
+<hr>
+<p>开头说，想清楚那一步，我还没学会。</p>
+<p>以后在这里写的，就是怎么学的。</p>
+</div>
+</article>
+<footer>
+  <a class="home" href="../index.html">← 弈沐资本</a>
+  <p>个人实盘记录与思考，不构成投资建议。</p>
+</footer>
+</main>
+</body>
+</html>

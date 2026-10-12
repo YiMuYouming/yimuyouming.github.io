@@ -225,7 +225,9 @@
     }
     if (n < 2) { p = [p[0], p[0]]; b = [b[0], b[0]]; labels = [labels[0], labels[0]]; n = 2; }
 
-    var PAD = { t: 24, r: 70, b: 30, l: 62 };
+    // 手机宽度下收窄边距，给曲线留出空间
+    var NARROW = W < 520;
+    var PAD = NARROW ? { t: 22, r: 58, b: 28, l: 46 } : { t: 24, r: 70, b: 30, l: 62 };
     var cw = W - PAD.l - PAD.r, ch = H - PAD.t - PAD.b;
     if (cw < 50 || ch < 20) return;
 
@@ -273,7 +275,9 @@
 
     // X-axis labels
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    var ls = n <= 10 ? 1 : n <= 30 ? Math.ceil(n / 8) : Math.ceil(n / 10);
+    // 刻度数按可用宽度定（每个日期约 56px），窄屏不再挤成一团
+    var maxTicks = Math.max(3, Math.floor(cw / 56));
+    var ls = n <= maxTicks ? 1 : Math.ceil(n / maxTicks);
     for (var xi = 0; xi < n; xi += ls) {
       var lbl = labels[xi];
       if (lbl && lbl.length > 5) lbl = lbl.slice(5);  // date → MM-DD
@@ -382,6 +386,11 @@
       var below = trY + 16, fitsBelow = below + 12 <= PAD.t + ch;
       var labY = fitsBelow ? below : trY - 12;
       ctx.textAlign = 'left'; ctx.textBaseline = fitsBelow ? 'top' : 'bottom';
+      if (NARROW) {
+        // 窄屏：谷底附近挤满了曲线和末端数值，标签贴到峰值虚线上方，靠右对齐到谷底
+        labX = Math.max(PAD.l, Math.min(trX - tw, W - 8 - tw));
+        labY = pkY - 6; ctx.textBaseline = 'bottom';
+      }
       ctx.fillText(ddLabel, labX, labY);
     }
 
