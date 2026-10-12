@@ -101,6 +101,24 @@ class RenderTest(unittest.TestCase):
 
 
 class CliTest(unittest.TestCase):
+    def test_same_day_essay_does_not_replace_daily_writing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            entries = []
+            for kind, folder, body in [('essay', '文章', '长文内容'), ('daily', '每日', '当天认可手记')]:
+                source = root / folder / '2026-10-12.md'
+                source.parent.mkdir(exist_ok=True)
+                source.write_text(body)
+                entries.append({'kind': kind, 'path': str(source.relative_to(root)),
+                                'date': '2026-10-12', 'status': 'published'})
+            index = root / 'writing.json'
+            index.write_text(json.dumps({'entries': entries}))
+            writing = build_daily_page_module._load_writing(index, '2026-10-12', root)
+            self.assertEqual([item['kind'] for item in writing], ['daily'])
+            page = build_daily_page(_index(), day='2026-10-12', data_date='2026-10-12', writing=writing)
+            self.assertIn('当天认可手记', page)
+            self.assertNotIn('长文内容', page)
+
     def test_dry_run_prints_without_writing(self):
         with tempfile.TemporaryDirectory() as tmp:
             payload = tmp + "/index.json"

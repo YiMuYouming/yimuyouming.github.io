@@ -209,6 +209,8 @@ def _load_writing(path: str | Path | None, day: str,
     for entry in entries or []:
         if not isinstance(entry, dict) or entry.get("status") != "published":
             continue
+        if entry.get("kind") != "daily":
+            continue
         if str(entry.get("date") or entry.get("published_at") or "")[:10] != day:
             continue
         base = Path(writing_root) if writing_root else PROJECT_ROOT / "vault-writing"
