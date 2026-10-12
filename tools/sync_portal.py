@@ -147,7 +147,7 @@ def find_reading_sidecar(note: Path, day: str) -> Path | None:
 
 
 def read_pnl_last_date() -> str | None:
-    """回读首页内嵌 PNL_DATA 的最新日期，用于确认第一步真的生效。"""
+    """第三步后回读首页内嵌 PNL_DATA 的最新日期。"""
     index = PORTAL / "index.html"
     if not index.is_file():
         return None
@@ -159,6 +159,15 @@ def read_pnl_last_date() -> str | None:
     try:
         data = json.loads(match.group(1))
     except ValueError:
+        return None
+    return (data.get("summary") or {}).get("last_date")
+
+
+def read_pnl_source_last_date() -> str | None:
+    """第一步回读刚写的 JSON；此时首页仍可能是旧版本。"""
+    try:
+        data = json.loads(PNL_DATA_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
         return None
     return (data.get("summary") or {}).get("last_date")
 
@@ -312,10 +321,10 @@ def main(argv: list[str] | None = None) -> int:
     done.append("① 首页数据")
 
     if not args.dry_run:
-        last_date = read_pnl_last_date()
+        last_date = read_pnl_source_last_date()
         if last_date != target_day:
             print(
-                f"WARN 首页数据 last_date={last_date}，目标日 {target_day}"
+                f"WARN data/pnl.json last_date={last_date}，目标日 {target_day}"
                 "；云端当日 PnL 可能尚未就绪",
                 flush=True,
             )
@@ -424,6 +433,11 @@ def main(argv: list[str] | None = None) -> int:
         print("已完成: " + " → ".join(done))
         return 5
     done.append("③ 首页")
+    if not args.dry_run:
+        last_date = read_pnl_last_date()
+        print(f"③ 首页回读 last_date={last_date}，目标日 {target_day}", flush=True)
+        if last_date != target_day:
+            print("WARN 首页 PnL 日期与目标日不一致", flush=True)
 
     # ④ 隐私红线门禁（2026-09-28）：只检查本次生成/修改的文件。
     # 只查本次真正改动的页面：第一阶段（≤09-30）的页面已冻结，不再重新生成。

@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from html.parser import HTMLParser
+from urllib.parse import urljoin, urlsplit, unquote
 
 # ── 项目根目录 ──────────────────────────────────────────────────────────────
 
@@ -218,31 +219,41 @@ class HTMLLinkParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.links = []    # [(href, line_no)]
+        self.base_href = ""
         self.ids = []      # [(id_val, line_no)]
         self.title = None
         self.has_body = False
         self._in_style = False
+        self._in_script = False
         self._text_chunks = []
         self._raw_chunks = []  # style/script content for whitelist matching
 
     def handle_starttag(self, tag, attrs):
         if tag == "style":
             self._in_style = True
+        elif tag == "script":
+            self._in_script = True
         elif tag in ("body",):
             self.has_body = True
 
         for name, val in attrs:
             if name == "href" and val:
-                self.links.append((val, self.getpos()[0]))
+                if tag == "base":
+                    if not self.base_href:
+                        self.base_href = val
+                else:
+                    self.links.append((val, self.getpos()[0]))
             elif name == "id" and val:
                 self.ids.append((val.strip(), self.getpos()[0]))
 
     def handle_endtag(self, tag):
         if tag == "style":
             self._in_style = False
+        elif tag == "script":
+            self._in_script = False
 
     def handle_data(self, data):
-        if self._in_style:
+        if self._in_style or self._in_script:
             self._raw_chunks.append(data)
         else:
             chunk = data.strip()
@@ -272,6 +283,7 @@ def parse_html(filepath: Path) -> dict:
         "error": None,
         "text": parser.text,
         "links": parser.links,
+        "base_href": parser.base_href,
         "ids": parser.ids,
         "title": title or parser.title,
         "has_body": parser.has_body,
@@ -284,6 +296,9 @@ def parse_html(filepath: Path) -> dict:
 def check_broken_links(filepath: Path, scan: dict) -> list[str]:
     """检查 href 指向不存在的本地文件"""
     issues = []
+    site_root = PORTAL.resolve()
+    page_url = "https://portal.invalid/" + filepath.resolve().relative_to(site_root).as_posix()
+    base_url = urljoin(page_url, scan.get("base_href") or "")
     for href, line_no in scan["links"]:
         # 跳过外部/锚点/javascript
         if re.match(r"^(https?://|mailto:|tel:|javascript:|#)", href):
@@ -299,8 +314,13 @@ def check_broken_links(filepath: Path, scan: dict) -> list[str]:
 
         # 相对路径解析
         try:
-            target = (filepath.parent / base).resolve()
-            rel = target.relative_to(PORTAL)
+            url = urlsplit(urljoin(base_url, href))
+            if url.netloc != "portal.invalid":
+                continue
+            target = (site_root / unquote(url.path).lstrip("/")).resolve()
+            if target.is_dir():
+                target = target / "index.html"
+            rel = target.relative_to(site_root)
             if not target.exists():
                 issues.append(f"  [{line_no}] 断链: {href}  (实际: {rel})")
             elif target.is_dir():
@@ -388,6 +408,11 @@ def check_placeholders(filepath: Path, scan: dict, collect_suppressed: bool = Fa
             if pi in matched_patterns:
                 continue
             matched_text = m.group(0)
+            # Browser readyState is code, not a displayed loading placeholder.
+            if matched_text.lower() == "loading" and any(
+                safe.start() <= m.start() < safe.end() for safe in re.finditer(
+                    r"document\.readyState\s*={2,3}\s*['\"]loading['\"]", combined_text)):
+                continue
 
             # 在原始 HTML 中取上下文（用于 FALSE_POSITIVE_CONTEXT 匹配）
             start = max(0, m.start() - 120)
@@ -929,7 +954,8 @@ def get_files(sections_only: bool) -> list[Path]:
         bases = ["index.html", "review-notes/index.html", "report/index.html",
                  "insights/index.html", "methodology/index.html", "tools/index.html"]
         return [PORTAL / p for p in bases]
-    return list(PORTAL.rglob("*.html"))
+    return sorted(path for path in PORTAL.rglob("*.html")
+                  if path.relative_to(PORTAL).parts[0] not in {"out", "templates", ".git"})
 
 
 def run(args) -> int:
