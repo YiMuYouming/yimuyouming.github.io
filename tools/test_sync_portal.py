@@ -65,7 +65,10 @@ def _run_main(argv: list[str], stub: _StubRun, *, public_page: Path | None = Non
         public_page.parent.mkdir(parents=True, exist_ok=True)
         public_page.write_text("<html></html>", encoding="utf-8")
     home.write_text("<html></html>", encoding="utf-8")
+    writing_root = _TEMP_ROOT / "writing"
+    writing_root.mkdir(exist_ok=True)
     with mock.patch.object(sync_portal.subprocess, "run", stub), \
+         mock.patch.object(sync_portal, "WRITING_ROOT", writing_root), \
          mock.patch.object(sync_portal, "load_review_index_fields", stub.review_index_fields), \
          mock.patch.object(sync_portal, "find_review_note",
                            lambda day: Path("/tmp/fake-ReviewNote.md")), \
@@ -115,6 +118,7 @@ class PortalSyncOrderTests(unittest.TestCase):
             [
                 "sync_pnl_data.py",
                 "review_index_fields",
+                "writing_index.py",
                 "build_daily_page.py",
                 "build_essay_page.py",
                 "build_home.py",

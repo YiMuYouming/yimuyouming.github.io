@@ -361,6 +361,15 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as exc:
         print(f"FAIL ②a 取封存市场指标（review_index_fields）：{exc}", flush=True)
         return 2
+    writing_argv = [str(TOOLS / "writing_index.py"), "--root", str(WRITING_ROOT),
+                    "--out", str(WRITING_INDEX)]
+    if not args.dry_run and not WRITING_ROOT.is_dir():
+        print(f"FAIL ②a 写作根目录不存在: {display(WRITING_ROOT)}", flush=True)
+        return 4
+    if not run_step("②a 刷新公开写作索引（writing_index）", writing_argv, args.dry_run,
+                    supports_dry_run=False,
+                    dry_run_note="将从公开写作重建索引，再生成每日公开页"):
+        return 4
     # 预演不往仓库里写盘，但 ②b 要读这份指标，所以落到**仓库外的临时文件**，
     # 用完即删——预演不能留下任何痕迹，也不能因为"没写"就让下一步失败。
     scratch: Path | None = None
