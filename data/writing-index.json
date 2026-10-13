@@ -21,6 +21,17 @@
       "status": "published",
       "title": "2026-10-12 市场手记",
       "week": ""
+    },
+    {
+      "date": "2026-10-13",
+      "kind": "daily",
+      "path": "每日/2026-10-13.md",
+      "published_at": "2026-10-13T18:06:05+0800",
+      "series": "",
+      "sha256": "c638f47d937d9404b87051407893eeb4ddb60eb742a4c7c2be0358a1556c55b6",
+      "status": "published",
+      "title": "2026-10-13 市场手记",
+      "week": ""
     }
   ],
   "issues": [],
