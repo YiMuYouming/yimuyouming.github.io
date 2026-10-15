@@ -412,6 +412,13 @@ def check_placeholders(filepath: Path, scan: dict, collect_suppressed: bool = Fa
             if matched_text.lower() == "loading" and any(
                 safe.start() <= m.start() < safe.end() for safe in re.finditer(
                     r"document\.readyState\s*={2,3}\s*['\"]loading['\"]", combined_text)):
+                if collect_suppressed:
+                    suppressed_items.append({
+                        "file": rel_path,
+                        "ctx": combined_text[max(0, m.start()-80):m.end()+80],
+                        "reason": "JS readyState 'loading'",
+                        "matched": matched_text,
+                    })
                 continue
 
             # 在原始 HTML 中取上下文（用于 FALSE_POSITIVE_CONTEXT 匹配）
