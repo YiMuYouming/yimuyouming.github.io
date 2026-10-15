@@ -169,6 +169,12 @@ def read_pnl_source_last_date() -> str | None:
         data = json.loads(PNL_DATA_FILE.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+    if not isinstance(data, dict):
+        return None
+    if "data" in data:
+        data = data["data"]
+    if not isinstance(data, dict):
+        return None
     return (data.get("summary") or {}).get("last_date")
 
 
