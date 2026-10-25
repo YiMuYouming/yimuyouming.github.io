@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>短线交易，是技术还是艺术？ · 弈沐资本</title>
+<meta name="description" content="我以为自己怕高、拿不住，数据给了另一个答案。">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2328;--sub:#6b7280;--faint:#9ca3af;--line:#e5e7eb;--paper:#faf9f7;--accent:#b45309;--mark:rgba(217,119,6,.16)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Serif SC","Songti SC",serif;line-height:1.7;font-feature-settings:"palt" 0}
+a{color:inherit}
+.bar{max-width:1040px;margin:0 auto;padding:22px 16px 0;display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:14px}
+.bar a{text-decoration:none;color:var(--ink);letter-spacing:.06em;font-weight:600}
+.bar span{color:var(--sub);font-size:13px}
+.preview{display:inline-block;margin-left:10px;font-size:12px;font-weight:400;letter-spacing:0;border:1px dashed var(--accent);color:var(--accent);border-radius:999px;padding:1px 9px}
+.col{max-width:680px;margin:0 auto;padding:0 16px}
+header.head{padding:72px 0 34px;border-bottom:1px solid var(--line);margin-bottom:44px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+h1.title{font-size:clamp(28px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:.02em;margin:14px 0 16px;text-wrap:balance}
+.deck{font-size:17px;color:var(--sub);line-height:1.8;margin:0 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--sub)}
+.meta b{color:var(--ink);font-weight:600}
+.writing-body{font-size:17.5px;line-height:2;counter-reset:sec;text-align:justify}
+.writing-body p{margin:0 0 1.3em}
+.writing-body > p:first-child{font-size:21px;line-height:1.85;font-weight:600;text-align:left;margin-bottom:1.6em}
+.writing-body h2{font-size:23px;line-height:1.4;margin:2.8em 0 1em;font-weight:700;letter-spacing:.02em;counter-increment:sec}
+.writing-body h2::before{content:counter(sec,decimal-leading-zero);display:block;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.14em;color:var(--accent);margin-bottom:6px}
+.writing-body h3{font-size:19px;margin:2em 0 .8em}
+.writing-body h3.sub{font-size:18.5px;line-height:1.6;margin:2.2em 0 .9em;padding-left:14px;border-left:3px solid var(--accent)}
+.writing-body strong{font-weight:700;background:linear-gradient(transparent 62%,var(--mark) 0)}
+.writing-body code{font-family:"JetBrains Mono",monospace;font-size:.86em;background:#f1efeb;border-radius:4px;padding:1px 5px}
+.writing-body hr{border:0;width:56px;height:1px;background:var(--faint);margin:3.2em 0 2.4em}
+.writing-body blockquote{margin:1.6em 0;padding:2px 0 2px 20px;border-left:2px solid var(--accent);color:var(--sub)}
+.writing-body blockquote p{margin:0}
+.writing-body ul,.writing-body ol{margin:0 0 1.3em;padding-left:1.4em}
+.writing-body li{margin:.3em 0}
+.writing-body figure{margin:2.6em 0 2.8em;width:min(920px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}
+.writing-body figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#f7f5f3}
+.writing-body figcaption{margin-top:12px;text-align:center;font-size:13px;color:var(--sub);letter-spacing:.04em}
+.writing-body > p:last-child::after{content:"";display:inline-block;width:.55em;height:.55em;background:var(--accent);margin-left:.5em;vertical-align:.08em}
+footer{margin-top:72px;padding:26px 0 64px;border-top:1px solid var(--line);font-size:13px;color:var(--faint);display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+footer a.home{color:var(--ink);text-decoration:none;font-weight:600;letter-spacing:.04em}
+footer p{margin:0}
+@media(max-width:600px){
+  header.head{padding:44px 0 26px;margin-bottom:32px}
+  .writing-body{font-size:16.5px;line-height:1.95;text-align:left}
+  .writing-body > p:first-child{font-size:19px}
+  .writing-body h2{font-size:21px}
+  .writing-body figure img{border-radius:8px}
+}
+</style>
+</head>
+<body>
+<div class="bar"><a href="../index.html">弈沐资本</a><span>成长与思想 · 长文</span></div>
+<main class="col">
+<header class="head">
+  <div class="kicker">Essay · 2026.10.25</div>
+  <h1 class="title">短线交易，是技术还是艺术？</h1>
+  <p class="deck">我以为自己怕高、拿不住，数据给了另一个答案。</p>
+  <div class="meta"><span><b>弈沐</b></span><span>约 1456 字 · 读完约 4 分钟</span><span>数据截至 2026-10-13 收盘</span></div>
+</header>
+<article>
+<div class="writing-body" data-public-writing="verbatim">
+<p>把过去四个多月的 59 笔真实交易，按新规则重算一遍，账单出来，挺让人沉默的：<strong>规则能挡住我大部分亏损，也会挡掉我最赚钱的几笔。</strong></p>
+<p>这套规则不是新的。从 3 月开始我就一直在写，今天补一条，明天加一条，缝缝补补。最近才把它们从头理了一遍，配合 AI 执行，起名叫<strong>「铸剑」</strong>：用规则这把剑，护住自己的曲线（愿景是这样的）。</p>
+<p>然后我让 AI 拿着它，把这 59 笔交易一笔一笔重走，只用当时知道的信息，不用后来的走势。</p>
+<p>这又把我带回一个老问题：<strong>短线交易，到底是技术，还是艺术？</strong></p>
+<figure><a href="2026-10-25/fig1.png" target="_blank" rel="noopener"><img src="2026-10-25/fig1.png" alt="图 1 · 照规则重算，跑赢上证 10 个点" loading="lazy"></a><figcaption>图 1 · 照规则重算，跑赢上证 10 个点</figcaption></figure>
+<p>如果这四个多月我照着规则不动摇，重算下来是 +2.8%，跑赢上证十个点。现实里，加上我的临场发挥，是 -15.9%（已实现盈亏占入金）。同期上证 -7.6%。</p>
+<p>当然，蓝线是用现在的规则回头重算，不是实盘。规则本身也是从这几个月的教训里磨出来的，真正的检验，在接下来的实盘里。</p>
+<h2>技术：能写成规则的，交给规则</h2>
+<p>规则挡掉的亏损约 23.5 万。我把最大的几笔翻出来，几乎是同一个样子：<strong>条件不满足，我买了；跌破止损线，我没走。</strong></p>
+<figure><a href="2026-10-25/fig2.png" target="_blank" rel="noopener"><img src="2026-10-25/fig2.png" alt="图 2 · 挡掉亏损，也挡掉盈利" loading="lazy"></a><figcaption>图 2 · 挡掉亏损，也挡掉盈利</figcaption></figure>
+<p>这些事，当时的笔记里我自己都写了。楚天龙那笔，9 月初买进去本想做个短线，破了止损线没舍得走，硬生生熬了大半个月，短线熬成股东，最后亏了五万出来。事后我说：<strong>达到了止损点，就一定要止损</strong>。写的时候，钱已经亏完了。</p>
+<p>后来盘前自省，我才认下这句话：<strong>我的问题就是短线做成了长线。亏了就会亏好多，也不舍得割；赚了就会跑得很快。</strong></p>
+<p>浮亏加仓的数字更干净：违反 10 次，8 次亏钱。</p>
+<p>所以，<strong>亏钱不是因为不知道，是知道了还做。</strong>贪、侥幸、想回本，这些靠「下次注意」改不掉，只能交给规则：写死，到线就走。那天我还写了一句：「执行止损永远比幻想回本便宜。」</p>
+<p>行情差的月份，规则最值钱。7 月半导体跌了 36%，照规则算，能少亏 5.7 万；9 月又是 7.2 万。</p>
+<p>什么时候不能买、跌到哪里必须走，这些已经能写清楚的，就不该再靠临场。</p>
+<h2>我以为的短板</h2>
+<p>回测之前，我对自己的判断是：短板在胆子。怕高，该上的不敢上；拿不住，赚一点就跑。印象最深的是雅克科技，我总觉得自己卖早了，少赚了十万。</p>
+<p>所以我让 AI 专门测了这两件事。结果出来，发现记忆挺会骗人的。</p>
+<p><strong>第一件，怕高。</strong> 9 月初我在笔记里写过：<strong>怕高和图便宜是待检验的决策偏差</strong>。这次拉出全量数据一验，真正「规则允许、我却不敢上」的，四个多月里只有 1 次。那段时间我盯着没买的种业，其实是规则拦住的，而且拦对了：20 天后板块跌了 13%。</p>
+<p><strong>第二件，卖飞。</strong> 就是让我耿耿于怀的雅克科技。</p>
+<figure><a href="2026-10-25/fig3.png" target="_blank" rel="noopener"><img src="2026-10-25/fig3.png" alt="图 3 · 雅克科技：我以为卖飞了 10 万" loading="lazy"></a><figcaption>图 3 · 雅克科技：我以为卖飞了 10 万</figcaption></figure>
+<p>照止损线，买入当天盘中就破了线，下一个交易日就得走，小亏 0.39 万。我没走，拿着分批卖，赚了 2.75 万。之后它又涨到 236，拿到最高点是 13 万，可那是卖完以后才知道的。</p>
+<p>这一笔，规则本来就不让买，它挡掉的是我最好的一笔。至于卖飞：<strong>以我那天的买点，能拿到的，我已经拿到了。</strong></p>
+<p>把所有赚钱的单子都测一遍，简单改成按 10 日线退出，21 笔里有 20 笔反而赚得更少。</p>
+<p>回头看，亏钱和卖早，其实是同一种人性的两面。<strong>亏损的时候，怕割了就反弹，所以不止损；赚钱的时候，怕守不住利润，所以卖得早</strong>。楚天龙是前一种，雅克是后一种，只不过那一次，怕对了。</p>
+<p>在弱势里，卖早是对的，规则也是这么看的。行情好的时候呢？6 月那 7 笔赚钱的，按 10 日线拿住也只有 1 笔多赚。只是好行情就一个 6 月，我还不能下结论。</p>
+<h2>还写不成规则的</h2>
+<p>那艺术在哪里？我想是两件：<strong>判断大势，选对龙头。</strong>数据还撑不住，只有些线索。</p>
+<p><strong>大势。</strong> 科技涨得最猛的 6 月，是唯一一个我做得比规则好的月份。那个月，规则显得太紧。</p>
+<p><strong>龙头，</strong> 这是我下阶段的重点。能比较的 18 笔里，只有 1 笔买在当天板块连板最高的龙头上：紫光股份，第二天卖掉，赚了 1.3 万，是全期最干净的一笔。</p>
+<p>还有三笔要重点提一下：笔记里明明已经写下了核心标的的名字，最后下手买的却是别的票，3 次全亏。</p>
+<p>看得见，下不去手，到底是怕龙头太高，还是想在后排图个便宜？答案不说我也知道，两者都是。</p>
+<h2>节奏：先守住，再看对</h2>
+<p>所以，短线交易是技术还是艺术？</p>
+<p>我现在的回答是：<strong>能写成规则的，是技术，交给规则；还写不成规则的，判断大势、选对龙头，是艺术。</strong></p>
+<p>所以，还写不成的，就接着记、接着验，验出一条，就交给规则一条。</p>
+<hr>
+<h2>总结一下</h2>
+<p>照规则重算，守住，就跑赢了大盘。</p>
+<p>往后要做的，是选对龙头、拿住它，去赚短线真正的那份超额收益。</p>
+</div>
+</article>
+<footer>
+  <a class="home" href="../index.html">← 弈沐资本</a>
+  <p>个人实盘记录与思考，不构成投资建议。</p>
+</footer>
+</main>
+</body>
+</html>

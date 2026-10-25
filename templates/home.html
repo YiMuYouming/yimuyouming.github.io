@@ -69,10 +69,11 @@ table.pnl-table th:first-child,table.pnl-table td:first-child{text-align:left}
 .feature .lede{margin:0 0 14px;font-size:16.5px;line-height:1.9;font-weight:600}
 .feature .sum{margin:0 0 20px;color:var(--sub);font-size:14px;line-height:1.8}
 .feature .more{font-size:14px;color:#b45309;letter-spacing:.04em}
-.feature .cover{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f7f5f3;aspect-ratio:7/5}
-.feature .cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top}
+.feature .cover{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f7f5f3}
+.feature .cover img{display:block;width:100%;height:auto}
 .writing-list{list-style:none;margin:0;padding:0}
-.writing-list li{display:grid;grid-template-columns:110px 1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.writing-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.writing-list li>a{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:baseline}
 .writing-date{font-family:"JetBrains Mono",monospace;color:var(--sub);font-size:13px}
 .writing-series{color:var(--sub);font-size:12px}
 .sample-badge{font-size:12px;border:1px dashed #b45309;color:#b45309;border-radius:999px;padding:1px 9px}
@@ -85,7 +86,7 @@ footer li span{color:var(--sub);font-size:12px}
   .kpis.k4,.kpis.k5{grid-template-columns:repeat(2,1fr)}
   .pnl-summary{grid-template-columns:1fr}
   footer ul{grid-template-columns:repeat(2,1fr)}
-  .writing-list li{grid-template-columns:1fr;gap:2px}
+  .writing-list li>a{grid-template-columns:1fr;gap:2px}
   .feature{grid-template-columns:1fr;gap:18px;padding:16px}
   .feature .cover{order:-1}
   .feature .lede{font-size:15.5px;line-height:1.85}
