@@ -785,15 +785,22 @@ def _scan_redline_hits(text: str, names, codes) -> list[tuple[int, int, str]]:
         (m.start(), m.end())
         for m in REDLINE_ALLOWED_CONTEXT.finditer(text)
     ]
+    # D-12：个股名称/代码只在写作原文 verbatim 区豁免，不共用百分比允许清单
+    # ——单独留一份 span，豁免范围才正好等于「本人原文区」。
+    writing_spans: list[tuple[int, int]] = []
     for opener in WRITING_SPAN_OPEN.finditer(text):
         closer = _matching_div_close(text, opener.end())
-        allowed_spans.append(
-            (opener.start(),
-             (closer + len("</div>")) if closer != -1 else len(text))
-        )
+        span = (opener.start(),
+                (closer + len("</div>")) if closer != -1 else len(text))
+        allowed_spans.append(span)
+        writing_spans.append(span)
 
-    def _covered(start: int, end: int) -> bool:
-        return any(a <= start and end <= b for a, b in allowed_spans)
+    def _covered(start: int, end: int, spans=None) -> bool:
+        return any(a <= start and end <= b
+                   for a, b in (allowed_spans if spans is None else spans))
+
+    def _in_writing_span(start: int, end: int) -> bool:
+        return _covered(start, end, writing_spans)
 
     def _scan(patterns, prefix):
         for pattern, label in patterns:
@@ -807,12 +814,19 @@ def _scan_redline_hits(text: str, names, codes) -> list[tuple[int, int, str]]:
     _scan(REDLINE_AMOUNT_PATTERNS, "金额股数")
     _scan(REDLINE_DIALOGUE_PATTERNS, "对话体")
     _scan(REDLINE_RESIDUE_PATTERNS, "脱敏残渣")
+    # 个股名称/代码与上面四类模式一样过 verbatim 豁免（D-12）：本人写的长文里
+    # 提到个股是原文，不是脱敏残渣；verbatim 区之外（首页、每日页、业绩/统计区）
+    # 以及任何非 verbatim 的 writing-body 照旧逐条拦。
     for name in names:
         for m in re.finditer(re.escape(name), text):
+            if _in_writing_span(m.start(), m.end()):
+                continue
             hits.append((m.start(), m.end(),
                          f"个股名称:{name}: …{text[max(0, m.start() - 12):m.end() + 12]}…"))
     for code in codes:
         for m in re.finditer(rf"(?<!\d){re.escape(code)}(?!\d)", text):
+            if _in_writing_span(m.start(), m.end()):
+                continue
             hits.append((m.start(), m.end(),
                          f"个股代码:{code}: …{text[max(0, m.start() - 12):m.end() + 12]}…"))
     return hits
