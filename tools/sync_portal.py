@@ -456,7 +456,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ④ 隐私红线门禁（2026-09-28）：只检查本次生成/修改的文件。
     # 只查本次真正改动的页面：第一阶段（≤09-30）的页面已冻结，不再重新生成。
-    redline_files = [home_page(), public_page, *sorted((PORTAL / "essays").glob("*.html"))]
+    redline_files = [home_page(), home_page().parent / "daily" / "index.html",
+                     public_page, *sorted((PORTAL / "essays").glob("*.html"))]
     existing = [path for path in redline_files if path.is_file()]
     if not run_step(
         "④ 隐私红线检查（本次生成/修改的页面）",

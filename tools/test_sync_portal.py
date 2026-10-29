@@ -108,6 +108,17 @@ class PortalSyncEntryTests(unittest.TestCase):
 class PortalSyncOrderTests(unittest.TestCase):
     """三条链必须按 首页数据 → 每日公开页 → 整页首页 固定顺序跑（W8 S7a）。"""
 
+    def test_privacy_gate_includes_the_daily_index(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+             mock.patch.object(sys.modules[__name__], "_TEMP_ROOT", Path(tmp)):
+            archive = Path(tmp) / "daily" / "index.html"
+            archive.parent.mkdir()
+            archive.write_text("<html>全部手记</html>")
+            stub = _StubRun()
+            code, out = _run_main(["--date", "2026-10-08"], stub)
+            self.assertEqual(code, 0, out)
+            self.assertIn(str(archive), stub.calls[-1])
+
     def test_real_run_executes_three_chains_in_order(self):
         stub = _StubRun()
 

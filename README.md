@@ -54,6 +54,9 @@ python3 tools/build_essay_page.py --writing-index data/writing-index.json --writ
 python3 tools/build_home.py
 ```
 
+首页每日手记只展示最新3篇，“更多”进入 `daily/index.html` 查看全部已发布手记。
+`build_home.py` 同时生成这两个页面，`--check` 同时检查首页和完整手记页。
+
 发布一篇长文：Vault 里把 `status` 改成 `published` 并填 `published_at`，然后
 `python3 tools/writing_index.py --root <Vault 公开写作>` → `build_essay_page.py` → `build_home.py`；
 日常 `sync_portal.py` 会在首页渲染前自动重建长文页（②c）。

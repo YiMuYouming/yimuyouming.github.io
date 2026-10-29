@@ -21,6 +21,8 @@ from typing import Any
 
 WORKSPACE = Path(__file__).resolve().parents[1]
 TEMPLATE_PATH = WORKSPACE / "templates" / "home.html"
+DAILY_INDEX_TEMPLATE = WORKSPACE / "templates" / "daily-index.html"
+HOME_DAILY_LIMIT = 3
 CURRENT_HOME = WORKSPACE / "index.html"
 WRITING_INDEX_PATH = WORKSPACE / "data" / "writing-index.json"
 # 长文清单：build_essay_page.py 生成，带首段与封面，首页据此出「最新长文」卡片
@@ -175,10 +177,24 @@ def render_writing(writing: dict[str, list[dict[str, Any]]], essays: dict[str, A
                for d in sorted(writing["daily"], key=_entry_date, reverse=True)]
     for label, items in (("每日手记", dailies), ("周记", writing["weekly"])):
         if items:
+            is_daily = label == "每日手记"
+            trailing = ('<a class="writing-more" href="daily/index.html">更多 →</a>'
+                        if is_daily else f'<span class="writing-count">{len(items)} 篇</span>')
             parts.append('<div class="writing-group"><div class="writing-group-head">'
-                         f'<h3>{label}</h3><span class="writing-count">{len(items)} 篇</span>'
-                         f'</div>{_render_entries(items)}</div>')
+                         f'<h3>{label}</h3>{trailing}'
+                         f'</div>{_render_entries(items[:HOME_DAILY_LIMIT] if is_daily else items)}</div>')
     return "\n".join(parts)
+
+
+def render_daily_index(writing_index: dict[str, Any]) -> str:
+    """全部已发布手记；与首页使用同一写作索引，链接相对 daily/。"""
+    entries = [{**item, "href": f"{_entry_date(item)[:10]}.html"}
+               for item in sorted(writing_sections(writing_index)["daily"],
+                                  key=_entry_date, reverse=True)]
+    return (DAILY_INDEX_TEMPLATE.read_text(encoding="utf-8")
+            .replace("{{DAILY_COUNT}}", str(len(entries)))
+            .replace("{{DAILY_ENTRIES}}", _render_entries(entries)
+                     or '<p class="empty">暂无已发布手记。</p>'))
 
 
 def render_home(
@@ -220,7 +236,7 @@ def render_home(
         ),
         "{{SAMPLE_BADGE}}": sample_badge,
         "{{ESSAYS}}": _render_entries(writing["essay"]),
-        "{{DAILIES}}": _render_entries(sorted(writing["daily"], key=_entry_date, reverse=True)),
+        "{{DAILIES}}": _render_entries(sorted(writing["daily"], key=_entry_date, reverse=True)[:HOME_DAILY_LIMIT]),
         "{{WEEKLIES}}": _render_entries(writing["weekly"]),
         "{{WRITING_BODY}}": render_writing(writing, essays),
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),
@@ -315,9 +331,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     pnl_data = read_pnl_data(Path(args.pnl_from))
+    writing_index = _load(args.writing_index, {"schema": "writing_index.v1", "entries": [], "issues": []})
     page = render_home(
         pnl_data,
-        writing_index=_load(args.writing_index, {"schema": "writing_index.v1", "entries": [], "issues": []}),
+        writing_index=writing_index,
         sample_writing=args.sample_writing,
         essays=_load(args.essays, {"schema": "essays.v1", "essays": []}),
         reports=_load(args.reports, {}),
@@ -328,14 +345,23 @@ def main(argv: list[str] | None = None) -> int:
         as_of=str((pnl_data.get("summary") or {}).get("last_date") or ""),
     )
     out = Path(args.out)
+    daily_index = out.parent / "daily" / "index.html"
+    daily_page = render_daily_index(writing_index)
     if args.check:
         if not out.is_file() or out.read_text(encoding="utf-8") != page:
             print(f"home_stale:{out}（重新生成后再提交）", file=sys.stderr)
             return 1
+        if not daily_index.is_file() or daily_index.read_text(encoding="utf-8") != daily_page:
+            print(f"daily_index_stale:{daily_index}（重新生成后再提交）", file=sys.stderr)
+            return 1
         print("home up to date")
+        print("daily index up to date")
         return 0
+    daily_index.parent.mkdir(parents=True, exist_ok=True)
+    daily_index.write_text(daily_page, encoding="utf-8")
     out.write_text(page, encoding="utf-8")
     print(f"home rendered: {len(page)} bytes → {out}")
+    print(f"daily index rendered → {daily_index}")
     return 0
 
 

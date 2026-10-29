@@ -17,7 +17,7 @@ Portal 有**三条互不相干的生成链**，且**顺序不能颠倒**：
 |---|---|---|---|
 | ① | 首页数据 | `sync_pnl_data.py` | `data/pnl.json` 等数据文件（只写数据，不再就地改 `index.html`） |
 | ② | 每日公开页 | `build_daily_page.py` | `daily/<date>.html`（四项指标来自封存原件；10-01 起出页） |
-| ③ | 首页整页渲染 | `build_home.py` | `index.html`（数据 + 模板整页渲染，不再正则就地改写） |
+| ③ | 首页整页渲染 | `build_home.py` | `index.html`、`daily/index.html`（首页最新3篇，完整手记页保留全部已发布条目） |
 
 ②③ 的输入（封存原件、`data/pnl.json`、`writing-index.json`）都依赖当日数据，所以 ① 必须最先；日常收盘用统一入口一次跑完，顺序由脚本固定，不靠人记：
 

@@ -12,6 +12,7 @@ import importlib.util
 import json
 import re
 import unittest
+import tempfile
 from copy import deepcopy
 from pathlib import Path
 
@@ -171,7 +172,7 @@ class RenderTest(unittest.TestCase):
         )
         self.assertNotIn("</script><script>alert(1)", html)
 
-    def test_daily_list_keeps_every_entry_newest_first_without_mutating_source(self):
+    def test_home_daily_preview_shows_three_latest_and_links_to_all(self):
         entries = [
             {"date": f"2026-11-{day:02d}", "title": f"手记 {day}",
              "href": f"daily/2026-11-{day:02d}.html", "series": "观察记录"}
@@ -182,12 +183,46 @@ class RenderTest(unittest.TestCase):
             {"essay": [], "daily": entries, "weekly": []}, None,
         )
         links = re.findall(r'<a[^>]+href="([^"]+)"', page)
-        self.assertEqual(links, [item["href"] for item in reversed(entries)])
+        self.assertEqual(links, ["daily/index.html"] + [item["href"] for item in reversed(entries[-3:])])
+        for item in entries[-3:]:
+            self.assertIn(f'>{item["title"]}<', page)
+            self.assertIn(item["date"], page)
+        self.assertEqual(page.count('>观察记录<'), 3)
+        self.assertEqual(entries, original)
+
+    def test_daily_index_preserves_all_entries_newest_first(self):
+        entries = [{"kind": "daily", "date": f"2026-11-{day:02d}",
+                    "title": f"手记 {day}", "series": "观察记录"}
+                   for day in range(1, 16)]
+        original = deepcopy(entries)
+        self.assertTrue(callable(getattr(build_home, "render_daily_index", None)),
+                        "更多入口需要完整手记页生成器")
+        page = build_home.render_daily_index({"entries": entries})
+        links = re.findall(r'class="writing-row" href="([^"]+)"', page)
+        self.assertEqual(links, [f'2026-11-{day:02d}.html' for day in range(15, 0, -1)])
         for item in entries:
             self.assertIn(f'>{item["title"]}<', page)
             self.assertIn(item["date"], page)
         self.assertEqual(page.count('>观察记录<'), 15)
         self.assertEqual(entries, original)
+
+    def test_home_build_also_generates_and_checks_daily_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            pnl = root / "pnl.json"
+            pnl.write_text(json.dumps({"summary": {}, "all_sh": {"portfolio": []}}))
+            writing = root / "writing.json"
+            writing.write_text(json.dumps({"entries": [
+                {"kind": "daily", "date": "2026-10-29", "title": "最新手记"}]}))
+            args = ["--pnl-from", str(pnl), "--writing-index", str(writing),
+                    "--out", str(root / "index.html")]
+            self.assertEqual(build_home.main(args), 0)
+            archive = root / "daily" / "index.html"
+            self.assertTrue(archive.is_file(), "正常首页生成必须同时生成更多页")
+            self.assertEqual(build_home.main(args + ["--check"]), 0)
+            archive.unlink()
+            self.assertEqual(build_home.main(args + ["--check"]), 1,
+                             "更多页缺失时不能报告生成物已齐")
 
     def test_daily_list_without_link_keeps_its_text(self):
         page = build_home.render_writing(
