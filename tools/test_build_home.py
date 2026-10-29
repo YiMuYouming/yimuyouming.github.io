@@ -12,6 +12,7 @@ import importlib.util
 import json
 import re
 import unittest
+from copy import deepcopy
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[1]
@@ -169,6 +170,34 @@ class RenderTest(unittest.TestCase):
             writing_index={}, reports={}, archive_groups={},
         )
         self.assertNotIn("</script><script>alert(1)", html)
+
+    def test_daily_list_keeps_every_entry_newest_first_without_mutating_source(self):
+        entries = [
+            {"date": f"2026-11-{day:02d}", "title": f"手记 {day}",
+             "href": f"daily/2026-11-{day:02d}.html", "series": "观察记录"}
+            for day in range(1, 16)
+        ]
+        original = deepcopy(entries)
+        page = build_home.render_writing(
+            {"essay": [], "daily": entries, "weekly": []}, None,
+        )
+        links = re.findall(r'<a[^>]+href="([^"]+)"', page)
+        self.assertEqual(links, [item["href"] for item in reversed(entries)])
+        for item in entries:
+            self.assertIn(f'>{item["title"]}<', page)
+            self.assertIn(item["date"], page)
+        self.assertEqual(page.count('>观察记录<'), 15)
+        self.assertEqual(entries, original)
+
+    def test_daily_list_without_link_keeps_its_text(self):
+        page = build_home.render_writing(
+            {"essay": [], "daily": [{"date": "2026-11-01", "title": "待补链接的手记",
+                                       "series": "连续观察"}], "weekly": []}, None,
+        )
+        self.assertIn("待补链接的手记", page)
+        self.assertIn("2026-11-01", page)
+        self.assertIn("连续观察", page)
+        self.assertNotIn('href="None"', page)
 
 
 if __name__ == "__main__":

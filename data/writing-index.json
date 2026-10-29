@@ -65,6 +65,50 @@
       "status": "published",
       "title": "10月23日市场手记",
       "week": ""
+    },
+    {
+      "date": "2026-10-26",
+      "kind": "daily",
+      "path": "每日/2026-10-26.md",
+      "published_at": "2026-10-29T19:14:21+08:00",
+      "series": "",
+      "sha256": "437e75f32d89fed041d6e7f9be88d81c48c2077276db6f06978eb5527d0cf4cd",
+      "status": "published",
+      "title": "把止损设定与执行分开看",
+      "week": ""
+    },
+    {
+      "date": "2026-10-27",
+      "kind": "daily",
+      "path": "每日/2026-10-27.md",
+      "published_at": "2026-10-29T19:14:21+08:00",
+      "series": "",
+      "sha256": "6d906db507899efbbb3d3a381b7aa35b67a41a612762f073fe647ae517beda5a",
+      "status": "published",
+      "title": "个股承接与板块扩散分开看",
+      "week": ""
+    },
+    {
+      "date": "2026-10-28",
+      "kind": "daily",
+      "path": "每日/2026-10-28.md",
+      "published_at": "2026-10-29T19:14:21+08:00",
+      "series": "",
+      "sha256": "c4b98862d03f0c8247dfdde01da542a741067d454fc94c5a52f8d99b81bcb144",
+      "status": "published",
+      "title": "反弹第一天，先看延续",
+      "week": ""
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "daily",
+      "path": "每日/2026-10-29.md",
+      "published_at": "2026-10-29T19:14:21+08:00",
+      "series": "",
+      "sha256": "334c6b71babc021891d5d2e4197116f0347586b4c92683abc6f005efe99e4b1d",
+      "status": "published",
+      "title": "强股表现与板块合力分开看",
+      "week": ""
     }
   ],
   "issues": [],

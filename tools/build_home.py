@@ -108,13 +108,21 @@ def _render_entries(entries: list[dict[str, Any]]) -> str:
         return ""
     rows = []
     for item in entries:
+        date = html.escape(_entry_date(item))
+        series = str(item.get("series") or "")
         cells = (
-            f'<span class="writing-date">{_entry_date(item)}</span>'
+            f'<span class="writing-date">{date}</span>'
+            '<span class="writing-copy">'
             f'<span class="writing-title">{html.escape(str(item.get("title") or _entry_date(item)))}</span>'
-            f'<span class="writing-series">{html.escape(str(item.get("series", "")))}</span>'
+            + (f'<span class="writing-series">{html.escape(series)}</span>' if series else "")
+            + '</span>'
         )
         href = item.get("href")
-        rows.append(f'<li><a href="{href}">{cells}</a></li>' if href else f"<li>{cells}</li>")
+        rows.append(
+            f'<li><a class="writing-row" href="{html.escape(str(href), quote=True)}">'
+            f'{cells}<span class="writing-arrow" aria-hidden="true">→</span></a></li>'
+            if href else f'<li><div class="writing-row">{cells}</div></li>'
+        )
     return f'<ul class="writing-list">{"".join(rows)}</ul>'
 
 
@@ -164,10 +172,12 @@ def render_writing(writing: dict[str, list[dict[str, Any]]], essays: dict[str, A
                          + _render_entries(essay_items[1:]) + "</div>")
     dailies = [{**d, "href": f"daily/{_entry_date(d)[:10]}.html"}
                if (WORKSPACE / "daily" / f"{_entry_date(d)[:10]}.html").is_file() else d
-               for d in writing["daily"][:12]]
+               for d in sorted(writing["daily"], key=_entry_date, reverse=True)]
     for label, items in (("每日手记", dailies), ("周记", writing["weekly"])):
         if items:
-            parts.append(f'<div class="writing-group"><h3>{label}</h3>{_render_entries(items)}</div>')
+            parts.append('<div class="writing-group"><div class="writing-group-head">'
+                         f'<h3>{label}</h3><span class="writing-count">{len(items)} 篇</span>'
+                         f'</div>{_render_entries(items)}</div>')
     return "\n".join(parts)
 
 
@@ -210,7 +220,7 @@ def render_home(
         ),
         "{{SAMPLE_BADGE}}": sample_badge,
         "{{ESSAYS}}": _render_entries(writing["essay"]),
-        "{{DAILIES}}": _render_entries(writing["daily"][:12]),
+        "{{DAILIES}}": _render_entries(sorted(writing["daily"], key=_entry_date, reverse=True)),
         "{{WEEKLIES}}": _render_entries(writing["weekly"]),
         "{{WRITING_BODY}}": render_writing(writing, essays),
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),

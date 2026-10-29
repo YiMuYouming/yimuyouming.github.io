@@ -29,12 +29,15 @@ section{padding:34px 0;border-bottom:1px solid var(--line)}
 .glabel{display:flex;align-items:baseline;gap:10px;margin:22px 0 10px;font-size:14px}
 .glabel span{color:var(--sub);font-size:12px}
 .kpis{display:grid;gap:12px}
-.kpis.k4{grid-template-columns:repeat(4,1fr)}
-.kpis.k5{grid-template-columns:repeat(5,1fr)}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpis.k5{grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kpi{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .kpi .kl{display:block;color:var(--sub);font-size:12px}
 .kpi b{display:block;font-family:"JetBrains Mono",monospace;font-size:22px;margin:4px 0 2px}
 .kpi .ks{color:var(--sub);font-size:12px}
+.kpis.k5 .kpi{background:transparent;border:0;border-radius:0;padding:12px 16px}
+.kpis.k5 .kpi+.kpi{border-left:1px solid var(--line)}
+.kpis.k5 b{font-size:18px;font-weight:500}
 .up{color:var(--up)} .down{color:var(--down)}
 .controls{display:flex;gap:14px 32px;flex-wrap:wrap;align-items:center;margin:26px 0 14px}
 .ctl{display:flex;align-items:center;gap:12px;min-width:0}
@@ -59,9 +62,12 @@ table.pnl-table th,table.pnl-table td{padding:7px 8px;border-bottom:1px solid va
 table.pnl-table th:first-child,table.pnl-table td:first-child{text-align:left}
 .foot-note{color:var(--sub);font-size:12px;margin-top:10px}
 .writing-group{margin:30px 0 0}
-.writing-group h3{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--sub);letter-spacing:.08em}
+.writing-group h3{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:.04em}
+.writing-group-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.writing-count{color:var(--sub);font-size:12px}
 .writing-list a{color:inherit;text-decoration:none}
-.writing-list a:hover .writing-title{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.writing-list a:hover .writing-title{text-decoration:underline;text-underline-offset:4px;text-decoration-color:#b45309}
+.writing-list a:focus-visible{outline:2px solid #b45309;outline-offset:2px;border-radius:4px}
 .feature{display:grid;grid-template-columns:1fr 1.05fr;gap:32px;align-items:center;margin-top:22px;padding:26px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;text-decoration:none;transition:border-color .2s,box-shadow .2s}
 .feature:hover{border-color:#d9d5ce;box-shadow:0 10px 30px rgba(31,35,40,.06)}
 .feature .k{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.14em;color:#b45309}
@@ -71,11 +77,14 @@ table.pnl-table th:first-child,table.pnl-table td:first-child{text-align:left}
 .feature .more{font-size:14px;color:#b45309;letter-spacing:.04em}
 .feature .cover{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f7f5f3}
 .feature .cover img{display:block;width:100%;height:auto}
-.writing-list{list-style:none;margin:0;padding:0}
-.writing-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
-.writing-list li>a{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:baseline}
-.writing-date{font-family:"JetBrains Mono",monospace;color:var(--sub);font-size:13px}
-.writing-series{color:var(--sub);font-size:12px}
+.writing-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.writing-list li{border-bottom:1px solid var(--line);font-size:15px}
+.writing-row{display:grid;grid-template-columns:110px minmax(0,1fr) 20px;column-gap:18px;align-items:baseline;padding:16px 2px;min-height:56px}
+.writing-date{font-family:"JetBrains Mono",monospace;color:var(--sub);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.writing-copy{min-width:0;overflow-wrap:anywhere}
+.writing-title{display:block;line-height:1.7}
+.writing-series{display:block;margin-top:4px;color:var(--sub);font-size:12px}
+.writing-arrow{color:var(--sub);text-align:right;font-family:system-ui,sans-serif}
 .sample-badge{font-size:12px;border:1px dashed #b45309;color:#b45309;border-radius:999px;padding:1px 9px}
 footer{padding:28px 0 44px;color:var(--sub);font-size:13px}
 footer ul{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -83,10 +92,19 @@ footer li a{color:var(--ink);text-decoration:none}
 footer li span{color:var(--sub);font-size:12px}
 .disclaimer{margin-top:22px;font-size:12px;line-height:1.8}
 @media (max-width:720px){
-  .kpis.k4,.kpis.k5{grid-template-columns:repeat(2,1fr)}
+  .kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis.k5{grid-template-columns:1fr}
+  .kpis.k5 .kpi{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:baseline;padding:8px 2px}
+  .kpis.k5 .kpi+.kpi{border-left:0;border-top:1px solid var(--line)}
+  .kpis.k5 .kl{grid-column:1;grid-row:1}
+  .kpis.k5 .ks{grid-column:1;grid-row:2}
+  .kpis.k5 b{grid-column:2;grid-row:1 / span 2;align-self:center;margin:0}
   .pnl-summary{grid-template-columns:1fr}
   footer ul{grid-template-columns:repeat(2,1fr)}
-  .writing-list li>a{grid-template-columns:1fr;gap:2px}
+  .writing-row{grid-template-columns:minmax(0,1fr) 20px;gap:4px 12px;padding:14px 2px}
+  .writing-date{grid-column:1;grid-row:1}
+  .writing-copy{grid-column:1;grid-row:2}
+  .writing-arrow{grid-column:2;grid-row:1 / span 2;align-self:center}
   .feature{grid-template-columns:1fr;gap:18px;padding:16px}
   .feature .cover{order:-1}
   .feature .lede{font-size:15.5px;line-height:1.85}
@@ -94,12 +112,17 @@ footer li span{color:var(--sub);font-size:12px}
   .sec-head .aside{margin-left:0}
   header.masthead{padding-top:30px;display:block}
   .brand{margin-bottom:18px}
-  nav.site{gap:26px;font-size:15px;overflow-x:auto;scrollbar-width:none}
-  nav.site a{padding-bottom:14px}
+  nav.site{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;font-size:14px}
+  nav.site a{min-width:0;letter-spacing:0;text-align:center;padding:10px 0 14px}
   .controls{gap:12px}
   .ctl{width:100%;flex-direction:column;align-items:stretch;gap:6px}
   .seg{display:flex;width:100%}
   .ctl button{flex:1 1 auto;height:38px;padding:0 6px;font-size:13.5px}
+}
+@media (max-width:359px){
+  nav.site{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis.k4 .kpi{padding:12px 10px}
+  .kpis.k4 b{font-size:18px}
 }
 </style>
 </head>
