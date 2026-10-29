@@ -41,6 +41,14 @@ git commit -m "sync: YYYY-MM-DD 复盘笔记"
 git push
 ```
 
+### Step 4：交付检查（H12，推送后必跑，三项任一红不得说「门户同步完成」）
+
+```bash
+python3 tools/delivery_check.py --date YYYY-MM-DD
+```
+
+分别核对：收益数据日期＝当天；首页「每日手记」最新一篇＝当天；本地界面（index.html）与公网实际返回一致。数据页更新不等于手记和界面更新。
+
 ---
 
 ## 周五额外做（周总结）
