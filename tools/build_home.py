@@ -16,6 +16,7 @@ import html
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,7 @@ ESSAYS_PATH = WORKSPACE / "data" / "essays.json"
 # 取数与渲染分开，两个写入者就不会互相覆盖 index.html。
 PNL_DATA_FILE = WORKSPACE / "data" / "pnl.json"
 REPORTS_PATH = WORKSPACE / "report" / "reports.json"
+PERIOD_REVIEWS_PATH = WORKSPACE / "data" / "period-reviews.json"
 
 # 与 static/pnl-engine.js 的 MET / PER 一一对应；这里只用来生成按钮，不参与计算。
 INDEX_BUTTONS = (("sh", "上证"), ("sz", "深证"), ("cy", "创业板"))
@@ -197,6 +199,27 @@ def render_daily_index(writing_index: dict[str, Any]) -> str:
                      or '<p class="empty">暂无已发布手记。</p>'))
 
 
+def render_period_review_links(payload: dict[str, Any] | None) -> str:
+    """Two direct links to the latest published week/month, without summaries."""
+    links = []
+    for kind in ("weekly", "monthly"):
+        entries = [item for item in (payload or {}).get("reports", [])
+                   if item.get("kind") == kind]
+        if not entries:
+            continue
+        latest = max(entries, key=lambda item: (item["end"], item["start"]))
+        start, end = date.fromisoformat(latest["start"]), date.fromisoformat(latest["end"])
+        if start > end:
+            raise ValueError("period review date range invalid")
+        href = f"review-notes/{kind}-{start.isoformat()}_{end:%m-%d}.html"
+        label = (f"最新周报 W{start.isocalendar().week:02d}"
+                 if kind == "weekly" else f"{start.month}月月报")
+        links.append(f'<a href="{href}">{label} →</a>')
+    if not links:
+        return ""
+    return '<nav class="period-review-links" aria-label="周报和月报">' + "".join(links) + '</nav>'
+
+
 def render_home(
     pnl_data: dict[str, Any],
     *,
@@ -205,6 +228,7 @@ def render_home(
     essays: dict[str, Any] | None = None,
     reports: dict[str, Any] | None = None,
     archive_groups: dict[str, Any] | None = None,
+    period_reviews: dict[str, Any] | None = None,
     version: str = "",
     as_of: str = "",
 ) -> str:
@@ -242,6 +266,7 @@ def render_home(
         "{{REPORT_ITEMS}}": "".join(_report_row(item) for item in report_items),
         "{{REPORT_COUNT}}": str(len(report_items)),
         "{{ARCHIVE_GROUPS}}": _archive_summary(archive_weeks),
+        "{{PERIOD_REVIEW_LINKS}}": render_period_review_links(period_reviews),
         # 审计回复 10 第二节第 11 条：weekly/index.html 由 build_weekly_page 在
         # 生成第一份新周报（W41 起）时产出。在那之前页脚指向第一阶段归档入口——
         # W40 及以前的周报都在那里，不给一个 404 的目录链接。
@@ -318,6 +343,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--writing-index", default=str(WRITING_INDEX_PATH))
     parser.add_argument("--essays", default=str(ESSAYS_PATH), help="长文清单 data/essays.json")
     parser.add_argument("--reports", default=str(REPORTS_PATH))
+    parser.add_argument("--period-reviews", default=str(PERIOD_REVIEWS_PATH),
+                        help="公开周/月总结清单，用于收益区的最新入口")
     parser.add_argument("--archive-groups", default=None,
                         help="第一阶段归档分组 JSON；缺省时按现有页面数推断")
     parser.add_argument("--version", default="", help="数据版本（提交号短哈希）")
@@ -338,6 +365,7 @@ def main(argv: list[str] | None = None) -> int:
         sample_writing=args.sample_writing,
         essays=_load(args.essays, {"schema": "essays.v1", "essays": []}),
         reports=_load(args.reports, {}),
+        period_reviews=_load(args.period_reviews, {}),
         archive_groups=(
             _load(args.archive_groups, None) if args.archive_groups else archive_groups_from_disk()
         ),

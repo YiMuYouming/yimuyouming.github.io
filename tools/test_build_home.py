@@ -13,6 +13,7 @@ import json
 import re
 import unittest
 import tempfile
+from inspect import signature
 from copy import deepcopy
 from pathlib import Path
 
@@ -32,6 +33,47 @@ def current_pnl_data() -> dict:
     match = re.search(r"var PNL_DATA = (\{.*?\});\s*</script>", html, flags=re.DOTALL)
     assert match, "现网首页没有 PNL_DATA"
     return json.loads(match.group(1))
+
+
+class PeriodReviewLinksTest(unittest.TestCase):
+    def _render(self, reports):
+        self.assertIn('period_reviews', signature(build_home.render_home).parameters)
+        return build_home.render_home(
+            {'summary': {'last_date': '2026-10-30'}, 'all_sh': {'portfolio': []}},
+            period_reviews={'reports': reports},
+        )
+
+    def test_two_direct_links_follow_income_heading_before_the_metrics(self):
+        page = self._render([
+            {'kind': 'monthly', 'id': '2026-10', 'start': '2026-10-08', 'end': '2026-10-30'},
+            {'kind': 'weekly', 'id': '2026-W44', 'start': '2026-10-26', 'end': '2026-10-30'},
+        ])
+        nav = re.search(r'<nav class="period-review-links"[^>]*>(.*?)</nav>', page, re.S)
+        self.assertIsNotNone(nav)
+        self.assertEqual(len(re.findall(r'<a\b', nav[1])), 2)
+        self.assertIn('review-notes/weekly-2026-10-26_10-30.html', nav[1])
+        self.assertIn('review-notes/monthly-2026-10-08_10-30.html', nav[1])
+        self.assertIn('最新周报 W44', nav[1])
+        self.assertIn('10月月报', nav[1])
+        self.assertLess(page.index('id="pnl-h"'), nav.start())
+        self.assertLess(nav.end(), page.index('<div class="glabel"'))
+        self.assertNotIn('摘要', nav[1])
+
+    def test_latest_periods_are_selected_by_date_regardless_of_input_order(self):
+        page = self._render([
+            {'kind': 'weekly', 'id': '2026-W45', 'start': '2026-11-02', 'end': '2026-11-06'},
+            {'kind': 'monthly', 'id': '2026-10', 'start': '2026-10-08', 'end': '2026-10-30'},
+            {'kind': 'weekly', 'id': '2026-W44', 'start': '2026-10-26', 'end': '2026-10-30'},
+            {'kind': 'monthly', 'id': '2026-11', 'start': '2026-11-02', 'end': '2026-11-30'},
+        ])
+        nav = re.search(r'<nav class="period-review-links"[^>]*>(.*?)</nav>', page, re.S)[1]
+        self.assertIn('weekly-2026-11-02_11-06.html', nav)
+        self.assertIn('monthly-2026-11-02_11-30.html', nav)
+        self.assertNotIn('weekly-2026-10-26', nav)
+        self.assertNotIn('monthly-2026-10-08', nav)
+
+    def test_no_reports_means_no_empty_row(self):
+        self.assertNotIn('<nav class="period-review-links"', self._render([]))
 
 
 class SingleImplementationTest(unittest.TestCase):
